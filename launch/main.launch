@@ -1,0 +1,4 @@
+<launch>
+    <!-- 程序节点 -->
+    <node pkg="syt_hmi" type="syt_hmi" name="syt_hmi" output="screen"></node>
+</launch>

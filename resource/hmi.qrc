@@ -1,0 +1,38 @@
+<RCC warning="WARNING! File created programmatically. All changes made in this file will be lost!">
+    <qresource prefix="m_logo">
+        <file>logo/win_logo.svg</file>
+        <file>logo/win_logo.png</file>
+        <file>logo/title_logo.png</file>
+        <file>logo/bg_logo.png</file>
+    </qresource>
+
+    <qresource prefix="m_font">
+        <file>font/NotoSansSC-Regular.otf</file>
+    </qresource>
+
+    <qresource prefix="m_icon">
+        <file>icon/chevron-up.svg</file>
+        <file>icon/browse.png</file>
+        <file>icon/browse-off.png</file>
+        <file>icon/lock.png</file>
+        <file>icon/unlock.png</file>
+        <file>icon/dev-mode.png</file>
+        <file>icon/help.png</file>
+        <file>icon/filter-records.png</file>
+        <file>icon/clear.png</file>
+        <file>icon/login_proxy.png</file>
+        <file>icon/Login-Form.png</file>
+        <file>icon/l-page.png</file>
+        <file>icon/r-page.png</file>
+    </qresource>
+
+    <qresource prefix="m_bg">
+        <file>background/loading.gif</file>
+        <file>background/loading2.gif</file>
+    </qresource>
+
+
+    <qresource prefix="m_qss">
+        <file>syt_style.qss</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,12 @@
+.vim
+__pycache__
+.pyc
+.vscode
+.nvimlog
+build
+bin
+.o
+.a
+.so
+cmake-build-debug
+.idea
