@@ -85,9 +85,14 @@ void MainWindow::initWidget() {
     // 隐藏默认标题栏
     this->setWindowFlags(Qt::FramelessWindowHint);
 
+    // icon
     this->setWindowIcon(QIcon(":m_logo/logo/bg_logo.png"));
 
     // todo add logo title
+    auto tit_logo = QPixmap(":m_logo/logo/logo2.png");
+    tit_logo = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(),
+                               Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
+    ui->sytLogoLabel->setPixmap(tit_logo);
 
     // 移动到中心
     QScreen *desktop = QApplication::screenAt(QCursor::pos());
@@ -175,8 +180,8 @@ void MainWindow::initWidget() {
 
 
     // 添加左右翻页按钮
-    int init_page_btn_w = this->width() / page_btn_w_scale_;
-    int init_page_btn_h = this->height() / page_btn_h_scale_;
+    int init_page_btn_w = this->width() / 50;
+    int init_page_btn_h = this->height() / 9;
 
     prev_btn = new InteractiveButtonBase(this);
     prev_btn->setIcon(QIcon(":m_icon/icon/l-page.png"));
@@ -462,8 +467,8 @@ void MainWindow::slotDevWindow() {
 void MainWindow::resizeEvent(QResizeEvent *event) {
     if (event->type() == QResizeEvent::Resize) {
         // 翻页按钮
-        int init_page_btn_w = this->width() / page_btn_w_scale_;
-        int init_page_btn_h = this->height() / page_btn_h_scale_;
+        int init_page_btn_w = this->width() / 50;
+        int init_page_btn_h = this->height() / 9;
 
         prev_btn->setGeometry(0, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
         next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2,

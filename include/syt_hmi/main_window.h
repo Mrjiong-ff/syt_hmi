@@ -99,8 +99,6 @@ private:
     bool is_normal_size_ = true;
     bool is_mouse_left_press_down_ = false;
     bool is_lock_screen_ = false;
-    int page_btn_w_scale_ = 50;
-    int page_btn_h_scale_ = 9;
 
     // 一些自定义的按钮控件
     WinMenuButton *m_menuBtn_;

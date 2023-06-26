@@ -50,6 +50,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>60</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
@@ -57,18 +63,33 @@
        </size>
       </property>
       <layout class="QHBoxLayout" name="mainHorizontalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLabel" name="sytLogoLabel">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>138</width>
-           <height>0</height>
+           <width>180</width>
+           <height>60</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -77,8 +98,14 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
          <property name="text">
           <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -86,6 +113,9 @@
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -99,8 +129,9 @@
         <widget class="QLabel" name="sytTitleLabel">
          <property name="font">
           <font>
-           <pointsize>13</pointsize>
+           <pointsize>14</pointsize>
            <weight>75</weight>
+           <italic>false</italic>
            <bold>true</bold>
           </font>
          </property>
@@ -114,6 +145,9 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
@@ -123,19 +157,32 @@
         </spacer>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="mainLayout"/>
+        <layout class="QHBoxLayout" name="mainLayout">
+         <property name="spacing">
+          <number>15</number>
+         </property>
+        </layout>
        </item>
       </layout>
      </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="sytToolBarHboxLayout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
       <item>
        <widget class="WaterZoomButton" name="sytDevModeBtn">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>40</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>40</width>
+          <height>40</height>
          </size>
         </property>
         <property name="text">
@@ -147,8 +194,8 @@
        <widget class="WaterZoomButton" name="sytLockScreenBtn">
         <property name="maximumSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>40</width>
+          <height>40</height>
          </size>
         </property>
         <property name="text">
@@ -160,8 +207,8 @@
        <widget class="WaterZoomButton" name="sytHelpPushButton">
         <property name="maximumSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>40</width>
+          <height>40</height>
          </size>
         </property>
         <property name="text">

@@ -4,6 +4,7 @@
         <file>logo/win_logo.png</file>
         <file>logo/title_logo.png</file>
         <file>logo/bg_logo.png</file>
+        <file>logo/logo2.png</file>
     </qresource>
 
     <qresource prefix="m_font">
