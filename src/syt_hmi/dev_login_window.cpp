@@ -40,7 +40,7 @@ DevLoginWindow::DevLoginWindow(QWidget *parent) :
             emit signDevMode(true);
             hide();
         } else {
-            show_message_box(this, "密码输入错误,请重新输入或联系管理员!", 1, {"确认"});
+            showMessageBox(this, "密码输入错误,请重新输入或联系管理员!", 1, {"确认"});
 //            emit signDevMode(false);
         }
     });

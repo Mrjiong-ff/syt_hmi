@@ -514,16 +514,28 @@ void MainWindow::initNode() {
 }
 
 void MainWindow::resetBtnClicked() {
+    bool res = isFastClick(ui->sytResetPushButton, 1000);
+    if (!res) {
+        return;
+    }
     qDebug("点击重置按钮");
 
 }
 
 void MainWindow::startBtnClicked() {
+    bool res = isFastClick(ui->sytStartPushButton, 1000);
+    if (!res) {
+        return;
+    }
     qDebug("点击开始按钮");
 
 }
 
 void MainWindow::stopBtnClicked() {
+    bool res = isFastClick(ui->sytStopPushButton, 1000);
+    if (!res) {
+        return;
+    }
     qDebug("点击停止按钮");
 
 }

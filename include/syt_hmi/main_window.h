@@ -20,6 +20,7 @@
 #include "syt_btn/winmaxbutton.h"
 #include "syt_hmi/dev_login_window.h"
 #include "syt_hmi/dev_window.h"
+#include "utils/utils.h"
 
 #include "syt_rclcomm//rcl_comm.h"
 //#include "syt_rviz/qrviz.h"

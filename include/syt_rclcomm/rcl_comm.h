@@ -30,6 +30,9 @@ protected:
     void run() override;
 
 private:
+    bool initAllNodes();
+
+private:
 
     std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> m_executor;
 
