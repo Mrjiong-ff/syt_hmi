@@ -27,6 +27,8 @@
         <file>icon/r-page.png</file>
         <file>icon/run.png</file>
         <file>icon/stop.png</file>
+        <file>icon/unvisable.png</file>
+        <file>icon/visable.png</file>
     </qresource>
 
     <qresource prefix="m_bg">

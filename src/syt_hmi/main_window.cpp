@@ -6,7 +6,6 @@
 
 #include "syt_hmi/main_window.h"
 
-
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::MainWindow) {
 
@@ -80,6 +79,49 @@ void MainWindow::settingConnection() {
     connect(ui->sytResetPushButton, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
     connect(ui->sytStartPushButton, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
     connect(ui->sytStopPushButton, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
+
+    // todo 可视化两个按钮
+    connect(ui->loadClothVisableBtn, &QPushButton::clicked, [=] {
+        is_load_cloth_on = !is_load_cloth_on;
+        if (is_load_cloth_on) {
+            qDebug("打开 上料视觉显示");
+            ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
+            ui->loadClothVisableBtn->setText("隐藏");
+        } else {
+            qDebug("关闭 上料视觉显示");
+            ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
+            ui->loadClothVisableBtn->setText("显示");
+            ui->leftLeftVisualLabel->clear();
+            ui->leftRightVisualLabel->clear();
+            ui->rightLeftVisualLabel->clear();
+            ui->rightRightVisualLabel->clear();
+            ui->leftLeftVisualLabel->setText("NO IMAGE");
+            ui->leftRightVisualLabel->setText("NO IMAGE");
+            ui->rightLeftVisualLabel->setText("NO IMAGE");
+            ui->rightRightVisualLabel->setText("NO IMAGE");
+            ui->leftLeftResEdt->setText("0");
+            ui->leftRightResEdt->setText("0");
+            ui->rightLeftResEdt->setText("0");
+            ui->rightRightResEdt->setText("0");
+        }
+    });
+
+    connect(ui->compositeClothVisableBtn, &QPushButton::clicked, [=] {
+        is_comp_cloth_on = !is_comp_cloth_on;
+        if (is_comp_cloth_on) {
+            qDebug("打开 合片视觉显示");
+            ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
+            ui->compositeClothVisableBtn->setText("隐藏");
+        } else {
+            qDebug("关闭 合片视觉显示");
+            ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
+            ui->compositeClothVisableBtn->setText("显示");
+            ui->leftCompLabel->clear();
+            ui->rightCompLabel->clear();
+            ui->leftCompLabel->setText("NO IMAGE");
+            ui->rightCompLabel->setText("NO IMAGE");
+        }
+    });
 
     // 一些节点相关的报错槽
     connect(rclcomm, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);
@@ -214,6 +256,12 @@ void MainWindow::initWidget() {
     next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2,
                            init_page_btn_w,
                            init_page_btn_h);
+
+    // todo 可视化的两个按钮
+    ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
+    ui->loadClothVisableBtn->setText("显示");
+    ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
+    ui->compositeClothVisableBtn->setText("显示");
 
     // todo rviz
 //    rviz_widget_ = new QRviz(ui->rviz_verticalLayout, "syt_hmi/");

@@ -21,7 +21,6 @@
 #include "syt_hmi/dev_login_window.h"
 #include "syt_hmi/dev_window.h"
 #include "utils/utils.h"
-
 #include "syt_rclcomm//rcl_comm.h"
 //#include "syt_rviz/qrviz.h"
 
@@ -100,6 +99,8 @@ private:
     bool is_normal_size_ = true;
     bool is_mouse_left_press_down_ = false;
     bool is_lock_screen_ = false;
+    bool is_load_cloth_on = false;
+    bool is_comp_cloth_on = false;
 
     // 一些自定义的按钮控件
     WinMenuButton *m_menuBtn_;
