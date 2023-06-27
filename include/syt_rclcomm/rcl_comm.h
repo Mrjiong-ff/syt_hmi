@@ -9,6 +9,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <QThread>
 #include <QWidget>
+#include <QProcess>
+#include "utils/utils.h"
 //#include "syt_msgs/msg/fsm_flow_control_command.hpp"
 //#include "syt_msgs/msg/fsm_run_mode.hpp"
 //#include <rcl_interfaces/msg/log.hpp>
@@ -26,11 +28,15 @@ public:
 
     ~SytRclComm() override;
 
+    bool initAllNodes();
+
+
 protected:
     void run() override;
 
-private:
-    bool initAllNodes();
+signals:
+
+    void errorNodeMsgSign(QString msg);
 
 private:
 
@@ -38,6 +44,7 @@ private:
 
     std::shared_ptr<rclcpp::Node> m_node;
 
+    QProcess *process_;
 
 };
 

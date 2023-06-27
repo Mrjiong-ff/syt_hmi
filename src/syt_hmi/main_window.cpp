@@ -17,6 +17,14 @@ MainWindow::MainWindow(QWidget *parent) :
     initWidget();
 
     settingConnection();
+
+    // 自动启动launch下所有节点
+    bool res = rclcomm->initAllNodes();
+    if (!res) {
+        delete rclcomm;
+        delete ui;
+        exit(-1);
+    }
 }
 
 MainWindow::~MainWindow() {
@@ -68,10 +76,14 @@ void MainWindow::settingConnection() {
     connect(prev_btn, &QPushButton::clicked, this, &MainWindow::slotPrevPage);
     connect(next_btn_, &QPushButton::clicked, this, &MainWindow::slotNextPage);
 
-    // 主界面3个程序按钮
+    // 主界面用于交互的程序按钮
     connect(ui->sytResetPushButton, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
     connect(ui->sytStartPushButton, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
     connect(ui->sytStopPushButton, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
+
+    // 一些节点相关的报错槽
+    connect(rclcomm, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);
+
 }
 
 void MainWindow::initWidget() {
@@ -88,7 +100,7 @@ void MainWindow::initWidget() {
     // icon
     this->setWindowIcon(QIcon(":m_logo/logo/bg_logo.png"));
 
-    // todo add logo title
+    // title logo
     auto tit_logo = QPixmap(":m_logo/logo/logo2.png");
     tit_logo = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(),
                                Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
@@ -99,14 +111,15 @@ void MainWindow::initWidget() {
     QRect rect = desktop->availableGeometry();
     move(rect.left() + (rect.width() - width()) / 2, (rect.height() - height()) / 2);
 
+    int btn_size = 40;
     m_menuBtn_ = new WinMenuButton(this);
-    m_menuBtn_->setFixedSize(30, 30);
+    m_menuBtn_->setFixedSize(btn_size, btn_size);
     m_minBtn_ = new WinMinButton(this);
-    m_minBtn_->setFixedSize(30, 30);
+    m_minBtn_->setFixedSize(btn_size, btn_size);
     m_maxBtn_ = new WinMaxButton(this);
-    m_maxBtn_->setFixedSize(30, 30);
+    m_maxBtn_->setFixedSize(btn_size, btn_size);
     m_closeBtn_ = new WinCloseButton(this);
-    m_closeBtn_->setFixedSize(30, 30);
+    m_closeBtn_->setFixedSize(btn_size, btn_size);
     ui->mainLayout->addWidget(m_menuBtn_);
     ui->mainLayout->addWidget(m_minBtn_);
     ui->mainLayout->addWidget(m_maxBtn_);
@@ -544,3 +557,8 @@ void MainWindow::stopBtnClicked() {
     qDebug("点击停止按钮");
 
 }
+
+void MainWindow::errorNodeMsgSlot(QString msg) {
+    showMessageBox(this, msg, 1, {"退出"});
+}
+

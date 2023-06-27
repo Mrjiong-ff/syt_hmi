@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1490</width>
+    <width>1508</width>
     <height>991</height>
    </rect>
   </property>
@@ -250,7 +250,7 @@
       </property>
       <widget class="QWidget" name="page0">
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
+        <item row="0" column="1">
          <widget class="QSplitter" name="mainVSplitter">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -264,6 +264,28 @@
              <property name="spacing">
               <number>0</number>
              </property>
+             <item>
+              <widget class="QFrame" name="frame">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>1200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
            <widget class="QTabWidget" name="sytTabWidget">
@@ -273,12 +295,18 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>270</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <pointsize>12</pointsize>
-              <weight>50</weight>
+              <weight>75</weight>
               <italic>false</italic>
-              <bold>false</bold>
+              <bold>true</bold>
               <strikeout>false</strikeout>
              </font>
             </property>
@@ -503,10 +531,16 @@
                </property>
                <item row="0" column="0">
                 <widget class="WaterZoomButton" name="sytFilterPushButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
-                   <width>30</width>
-                   <height>30</height>
+                   <width>40</width>
+                   <height>40</height>
                   </size>
                  </property>
                  <property name="text">
@@ -516,10 +550,16 @@
                </item>
                <item row="1" column="0">
                 <widget class="WaterZoomButton" name="sytClearPushButton">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
-                   <width>30</width>
-                   <height>30</height>
+                   <width>40</width>
+                   <height>40</height>
                   </size>
                  </property>
                  <property name="text">

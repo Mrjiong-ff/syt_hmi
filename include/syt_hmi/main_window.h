@@ -69,7 +69,6 @@ private:
 
     void setAllButtonsEnabled(QWidget *parent, bool enabled, QPushButton *excludedButton = nullptr);
 
-
 private slots:
 
     void slotMaxBtnClicked();
@@ -89,6 +88,8 @@ private slots:
     void startBtnClicked();
 
     void stopBtnClicked();
+
+    void errorNodeMsgSlot(QString msg);
 
 private:
     Ui::MainWindow *ui;
