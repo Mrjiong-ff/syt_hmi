@@ -280,6 +280,8 @@ void MainWindow::initWidget() {
     // 等待动画初始化
     _localPodsSpinnerWidget = new WaitingSpinnerWidget(this);
 
+    // todo 程序界面的比例问题
+
 
     // todo rviz
 //    rviz_widget_ = new QRviz(ui->rviz_verticalLayout, "syt_hmi/");
@@ -671,8 +673,8 @@ void MainWindow::otaResultShow(bool res, QString msg) {
     _localPodsSpinnerWidget->stop();
     if (res) {
         //todo show ota res
-        auto res = showMessageBox(this, STATE::SUCCESS, "检测到存在可用的新安装包,请选择是否升级?", 2,
-                                  {"更新", "取消"});
+        auto res = showMessageBox(this, STATE::SUCCESS, "检测到远端存在新安装包,请选择是否升级", 2,
+                                  {"一键升级", "取消升级"});
         switch (res) {
             case 0:
                 qDebug("下载更新中...");
@@ -681,7 +683,17 @@ void MainWindow::otaResultShow(bool res, QString msg) {
                 qDebug("取消更新");
                 return;
         }
-
+        // todo
+        auto ota_dialog = new OtaUpdateDialog(this);
+        ota_dialog->show();
+        auto res_ = ota_dialog->exec();
+        delete ota_dialog;
+        if (res_ == 0) {
+            showMessageBox(this, STATE::WARN, "取消升级", 1, {"退出"});
+            return;
+        }
+        showMessageBox(this, STATE::SUCCESS, "升级完成,请点击关闭按钮后,再重新打开软件", 1, {"关闭并重启"});
+        exit(0);
 
     } else {
         showMessageBox(this, STATE::ERROR, msg, 1, {"退出"});

@@ -243,7 +243,7 @@
        <enum>QFrame::Plain</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page0">
        <layout class="QGridLayout" name="gridLayout">
@@ -261,28 +261,6 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <item>
-              <widget class="QFrame" name="frame">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>1200</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-              </widget>
-             </item>
             </layout>
            </widget>
            <widget class="QTabWidget" name="sytTabWidget">
@@ -294,7 +272,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>270</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
@@ -670,8 +648,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1476</width>
-             <height>803</height>
+             <width>860</width>
+             <height>370</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1172,8 +1150,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1476</width>
-             <height>803</height>
+             <width>717</width>
+             <height>170</height>
             </rect>
            </property>
            <attribute name="label">
