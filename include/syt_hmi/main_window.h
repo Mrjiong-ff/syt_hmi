@@ -11,7 +11,7 @@
 #include <QScreen>
 #include <QMenu>
 #include <QGraphicsOpacityEffect>
-
+#include <QtConcurrent/QtConcurrent>
 
 #include "ui_main_window.h"
 #include "syt_btn/winclosebutton.h"
@@ -21,6 +21,8 @@
 #include "syt_hmi/dev_login_window.h"
 #include "syt_hmi/dev_window.h"
 #include "utils/utils.h"
+#include "utils/waitingspinnerwidget.h"
+
 #include "syt_rclcomm//rcl_comm.h"
 //#include "syt_rviz/qrviz.h"
 
@@ -90,6 +92,12 @@ private slots:
 
     void errorNodeMsgSlot(QString msg);
 
+    void triggeredOTAUpdate();
+
+    void otaResultShow(bool res, QString msg);
+
+    void updateLoadClothVisual(int, int, cv::Mat);
+
 private:
     Ui::MainWindow *ui;
 
@@ -122,9 +130,11 @@ private:
     QAction *closeAct_;
     QAction *fullAct_;
 
-    QAction *devAct_;
+    QAction *updateAct_;
     QAction *helpAct_;
     QAction *aboutAct_;
+
+    WaitingSpinnerWidget *_localPodsSpinnerWidget;
 
     QPoint m_mousePos_;
     Direction dir_;    // 窗口大小改变时，记录改变方向

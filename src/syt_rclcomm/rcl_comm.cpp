@@ -10,6 +10,13 @@ SytRclComm::SytRclComm() {
     m_executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
     m_node = rclcpp::Node::make_shared("syt_hmi_node");
     m_executor->add_node(m_node);
+
+    // todo 用于回调视觉显示
+    callback_group_vision =
+            m_node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    auto sub_vision_obt = rclcpp::SubscriptionOptions();
+    sub_vision_obt.callback_group = callback_group_vision;
+
     this->start();
     qDebug("init syt hmi node successful!");
 }
@@ -53,4 +60,19 @@ bool SytRclComm::initAllNodes() {
     QString msg = QString("Fatal: 节点初始化失败.\n错误消息: %1").arg(error_msg.data());
     emit errorNodeMsgSign(msg);
     return false;
+}
+
+void SytRclComm::load_cloth_visable(bool f) {
+    // todo 向syt cloth edge server 发送允许传输图像指令
+    qDebug("允许传输上料的图像");
+
+}
+
+void SytRclComm::otaUpdate() {
+    // todo server call
+    for (int i = 0; i < 2; ++i) {
+        QThread::sleep(1);
+    }
+    emit waitUpdateResultSuccess(true,"123456");
+//    emit waitUpdateResultSuccess(false,"更新失败,请检查网络是否异常");
 }

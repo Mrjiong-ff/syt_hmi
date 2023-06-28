@@ -8,9 +8,14 @@
 #include <QWidget>
 #include <QMessageBox>
 #include <QVariant>
+#include <QIcon>
 #include <sys/time.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
+
+enum STATE {
+    SUCCESS = 0, WARN = 1, ERROR
+};
 
 /**
  * 一些消息弹窗
@@ -20,7 +25,7 @@
  * @param btn_text
  * @return
  */
-int showMessageBox(QWidget *p, QString text, int btn_num, QVector<QString> btn_text);
+int showMessageBox(QWidget *p, STATE state, QString text, int btn_num, QVector<QString> btn_text);
 
 /**
  * 获取当前系统时间

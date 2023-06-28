@@ -5,12 +5,27 @@
 #include "utils/utils.h"
 
 
-int showMessageBox(QWidget *p, QString text, int btn_num, QVector<QString> btn_text) {
+int showMessageBox(QWidget *p, STATE state, QString text, int btn_num, QVector<QString> btn_text) {
     auto box = new QMessageBox(p);
     box->setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
     box->setText(text);
+    QImage qimage;
+    switch (state) {
+        case SUCCESS:
+            qimage = QImage(":m_icon/icon/confirm.png");
+            break;
+        case WARN:
+            qimage = QImage(":m_icon/icon/warn.png");
+            break;
+        case ERROR:
+            qimage = QImage(":m_icon/icon/dididi.png");
+            break;
+    }
+    qimage = qimage.scaled(50, 50, Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
+    box->setIconPixmap(QPixmap::fromImage(qimage));
+//    box->addButton()
     for (int i = 0; i < btn_num; ++i) {
-        box->setButtonText(i + 1, btn_text[i]);
+        box->addButton(btn_text[i], QMessageBox::ActionRole);
     }
     box->show();
     return box->exec();

@@ -875,7 +875,7 @@
                   </font>
                  </property>
                  <property name="title">
-                  <string>左相机</string>
+                  <string>右相机</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1066,7 +1066,7 @@
                   </font>
                  </property>
                  <property name="title">
-                  <string>左相机</string>
+                  <string>右相机</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

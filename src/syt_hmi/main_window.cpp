@@ -70,7 +70,7 @@ void MainWindow::settingConnection() {
     connect(fullAct_, &QAction::triggered, this, &MainWindow::showFullScreen);
     connect(closeAct_, &QAction::triggered, this, &MainWindow::close);
 
-    connect(devAct_, &QAction::triggered, this, &MainWindow::slotShowDevLoginWindow);
+    connect(updateAct_, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
 
     connect(prev_btn, &QPushButton::clicked, this, &MainWindow::slotPrevPage);
     connect(next_btn_, &QPushButton::clicked, this, &MainWindow::slotNextPage);
@@ -87,6 +87,8 @@ void MainWindow::settingConnection() {
             qDebug("打开 上料视觉显示");
             ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
             ui->loadClothVisableBtn->setText("隐藏");
+            // todo
+            rclcomm->load_cloth_visable(true);
         } else {
             qDebug("关闭 上料视觉显示");
             ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
@@ -103,6 +105,9 @@ void MainWindow::settingConnection() {
             ui->leftRightResEdt->setText("0");
             ui->rightLeftResEdt->setText("0");
             ui->rightRightResEdt->setText("0");
+
+            // todo
+            rclcomm->load_cloth_visable(false);
         }
     });
 
@@ -125,6 +130,12 @@ void MainWindow::settingConnection() {
 
     // 一些节点相关的报错槽
     connect(rclcomm, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);
+
+    // ota停止
+    connect(rclcomm, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow, Qt::QueuedConnection);
+
+    // 可视化相关槽函数
+//    connect()
 
 }
 
@@ -185,13 +196,16 @@ void MainWindow::initWidget() {
 
     // menu btn上下文
     m_menu_ = new QMenu(this);
-    devAct_ = new QAction(this);
+    updateAct_ = new QAction(this);
     helpAct_ = new QAction(this);
     aboutAct_ = new QAction(this);
-    devAct_->setText("开发者模式");
+    updateAct_->setText("检查更新");
+    updateAct_->setIcon(QIcon(":m_icon/icon/update.png"));
     helpAct_->setText("帮助文档");
+    helpAct_->setIcon(QIcon(":m_icon/icon/help.png"));
     aboutAct_->setText("关于速英");
-    m_menu_->addAction(devAct_);
+    aboutAct_->setIcon(QIcon(":m_icon/icon/about.png"));
+    m_menu_->addAction(updateAct_);
     m_menu_->addAction(helpAct_);
     m_menu_->addAction(aboutAct_);
     m_menuBtn_->setMenu(m_menu_);
@@ -262,6 +276,10 @@ void MainWindow::initWidget() {
     ui->loadClothVisableBtn->setText("显示");
     ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
     ui->compositeClothVisableBtn->setText("显示");
+
+    // 等待动画初始化
+    _localPodsSpinnerWidget = new WaitingSpinnerWidget(this);
+
 
     // todo rviz
 //    rviz_widget_ = new QRviz(ui->rviz_verticalLayout, "syt_hmi/");
@@ -607,6 +625,66 @@ void MainWindow::stopBtnClicked() {
 }
 
 void MainWindow::errorNodeMsgSlot(QString msg) {
-    showMessageBox(this, msg, 1, {"退出"});
+    showMessageBox(this, STATE::ERROR, msg, 1, {"退出"});
+}
+
+void MainWindow::updateLoadClothVisual(int machine_ori, int cam_idx, cv::Mat mat) {
+    // todo 上料机回调的 图片显示
+    auto qimage = cvMat2QImage(mat);
+    int scale_ratio;
+    auto image_w = qimage.width();
+    auto image_h = qimage.height();
+    auto label_w = ui->leftLeftVisualLabel->width();
+    auto label_h = ui->leftLeftVisualLabel->height();
+    auto w_r = image_w / label_w;
+    auto h_r = image_h / label_h;
+
+    if (machine_ori == 0) {
+        qDebug("left machine");
+        if (cam_idx == 0) {
+            qDebug("left cam");
+        } else {
+            qDebug("right cam");
+
+        }
+    } else {
+        qDebug("right machine");
+        if (cam_idx == 0) {
+            qDebug("left cam");
+
+        } else {
+            qDebug("right cam");
+
+        }
+    }
+}
+
+void MainWindow::triggeredOTAUpdate() {
+    qDebug("update");
+    _localPodsSpinnerWidget->start();
+    QFuture<void> future = QtConcurrent::run([=] {
+        rclcomm->otaUpdate();
+    });
+}
+
+void MainWindow::otaResultShow(bool res, QString msg) {
+    _localPodsSpinnerWidget->stop();
+    if (res) {
+        //todo show ota res
+        auto res = showMessageBox(this, STATE::SUCCESS, "检测到存在可用的新安装包,请选择是否升级?", 2,
+                                  {"更新", "取消"});
+        switch (res) {
+            case 0:
+                qDebug("下载更新中...");
+                break;
+            case 1:
+                qDebug("取消更新");
+                return;
+        }
+
+
+    } else {
+        showMessageBox(this, STATE::ERROR, msg, 1, {"退出"});
+    }
 }
 

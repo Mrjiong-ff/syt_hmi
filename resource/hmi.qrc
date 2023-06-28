@@ -29,11 +29,15 @@
         <file>icon/stop.png</file>
         <file>icon/unvisable.png</file>
         <file>icon/visable.png</file>
+        <file>icon/update.png</file>
+        <file>icon/about.png</file>
+        <file>icon/dididi.png</file>
+        <file>icon/confirm.png</file>
+        <file>icon/warn.png</file>
     </qresource>
 
     <qresource prefix="m_bg">
         <file>background/loading.gif</file>
-        <file>background/loading2.gif</file>
     </qresource>
 
 
