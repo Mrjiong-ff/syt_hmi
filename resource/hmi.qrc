@@ -34,6 +34,7 @@
         <file>icon/dididi.png</file>
         <file>icon/confirm.png</file>
         <file>icon/warn.png</file>
+        <file>icon/lock_screen.png</file>
     </qresource>
 
     <qresource prefix="m_bg">

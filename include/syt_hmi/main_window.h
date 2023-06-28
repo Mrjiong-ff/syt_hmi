@@ -21,6 +21,7 @@
 #include "syt_hmi/dev_login_window.h"
 #include "syt_hmi/dev_window.h"
 #include "syt_hmi/ota_update_dialog.h"
+#include "syt_hmi/lock_dialog.h"
 #include "utils/utils.h"
 #include "utils/waitingspinnerwidget.h"
 

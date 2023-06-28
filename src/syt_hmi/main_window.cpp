@@ -508,14 +508,10 @@ void MainWindow::slotShowDevLoginWindow() {
 }
 
 void MainWindow::slotLockScreen() {
-    is_lock_screen_ = !is_lock_screen_;
-    if (is_lock_screen_) {
-        ui->sytLockScreenBtn->setIcon(QIcon(":m_icon/icon/unlock.png"));
-        setAllButtonsEnabled(this, false, ui->sytLockScreenBtn);
-    } else {
-        ui->sytLockScreenBtn->setIcon(QIcon(":m_icon/icon/lock.png"));
-        setAllButtonsEnabled(this, true, ui->sytLockScreenBtn);
-    }
+    auto lock_dialog = new LockDialog(this);
+    lock_dialog->show();
+    lock_dialog->exec();
+    delete lock_dialog;
 }
 
 void MainWindow::setAllButtonsEnabled(QWidget *parent, bool enabled, QPushButton *excludedButton) {
@@ -692,7 +688,7 @@ void MainWindow::otaResultShow(bool res, QString msg) {
             showMessageBox(this, STATE::WARN, "取消升级", 1, {"退出"});
             return;
         }
-        showMessageBox(this, STATE::SUCCESS, "升级完成,请点击关闭按钮后,再重新打开软件", 1, {"关闭并重启"});
+        showMessageBox(this, STATE::SUCCESS, "升级完成,请点击以下按钮后,再手动重启软件", 1, {"关闭并重启"});
         exit(0);
 
     } else {
