@@ -51,7 +51,16 @@ UserOptDialog::UserOptDialog(QWidget *parent) :
     });
 
     connect(ui->confirmPushButton, &QPushButton::clicked, [=] {
-        // todo 确认 emit给mainwindow
+        // todo 确认 emit给 rcl comm
+        auto cad_path = ui->lineEdit_2->text();
+        if (cad_path.isEmpty()) {
+            showMessageBox(this, WARN, "CAD裁片文件路径不能为空", 1, {"返回"});
+            return;
+        }
+
+        emit systemStart();
+        // todo emit to rclcomm
+        this->accept();
 
     });
 

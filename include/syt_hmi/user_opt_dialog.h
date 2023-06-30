@@ -7,7 +7,7 @@
 
 #include <QDialog>
 #include <QFileDialog>
-
+#include "utils/utils.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class UserOptDialog; }
@@ -20,6 +20,9 @@ public:
     explicit UserOptDialog(QWidget *parent = nullptr);
 
     ~UserOptDialog() override;
+
+signals:
+    void systemStart();
 
 private:
     Ui::UserOptDialog *ui;

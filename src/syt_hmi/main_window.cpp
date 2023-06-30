@@ -289,7 +289,10 @@ void MainWindow::initWidget() {
     ui->sytStopPushButton->setStyleSheet("color: gray;");
 
     // todo 初始状态下，亮绿灯
-    this->setMutuallyLight(GREEN);
+    this->setMutuallyLight(YELLOW);
+
+    // todo msg_widget用于显示回调接收到的系统信息
+    ui->msg_widget->setToolTip("系统暂停");
 
     // todo rviz
 //    rviz_widget_ = new QRviz(ui->rviz_verticalLayout, "syt_hmi/");
@@ -612,7 +615,7 @@ void MainWindow::resetBtnClicked() {
     ui->sytStartPushButton->setStyleSheet("");
     ui->sytStopPushButton->setEnabled(true);
     ui->sytStopPushButton->setStyleSheet("");
-
+    this->setMutuallyLight(YELLOW);
 }
 
 void MainWindow::startBtnClicked() {
@@ -622,9 +625,20 @@ void MainWindow::startBtnClicked() {
     }
     qDebug("点击开始按钮");
     auto user_opt_dialog = new UserOptDialog(this);
+    // todo
+    connect(user_opt_dialog, &UserOptDialog::systemStart,
+            [=] { setMutuallyLight(GREEN); });
     user_opt_dialog->show();
     user_opt_dialog->exec();
     delete user_opt_dialog;
+    // todo
+    ui->sytStartPushButton->setEnabled(false);
+    ui->sytStartPushButton->setStyleSheet("color: gray;");
+
+    ui->sytResetPushButton->setEnabled(false);
+    ui->sytResetPushButton->setStyleSheet("color: gray;");
+
+    ui->msg_widget->setToolTip("系统开始");
 }
 
 void MainWindow::stopBtnClicked() {
@@ -633,12 +647,25 @@ void MainWindow::stopBtnClicked() {
         return;
     }
     qDebug("点击停止按钮");
-    // todo
+
+////    // todo
+//    ui->sytStartPushButton->setEnabled(false);
+//    ui->sytStartPushButton->setStyleSheet("color: gray;");
+//    ui->sytStopPushButton->setEnabled(false);
+//    ui->sytStopPushButton->setStyleSheet("color: gray;");
+
+//    // todo
     ui->sytStartPushButton->setEnabled(false);
     ui->sytStartPushButton->setStyleSheet("color: gray;");
-
     ui->sytStopPushButton->setEnabled(false);
     ui->sytStopPushButton->setStyleSheet("color: gray;");
+
+    ui->sytResetPushButton->setEnabled(true);
+    ui->sytResetPushButton->setStyleSheet("");
+
+    ui->msg_widget->setToolTip("系统异常");
+
+    this->setMutuallyLight(RED);
 }
 
 void MainWindow::errorNodeMsgSlot(QString msg) {
@@ -731,11 +758,9 @@ void MainWindow::otaResultShow(bool res, QString msg) {
 
 void MainWindow::setMutuallyLight(LIGHT_COLOR c) {
     std::map<LIGHT_COLOR, std::string> m;
-    m[RED] = "background-color: rgb(238, 99, 99);\n"
-             "    border: 3px solid black;\n"
-             "    border-radius: 15px;";
+    m[RED] = "background-color: rgb(238, 99, 99);border: 3px solid black;border-radius: 15px;";
     m[YELLOW] = "background-color: rgb(255 ,215, 0);border: 3px solid black;border-radius: 15px;";
-    m[GREEN] = "background-color: rgb(0 ,255, 127);border: 3px solid black;border-radius: 15px;";
+    m[GREEN] = "background-color: rgb(0 ,255, 150);border: 3px solid black;border-radius: 15px;";
     m[GRAY] = "background-color: gray;border: 3px solid black;border-radius: 15px;";
     switch (c) {
         case RED:
