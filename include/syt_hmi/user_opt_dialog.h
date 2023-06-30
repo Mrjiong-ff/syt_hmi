@@ -6,6 +6,7 @@
 #define SYT_HMI_USER_OPT_DIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
 
 
 QT_BEGIN_NAMESPACE

@@ -4,6 +4,7 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_user_opt_dialog.h" resolved
 
+#include <iostream>
 #include "syt_hmi/user_opt_dialog.h"
 #include "ui_user_opt_dialog.h"
 
@@ -26,16 +27,31 @@ UserOptDialog::UserOptDialog(QWidget *parent) :
     ui->confirmPushButton->setForeEnabled(false);
     ui->confirmPushButton->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-    ui->label->setPixmap(QPixmap(":m_icon/icon/opt.png").scaled(70, 70, Qt::AspectRatioMode::KeepAspectRatio,
+    ui->label->setPixmap(QPixmap(":m_icon/icon/opt.png").scaled(80, 80, Qt::AspectRatioMode::KeepAspectRatio,
                                                                 Qt::TransformationMode::SmoothTransformation));
 
-    connect(ui->pushButton_3, &QPushButton::clicked, [=] {
-        // todo 打开选取
+    // dxf save dir
 
+
+    QStringList colorStrList;
+    colorStrList << "黑色" << "白色" << "红色" << "绿色" << "蓝色" << "紫色";
+    ui->comboBox_3->addItems(colorStrList);
+
+    QStringList sizeStrList;
+    sizeStrList << "S" << "M" << "L" << "XL" << "XXL";
+    ui->comboBox_4->addItems(sizeStrList);
+
+    connect(ui->pushButton_3, &QPushButton::clicked, [=] {
+        QString fileName = QFileDialog::getOpenFileName(this, "选择cad文件", "", "DXF Files (*.dxf)");
+        if (!fileName.isEmpty()) {
+            ui->lineEdit_2->setText(fileName);
+        } else {
+            return;
+        }
     });
 
     connect(ui->confirmPushButton, &QPushButton::clicked, [=] {
-       // todo 确认 emit给mainwindow
+        // todo 确认 emit给mainwindow
 
     });
 

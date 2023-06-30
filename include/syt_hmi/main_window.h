@@ -12,6 +12,7 @@
 #include <QMenu>
 #include <QGraphicsOpacityEffect>
 #include <QtConcurrent/QtConcurrent>
+#include <QScrollBar>
 
 #include "ui_main_window.h"
 #include "syt_btn/winclosebutton.h"
@@ -38,6 +39,10 @@ QT_END_NAMESPACE
 // 定义方向枚举，用于判断鼠标在mainWindow的哪个位置
 enum Direction {
     UP = 0, DOWN = 1, LEFT, RIGHT, LEFTTOP, LEFTBOTTOM, RIGHTBOTTOM, RIGHTTOP, NONE
+};
+
+enum LIGHT_COLOR {
+    RED = 0, YELLOW = 1, GREEN,GRAY
 };
 
 class MainWindow : public QMainWindow {
@@ -72,6 +77,8 @@ private:
     void settingConnection();
 
     void setAllButtonsEnabled(QWidget *parent, bool enabled, QPushButton *excludedButton = nullptr);
+
+    void setMutuallyLight(LIGHT_COLOR);
 
 private slots:
 

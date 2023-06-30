@@ -53,11 +53,13 @@ void MainWindow::settingConnection() {
         workCursor.insertBlock();
         workCursor.movePosition(QTextCursor::End);
 
-//        //移动滚动条到底部
-//        QScrollBar *scrollbar = ui->sytPlainTextEdit->verticalScrollBar();
-//        if (scrollbar) {
-//            scrollbar->setSliderPosition(scrollbar->maximum());
-//        }
+        this->setMutuallyLight(RED);
+
+        //移动滚动条到底部
+        QScrollBar *scrollbar = ui->sytPlainTextEdit->verticalScrollBar();
+        if (scrollbar) {
+            scrollbar->setSliderPosition(scrollbar->maximum());
+        }
     });
 
     // todo log filter btn
@@ -286,6 +288,8 @@ void MainWindow::initWidget() {
     ui->sytStopPushButton->setEnabled(false);
     ui->sytStopPushButton->setStyleSheet("color: gray;");
 
+    // todo 初始状态下，亮绿灯
+    this->setMutuallyLight(GREEN);
 
     // todo rviz
 //    rviz_widget_ = new QRviz(ui->rviz_verticalLayout, "syt_hmi/");
@@ -629,7 +633,12 @@ void MainWindow::stopBtnClicked() {
         return;
     }
     qDebug("点击停止按钮");
+    // todo
+    ui->sytStartPushButton->setEnabled(false);
+    ui->sytStartPushButton->setStyleSheet("color: gray;");
 
+    ui->sytStopPushButton->setEnabled(false);
+    ui->sytStopPushButton->setStyleSheet("color: gray;");
 }
 
 void MainWindow::errorNodeMsgSlot(QString msg) {
@@ -717,6 +726,35 @@ void MainWindow::otaResultShow(bool res, QString msg) {
 
     } else {
         showMessageBox(this, STATE::ERROR, msg, 1, {"退出"});
+    }
+}
+
+void MainWindow::setMutuallyLight(LIGHT_COLOR c) {
+    std::map<LIGHT_COLOR, std::string> m;
+    m[RED] = "background-color: rgb(238, 99, 99);\n"
+             "    border: 3px solid black;\n"
+             "    border-radius: 15px;";
+    m[YELLOW] = "background-color: rgb(255 ,215, 0);border: 3px solid black;border-radius: 15px;";
+    m[GREEN] = "background-color: rgb(0 ,255, 127);border: 3px solid black;border-radius: 15px;";
+    m[GRAY] = "background-color: gray;border: 3px solid black;border-radius: 15px;";
+    switch (c) {
+        case RED:
+            ui->red_label->setStyleSheet(m[RED].data());
+            ui->yellow_label->setStyleSheet(m[GRAY].data());
+            ui->green_label->setStyleSheet(m[GRAY].data());
+            break;
+        case YELLOW:
+            ui->red_label->setStyleSheet(m[GRAY].data());
+            ui->yellow_label->setStyleSheet(m[YELLOW].data());
+            ui->green_label->setStyleSheet(m[GRAY].data());
+            break;
+        case GREEN:
+            ui->red_label->setStyleSheet(m[GRAY].data());
+            ui->yellow_label->setStyleSheet(m[GRAY].data());
+            ui->green_label->setStyleSheet(m[GREEN].data());
+            break;
+        default:
+            break;
     }
 }
 
