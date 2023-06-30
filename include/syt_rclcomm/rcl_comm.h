@@ -12,9 +12,8 @@
 #include <QProcess>
 #include "utils/utils.h"
 #include "syt_msgs/srv/get_break_point_y.hpp"
-//#include "syt_msgs/msg/fsm_flow_control_command.hpp"
-//#include "syt_msgs/msg/fsm_run_mode.hpp"
-//#include <rcl_interfaces/msg/log.hpp>
+#include <std_srvs/srv/set_bool.hpp>
+#include <std_msgs/msg/int32.hpp>
 
 /**
  * 所有与ros2打交道的，在这里实现
@@ -33,7 +32,12 @@ public:
 
     void otaUpdate();
 
+    void otaDownload();
+
     void load_cloth_visable(bool f);
+
+private:
+    void download_callback(const std_msgs::msg::Int32::SharedPtr msg);
 
 protected:
     void run() override;
@@ -44,11 +48,21 @@ signals:
 
     void waitUpdateResultSuccess(bool res, QString msg);
 
+    void updateProcess(int, int);
+
+    void processZero();
+
+    void downloadRes(bool,QString);
+
 private:
+    // total
+    int total_size = 0;
 
     std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> m_executor;
 
     std::shared_ptr<rclcpp::Node> m_node;
+
+    rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
 
     QProcess *process_;
 

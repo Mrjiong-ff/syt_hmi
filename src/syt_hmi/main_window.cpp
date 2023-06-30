@@ -34,7 +34,7 @@ MainWindow::~MainWindow() {
 void MainWindow::settingConnection() {
     // main window右上角4个按钮
     connect(m_closeBtn_, &WinCloseButton::clicked, this, &MainWindow::close);
-    connect(m_minBtn_, &WinMaxButton::clicked, this, &MainWindow::showMinimized);
+    connect(m_hideBtn_, &WinMaxButton::clicked, this, &MainWindow::showMinimized);
     connect(m_maxBtn_, &WinMaxButton::clicked, this, &MainWindow::slotMaxBtnClicked);
 
     connect(m_menuBtn_, &WinMenuButton::toggled, [=] {
@@ -167,14 +167,14 @@ void MainWindow::initWidget() {
     int btn_size = 40;
     m_menuBtn_ = new WinMenuButton(this);
     m_menuBtn_->setFixedSize(btn_size, btn_size);
-    m_minBtn_ = new WinMinButton(this);
-    m_minBtn_->setFixedSize(btn_size, btn_size);
+    m_hideBtn_ = new WinMinButton(this);
+    m_hideBtn_->setFixedSize(btn_size, btn_size);
     m_maxBtn_ = new WinMaxButton(this);
     m_maxBtn_->setFixedSize(btn_size, btn_size);
     m_closeBtn_ = new WinCloseButton(this);
     m_closeBtn_->setFixedSize(btn_size, btn_size);
     ui->mainLayout->addWidget(m_menuBtn_);
-    ui->mainLayout->addWidget(m_minBtn_);
+    ui->mainLayout->addWidget(m_hideBtn_);
     ui->mainLayout->addWidget(m_maxBtn_);
     ui->mainLayout->addWidget(m_closeBtn_);
 
@@ -280,7 +280,11 @@ void MainWindow::initWidget() {
     // 等待动画初始化
     _localPodsSpinnerWidget = new WaitingSpinnerWidget(this);
 
-    // todo 程序界面的比例问题
+    // todo 初始状态下，开始和停止无法使用
+    ui->sytStartPushButton->setEnabled(false);
+    ui->sytStartPushButton->setStyleSheet("color: gray;");
+    ui->sytStopPushButton->setEnabled(false);
+    ui->sytStopPushButton->setStyleSheet("color: gray;");
 
 
     // todo rviz
@@ -299,12 +303,11 @@ void MainWindow::initWidget() {
 }
 
 void MainWindow::slotMaxBtnClicked() {
-    if (is_normal_size_) {
-        showMaximized();
+    if (this->isMaximized()) {
+        this->showNormal();
     } else {
-        showNormal();
+        this->showMaximized();
     }
-    is_normal_size_ = !is_normal_size_;
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
@@ -600,7 +603,11 @@ void MainWindow::resetBtnClicked() {
     if (!res) {
         return;
     }
-    qDebug("点击重置按钮");
+    // todo 重置完成后可用
+    ui->sytStartPushButton->setEnabled(true);
+    ui->sytStartPushButton->setStyleSheet("");
+    ui->sytStopPushButton->setEnabled(true);
+    ui->sytStopPushButton->setStyleSheet("");
 
 }
 
@@ -610,7 +617,10 @@ void MainWindow::startBtnClicked() {
         return;
     }
     qDebug("点击开始按钮");
-
+    auto user_opt_dialog = new UserOptDialog(this);
+    user_opt_dialog->show();
+    user_opt_dialog->exec();
+    delete user_opt_dialog;
 }
 
 void MainWindow::stopBtnClicked() {
@@ -671,25 +681,39 @@ void MainWindow::otaResultShow(bool res, QString msg) {
         //todo show ota res
         auto res = showMessageBox(this, STATE::SUCCESS, "检测到远端存在新安装包,请选择是否升级", 2,
                                   {"一键升级", "取消升级"});
-        switch (res) {
-            case 0:
-                qDebug("下载更新中...");
-                break;
-            case 1:
-                qDebug("取消更新");
-                return;
-        }
-        // todo
-        auto ota_dialog = new OtaUpdateDialog(this);
-        ota_dialog->show();
-        auto res_ = ota_dialog->exec();
-        delete ota_dialog;
-        if (res_ == 0) {
-            showMessageBox(this, STATE::WARN, "取消升级", 1, {"退出"});
+        if (res == 0) {
+            QFuture<void> future2 = QtConcurrent::run([=] {
+                rclcomm->otaDownload();
+            });
+//            future2.waitForFinished();
+
+        } else if (res == 1) {
+            qDebug("取消更新");
             return;
         }
-        showMessageBox(this, STATE::SUCCESS, "升级完成,请点击以下按钮后,再手动重启软件", 1, {"关闭并重启"});
-        exit(0);
+
+        // todo 完成后的
+        auto ota_dialog = new OtaUpdateDialog(this);
+        connect(rclcomm, &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue,
+                Qt::ConnectionType::QueuedConnection);
+        connect(rclcomm, &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue,
+                Qt::ConnectionType::QueuedConnection);
+        connect(rclcomm, &SytRclComm::downloadRes, ota_dialog, &OtaUpdateDialog::getDownloadRes);
+        ota_dialog->show();
+        auto res_ = ota_dialog->exec();
+
+        if (res_ == QDialog::Rejected) {
+            showMessageBox(this, STATE::WARN, "取消升级", 1, {"退出"});
+            return;
+        } else if (res_ == 9) {
+            showMessageBox(this, STATE::SUCCESS, "升级完成,请点击以下按钮后,再手动重启软件", 1, {"关闭并重启"});
+            exit(0);
+        } else if (res_ == 10) {
+            showMessageBox(this, STATE::ERROR, "升级失败,请检查网络是否异常", 1, {"退出"});
+            return;
+        }
+
+        delete ota_dialog;
 
     } else {
         showMessageBox(this, STATE::ERROR, msg, 1, {"退出"});

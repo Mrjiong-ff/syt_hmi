@@ -20,6 +20,16 @@ public:
 
     ~OtaUpdateDialog() override;
 
+signals:
+
+
+public slots:
+
+    void clearProcessValue();
+
+    void updateProcessValue(int val, int total);
+
+    void getDownloadRes(bool,QString);
 
 private:
     Ui::OtaUpdateDialog *ui;

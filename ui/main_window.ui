@@ -261,6 +261,9 @@
              <property name="spacing">
               <number>0</number>
              </property>
+             <item>
+              <widget class="QWidget" name="widget_3" native="true"/>
+             </item>
             </layout>
            </widget>
            <widget class="QTabWidget" name="sytTabWidget">
@@ -272,7 +275,25 @@
             </property>
             <property name="minimumSize">
              <size>
+              <width>300</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>420</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="sizeIncrement">
+             <size>
               <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="baseSize">
+             <size>
+              <width>800</width>
               <height>0</height>
              </size>
             </property>
@@ -315,60 +336,6 @@
                 </property>
                </spacer>
               </item>
-              <item row="5" column="1">
-               <widget class="InteractiveButtonBase" name="sytStopPushButton">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>20</pointsize>
-                  <weight>75</weight>
-                  <italic>false</italic>
-                  <bold>true</bold>
-                  <strikeout>false</strikeout>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>停止</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <spacer name="verticalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="6" column="1">
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
               <item row="2" column="1">
                <spacer name="verticalSpacer_3">
                 <property name="orientation">
@@ -386,7 +353,7 @@
                </spacer>
               </item>
               <item row="3" column="1">
-               <widget class="InteractiveButtonBase" name="sytStartPushButton">
+               <widget class="WaterZoomButton" name="sytStartPushButton">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -395,30 +362,33 @@
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>20</pointsize>
+                  <pointsize>25</pointsize>
                   <weight>75</weight>
                   <italic>false</italic>
                   <bold>true</bold>
                   <strikeout>false</strikeout>
                  </font>
                 </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
                 <property name="text">
                  <string>开始</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <spacer name="horizontalSpacer_4">
+              <item row="6" column="1">
+               <spacer name="verticalSpacer_2">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeType">
                  <enum>QSizePolicy::Preferred</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>40</width>
-                  <height>20</height>
+                  <width>20</width>
+                  <height>40</height>
                  </size>
                 </property>
                </spacer>
@@ -439,8 +409,8 @@
                 </property>
                </spacer>
               </item>
-              <item row="1" column="1">
-               <widget class="InteractiveButtonBase" name="sytResetPushButton">
+              <item row="5" column="1">
+               <widget class="WaterZoomButton" name="sytStopPushButton">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -449,7 +419,45 @@
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>20</pointsize>
+                  <pointsize>25</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <strikeout>false</strikeout>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>停止</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Preferred</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="1" column="1">
+               <widget class="WaterZoomButton" name="sytResetPushButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>25</pointsize>
                   <weight>75</weight>
                   <italic>false</italic>
                   <bold>true</bold>
@@ -463,6 +471,22 @@
                  <string>重置</string>
                 </property>
                </widget>
+              </item>
+              <item row="0" column="1">
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Preferred</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </widget>
@@ -601,22 +625,7 @@
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="QWidget" name="widget" native="true">
-          <layout class="QGridLayout" name="gridLayout_4">
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>3</number>
-           </property>
-           <property name="rightMargin">
-            <number>3</number>
-           </property>
-           <property name="bottomMargin">
-            <number>3</number>
-           </property>
-          </layout>
-         </widget>
+         <widget class="QWidget" name="widget" native="true"/>
         </item>
        </layout>
       </widget>
@@ -1337,11 +1346,6 @@
    <class>WaterZoomButton</class>
    <extends>QPushButton</extends>
    <header>syt_btn/waterzoombutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>InteractiveButtonBase</class>
-   <extends>QPushButton</extends>
-   <header>syt_btn/interactivebuttonbase.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

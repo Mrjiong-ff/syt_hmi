@@ -11,6 +11,11 @@ SytRclComm::SytRclComm() {
     m_node = rclcpp::Node::make_shared("syt_hmi_node");
     m_executor->add_node(m_node);
 
+    // ota sub
+    download_subscription_ = m_node->create_subscription<std_msgs::msg::Int32>("/syt/ota/ftp_topic", 10,
+                                                                               std::bind(&SytRclComm::download_callback,
+                                                                                         this, std::placeholders::_1));
+
     // todo 用于回调视觉显示
     callback_group_vision =
             m_node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
@@ -69,10 +74,46 @@ void SytRclComm::load_cloth_visable(bool f) {
 }
 
 void SytRclComm::otaUpdate() {
-    // todo server call
-    for (int i = 0; i < 2; ++i) {
-        QThread::sleep(1);
+    total_size = 0;
+    rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
+            "/syt/ota/update");
+
+    auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
+
+    request->data = true;
+
+    auto result = client->async_send_request(request);
+
+    auto success = result.get()->success;
+    auto msg = result.get()->message;
+    std::cout << "是否成功: " << success << std::endl;
+    if (success) {
+        total_size = std::stoi(msg);
+        std::cout << "更新包总大小: " << total_size << std::endl;
     }
-    emit waitUpdateResultSuccess(true,"123456");
-//    emit waitUpdateResultSuccess(false,"更新失败,请检查网络是否异常");
+    emit waitUpdateResultSuccess(success, QString(msg.data()));
+}
+
+void SytRclComm::otaDownload() {
+    emit processZero();
+    rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
+            "/syt/ota/download");
+    auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
+    request->data = true;
+
+    auto result = client->async_send_request(request);
+
+    bool success = result.get()->success;
+
+    std::cout << "==========================" << std::endl;
+    std::cout << "是否下载成功::" << success << result.get()->message << std::endl;
+    std::cout << "==========================" << std::endl;
+
+    emit downloadRes(success, QString(result.get()->message.data()));
+
+}
+
+void SytRclComm::download_callback(const std_msgs::msg::Int32::SharedPtr msg) {
+    int val = msg.get()->data;
+    emit updateProcess(val, total_size);
 }

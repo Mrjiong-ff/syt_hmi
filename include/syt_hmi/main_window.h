@@ -22,6 +22,7 @@
 #include "syt_hmi/dev_window.h"
 #include "syt_hmi/ota_update_dialog.h"
 #include "syt_hmi/lock_dialog.h"
+#include "syt_hmi/user_opt_dialog.h"
 #include "utils/utils.h"
 #include "utils/waitingspinnerwidget.h"
 
@@ -106,15 +107,13 @@ private:
     SytRclComm *rclcomm;
 
     // 定义的一些bool类型标志位
-    bool is_normal_size_ = true;
     bool is_mouse_left_press_down_ = false;
-    bool is_lock_screen_ = false;
     bool is_load_cloth_on = false;
     bool is_comp_cloth_on = false;
 
     // 一些自定义的按钮控件
     WinMenuButton *m_menuBtn_;
-    WinMinButton *m_minBtn_;
+    WinMinButton *m_hideBtn_;
     WinMaxButton *m_maxBtn_;
     WinCloseButton *m_closeBtn_;
 

@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
 
     rclcpp::init(argc, argv);
 
+    // 字体
     QTextCodec *code = QTextCodec::codecForName("UTF-8");
     QTextCodec::setCodecForLocale(code);
     int font_id = QFontDatabase::addApplicationFont(":m_font/font/NotoSansSC-Regular.otf");
@@ -53,7 +54,7 @@ int main(int argc, char **argv) {
     // todo 是否要有login ui？
 
     MainWindow m;
-    m.showNormal();
+    m.show();
 
     splash.finish(&m);  //在主体对象初始化完成后结束启动动画
 

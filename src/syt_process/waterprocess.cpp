@@ -8,7 +8,7 @@ WaterProcess::WaterProcess(QWidget *parent)
         : QWidget(parent) {
     m_minValue = 0;
     m_maxValue = 100;
-    m_value = 66;
+    m_value = 0;
 
     m_borderWidth = 10.0;
     m_waterHeight = 0.05;

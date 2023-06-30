@@ -9,6 +9,7 @@
 
     <qresource prefix="m_font">
         <file>font/NotoSansSC-Regular.otf</file>
+        <file>font/QingNiaoHuaGuangJianMeiHei-2.ttf</file>
     </qresource>
 
     <qresource prefix="m_icon">
@@ -35,6 +36,7 @@
         <file>icon/confirm.png</file>
         <file>icon/warn.png</file>
         <file>icon/lock_screen.png</file>
+        <file>icon/opt.png</file>
     </qresource>
 
     <qresource prefix="m_bg">
