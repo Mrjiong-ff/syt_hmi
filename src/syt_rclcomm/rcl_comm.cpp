@@ -31,15 +31,15 @@ SytRclComm::~SytRclComm() {
     process_->waitForFinished();
     delete process_;
 
-    rclcpp::shutdown();
     // todo 杀死所有ros2相关的进程  目前已知为 _ros2_daemon  ros2，感觉有问题，但暂时能解决进程未杀死的问题
     std::string command = "pkill ros2\n";
     int result = std::system(command.c_str());
-//    command = "pkill _ros2_daemon\n";
-//    result = std::system(command.c_str());
     if (result != 0) {
         emit errorNodeMsgSign("Bug: 进程杀死错误,请检查这部分代码.");
     }
+
+    rclcpp::shutdown();
+
     qDebug("shut down rclcomm.");
 }
 
