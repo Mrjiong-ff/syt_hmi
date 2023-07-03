@@ -11,6 +11,7 @@
 #include <QWidget>
 #include <QProcess>
 #include "utils/utils.h"
+#include <unistd.h>
 #include "syt_msgs/srv/get_break_point_y.hpp"
 #include <std_srvs/srv/set_bool.hpp>
 #include <std_msgs/msg/int32.hpp>
@@ -36,8 +37,12 @@ public:
 
     void load_cloth_visable(bool f);
 
+
+
 private:
     void download_callback(const std_msgs::msg::Int32::SharedPtr msg);
+
+    void killProcesses(std::string);
 
 protected:
     void run() override;
