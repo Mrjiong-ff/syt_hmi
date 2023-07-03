@@ -18,6 +18,7 @@ endif ()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_srvs REQUIRED) #
+
 find_package(rviz_common REQUIRED)
 find_package(rviz_default_plugins REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
@@ -27,6 +28,16 @@ find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
 find_package(syt_common REQUIRED)
 find_package(syt_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
+
+
+set(THIS_PACKAGE_INCLUDE_DEPENDS
+        rclcpp
+        rclcpp_components
+        rviz_common
+        rviz_default_plugins
+        rviz_ogre_vendor
+        rviz_rendering
+        )
 
 # Note that ament_target_dependencies() in algo cannot export Boost::thread to downstream. As a result, qt_example_node, as a downstream of libalgo.so, needs to explicitly find_package() for Boost again so that qt_example_node is able to link to Boost::thread.
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -39,6 +50,10 @@ file(GLOB_RECURSE PRO_SOURCES_DIR RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SY
 include_directories(
         include/
         ${CMAKE_CURRENT_BINARY_DIR}
+        ${rclcpp_INCLUDE_DIRS}
+        ${rviz_common_INCLUDE_DIRS}
+        ${Qt5Core_INCLUDE_DIRS}
+        ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 #qt头文件moc文件resource文件处理
@@ -67,6 +82,10 @@ target_link_libraries(${PROJECT_NAME}
         Qt5::Widgets
         Qt5::Core
         ${OpenCV_LIBS}
+        rviz_common::rviz_common
+        rviz_rendering::rviz_rendering
+        rviz_ogre_vendor::OgreMain
+        rviz_ogre_vendor::OgreOverlay
         )
 
 install(TARGETS ${PROJECT_NAME}

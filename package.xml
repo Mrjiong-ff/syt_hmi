@@ -10,10 +10,13 @@
     <buildtool_depend>ament_cmake</buildtool_depend>
 
     <depend>rclcpp</depend>
-    <build_depend>rviz_common</build_depend>
-    <build_depend>rviz_default_plugins</build_depend>
-    <build_depend>rviz_ogre_vendor</build_depend>
-    <build_depend>rviz_rendering</build_depend>
+    <depend>rclcpp_components</depend>
+
+    <depend>rviz_common</depend>
+    <depend>rviz_default_plugins</depend>
+    <depend>rviz_ogre_vendor</depend>
+    <depend>rviz_rendering</depend>
+
     <depend>std_msgs</depend>
     <depend>std_srvs</depend>
     <depend>syt_msgs</depend>
