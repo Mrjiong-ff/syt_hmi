@@ -742,8 +742,18 @@ void MainWindow::otaResultShow(bool res, QString msg) {
             showMessageBox(this, STATE::WARN, "取消升级", 1, {"退出"});
             return;
         } else if (res_ == 9) {
-            showMessageBox(this, STATE::SUCCESS, "升级完成,请点击以下按钮后,再手动重启软件", 1, {"关闭并重启"});
+            showMessageBox(this, STATE::SUCCESS, "升级完成,请点击以下按钮安装软件,并手动重启", 1, {"安装并重启"});
+            // todo call server
+            _localPodsSpinnerWidget->start();
+            QFuture<void> future = QtConcurrent::run([=] {
+                rclcomm->otaInstall();
+            });
+            future.waitForFinished();
+            _localPodsSpinnerWidget->stop();
+            delete rclcomm;
+            delete ui;
             exit(0);
+
         } else if (res_ == 10) {
             showMessageBox(this, STATE::ERROR, "升级失败,请检查网络是否异常", 1, {"退出"});
             return;

@@ -35,6 +35,8 @@ public:
 
     void otaDownload();
 
+    void otaInstall();
+
     void load_cloth_visable(bool f);
 
 

@@ -144,3 +144,18 @@ void SytRclComm::killProcesses(std::string processPattern) {
         }
     }
 }
+
+void SytRclComm::otaInstall() {
+    qDebug("install app");
+    rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
+            "/syt/ota/install");
+
+    auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
+
+    request->data = true;
+
+    auto result = client->async_send_request(request);
+
+    auto success = result.get()->success;
+    std::cout << "安装成功: " << success << std::endl;
+}
