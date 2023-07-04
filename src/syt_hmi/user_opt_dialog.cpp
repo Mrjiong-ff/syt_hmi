@@ -61,11 +61,10 @@ UserOptDialog::UserOptDialog(QWidget *parent) :
         emit systemStart();
         // todo emit to rclcomm
         this->accept();
-
     });
 
     connect(ui->backPushButton, &QPushButton::clicked, [=] {
-        close();
+        this->reject();
     });
 }
 

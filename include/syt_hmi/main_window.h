@@ -27,6 +27,7 @@
 #include "utils/utils.h"
 #include "utils/waitingspinnerwidget.h"
 #include "syt_hmi/dev_select_dialog.h"
+#include "syt_hmi/head_eye_dialog.h"
 
 #include "syt_rclcomm/rcl_comm.h"
 
@@ -106,6 +107,11 @@ private slots:
     void otaResultShow(bool res, QString msg);
 
     void updateLoadClothVisual(int, int, cv::Mat);
+
+    void slotStartHeadEyeWindow();
+
+signals:
+    void signHeadEyeWindowShow();
 
 private:
     Ui::MainWindow *ui;

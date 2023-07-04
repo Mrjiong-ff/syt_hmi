@@ -37,6 +37,9 @@
         <file>icon/warn.png</file>
         <file>icon/lock_screen.png</file>
         <file>icon/opt.png</file>
+        <file>icon/handeye.png</file>
+        <file>icon/comp.png</file>
+        <file>icon/sewing.png</file>
     </qresource>
 
     <qresource prefix="m_bg">

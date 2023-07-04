@@ -43,6 +43,7 @@ void MainWindow::settingConnection() {
     });
 
     // 工具栏按钮
+    connect(ui->sytHeadEyeBtn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
     connect(ui->sytDevModeBtn, &QPushButton::clicked, this, &MainWindow::slotShowDevLoginWindow);
     connect(ui->sytLockScreenBtn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
 
@@ -53,7 +54,7 @@ void MainWindow::settingConnection() {
         workCursor.insertBlock();
         workCursor.movePosition(QTextCursor::End);
 
-        this->setMutuallyLight(RED);
+//        this->setMutuallyLight(RED);
 
         //移动滚动条到底部
         QScrollBar *scrollbar = ui->sytPlainTextEdit->verticalScrollBar();
@@ -137,6 +138,15 @@ void MainWindow::settingConnection() {
     connect(rclcomm.get(), &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow,
             Qt::QueuedConnection);
 
+    // head eye 信号槽
+    connect(this, &MainWindow::signHeadEyeWindowShow, [=] {
+        // todo 眼手界面
+        auto head_eye_dialog = new HeadEyeDialog(this);
+        head_eye_dialog->show();
+        head_eye_dialog->exec();
+        delete head_eye_dialog;
+    });
+
     // 可视化相关槽函数
 //    connect()
 
@@ -217,8 +227,11 @@ void MainWindow::initWidget() {
     ui->sytDevModeBtn->setIcon(QIcon(":m_icon/icon/dev-mode.png"));  // 开发者模式按钮
     ui->sytDevModeBtn->setToolTip(QString("开发者模式"));
 
+    ui->sytHeadEyeBtn->setIcon(QIcon(":m_icon/icon/handeye.png"));  // 开发者模式按钮
+    ui->sytHeadEyeBtn->setToolTip(QString("机器人眼手标定"));
+
     ui->sytLockScreenBtn->setIcon(QIcon(":m_icon/icon/lock.png"));  // 屏幕上锁/解锁按钮
-    ui->sytLockScreenBtn->setToolTip(QString("界面上锁/解锁"));
+    ui->sytLockScreenBtn->setToolTip(QString("界面上锁"));
 
     ui->sytHelpPushButton->setIcon(QIcon(":m_icon/icon/help.png"));
     ui->sytHelpPushButton->setToolTip(QString("帮助说明"));
@@ -621,16 +634,20 @@ void MainWindow::startBtnClicked() {
     connect(user_opt_dialog, &UserOptDialog::systemStart,
             [=] { setMutuallyLight(GREEN); });
     user_opt_dialog->show();
-    user_opt_dialog->exec();
+    auto i = user_opt_dialog->exec();
     delete user_opt_dialog;
+
     // todo
-    ui->sytStartPushButton->setEnabled(false);
-    ui->sytStartPushButton->setStyleSheet("color: gray;");
+    if (i == QDialog::Accepted) {
+        ui->sytStartPushButton->setEnabled(false);
+        ui->sytStartPushButton->setStyleSheet("color: gray;");
 
-    ui->sytResetPushButton->setEnabled(false);
-    ui->sytResetPushButton->setStyleSheet("color: gray;");
+        ui->sytResetPushButton->setEnabled(false);
+        ui->sytResetPushButton->setStyleSheet("color: gray;");
 
-    ui->msg_widget->setToolTip("系统开始");
+        ui->msg_widget->setToolTip("系统开始");
+    }
+
 }
 
 void MainWindow::stopBtnClicked() {
@@ -781,6 +798,31 @@ void MainWindow::setMutuallyLight(LIGHT_COLOR c) {
             break;
         default:
             break;
+    }
+}
+
+void MainWindow::slotStartHeadEyeWindow() {
+    qDebug("启动眼手标定");
+
+    QString tip = "<html>"
+                  "<head/><b>启动机器人眼手标定</b>\n<body>"
+                  "<b>注意:</b>"
+                  "<p>1.标定过程中,<font color=\"red\"><b>禁止靠近机台</b></font>;\n</p>"
+                  "<p>2.请确认机器人处在一个<font color=\"red\"><b>良好的位置</b></font>,避免启动时发生碰撞;\n</p>"
+                  "<p>3.请时刻<font color=\"red\"><b>保持专注</b></font>,并<font color=\"red\"><b>手持急停开关</b></font>,务必保证危险时刻能按下;\n</p>"
+                  "<p>4.确保机器人当前为<font color=\"red\"><b>停止状态</b></font>;\n</p>"
+                  "</body></html>";
+
+    auto res = showMessageBox(this, WARN, tip, 2, {"确认", "返回"});
+
+    switch (res) {
+        case 0:
+            emit signHeadEyeWindowShow();
+            return;
+        case 1:
+            return;
+        default:
+            return;
     }
 }
 

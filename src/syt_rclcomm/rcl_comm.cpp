@@ -52,19 +52,20 @@ void SytRclComm::run() {
 
 bool SytRclComm::initAllNodes() {
     // todo 一键启动launch的命令 test
-    std::string command = "cd /home/jerry/Documents/syt_ros2_ws && source install/setup.zsh && ros2 launch syt_template 456.launch.py\n";
-    process_ = new QProcess(this);
-    process_->start("zsh\n");
-    process_->waitForStarted();
-    process_->write(command.c_str());
-    process_->waitForReadyRead(1000);
-    auto error_msg = process_->readAllStandardError().toStdString();
-    if (error_msg.empty()) {
-        return true;
-    }
-    QString msg = QString("Fatal: 节点初始化失败.\n错误消息: %1").arg(error_msg.data());
-    emit errorNodeMsgSign(msg);
-    return false;
+//    std::string command = "cd /home/jerry/Documents/syt_ros2_ws && source install/setup.zsh && ros2 launch syt_template 456.launch.py\n";
+//    process_ = new QProcess(this);
+//    process_->start("zsh\n");
+//    process_->waitForStarted();
+//    process_->write(command.c_str());
+//    process_->waitForReadyRead(1000);
+//    auto error_msg = process_->readAllStandardError().toStdString();
+//    if (error_msg.empty()) {
+//        return true;
+//    }
+//    QString msg = QString("Fatal: 节点初始化失败.\n错误消息: %1").arg(error_msg.data());
+//    emit errorNodeMsgSign(msg);
+//    return false;
+    return true;
 }
 
 void SytRclComm::load_cloth_visable(bool f) {

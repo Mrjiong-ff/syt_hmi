@@ -64,6 +64,19 @@
        </widget>
       </item>
       <item>
+       <widget class="WaterZoomButton" name="sytHeadEyeBtn">
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="WaterZoomButton" name="sytLockScreenBtn">
         <property name="maximumSize">
          <size>
