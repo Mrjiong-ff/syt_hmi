@@ -21,7 +21,7 @@ void PointMenuButton::paintEvent(QPaintEvent * event)
 
     int w = _w, h = _h;
     int l = _l+w/3, t = _t+h/3, r = w*2/3, b = h*2/3;
-    int mx = _l+w/2+offset_pos.x(), my = _t+h/2+offset_pos.y();
+//    int mx = _l+w/2+offset_pos.x(), my = _t+h/2+offset_pos.y();
 
     // 画笔
     QPainter painter(this);

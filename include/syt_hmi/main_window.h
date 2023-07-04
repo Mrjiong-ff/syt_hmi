@@ -26,10 +26,9 @@
 #include "syt_hmi/user_opt_dialog.h"
 #include "utils/utils.h"
 #include "utils/waitingspinnerwidget.h"
+#include "syt_hmi/dev_select_dialog.h"
 
-#include "syt_rclcomm//rcl_comm.h"
-//#include "syt_rviz/qrviz.h"
-
+#include "syt_rclcomm/rcl_comm.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -42,7 +41,7 @@ enum Direction {
 };
 
 enum LIGHT_COLOR {
-    RED = 0, YELLOW = 1, GREEN,GRAY
+    RED = 0, YELLOW = 1, GREEN, GRAY
 };
 
 class MainWindow : public QMainWindow {
@@ -111,7 +110,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    SytRclComm *rclcomm;
+    std::unique_ptr<SytRclComm> rclcomm;
 
     // 定义的一些bool类型标志位
     bool is_mouse_left_press_down_ = false;
@@ -128,7 +127,6 @@ private:
     DevLoginWindow *dev_login_window_;
     InteractiveButtonBase *prev_btn;
     InteractiveButtonBase *next_btn_;
-//    QRviz *rviz_widget_;
 
     // about action
     QMenu *m_titleMenu_;

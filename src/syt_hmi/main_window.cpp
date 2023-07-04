@@ -6,6 +6,8 @@
 
 #include "syt_hmi/main_window.h"
 
+#include <memory>
+
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::MainWindow) {
 
@@ -20,14 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
     // 自动启动launch下所有节点
     bool res = rclcomm->initAllNodes();
     if (!res) {
-        delete rclcomm;
         delete ui;
         exit(-1);
     }
 }
 
 MainWindow::~MainWindow() {
-    delete rclcomm;
     delete ui;
 }
 
@@ -131,10 +131,11 @@ void MainWindow::settingConnection() {
     });
 
     // 一些节点相关的报错槽
-    connect(rclcomm, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);
+    connect(rclcomm.get(), &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);
 
     // ota停止
-    connect(rclcomm, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow, Qt::QueuedConnection);
+    connect(rclcomm.get(), &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow,
+            Qt::QueuedConnection);
 
     // 可视化相关槽函数
 //    connect()
@@ -294,16 +295,6 @@ void MainWindow::initWidget() {
     // todo msg_widget用于显示回调接收到的系统信息
     ui->msg_widget->setToolTip("系统暂停");
 
-    // todo rviz
-//    rviz_widget_ = new QRviz(ui->rviz_verticalLayout, "syt_hmi/");
-//    rviz_widget_->GetDisplayTreeModel();
-//    QMap<QString, QVariant> namevalue;
-//    namevalue.insert("Line Style", "Billboards");
-//    namevalue.insert("Color", QColor(150, 150, 150));
-//    namevalue.insert("Plane Cell Count", 10);
-//    rviz_widget_->DisplayInit(RVIZ_DISPLAY_GRID, "Grid", true, namevalue);
-////    rviz_widget_->createDisplay(RVIZ_DISPLAY_MARKER,)
-////    rviz_widget_->DisplayInit(RVIZ_DISPLAY_AXES, "Axes", true, {});
 
     // 事件过滤
     ui->sytMainTitleWidget->installEventFilter(this);
@@ -538,17 +529,18 @@ void MainWindow::setAllButtonsEnabled(QWidget *parent, bool enabled, QPushButton
 
 
 void MainWindow::slotDevWindow() {
-    this->hide();
-
     dev_login_window_->deleteLater();
     dev_login_window_ = nullptr;
-
     // dev main window
-    auto dev_window = new DevWindow(this);
-    dev_window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(dev_window, &DevWindow::closeDevWindow, [=] { this->show(); });
-    connect(dev_window, &DevWindow::destroyed, [=] { dev_window->deleteLater(); });
-    dev_window->show();
+//    auto dev_window = new DevWindow(this);
+//    dev_window->setAttribute(Qt::WA_DeleteOnClose);
+//    connect(dev_window, &DevWindow::closeDevWindow, [=] { this->show(); });
+//    connect(dev_window, &DevWindow::destroyed, [=] { dev_window->deleteLater(); });
+//    dev_window->show();
+    auto dev_sel_dialog = new DevSelectDialog(this);
+    dev_sel_dialog->show();
+    dev_sel_dialog->exec();
+    delete dev_sel_dialog;
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
@@ -601,7 +593,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 }
 
 void MainWindow::initNode() {
-    rclcomm = new SytRclComm();
+    rclcomm = std::make_unique<SytRclComm>(nullptr);
 
 }
 
@@ -675,13 +667,13 @@ void MainWindow::errorNodeMsgSlot(QString msg) {
 void MainWindow::updateLoadClothVisual(int machine_ori, int cam_idx, cv::Mat mat) {
     // todo 上料机回调的 图片显示
     auto qimage = cvMat2QImage(mat);
-    int scale_ratio;
-    auto image_w = qimage.width();
-    auto image_h = qimage.height();
-    auto label_w = ui->leftLeftVisualLabel->width();
-    auto label_h = ui->leftLeftVisualLabel->height();
-    auto w_r = image_w / label_w;
-    auto h_r = image_h / label_h;
+//    int scale_ratio;
+//    auto image_w = qimage.width();
+//    auto image_h = qimage.height();
+//    auto label_w = ui->leftLeftVisualLabel->width();
+//    auto label_h = ui->leftLeftVisualLabel->height();
+//    auto w_r = image_w / label_w;
+//    auto h_r = image_h / label_h;
 
     if (machine_ori == 0) {
         qDebug("left machine");
@@ -730,11 +722,11 @@ void MainWindow::otaResultShow(bool res, QString msg) {
 
         // todo 完成后的
         auto ota_dialog = new OtaUpdateDialog(this);
-        connect(rclcomm, &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue,
+        connect(rclcomm.get(), &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue,
                 Qt::ConnectionType::QueuedConnection);
-        connect(rclcomm, &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue,
+        connect(rclcomm.get(), &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue,
                 Qt::ConnectionType::QueuedConnection);
-        connect(rclcomm, &SytRclComm::downloadRes, ota_dialog, &OtaUpdateDialog::getDownloadRes);
+        connect(rclcomm.get(), &SytRclComm::downloadRes, ota_dialog, &OtaUpdateDialog::getDownloadRes);
         ota_dialog->show();
         auto res_ = ota_dialog->exec();
 
@@ -750,7 +742,6 @@ void MainWindow::otaResultShow(bool res, QString msg) {
             });
             future.waitForFinished();
             _localPodsSpinnerWidget->stop();
-            delete rclcomm;
             delete ui;
             exit(0);
 

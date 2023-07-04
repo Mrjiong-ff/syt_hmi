@@ -61,5 +61,9 @@ int main(int argc, char **argv) {
 
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 
+//    while (rclcpp::ok()) {
+//        app.processEvents();
+//    }
     return app.exec();
+
 }

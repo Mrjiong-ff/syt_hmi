@@ -125,7 +125,7 @@ QPainterPath ThreeDimenButton::getBgPainterPath()
 		double hp = hover_progress / 100.0;
 		QPoint o(width()/2, height()/2);         // 中心点
         QPointF m = limitPointXY(mapFromGlobal(QCursor::pos())-o, width()/2, height()/2); // 当前鼠标的点
-        QPointF f = limitPointXY(offset_pos, aop_w, aop_h);  // 偏移点（压力中心）
+//        QPointF f = limitPointXY(offset_pos, aop_w, aop_h);  // 偏移点（压力中心）
 
         QPointF lt, lb, rb, rt;
 		// 左上角

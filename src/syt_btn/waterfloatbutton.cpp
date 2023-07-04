@@ -16,7 +16,7 @@ WaterFloatButton::WaterFloatButton(QString s, QWidget *parent) : InteractiveButt
 
 void WaterFloatButton::enterEvent(QEvent *event)
 {
-
+    Q_UNUSED(event);
 }
 
 void WaterFloatButton::leaveEvent(QEvent *event)

@@ -6,16 +6,18 @@
 #include "syt_rclcomm/rcl_comm.h"
 
 
-SytRclComm::SytRclComm() {
+SytRclComm::SytRclComm(SytRclComm *pComm) {
     m_executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
     m_node = rclcpp::Node::make_shared("syt_hmi_node");
     m_executor->add_node(m_node);
 
     // ota sub
     download_subscription_ = m_node->create_subscription<std_msgs::msg::Int32>("/syt/ota/ftp_topic", 10,
-                                                                               std::bind(&SytRclComm::download_callback,
-                                                                                         this, std::placeholders::_1));
-
+                                                                               std::bind(
+                                                                                       &SytRclComm::download_callback,
+                                                                                       this,
+                                                                                       std::placeholders::_1));
+//    m_executor.get
     // todo 用于回调视觉显示
     callback_group_vision =
             m_node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
@@ -63,7 +65,6 @@ bool SytRclComm::initAllNodes() {
     QString msg = QString("Fatal: 节点初始化失败.\n错误消息: %1").arg(error_msg.data());
     emit errorNodeMsgSign(msg);
     return false;
-//    return true;
 }
 
 void SytRclComm::load_cloth_visable(bool f) {

@@ -76,7 +76,7 @@ void InfoButton::paintEvent(QPaintEvent *event)
 
             if (tongue)
             {
-                double prop = press_progress / 100.0;
+//                double prop = press_progress / 100.0;
                 // TODO: 添加吐舌头……太麻烦，懒得写了
             }
         }

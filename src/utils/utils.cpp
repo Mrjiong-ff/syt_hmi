@@ -104,6 +104,9 @@ cv::Mat QImage2cvMat(QImage image) {
         case QImage::Format_Indexed8:
             mat = cv::Mat(image.height(), image.width(), CV_8UC1, (void *) image.constBits(), image.bytesPerLine());
             break;
+        default:
+            // todo:
+            break;
     }
     return mat;
 }

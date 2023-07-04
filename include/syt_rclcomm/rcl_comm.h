@@ -25,7 +25,7 @@ class SytRclComm : public QThread {
 Q_OBJECT
 public:
 
-    SytRclComm();
+    SytRclComm(SytRclComm *pComm);
 
     ~SytRclComm() override;
 
@@ -38,7 +38,6 @@ public:
     void otaInstall();
 
     void load_cloth_visable(bool f);
-
 
 
 private:
@@ -59,7 +58,7 @@ signals:
 
     void processZero();
 
-    void downloadRes(bool,QString);
+    void downloadRes(bool, QString);
 
 private:
     // total
