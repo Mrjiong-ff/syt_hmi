@@ -753,12 +753,12 @@ void MainWindow::otaResultShow(bool res, QString msg) {
         } else if (res_ == 9) {
             showMessageBox(this, STATE::SUCCESS, "升级完成,请点击以下按钮安装软件,并手动重启", 1, {"安装并重启"});
             // todo call server
-            _localPodsSpinnerWidget->start();
             QFuture<void> future = QtConcurrent::run([=] {
                 rclcomm->otaInstall();
             });
+//            _localPodsSpinnerWidget->start();
             future.waitForFinished();
-            _localPodsSpinnerWidget->stop();
+//            _localPodsSpinnerWidget->stop();
             delete ui;
             exit(0);
 
