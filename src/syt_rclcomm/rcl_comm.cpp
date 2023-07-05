@@ -6,7 +6,7 @@
 #include "syt_rclcomm/rcl_comm.h"
 
 
-SytRclComm::SytRclComm(SytRclComm *pComm) {
+SytRclComm::SytRclComm() {
     m_executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
     m_node = rclcpp::Node::make_shared("syt_hmi_node");
     m_executor->add_node(m_node);
@@ -29,9 +29,12 @@ SytRclComm::SytRclComm(SytRclComm *pComm) {
 }
 
 SytRclComm::~SytRclComm() {
-    process_->terminate();
-    process_->waitForFinished();
-    delete process_;
+    if (process_ != nullptr) {
+        process_->terminate();
+        process_->waitForFinished();
+        delete process_;
+    }
+
 
     rclcpp::shutdown();
 
@@ -138,6 +141,7 @@ void SytRclComm::killProcesses(std::string processPattern) {
 
         pclose(pipe);
     }
+    std::cerr << "process size: " << processIds.size() << std::endl;
 
     // 杀死符合模式但排除特定进程的进程
     for (int pid: processIds) {

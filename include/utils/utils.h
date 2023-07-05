@@ -12,6 +12,10 @@
 #include <sys/time.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <fstream>
 
 enum STATE {
     SUCCESS = 0, WARN = 1, ERROR
@@ -57,5 +61,8 @@ QImage cvMat2QImage(const cv::Mat &mat);
  */
 cv::Mat QImage2cvMat(QImage image);
 
+void checkConfigsExist();
+
+std::string getConfigPath();
 
 #endif //SYT_HMI_UTILS_H

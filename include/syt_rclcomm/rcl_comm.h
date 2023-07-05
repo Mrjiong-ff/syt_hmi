@@ -25,7 +25,7 @@ class SytRclComm : public QThread {
 Q_OBJECT
 public:
 
-    SytRclComm(SytRclComm *pComm);
+    SytRclComm();
 
     ~SytRclComm() override;
 
@@ -70,7 +70,7 @@ private:
 
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
 
-    QProcess *process_;
+    QProcess *process_= nullptr;
 
     rclcpp::CallbackGroup::SharedPtr callback_group_vision;
 

@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initWidget();
 
+    initOther();
+
     settingConnection();
 
     // 自动启动launch下所有节点
@@ -28,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 MainWindow::~MainWindow() {
-    delete ui;
+    this->deleteAll();
 }
 
 void MainWindow::settingConnection() {
@@ -132,10 +134,10 @@ void MainWindow::settingConnection() {
     });
 
     // 一些节点相关的报错槽
-    connect(rclcomm.get(), &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);
+    connect(rclcomm, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);
 
     // ota停止
-    connect(rclcomm.get(), &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow,
+    connect(rclcomm, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow,
             Qt::QueuedConnection);
 
     // head eye 信号槽
@@ -606,7 +608,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 }
 
 void MainWindow::initNode() {
-    rclcomm = std::make_unique<SytRclComm>(nullptr);
+//    rclcomm = std::make_shared<SytRclComm>(nullptr);
+    rclcomm = new SytRclComm();
 
 }
 
@@ -739,11 +742,11 @@ void MainWindow::otaResultShow(bool res, QString msg) {
 
         // todo 完成后的
         auto ota_dialog = new OtaUpdateDialog(this);
-        connect(rclcomm.get(), &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue,
+        connect(rclcomm, &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue,
                 Qt::ConnectionType::QueuedConnection);
-        connect(rclcomm.get(), &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue,
+        connect(rclcomm, &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue,
                 Qt::ConnectionType::QueuedConnection);
-        connect(rclcomm.get(), &SytRclComm::downloadRes, ota_dialog, &OtaUpdateDialog::getDownloadRes);
+        connect(rclcomm, &SytRclComm::downloadRes, ota_dialog, &OtaUpdateDialog::getDownloadRes);
         ota_dialog->show();
         auto res_ = ota_dialog->exec();
 
@@ -753,13 +756,13 @@ void MainWindow::otaResultShow(bool res, QString msg) {
         } else if (res_ == 9) {
             showMessageBox(this, STATE::SUCCESS, "升级完成,请点击以下按钮安装软件,并手动重启", 1, {"安装并重启"});
             // todo call server
+            _localPodsSpinnerWidget->start();
             QFuture<void> future = QtConcurrent::run([=] {
                 rclcomm->otaInstall();
             });
-//            _localPodsSpinnerWidget->start();
             future.waitForFinished();
-//            _localPodsSpinnerWidget->stop();
-            delete ui;
+            _localPodsSpinnerWidget->stop();
+            this->deleteAll();
             exit(0);
 
         } else if (res_ == 10) {
@@ -824,5 +827,16 @@ void MainWindow::slotStartHeadEyeWindow() {
         default:
             return;
     }
+}
+
+void MainWindow::deleteAll() {
+    delete rclcomm;
+    delete ui;
+}
+
+void MainWindow::initOther() {
+    // 如未存在,创建所有配置文件
+    checkConfigsExist();
+
 }
 

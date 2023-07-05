@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <QFileDialog>
 #include "utils/utils.h"
+#include <opencv2/core/core.hpp>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class UserOptDialog; }
@@ -25,6 +26,8 @@ signals:
     void systemStart();
 
 private:
+    void readConfigAndSet();
+
     Ui::UserOptDialog *ui;
 };
 

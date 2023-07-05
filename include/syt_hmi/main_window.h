@@ -80,6 +80,10 @@ private:
 
     void setMutuallyLight(LIGHT_COLOR);
 
+    void deleteAll();
+
+    void initOther();
+
 private slots:
 
     void slotMaxBtnClicked();
@@ -111,12 +115,13 @@ private slots:
     void slotStartHeadEyeWindow();
 
 signals:
+
     void signHeadEyeWindowShow();
 
 private:
     Ui::MainWindow *ui;
 
-    std::unique_ptr<SytRclComm> rclcomm;
+    SytRclComm *rclcomm;
 
     // 定义的一些bool类型标志位
     bool is_mouse_left_press_down_ = false;

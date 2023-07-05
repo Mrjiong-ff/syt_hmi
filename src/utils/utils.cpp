@@ -110,3 +110,47 @@ cv::Mat QImage2cvMat(QImage image) {
     }
     return mat;
 }
+
+
+void checkConfigsExist() {
+    std::string folderPath = std::string(getenv("HOME")) + "/SytHmi";
+//    std::cout << folderPath << std::endl;
+
+    struct stat info;
+    if (stat(folderPath.c_str(), &info) != 0) {
+        // 文件夹不存在，创建它
+        if (mkdir(folderPath.c_str(), 0777) == 0) {
+            std::cout << "文件夹创建成功！" << std::endl;
+        } else {
+            std::cerr << "无法创建文件夹！" << std::endl;
+            return;
+        }
+    } else if (info.st_mode & S_IFDIR) {
+        // 文件夹已经存在
+        std::cout << "文件夹已存在！" << std::endl;
+    } else {
+        std::cerr << "路径不是文件夹！" << std::endl;
+        return;
+    }
+
+    std::string filePath = folderPath + "/config.yaml";
+    struct stat info2;
+    if (stat(filePath.c_str(), &info2) != 0) {
+        cv::FileStorage fs(filePath, cv::FileStorage::WRITE);
+        fs.release();
+    } else if (info2.st_mode & S_IFREG) {
+        // 文件已经存在
+        std::cout << "配置文件已存在！" << std::endl;
+    } else {
+        std::cerr << "路径不是文件！" << std::endl;
+        return;
+    }
+
+
+}
+
+std::string getConfigPath() {
+    std::string folderPath = std::string(getenv("HOME")) + "/SytHmi";
+    std::string filePath = folderPath + "/config.yaml";
+    return filePath;
+};

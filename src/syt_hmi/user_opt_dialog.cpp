@@ -41,6 +41,9 @@ UserOptDialog::UserOptDialog(QWidget *parent) :
     sizeStrList << "S" << "M" << "L" << "XL" << "XXL";
     ui->comboBox_4->addItems(sizeStrList);
 
+    // read config
+    readConfigAndSet();
+
     connect(ui->pushButton_3, &QPushButton::clicked, [=] {
         QString fileName = QFileDialog::getOpenFileName(this, "选择cad文件", "", "DXF Files (*.dxf)");
         if (!fileName.isEmpty()) {
@@ -57,6 +60,18 @@ UserOptDialog::UserOptDialog(QWidget *parent) :
             showMessageBox(this, WARN, "CAD裁片文件路径不能为空", 1, {"返回"});
             return;
         }
+        // todo 记录当前配置
+        auto p = getConfigPath();
+        cv::FileStorage fs(p, cv::FileStorage::WRITE);
+        if (fs.isOpened()) {
+            fs << "cad_path" << ui->lineEdit_2->text().toStdString();
+            fs << "color" << ui->comboBox_3->currentText().toStdString();
+            fs << "size" << ui->comboBox_4->currentText().toStdString();
+            fs.release(); // 关闭文件
+        } else {
+            qDebug("马勒戈壁打开配置文件失败...?");
+            return;
+        }
 
         emit systemStart();
         // todo emit to rclcomm
@@ -70,4 +85,30 @@ UserOptDialog::UserOptDialog(QWidget *parent) :
 
 UserOptDialog::~UserOptDialog() {
     delete ui;
+}
+
+void UserOptDialog::readConfigAndSet() {
+    auto p = getConfigPath();
+    cv::FileStorage fs(p, cv::FileStorage::READ);
+
+    if (!fs.isOpened()) {
+        std::cerr << "无法打开文件！" << std::endl;
+        return;
+    }
+    std::string cad_path = fs["cad_path"];
+    if (cad_path.empty()) {
+        std::cerr << "字段为空";
+        fs.release();
+        return;
+    }
+    std::string color = fs["color"];
+    std::string size = fs["size"];
+    // 输出读取的数据
+    std::cout << "cad_path: " << cad_path << std::endl;
+    std::cout << "color: " << color << std::endl;
+    std::cout << "size: " << size << std::endl;
+    ui->lineEdit_2->setText(cad_path.data());
+    ui->comboBox_3->setCurrentText(color.data());
+    ui->comboBox_4->setCurrentText(size.data());
+    fs.release();
 }
