@@ -82,6 +82,14 @@ void SytRclComm::otaUpdate() {
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
             "/syt/ota/update");
 
+    while (!client->wait_for_service(1s)) {
+        if (!rclcpp::ok()) {
+            RCLCPP_ERROR(rclcpp::get_logger("SytHmi"),
+                         "Interrupted while waiting for the /syt/ota/update service. Exiting.");
+        }
+        RCLCPP_INFO(rclcpp::get_logger("SytHmi"), "service not available, waiting again...");
+    }
+
     auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
 
     request->data = true;
