@@ -153,4 +153,4 @@ std::string getConfigPath() {
     std::string folderPath = std::string(getenv("HOME")) + "/SytHmi";
     std::string filePath = folderPath + "/config.yaml";
     return filePath;
-};
+}

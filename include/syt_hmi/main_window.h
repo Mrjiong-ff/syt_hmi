@@ -110,11 +110,11 @@ private slots:
 
     void otaResultShow(bool res, QString msg);
 
-    void updateLoadClothVisual(int, int, cv::Mat);
-
     void slotStartHeadEyeWindow();
 
-    void otaInstallSuccess();
+    void otaInstallSuccess(bool res, QString msg);
+
+    void slotVisualLoadCloth(int machine_id, int cam_id, QImage image);
 
 signals:
 
@@ -123,7 +123,7 @@ signals:
 private:
     Ui::MainWindow *ui;
 
-    SytRclComm *rclcomm;
+    SytRclComm *rclcomm = nullptr;
 
     // 定义的一些bool类型标志位
     bool is_mouse_left_press_down_ = false;

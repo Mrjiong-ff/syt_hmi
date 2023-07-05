@@ -15,6 +15,8 @@
 #include "syt_msgs/srv/get_break_point_y.hpp"
 #include <std_srvs/srv/set_bool.hpp>
 #include <std_msgs/msg/int32.hpp>
+#include "syt_msgs/msg/calib_state.hpp"
+#include "syt_msgs/msg/load_cloth_visual.hpp"
 
 using namespace std::chrono_literals;
 
@@ -41,9 +43,14 @@ public:
 
     void load_cloth_visable(bool f);
 
+    void compCalib();
+
+    void sewingCalib();
 
 private:
     void download_callback(const std_msgs::msg::Int32::SharedPtr msg);
+
+    void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
 
     void killProcesses(std::string);
 
@@ -62,7 +69,9 @@ signals:
 
     void downloadRes(bool, QString);
 
-    void installRes();
+    void installRes(bool ,QString);
+
+    void visualLoadClothRes(int, int, QImage);
 
 private:
     // total
@@ -73,6 +82,8 @@ private:
     std::shared_ptr<rclcpp::Node> m_node;
 
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
+
+    rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr load_cloth_visual_subscription_;
 
     QProcess *process_ = nullptr;
 

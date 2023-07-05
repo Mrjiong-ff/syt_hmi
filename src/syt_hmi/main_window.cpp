@@ -24,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // 自动启动launch下所有节点
     bool res = rclcomm->initAllNodes();
     if (!res) {
+        if (rclcomm != nullptr) {
+            delete rclcomm;
+        }
         delete ui;
         exit(-1);
     }
@@ -153,7 +156,7 @@ void MainWindow::settingConnection() {
 
 
     // 可视化相关槽函数
-//    connect()
+    connect(rclcomm, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth);
 
 }
 
@@ -687,37 +690,6 @@ void MainWindow::errorNodeMsgSlot(QString msg) {
     showMessageBox(this, STATE::ERROR, msg, 1, {"退出"});
 }
 
-void MainWindow::updateLoadClothVisual(int machine_ori, int cam_idx, cv::Mat mat) {
-    // todo 上料机回调的 图片显示
-    auto qimage = cvMat2QImage(mat);
-//    int scale_ratio;
-//    auto image_w = qimage.width();
-//    auto image_h = qimage.height();
-//    auto label_w = ui->leftLeftVisualLabel->width();
-//    auto label_h = ui->leftLeftVisualLabel->height();
-//    auto w_r = image_w / label_w;
-//    auto h_r = image_h / label_h;
-
-    if (machine_ori == 0) {
-        qDebug("left machine");
-        if (cam_idx == 0) {
-            qDebug("left cam");
-        } else {
-            qDebug("right cam");
-
-        }
-    } else {
-        qDebug("right machine");
-        if (cam_idx == 0) {
-            qDebug("left cam");
-
-        } else {
-            qDebug("right cam");
-
-        }
-    }
-}
-
 void MainWindow::triggeredOTAUpdate() {
     qDebug("update");
     _localPodsSpinnerWidget->start();
@@ -757,18 +729,12 @@ void MainWindow::otaResultShow(bool res, QString msg) {
             showMessageBox(this, STATE::WARN, "取消升级", 1, {"退出"});
             return;
         } else if (res_ == 9) {
-            showMessageBox(this, STATE::SUCCESS, "升级完成,请点击以下按钮安装软件,并手动重启", 1, {"安装并重启"});
+            showMessageBox(this, STATE::SUCCESS, "下载完成,请点击安装按钮软件安装", 1, {"安装"});
             // todo call server
             _localPodsSpinnerWidget->start();
             QFuture<void> future = QtConcurrent::run([=] {
                 rclcomm->otaInstall();
             });
-//            std::cout<<"333"<<std::endl;
-//            future.waitForFinished();
-//            std::cout<<"444"<<std::endl;
-//            _localPodsSpinnerWidget->stop();
-//            this->deleteAll();
-//            exit(0);
         } else if (res_ == 10) {
             showMessageBox(this, STATE::ERROR, "升级失败,请检查网络是否异常", 1, {"退出"});
             return;
@@ -844,13 +810,48 @@ void MainWindow::initOther() {
 
 }
 
-void MainWindow::otaInstallSuccess() {
-    std::cout << "333" << std::endl;
+void MainWindow::otaInstallSuccess(bool res, QString msg) {
     _localPodsSpinnerWidget->stop();
-    std::cout << "444" << std::endl;
+    if (!res) {
+        showMessageBox(this, ERROR, msg, 1, {"返回"});
+        return;
+    }
+    showMessageBox(this, SUCCESS, msg, 1, {"重启"});
     this->deleteAll();
-    std::cout<<"install ok"<<std::endl;
     exit(0);
+}
 
+void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
+    auto pix = QPixmap::fromImage(
+            image.scaled(ui->leftLeftVisualLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+    if (machine_id == 0) {
+        if (cam_id == 0) {
+            qDebug("[左机台左相机]");
+            ui->leftLeftVisualLabel->setPixmap(pix);
+            ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+        } else if (cam_id == 1) {
+            qDebug("[左机台右相机]");
+            ui->leftRightVisualLabel->setPixmap(pix);
+            ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+        } else {
+            return;
+        }
+
+    } else if (machine_id == 1) {
+        if (cam_id == 0) {
+            qDebug("[右机台左相机]");
+            ui->rightLeftVisualLabel->setPixmap(pix);
+            ui->rightLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+        } else if (cam_id == 1) {
+            qDebug("[右机台右相机]");
+            ui->rightRightVisualLabel->setPixmap(pix);
+            ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+        } else {
+            return;
+        }
+    } else {
+        return;
+    }
 }
 
