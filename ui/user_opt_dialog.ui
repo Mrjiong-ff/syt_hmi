@@ -33,14 +33,13 @@
     border: 2px solid lightgray;
     border-radius: 5px;
     margin-top: 10px;
-    font: bold 14px;
+    font: bold 15px;
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    subcontrol-position: top left;
-    left: 10px;
-    top: 0px;
+    subcontrol-position: top center;
+	padding: -5 8px;
 }
 </string>
      </property>
@@ -93,14 +92,13 @@ QGroupBox::title {
     border: 2px solid lightgray;
     border-radius: 5px;
     margin-top: 10px;
-    font: bold 14px;
+    font: bold 15px;
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    subcontrol-position: top left;
-    left: 10px;
-    top: 0px;
+    subcontrol-position: top center;
+	padding: -5 8px;
 }
 </string>
      </property>
@@ -261,14 +259,13 @@ QGroupBox::title {
     border: 2px solid lightgray;
     border-radius: 5px;
     margin-top: 10px;
-    font: bold 14px;
+    font: bold 15px;
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    subcontrol-position: top left;
-    left: 10px;
-    top: 0px;
+    subcontrol-position: top center;
+	padding: -5 8px;
 }
 </string>
      </property>

@@ -140,6 +140,8 @@ void MainWindow::settingConnection() {
     connect(rclcomm, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow,
             Qt::QueuedConnection);
 
+    connect(rclcomm, &SytRclComm::installRes, this, &MainWindow::otaInstallSuccess, Qt::QueuedConnection);
+
     // head eye 信号槽
     connect(this, &MainWindow::signHeadEyeWindowShow, [=] {
         // todo 眼手界面
@@ -148,6 +150,7 @@ void MainWindow::settingConnection() {
         head_eye_dialog->exec();
         delete head_eye_dialog;
     });
+
 
     // 可视化相关槽函数
 //    connect()
@@ -760,11 +763,12 @@ void MainWindow::otaResultShow(bool res, QString msg) {
             QFuture<void> future = QtConcurrent::run([=] {
                 rclcomm->otaInstall();
             });
-            future.waitForFinished();
-            _localPodsSpinnerWidget->stop();
-            this->deleteAll();
-            exit(0);
-
+//            std::cout<<"333"<<std::endl;
+//            future.waitForFinished();
+//            std::cout<<"444"<<std::endl;
+//            _localPodsSpinnerWidget->stop();
+//            this->deleteAll();
+//            exit(0);
         } else if (res_ == 10) {
             showMessageBox(this, STATE::ERROR, "升级失败,请检查网络是否异常", 1, {"退出"});
             return;
@@ -837,6 +841,16 @@ void MainWindow::deleteAll() {
 void MainWindow::initOther() {
     // 如未存在,创建所有配置文件
     checkConfigsExist();
+
+}
+
+void MainWindow::otaInstallSuccess() {
+    std::cout << "333" << std::endl;
+    _localPodsSpinnerWidget->stop();
+    std::cout << "444" << std::endl;
+    this->deleteAll();
+    std::cout<<"install ok"<<std::endl;
+    exit(0);
 
 }
 

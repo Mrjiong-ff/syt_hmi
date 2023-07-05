@@ -114,6 +114,8 @@ private slots:
 
     void slotStartHeadEyeWindow();
 
+    void otaInstallSuccess();
+
 signals:
 
     void signHeadEyeWindowShow();

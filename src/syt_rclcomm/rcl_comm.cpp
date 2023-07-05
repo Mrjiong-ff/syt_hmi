@@ -172,4 +172,6 @@ void SytRclComm::otaInstall() {
 
     auto success = result.get()->success;
     std::cout << "安装成功: " << success << std::endl;
+
+    emit installRes();
 }

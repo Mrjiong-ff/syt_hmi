@@ -30,9 +30,6 @@ UserOptDialog::UserOptDialog(QWidget *parent) :
     ui->label->setPixmap(QPixmap(":m_icon/icon/opt.png").scaled(80, 80, Qt::AspectRatioMode::KeepAspectRatio,
                                                                 Qt::TransformationMode::SmoothTransformation));
 
-    // dxf save dir
-
-
     QStringList colorStrList;
     colorStrList << "黑色" << "白色" << "红色" << "绿色" << "蓝色" << "紫色";
     ui->comboBox_3->addItems(colorStrList);
@@ -43,6 +40,8 @@ UserOptDialog::UserOptDialog(QWidget *parent) :
 
     // read config
     readConfigAndSet();
+
+    // todo dxf save dir
 
     connect(ui->pushButton_3, &QPushButton::clicked, [=] {
         QString fileName = QFileDialog::getOpenFileName(this, "选择cad文件", "", "DXF Files (*.dxf)");

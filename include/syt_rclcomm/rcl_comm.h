@@ -62,6 +62,8 @@ signals:
 
     void downloadRes(bool, QString);
 
+    void installRes();
+
 private:
     // total
     int total_size = 0;
@@ -72,7 +74,7 @@ private:
 
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
 
-    QProcess *process_= nullptr;
+    QProcess *process_ = nullptr;
 
     rclcpp::CallbackGroup::SharedPtr callback_group_vision;
 

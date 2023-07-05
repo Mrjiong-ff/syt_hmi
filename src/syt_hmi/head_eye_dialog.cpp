@@ -22,17 +22,16 @@ HeadEyeDialog::HeadEyeDialog(QWidget *parent) :
     ui->sewingMachineBtn->setForeEnabled(false);
     ui->sewingMachineBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-    ui->sewingMachineBtn->setIcon(QPixmap::fromImage(
-            QImage(":m_icon/icon/sewing.png").scaled(ui->sewingMachineBtn->width() / 2,
-                                                     ui->sewingMachineBtn->height() / 2,
-                                                     Qt::AspectRatioMode::KeepAspectRatio,
-                                                     Qt::TransformationMode::SmoothTransformation)));
-
-    ui->composerMachineBtn->setIcon(QPixmap::fromImage(
-            QImage(":m_icon/icon/comp.png").scaled(ui->composerMachineBtn->width() / 2,
-                                                   ui->composerMachineBtn->height() / 2,
-                                                   Qt::AspectRatioMode::KeepAspectRatio,
-                                                   Qt::TransformationMode::SmoothTransformation)));
+//    ui->sewingMachineBtn->setIcon(QPixmap::fromImage(
+//            QImage(":m_icon/icon/sewing.png").scaled(ui->sewingMachineBtn->width() / 2,
+//                                                     ui->sewingMachineBtn->height() / 2,
+//                                                     Qt::AspectRatioMode::KeepAspectRatio,
+//                                                     Qt::TransformationMode::SmoothTransformation)));
+//    ui->composerMachineBtn->setIcon(QPixmap::fromImage(
+//            QImage(":m_icon/icon/comp.png").scaled(ui->composerMachineBtn->width() / 2,
+//                                                   ui->composerMachineBtn->height() / 2,
+//                                                   Qt::AspectRatioMode::KeepAspectRatio,
+//                                                   Qt::TransformationMode::SmoothTransformation)));
 
     connect(ui->composerMachineBtn, &QPushButton::clicked, [=] {
         QString tip = "<html>"

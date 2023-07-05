@@ -22,6 +22,7 @@ void ThreeDimenButton::enterEvent(QEvent *event)
 
 void ThreeDimenButton::leaveEvent(QEvent *event)
 {
+    Q_UNUSED(event);
     if (in_rect && !pressing && !inArea(mapFromGlobal(QCursor::pos())))
     {
         in_rect = false;
