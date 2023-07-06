@@ -72,13 +72,13 @@ signals:
 
     void downloadRes(bool, QString);
 
-    void installRes(bool ,QString);
+    void installRes(bool, QString);
 
     void visualLoadClothRes(int, int, QImage);
 
-    void compCalibRes(bool );
+    void compCalibRes(bool);
 
-    void sewingCalibRes(bool );
+    void sewingCalibRes(bool);
 
 private:
     // total
@@ -96,8 +96,7 @@ private:
     rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr composer_visual_subscription_;
 
     QProcess *process_ = nullptr;
-
-    rclcpp::CallbackGroup::SharedPtr callback_group_vision;
+//    rclcpp::CallbackGroup::SharedPtr callback_group_vision;
 
 };
 

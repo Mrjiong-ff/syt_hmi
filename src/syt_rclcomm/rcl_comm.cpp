@@ -20,13 +20,13 @@ SytRclComm::SytRclComm() {
 
     // 上料机视觉显示回调
     load_cloth_visual_subscription_ = m_node->create_subscription<syt_msgs::msg::LoadClothVisual>(
-            "/syt/cloth_edge/cloth_edge_visual_topic", 10,
+            "/syt/cloth_edge_pydetect/cloth_edge_visual_topic", 10,
             std::bind(
                     &SytRclComm::loadClothVisualCallback,
                     this,
                     std::placeholders::_1));
 
-    // todo 和片机视觉显示回调
+    // todo 合片机视觉显示回调
     composer_visual_subscription_ = m_node->create_subscription<syt_msgs::msg::LoadClothVisual>(
             "/syt/comp/comp_visual_topic", 10,
             std::bind(
@@ -34,13 +34,12 @@ SytRclComm::SytRclComm() {
                     this,
                     std::placeholders::_1));
 
-
 //    m_executor.get
     // todo 用于回调视觉显示
-    callback_group_vision =
-            m_node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-    auto sub_vision_obt = rclcpp::SubscriptionOptions();
-    sub_vision_obt.callback_group = callback_group_vision;
+//    callback_group_vision =
+//            m_node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+//    auto sub_vision_obt = rclcpp::SubscriptionOptions();
+//    sub_vision_obt.callback_group = callback_group_vision;
 
     this->start();
     qDebug("init syt hmi node successful!");
@@ -154,10 +153,10 @@ void SytRclComm::loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::S
     auto img_h = msg.get()->image.height;
     auto img_w = msg.get()->image.width;
     auto img_data = msg.get()->image.data;
-
-    QImage image(img_data.data(), img_w, img_h, QImage::Format_RGB888);
-
-    emit visualLoadClothRes(machine_id, cam_id, image);
+    cv::Mat image(img_h, img_w, CV_8UC3, const_cast<uint8_t *>(img_data.data()), msg.get()->image.step);
+    cv::cvtColor(image, image, cv::COLOR_BGR2BGRA);
+    auto qimage = cvMat2QImage(image);
+    emit visualLoadClothRes(machine_id, cam_id, qimage);
 }
 
 
