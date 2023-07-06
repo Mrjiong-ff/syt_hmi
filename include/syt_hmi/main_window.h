@@ -116,6 +116,14 @@ private slots:
 
     void slotVisualLoadCloth(int machine_id, int cam_id, QImage image);
 
+    void slotCompCalibRes(bool f);
+
+    void slotSewingCalibRes(bool f);
+
+    void slotCompCalibStart();
+
+    void slotSewingCalibStart();
+
 signals:
 
     void signHeadEyeWindowShow();
@@ -125,17 +133,18 @@ private:
 
     SytRclComm *rclcomm = nullptr;
 
+    QFuture<void> future;
+
     // 定义的一些bool类型标志位
     bool is_mouse_left_press_down_ = false;
-    bool is_load_cloth_on = false;
-    bool is_comp_cloth_on = false;
+    bool is_load_cloth_on = true;
+    bool is_comp_cloth_on = true;
 
     // 一些自定义的按钮控件
     WinMenuButton *m_menuBtn_;
     WinMinButton *m_hideBtn_;
     WinMaxButton *m_maxBtn_;
     WinCloseButton *m_closeBtn_;
-
 
     DevLoginWindow *dev_login_window_;
     InteractiveButtonBase *prev_btn;
@@ -153,7 +162,7 @@ private:
     QAction *helpAct_;
     QAction *aboutAct_;
 
-    WaitingSpinnerWidget *_localPodsSpinnerWidget;
+    WaitingSpinnerWidget *localPodsSpinnerWidget_;
 
     QPoint m_mousePos_;
     Direction dir_;    // 窗口大小改变时，记录改变方向

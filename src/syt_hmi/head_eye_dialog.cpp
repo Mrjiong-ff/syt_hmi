@@ -43,8 +43,8 @@ HeadEyeDialog::HeadEyeDialog(QWidget *parent) :
         switch (res) {
             case 0:
                 qDebug("合片台标定-确认");
-                // todo emit rcl合片
-                return;
+                emit signCompStart();
+                this->accept();
             case 1:
                 return;
             default:
@@ -63,9 +63,8 @@ HeadEyeDialog::HeadEyeDialog(QWidget *parent) :
         switch (res) {
             case 0:
                 qDebug("缝纫台标定-确认");
-                // todo emit rcl缝纫
-
-                return;
+                emit signSewingStart();
+                this->accept();
             case 1:
                 return;
             default:

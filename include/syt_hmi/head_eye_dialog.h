@@ -20,6 +20,11 @@ public:
 
     ~HeadEyeDialog() override;
 
+signals:
+    void signSewingStart();
+
+    void signCompStart();
+
 private:
     Ui::HeadEyeDialog *ui;
 };

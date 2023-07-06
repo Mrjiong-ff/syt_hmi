@@ -17,9 +17,18 @@ SytRclComm::SytRclComm() {
                                                                                        &SytRclComm::download_callback,
                                                                                        this,
                                                                                        std::placeholders::_1));
-    // todo upload cloth vision sub   node name not set
-    load_cloth_visual_subscription_ = m_node->create_subscription<std_msgs::msg::Int32>(
+
+    // 上料机视觉显示回调
+    load_cloth_visual_subscription_ = m_node->create_subscription<syt_msgs::msg::LoadClothVisual>(
             "/syt/cloth_edge/cloth_edge_visual_topic", 10,
+            std::bind(
+                    &SytRclComm::loadClothVisualCallback,
+                    this,
+                    std::placeholders::_1));
+
+    // todo 和片机视觉显示回调
+    composer_visual_subscription_ = m_node->create_subscription<syt_msgs::msg::LoadClothVisual>(
+            "/syt/comp/comp_visual_topic", 10,
             std::bind(
                     &SytRclComm::loadClothVisualCallback,
                     this,
@@ -96,7 +105,7 @@ void SytRclComm::otaUpdate() {
             RCLCPP_ERROR(rclcpp::get_logger("SytHmi"),
                          "Interrupted while waiting for the /syt/ota/update service. Exiting.");
         }
-        RCLCPP_INFO(rclcpp::get_logger("SytHmi"), "service not available, waiting again...");
+        RCLCPP_INFO(rclcpp::get_logger("SytHmi"), "/syt/ota/update not available, waiting again...");
     }
 
     auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
@@ -142,10 +151,8 @@ void SytRclComm::download_callback(const std_msgs::msg::Int32::SharedPtr msg) {
 void SytRclComm::loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg) {
     auto machine_id = msg.get()->machine_id;
     auto cam_id = msg.get()->cam_id;
-    std::cerr << "recv machine id: " << machine_id << " cam id: " << cam_id << std::endl;
     auto img_h = msg.get()->image.height;
     auto img_w = msg.get()->image.width;
-    auto encoding = msg.get()->image.encoding;
     auto img_data = msg.get()->image.data;
 
     QImage image(img_data.data(), img_w, img_h, QImage::Format_RGB888);
@@ -187,6 +194,7 @@ void SytRclComm::otaInstall() {
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
             "/syt/ota/install");
     // todo 除了 hmi 和 ota之外的进程全部关闭
+//    killProcesses()
 
     auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
     request->data = true;
@@ -197,17 +205,49 @@ void SytRclComm::otaInstall() {
 }
 
 void SytRclComm::compCalib() {
-    qDebug("发布 合片台标定 话题");
-    auto pub = m_node->create_publisher<syt_msgs::msg::CalibState>("/syt/calibration_system/calibrator", 10);
-    syt_msgs::msg::CalibState calib_state;
-    calib_state.state = 3;
-    pub->publish(calib_state);
+    qDebug("call 合片台标定");
+    rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = m_node->create_client<syt_msgs::srv::RunCalibration>(
+            "/syt/calibration_system/calibration_service");
+
+    while (!client->wait_for_service(1s)) {
+        if (!rclcpp::ok()) {
+            RCLCPP_ERROR(rclcpp::get_logger("SytHmi"),
+                         "Interrupted while waiting for the /syt/calibration_system/calibration_service service. Exiting.");
+        }
+        RCLCPP_INFO(rclcpp::get_logger("SytHmi"),
+                    "/syt/calibration_system/calibration_service not available, waiting again...");
+    }
+
+    auto request = std::make_shared<syt_msgs::srv::RunCalibration::Request>();
+    request->mode.state = 3;
+    auto result = client->async_send_request(request);
+    auto success = result.get()->success;
+    std::cout << "合片台标定完成,结果: " << success << std::endl;
+
+    emit compCalibRes(success);
 }
 
 void SytRclComm::sewingCalib() {
-    qDebug("发布 缝纫台标定 话题");
-    auto pub = m_node->create_publisher<syt_msgs::msg::CalibState>("/syt/calibration_system/calibrator", 10);
-    syt_msgs::msg::CalibState calib_state;
-    calib_state.state = 2;
-    pub->publish(calib_state);
+    qDebug("call 缝纫台标定");
+
+    rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = m_node->create_client<syt_msgs::srv::RunCalibration>(
+            "/syt/calibration_system/calibration_service");
+
+    while (!client->wait_for_service(1s)) {
+        if (!rclcpp::ok()) {
+            RCLCPP_ERROR(rclcpp::get_logger("SytHmi"),
+                         "Interrupted while waiting for the /syt/calibration_system/calibration_service service. Exiting.");
+        }
+        RCLCPP_INFO(rclcpp::get_logger("SytHmi"),
+                    "/syt/calibration_system/calibration_service not available, waiting again...");
+    }
+
+    auto request = std::make_shared<syt_msgs::srv::RunCalibration::Request>();
+    request->mode.state = 2;
+    auto result = client->async_send_request(request);
+    auto success = result.get()->success;
+
+    std::cout << "缝纫台标定完成,结果: " << success << std::endl;
+
+    emit sewingCalibRes(success);
 }

@@ -113,7 +113,6 @@ void MainWindow::settingConnection() {
             ui->leftRightResEdt->setText("0");
             ui->rightLeftResEdt->setText("0");
             ui->rightRightResEdt->setText("0");
-
             // todo
             rclcomm->load_cloth_visable(false);
         }
@@ -149,10 +148,19 @@ void MainWindow::settingConnection() {
     connect(this, &MainWindow::signHeadEyeWindowShow, [=] {
         // todo 眼手界面
         auto head_eye_dialog = new HeadEyeDialog(this);
+        connect(head_eye_dialog, &HeadEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart,
+                Qt::ConnectionType::QueuedConnection);
+        connect(head_eye_dialog, &HeadEyeDialog::signSewingStart, this, &MainWindow::slotSewingCalibStart,
+                Qt::ConnectionType::QueuedConnection);
         head_eye_dialog->show();
         head_eye_dialog->exec();
         delete head_eye_dialog;
     });
+
+    // 标定相关
+//    connect()
+    connect(rclcomm, &SytRclComm::compCalibRes, this, &MainWindow::slotCompCalibRes);
+    connect(rclcomm, &SytRclComm::sewingCalibRes, this, &MainWindow::slotSewingCalibRes);
 
 
     // 可视化相关槽函数
@@ -233,13 +241,13 @@ void MainWindow::initWidget() {
 
     // tool bar btn
     ui->sytDevModeBtn->setIcon(QIcon(":m_icon/icon/dev-mode.png"));  // 开发者模式按钮
-    ui->sytDevModeBtn->setToolTip(QString("开发者模式"));
+    ui->sytDevModeBtn->setToolTip(QString("开发者调试模式"));
 
     ui->sytHeadEyeBtn->setIcon(QIcon(":m_icon/icon/handeye.png"));  // 开发者模式按钮
     ui->sytHeadEyeBtn->setToolTip(QString("机器人眼手标定"));
 
     ui->sytLockScreenBtn->setIcon(QIcon(":m_icon/icon/lock.png"));  // 屏幕上锁/解锁按钮
-    ui->sytLockScreenBtn->setToolTip(QString("界面上锁"));
+    ui->sytLockScreenBtn->setToolTip(QString("锁屏"));
 
     ui->sytHelpPushButton->setIcon(QIcon(":m_icon/icon/help.png"));
     ui->sytHelpPushButton->setToolTip(QString("帮助说明"));
@@ -296,13 +304,13 @@ void MainWindow::initWidget() {
                            init_page_btn_h);
 
     // todo 可视化的两个按钮
-    ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
-    ui->loadClothVisableBtn->setText("显示");
-    ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
-    ui->compositeClothVisableBtn->setText("显示");
+    ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
+    ui->loadClothVisableBtn->setText("隐藏");
+    ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
+    ui->compositeClothVisableBtn->setText("隐藏");
 
     // 等待动画初始化
-    _localPodsSpinnerWidget = new WaitingSpinnerWidget(this);
+    localPodsSpinnerWidget_ = new WaitingSpinnerWidget(this);
 
     // todo 初始状态下，开始和停止无法使用
     ui->sytStartPushButton->setEnabled(false);
@@ -310,11 +318,14 @@ void MainWindow::initWidget() {
     ui->sytStopPushButton->setEnabled(false);
     ui->sytStopPushButton->setStyleSheet("color: gray;");
 
-    // todo 初始状态下，亮绿灯
+    // todo 初始状态下，亮灯
     this->setMutuallyLight(YELLOW);
-
-    // todo msg_widget用于显示回调接收到的系统信息
     ui->msg_widget->setToolTip("系统暂停");
+
+    // todo 主界面任务进度条
+    ui->processWidget->setValue(100);
+
+    // todo line edit
 
 
     // 事件过滤
@@ -630,6 +641,8 @@ void MainWindow::resetBtnClicked() {
     ui->sytStopPushButton->setEnabled(true);
     ui->sytStopPushButton->setStyleSheet("");
     this->setMutuallyLight(YELLOW);
+    // todo 进度条清0
+    ui->processWidget->setValue(0);
 }
 
 void MainWindow::startBtnClicked() {
@@ -692,20 +705,20 @@ void MainWindow::errorNodeMsgSlot(QString msg) {
 
 void MainWindow::triggeredOTAUpdate() {
     qDebug("update");
-    _localPodsSpinnerWidget->start();
-    QFuture<void> future = QtConcurrent::run([=] {
+    localPodsSpinnerWidget_->start();
+    future = QtConcurrent::run([=] {
         rclcomm->otaUpdate();
     });
 }
 
 void MainWindow::otaResultShow(bool res, QString msg) {
-    _localPodsSpinnerWidget->stop();
+    localPodsSpinnerWidget_->stop();
     if (res) {
         //todo show ota res
         auto res = showMessageBox(this, STATE::SUCCESS, "检测到远端存在新安装包,请选择是否升级", 2,
                                   {"一键升级", "取消升级"});
         if (res == 0) {
-            QFuture<void> future2 = QtConcurrent::run([=] {
+            future = QtConcurrent::run([=] {
                 rclcomm->otaDownload();
             });
 //            future2.waitForFinished();
@@ -729,10 +742,10 @@ void MainWindow::otaResultShow(bool res, QString msg) {
             showMessageBox(this, STATE::WARN, "取消升级", 1, {"退出"});
             return;
         } else if (res_ == 9) {
-            showMessageBox(this, STATE::SUCCESS, "下载完成,请点击安装按钮软件安装", 1, {"安装"});
+            showMessageBox(this, STATE::SUCCESS, "下载完成,请点击以下按钮进行软件安装", 1, {"安装"});
             // todo call server
-            _localPodsSpinnerWidget->start();
-            QFuture<void> future = QtConcurrent::run([=] {
+            localPodsSpinnerWidget_->start();
+            future = QtConcurrent::run([=] {
                 rclcomm->otaInstall();
             });
         } else if (res_ == 10) {
@@ -800,6 +813,10 @@ void MainWindow::slotStartHeadEyeWindow() {
 }
 
 void MainWindow::deleteAll() {
+    if (this->future.isRunning()) {
+        this->future.cancel();
+        this->future.waitForFinished();
+    }
     delete rclcomm;
     delete ui;
 }
@@ -811,7 +828,7 @@ void MainWindow::initOther() {
 }
 
 void MainWindow::otaInstallSuccess(bool res, QString msg) {
-    _localPodsSpinnerWidget->stop();
+    localPodsSpinnerWidget_->stop();
     if (!res) {
         showMessageBox(this, ERROR, msg, 1, {"返回"});
         return;
@@ -822,36 +839,86 @@ void MainWindow::otaInstallSuccess(bool res, QString msg) {
 }
 
 void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
+    if (!is_load_cloth_on) {
+        return;
+    }
     auto pix = QPixmap::fromImage(
             image.scaled(ui->leftLeftVisualLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
     if (machine_id == 0) {
         if (cam_id == 0) {
             qDebug("[左机台左相机]");
+            ui->leftLeftVisualLabel->clear();
             ui->leftLeftVisualLabel->setPixmap(pix);
             ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else if (cam_id == 1) {
             qDebug("[左机台右相机]");
+            ui->leftRightVisualLabel->clear();
             ui->leftRightVisualLabel->setPixmap(pix);
             ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else {
+            showMessageBox(this, ERROR, "BUG1: 甘霖娘?", 1, {"返回"});
             return;
         }
 
     } else if (machine_id == 1) {
         if (cam_id == 0) {
             qDebug("[右机台左相机]");
+            ui->rightLeftVisualLabel->clear();
             ui->rightLeftVisualLabel->setPixmap(pix);
             ui->rightLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else if (cam_id == 1) {
             qDebug("[右机台右相机]");
+            ui->rightRightVisualLabel->clear();
             ui->rightRightVisualLabel->setPixmap(pix);
             ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else {
+            showMessageBox(this, ERROR, "BUG2: 甘霖娘?", 1, {"返回"});
             return;
         }
     } else {
+        showMessageBox(this, ERROR, "BUG3: 甘霖娘?", 1, {"返回"});
         return;
     }
+}
+
+void MainWindow::slotCompCalibRes(bool f) {
+    localPodsSpinnerWidget_->stop();
+    if (f) {
+        showMessageBox(this, SUCCESS, "合片台标定成功", 1, {"退出"});
+        return;
+    } else {
+        showMessageBox(this, SUCCESS, "合片台标定失败,请联系相关人员", 1, {"退出"});
+        return;
+    }
+}
+
+void MainWindow::slotSewingCalibRes(bool f) {
+    localPodsSpinnerWidget_->stop();
+    if (f) {
+        showMessageBox(this, SUCCESS, "缝纫台标定成功", 1, {"退出"});
+        return;
+    } else {
+        showMessageBox(this, SUCCESS, "缝纫台标定失败,请联系相关人员", 1, {"退出"});
+        return;
+    }
+
+}
+
+void MainWindow::slotCompCalibStart() {
+    qDebug("合片 标定开始");
+    localPodsSpinnerWidget_->start();
+    std::cout<<"1"<<std::endl;
+    future = QtConcurrent::run([=] {
+        rclcomm->compCalib();
+    });
+}
+
+void MainWindow::slotSewingCalibStart() {
+    qDebug("缝纫 标定开始");
+    localPodsSpinnerWidget_->start();
+    std::cout<<"2"<<std::endl;
+    future = QtConcurrent::run([=] {
+        rclcomm->sewingCalib();
+    });
 }
 

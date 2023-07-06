@@ -17,6 +17,7 @@
 #include <std_msgs/msg/int32.hpp>
 #include "syt_msgs/msg/calib_state.hpp"
 #include "syt_msgs/msg/load_cloth_visual.hpp"
+#include "syt_msgs/srv/run_calibration.hpp"
 
 using namespace std::chrono_literals;
 
@@ -52,6 +53,8 @@ private:
 
     void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
 
+//    void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
+
     void killProcesses(std::string);
 
 protected:
@@ -73,6 +76,10 @@ signals:
 
     void visualLoadClothRes(int, int, QImage);
 
+    void compCalibRes(bool );
+
+    void sewingCalibRes(bool );
+
 private:
     // total
     int total_size = 0;
@@ -84,6 +91,9 @@ private:
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
 
     rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr load_cloth_visual_subscription_;
+
+    // todo
+    rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr composer_visual_subscription_;
 
     QProcess *process_ = nullptr;
 
