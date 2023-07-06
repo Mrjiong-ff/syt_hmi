@@ -95,8 +95,6 @@ void MainWindow::settingConnection() {
             qDebug("打开 上料视觉显示");
             ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
             ui->loadClothVisableBtn->setText("隐藏");
-            // todo
-            rclcomm->load_cloth_visable(true);
         } else {
             qDebug("关闭 上料视觉显示");
             ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
@@ -113,8 +111,6 @@ void MainWindow::settingConnection() {
             ui->leftRightResEdt->setText("0");
             ui->rightLeftResEdt->setText("0");
             ui->rightRightResEdt->setText("0");
-            // todo
-            rclcomm->load_cloth_visable(false);
         }
     });
 

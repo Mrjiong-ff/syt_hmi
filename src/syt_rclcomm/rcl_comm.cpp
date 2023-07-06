@@ -88,12 +88,6 @@ bool SytRclComm::initAllNodes() {
     return true;
 }
 
-void SytRclComm::load_cloth_visable(bool f) {
-    // todo 向syt cloth edge server 发送允许传输图像指令
-    qDebug("允许传输上料的图像");
-
-}
-
 void SytRclComm::otaUpdate() {
     total_size = 0;
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
