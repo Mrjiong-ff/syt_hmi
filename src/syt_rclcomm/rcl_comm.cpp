@@ -34,6 +34,13 @@ SytRclComm::SytRclComm() {
                     this,
                     std::placeholders::_1));
 
+    // todo rosout消息回调
+    log_subscription = m_node->create_subscription<rcl_interfaces::msg::Log>("/rosout", 10,
+                                                                             std::bind(&SytRclComm::logCallback, this,
+                                                                                       std::placeholders::_1));
+
+
+
 //    m_executor.get
     // todo 用于回调视觉显示
 //    callback_group_vision =
@@ -243,4 +250,33 @@ void SytRclComm::sewingCalib() {
     std::cout << "缝纫台标定完成,结果: " << success << std::endl;
 
     emit sewingCalibRes(success);
+}
+
+void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
+    auto cur_time = getCurrentTime();
+    // 枚举详情信息看官方
+    auto level_bt = msg->level;
+    QString level;
+    switch (level_bt) {
+        case 10:
+            level = "DEBUG";
+            break;
+        case 20:
+            level = "INFO";
+            break;
+        case 30:
+            level = "WARN";
+            break;
+        case 40:
+            level = "ERROR";
+            break;
+        case 50:
+            level = "FATAL";
+            break;
+    }
+    auto _msg = msg->msg.data();
+    auto func = msg->function.data();
+    auto location = msg->name.data();
+    emit signLogPub(QString(cur_time.c_str()), level, QString(location),
+                    QString(func), QString(_msg));
 }

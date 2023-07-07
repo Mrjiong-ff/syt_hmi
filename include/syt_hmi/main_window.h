@@ -36,6 +36,8 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 #define PADDING 2
+#define MAX_RECORDS 30
+
 // 定义方向枚举，用于判断鼠标在mainWindow的哪个位置
 enum Direction {
     UP = 0, DOWN = 1, LEFT, RIGHT, LEFTTOP, LEFTBOTTOM, RIGHTBOTTOM, RIGHTTOP, NONE
@@ -76,13 +78,13 @@ private:
 
     void settingConnection();
 
-    void setAllButtonsEnabled(QWidget *parent, bool enabled, QPushButton *excludedButton = nullptr);
-
     void setMutuallyLight(LIGHT_COLOR);
 
     void deleteAll();
 
     void initOther();
+
+    void btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables);
 
 private slots:
 
@@ -124,9 +126,13 @@ private slots:
 
     void slotSewingCalibStart();
 
+    void slotLogShow(QString, QString, QString, QString, QString);
+
 signals:
 
     void signHeadEyeWindowShow();
+
+    void processSuccessful();
 
 private:
     Ui::MainWindow *ui;
@@ -139,6 +145,10 @@ private:
     bool is_mouse_left_press_down_ = false;
     bool is_load_cloth_on = true;
     bool is_comp_cloth_on = true;
+
+    // todo 进度条测试
+    int value = 0;
+    QTimer *test_timer;
 
     // 一些自定义的按钮控件
     WinMenuButton *m_menuBtn_;

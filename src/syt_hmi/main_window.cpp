@@ -54,18 +54,18 @@ void MainWindow::settingConnection() {
 
     // todo 帮助
     connect(ui->sytHelpPushButton, &QPushButton::clicked, [=] {
-        auto workCursor = ui->sytPlainTextEdit->textCursor();
-        workCursor.insertText(QString("test test test"));
-        workCursor.insertBlock();
-        workCursor.movePosition(QTextCursor::End);
-
-//        this->setMutuallyLight(RED);
-
-        //移动滚动条到底部
-        QScrollBar *scrollbar = ui->sytPlainTextEdit->verticalScrollBar();
-        if (scrollbar) {
-            scrollbar->setSliderPosition(scrollbar->maximum());
-        }
+//        auto workCursor = ui->sytPlainTextEdit->textCursor();
+//        workCursor.insertText(QString("test test test"));
+//        workCursor.insertBlock();
+//        workCursor.movePosition(QTextCursor::End);
+//
+////        this->setMutuallyLight(RED);
+//
+//        //移动滚动条到底部
+//        QScrollBar *scrollbar = ui->sytPlainTextEdit->verticalScrollBar();
+//        if (scrollbar) {
+//            scrollbar->setSliderPosition(scrollbar->maximum());
+//        }
     });
 
     // todo log filter btn
@@ -154,13 +154,32 @@ void MainWindow::settingConnection() {
     });
 
     // 标定相关
-//    connect()
     connect(rclcomm, &SytRclComm::compCalibRes, this, &MainWindow::slotCompCalibRes);
     connect(rclcomm, &SytRclComm::sewingCalibRes, this, &MainWindow::slotSewingCalibRes);
 
+    // ros2消息槽函数
+    connect(rclcomm, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow, Qt::ConnectionType::QueuedConnection);
+
+    connect(ui->moveToEndBtn, &QPushButton::clicked, [=] {
+        QTextCursor cursor = ui->sytPlainTextEdit->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        ui->sytPlainTextEdit->setTextCursor(cursor);
+        // 自动滚动到末尾
+        QScrollBar *scrollBar = ui->sytPlainTextEdit->verticalScrollBar();
+        scrollBar->setValue(scrollBar->maximum());
+
+    });
 
     // 可视化相关槽函数
     connect(rclcomm, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth);
+
+
+    // 任务完成
+    connect(this, &MainWindow::processSuccessful, [=] {
+        this->btnControl({ui->sytResetPushButton}, {ui->sytStartPushButton, ui->sytStopPushButton});
+        showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
+
+    });
 
 }
 
@@ -309,10 +328,7 @@ void MainWindow::initWidget() {
     localPodsSpinnerWidget_ = new WaitingSpinnerWidget(this);
 
     // todo 初始状态下，开始和停止无法使用
-    ui->sytStartPushButton->setEnabled(false);
-    ui->sytStartPushButton->setStyleSheet("color: gray;");
-    ui->sytStopPushButton->setEnabled(false);
-    ui->sytStopPushButton->setStyleSheet("color: gray;");
+    this->btnControl({ui->sytResetPushButton}, {ui->sytStartPushButton, ui->sytStopPushButton});
 
     // todo 初始状态下，亮灯
     this->setMutuallyLight(YELLOW);
@@ -321,8 +337,23 @@ void MainWindow::initWidget() {
     // todo 主界面任务进度条
     ui->processWidget->setValue(100);
 
-    // todo line edit
+    // 移动至末尾
+    ui->moveToEndBtn->setIcon(QIcon(":m_icon/icon/end.png"));
+    ui->moveToEndBtn->setToolTip("移至日志末尾");
 
+    ui->sytPlainTextEdit->setReadOnly(true);
+
+    // todo 测试进度条
+    test_timer = new QTimer(this);
+    connect(test_timer, &QTimer::timeout, [=] {
+        value += 1;
+        ui->processWidget->setValue(value);
+        if (value == 100) {
+            test_timer->stop();
+            emit processSuccessful();
+            return;
+        }
+    });
 
     // 事件过滤
     ui->sytMainTitleWidget->installEventFilter(this);
@@ -543,18 +574,6 @@ void MainWindow::slotLockScreen() {
     delete lock_dialog;
 }
 
-void MainWindow::setAllButtonsEnabled(QWidget *parent, bool enabled, QPushButton *excludedButton) {
-    // 遍历父控件下的所有子控件,禁用所有btn，仅保留lock btn
-    QList<QWidget *> childWidgets = parent->findChildren<QWidget *>();
-    for (auto widget: childWidgets) {
-        // 如果是QPushButton类型并且不是排除的按钮，则设置其enabled状态
-        QPushButton *button = qobject_cast<QPushButton *>(widget);
-        if (button && button != excludedButton) {
-            button->setEnabled(enabled);
-        }
-    }
-}
-
 
 void MainWindow::slotDevWindow() {
     dev_login_window_->deleteLater();
@@ -638,7 +657,8 @@ void MainWindow::resetBtnClicked() {
     ui->sytStopPushButton->setStyleSheet("");
     this->setMutuallyLight(YELLOW);
     // todo 进度条清0
-    ui->processWidget->setValue(0);
+    value = 0;
+    ui->processWidget->setValue(value);
 }
 
 void MainWindow::startBtnClicked() {
@@ -647,6 +667,17 @@ void MainWindow::startBtnClicked() {
         return;
     }
     qDebug("点击开始按钮");
+    int v = ui->processWidget->getValue();
+    std::cout << "get value: " << v << std::endl;
+    if (v != 0) {
+        if (v != 100) {
+            std::cout << "qqq" << std::endl;
+            this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
+            test_timer->start();
+            return;
+        }
+    }
+
     auto user_opt_dialog = new UserOptDialog(this);
     // todo
     connect(user_opt_dialog, &UserOptDialog::systemStart,
@@ -654,17 +685,16 @@ void MainWindow::startBtnClicked() {
     user_opt_dialog->show();
     auto i = user_opt_dialog->exec();
     delete user_opt_dialog;
-
     // todo
     if (i == QDialog::Accepted) {
-        ui->sytStartPushButton->setEnabled(false);
-        ui->sytStartPushButton->setStyleSheet("color: gray;");
-
-        ui->sytResetPushButton->setEnabled(false);
-        ui->sytResetPushButton->setStyleSheet("color: gray;");
-
+        this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
         ui->msg_widget->setToolTip("系统开始");
     }
+
+    // todo 测试进度条
+    test_timer->setInterval(500);
+
+    test_timer->start();
 
 }
 
@@ -675,24 +705,14 @@ void MainWindow::stopBtnClicked() {
     }
     qDebug("点击停止按钮");
 
-////    // todo
-//    ui->sytStartPushButton->setEnabled(false);
-//    ui->sytStartPushButton->setStyleSheet("color: gray;");
-//    ui->sytStopPushButton->setEnabled(false);
-//    ui->sytStopPushButton->setStyleSheet("color: gray;");
+    // todo
+    this->btnControl({ui->sytResetPushButton, ui->sytStartPushButton}, {ui->sytStopPushButton});
 
-//    // todo
-    ui->sytStartPushButton->setEnabled(false);
-    ui->sytStartPushButton->setStyleSheet("color: gray;");
-    ui->sytStopPushButton->setEnabled(false);
-    ui->sytStopPushButton->setStyleSheet("color: gray;");
-
-    ui->sytResetPushButton->setEnabled(true);
-    ui->sytResetPushButton->setStyleSheet("");
-
+    // todo test
     ui->msg_widget->setToolTip("系统异常");
+    test_timer->stop();
 
-    this->setMutuallyLight(RED);
+    this->setMutuallyLight(YELLOW);
 }
 
 void MainWindow::errorNodeMsgSlot(QString msg) {
@@ -842,12 +862,10 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
             image.scaled(ui->leftLeftVisualLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     if (machine_id == 0) {
         if (cam_id == 0) {
-            qDebug("[左机台左相机]");
             ui->leftLeftVisualLabel->clear();
             ui->leftLeftVisualLabel->setPixmap(pix);
             ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else if (cam_id == 1) {
-            qDebug("[左机台右相机]");
             ui->leftRightVisualLabel->clear();
             ui->leftRightVisualLabel->setPixmap(pix);
             ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -901,20 +919,62 @@ void MainWindow::slotSewingCalibRes(bool f) {
 }
 
 void MainWindow::slotCompCalibStart() {
-    qDebug("合片 标定开始");
     localPodsSpinnerWidget_->start();
-    std::cout<<"1"<<std::endl;
     future = QtConcurrent::run([=] {
         rclcomm->compCalib();
     });
 }
 
 void MainWindow::slotSewingCalibStart() {
-    qDebug("缝纫 标定开始");
     localPodsSpinnerWidget_->start();
-    std::cout<<"2"<<std::endl;
     future = QtConcurrent::run([=] {
         rclcomm->sewingCalib();
     });
 }
 
+void MainWindow::slotLogShow(QString time, QString level, QString location, QString func, QString msg) {
+    Q_UNUSED(func);
+    QString htmlText;
+    if (level == "DEBUG") {
+        htmlText = QString(
+                "<span style=\"background-color: green; color: white; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                level).arg(time).arg(location).arg(msg);
+
+    } else if (level == "INFO") {
+        htmlText = QString(
+                "<span style=\"background-color: white; color: black; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                level).arg(time).arg(location).arg(msg);
+
+    } else if (level == "WARN") {
+        htmlText = QString(
+                "<span style=\"background-color: orange; color: white; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                level).arg(time).arg(location).arg(msg);
+
+    } else if (level == "ERROR") {
+        htmlText = QString(
+                "<span style=\"background-color: darkred; color: white; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                level).arg(time).arg(location).arg(msg);
+
+    } else if (level == "FATAL") {
+        htmlText = QString(
+                "<span style=\"background-color: red; color: white; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                level).arg(time).arg(location).arg(msg);
+
+    } else {
+        qDebug("敲尼玛？");
+        return;
+    }
+    ui->sytPlainTextEdit->appendHtml(htmlText);
+
+}
+
+void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables) {
+    for (auto i: enables) {
+        i->setEnabled(true);
+        i->setStyleSheet("");
+    }
+    for (auto i: unables) {
+        i->setEnabled(false);
+        i->setStyleSheet("color: gray;");
+    }
+}

@@ -65,4 +65,6 @@ void checkConfigsExist();
 
 std::string getConfigPath();
 
+std::string getCurrentTime();
+
 #endif //SYT_HMI_UTILS_H

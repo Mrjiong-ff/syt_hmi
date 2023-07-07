@@ -14,16 +14,6 @@ DevSelectDialog::DevSelectDialog(QWidget *parent) :
     this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     this->setModal(true);  // 设置为模态 父对象控件不可选
 
-    ui->handeyeBtn->setEnabled(false);
-    ui->handeyeBtn->setParentEnabled(true);
-    ui->handeyeBtn->setForeEnabled(false);
-    ui->handeyeBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-    ui->motionBtn->setEnabled(false);
-    ui->motionBtn->setParentEnabled(true);
-    ui->motionBtn->setForeEnabled(false);
-    ui->motionBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
     ui->visionBtn->setParentEnabled(true);
     ui->visionBtn->setForeEnabled(false);
     ui->visionBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");

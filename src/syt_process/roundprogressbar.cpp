@@ -12,21 +12,19 @@ RoundProgressBar::RoundProgressBar(QWidget *parent) :
     //设置初始角度，顺时针逆时针
     setdefault(90, true);
     //设置默认外圈宽度
-//    setOutterBarWidth(18);
     setOutterBarWidth(60);
     //设置默认内圈宽度
-//    setInnerBarWidth(16);
-    setInnerBarWidth(50);
+    setInnerBarWidth(60);
     //设置默认范围
     setRange(0, 100);
     //设置默认值
     setValue(0);
     //设置外圈颜色
-    setOutterColor(QColor(233, 248, 248));
+    setOutterColor(QColor(207, 207, 207));
     //设置默认渐变色
-    setInnerColor(QColor(49, 177, 190), QColor(133, 243, 244));
+    setInnerColor(QColor(74, 112, 139), QColor(126, 192, 238));
     //设置默认文字颜色
-    setDefaultTextColor(QColor(49, 177, 190));
+    setDefaultTextColor(QColor("#1C1C1C"));
     //设置默认精度
     setPrecision(0);
     //设置内圈默认文字样式
@@ -194,7 +192,7 @@ void RoundProgressBar::paintDot(QPainter &painter) {
     painter.setPen(QColor(255, 255, 255));
     painter.setBrush(QColor(255, 255, 255));
     //区域为圆点绘制正方形区域
-    painter.drawEllipse(_dotX - _innerBarWidth / 6, _dotY - _innerBarWidth / 6, _innerBarWidth / 2, _innerBarWidth / 2);
+    painter.drawEllipse(_dotX - _innerBarWidth / 6, _dotY - _innerBarWidth / 6, _innerBarWidth / 3, _innerBarWidth / 3);
 }
 
 //绘制默认内置文字

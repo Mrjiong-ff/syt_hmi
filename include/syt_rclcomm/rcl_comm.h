@@ -18,6 +18,7 @@
 #include "syt_msgs/msg/calib_state.hpp"
 #include "syt_msgs/msg/load_cloth_visual.hpp"
 #include "syt_msgs/srv/run_calibration.hpp"
+#include "rcl_interfaces/msg/log.hpp"
 
 using namespace std::chrono_literals;
 
@@ -55,6 +56,8 @@ private:
 
     void killProcesses(std::string);
 
+    void logCallback(const rcl_interfaces::msg::Log::SharedPtr msg);
+
 protected:
     void run() override;
 
@@ -78,6 +81,8 @@ signals:
 
     void sewingCalibRes(bool);
 
+    void signLogPub(QString, QString, QString, QString, QString);
+
 private:
     // total
     int total_size = 0;
@@ -92,6 +97,9 @@ private:
 
     // todo
     rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr composer_visual_subscription_;
+
+    rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr log_subscription;
+
 
     QProcess *process_ = nullptr;
 //    rclcpp::CallbackGroup::SharedPtr callback_group_vision;
