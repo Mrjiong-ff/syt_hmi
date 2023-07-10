@@ -76,7 +76,7 @@ QImage cvMat2QImage(const cv::Mat &mat) {
         QImage image(pSrc, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
         return image.rgbSwapped();
     } else if (mat.type() == CV_8UC4) {
-        qDebug("CV_8UC4");
+//        qDebug("CV_8UC4");
         // Copy input Mat
         const uchar *pSrc = (const uchar *) mat.data;
         // Create QImage with same dimensions as input Mat
@@ -105,7 +105,7 @@ cv::Mat QImage2cvMat(QImage image) {
             mat = cv::Mat(image.height(), image.width(), CV_8UC1, (void *) image.constBits(), image.bytesPerLine());
             break;
         default:
-            // todo:
+            // todo: 如果存在其他的图像格式...
             break;
     }
     return mat;

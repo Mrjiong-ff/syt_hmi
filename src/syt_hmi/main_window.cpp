@@ -902,12 +902,10 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
             image.scaled(ui->leftLeftVisualLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     if (machine_id == 0) {
         if (cam_id == 0) {
-            qDebug("left - left");
             ui->leftLeftVisualLabel->clear();
             ui->leftLeftVisualLabel->setPixmap(pix);
             ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else if (cam_id == 1) {
-            qDebug("left - right");
             ui->leftRightVisualLabel->clear();
             ui->leftRightVisualLabel->setPixmap(pix);
             ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -917,12 +915,10 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
 
     } else if (machine_id == 1) {
         if (cam_id == 0) {
-            qDebug("right - left");
             ui->rightLeftVisualLabel->clear();
             ui->rightLeftVisualLabel->setPixmap(pix);
             ui->rightLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else if (cam_id == 1) {
-            qDebug("right - right");
             ui->rightRightVisualLabel->clear();
             ui->rightRightVisualLabel->setPixmap(pix);
             ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
