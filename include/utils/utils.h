@@ -61,10 +61,21 @@ QImage cvMat2QImage(const cv::Mat &mat);
  */
 cv::Mat QImage2cvMat(QImage image);
 
+/**
+ * 检测是否存在配置文件，没有则自动生成
+ */
 void checkConfigsExist();
 
+/**
+ * 获取配置文件路径
+ * @return
+ */
 std::string getConfigPath();
 
+/**
+ * 得到当前时间 精确到 年月日时分秒
+ * @return
+ */
 std::string getCurrentTime();
 
 #endif //SYT_HMI_UTILS_H

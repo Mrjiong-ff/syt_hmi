@@ -34,26 +34,18 @@ SytRclComm::SytRclComm() {
                     this,
                     std::placeholders::_1));
 
-    // todo rosout消息回调
+    // rosout消息回调函数
     log_subscription = m_node->create_subscription<rcl_interfaces::msg::Log>("/rosout", 10,
                                                                              std::bind(&SytRclComm::logCallback, this,
                                                                                        std::placeholders::_1));
 
 
-    // todo 开始停止复位
+    // 开始停止复位
     fsm_flow_control_cmd_publisher = m_node->create_publisher<syt_msgs::msg::FSMFlowControlCommand>(
             "/syt/robot_control/flow_control_cmd", 10);
-
+    // 模式选择
     fsm_run_mode_publisher = m_node->create_publisher<syt_msgs::msg::FSMRunMode>(
             "/syt/robot_control/running_mode", 10);
-
-
-//    m_executor.get
-    // todo 用于回调视觉显示
-//    callback_group_vision =
-//            m_node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-//    auto sub_vision_obt = rclcpp::SubscriptionOptions();
-//    sub_vision_obt.callback_group = callback_group_vision;
 
     this->start();
     qDebug("init syt hmi node successful!");
@@ -65,7 +57,6 @@ SytRclComm::~SytRclComm() {
         process_->waitForFinished();
         delete process_;
     }
-
 
     rclcpp::shutdown();
 
@@ -175,7 +166,6 @@ void SytRclComm::loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::S
 
 void SytRclComm::killProcesses(std::string processPattern) {
     std::vector<int> processIds;
-
     std::string pgrepCommand = "pgrep -f ";
     pgrepCommand += processPattern;
 
@@ -192,7 +182,6 @@ void SytRclComm::killProcesses(std::string processPattern) {
         pclose(pipe);
     }
     std::cerr << "process size: " << processIds.size() << std::endl;
-
     // 杀死符合模式但排除特定进程的进程
     for (int pid: processIds) {
         if (pid != getpid()) {  // 排除当前进程
@@ -202,10 +191,9 @@ void SytRclComm::killProcesses(std::string processPattern) {
 }
 
 void SytRclComm::otaInstall() {
-    qDebug("install app");
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
             "/syt/ota/install");
-    // todo 除了 hmi 和 ota之外的进程全部关闭
+    // todo 杀死 除了 hmi 和 ota之外的全部进程
 //    killProcesses()
 
     auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
@@ -308,5 +296,6 @@ void SytRclComm::resetCmd() {
 }
 
 void SytRclComm::stopCmd() {
-    // todo
+    // todo 接口未实现
+
 }
