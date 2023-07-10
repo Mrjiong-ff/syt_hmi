@@ -905,7 +905,6 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
             ui->leftRightVisualLabel->setPixmap(pix);
             ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else {
-            showMessageBox(this, ERROR, "BUG1: 甘霖娘?", 1, {"返回"});
             return;
         }
 
@@ -921,11 +920,9 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
             ui->rightRightVisualLabel->setPixmap(pix);
             ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else {
-            showMessageBox(this, ERROR, "BUG2: 甘霖娘?", 1, {"返回"});
             return;
         }
     } else {
-        showMessageBox(this, ERROR, "BUG3: 甘霖娘?", 1, {"返回"});
         return;
     }
 }
@@ -972,27 +969,27 @@ void MainWindow::slotLogShow(QString time, QString level, QString location, QStr
     QString htmlText;
     if (level == "DEBUG") {
         htmlText = QString(
-                "<span style=\"background-color: green; color: white; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                "<span style=\"background-color: green; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(
                 level).arg(time).arg(location).arg(msg);
 
     } else if (level == "INFO") {
         htmlText = QString(
-                "<span style=\"background-color: white; color: black; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                "<span style=\"background-color: white; color: black; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(
                 level).arg(time).arg(location).arg(msg);
 
     } else if (level == "WARN") {
         htmlText = QString(
-                "<span style=\"background-color: orange; color: white; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                "<span style=\"background-color: orange; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(
                 level).arg(time).arg(location).arg(msg);
 
     } else if (level == "ERROR") {
         htmlText = QString(
-                "<span style=\"background-color: darkred; color: white; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                "<span style=\"background-color: darkred; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(
                 level).arg(time).arg(location).arg(msg);
 
     } else if (level == "FATAL") {
         htmlText = QString(
-                "<span style=\"background-color: red; color: white; font-weight: bold;\">[ %1 ]   [ %2 ]  [ %3 ]:  %4\n</span>").arg(
+                "<span style=\"background-color: red; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(
                 level).arg(time).arg(location).arg(msg);
 
     } else {

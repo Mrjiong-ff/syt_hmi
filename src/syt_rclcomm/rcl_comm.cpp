@@ -308,5 +308,5 @@ void SytRclComm::resetCmd() {
 }
 
 void SytRclComm::stopCmd() {
-
+    // todo
 }
