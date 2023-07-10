@@ -49,7 +49,8 @@ LabeledEdit::LabeledEdit(QWidget *parent) : QWidget(parent) {
     });
 
     grayed_color = Qt::gray;
-    accent_color = QColor(198, 47, 47);
+//    accent_color = QColor(198, 47, 47);
+    accent_color = QColor(0 ,139, 139);
 
     QFont ft = line_edit->font();
     ft.setPointSizeF(ft.pointSize() * 1.5);

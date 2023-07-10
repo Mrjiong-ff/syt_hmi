@@ -128,6 +128,8 @@ private slots:
 
     void slotLogShow(QString, QString, QString, QString, QString);
 
+    void slotImportCfg();
+
 signals:
 
     void signHeadEyeWindowShow();

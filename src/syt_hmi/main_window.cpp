@@ -13,15 +13,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
+    // 初始化节点
     initNode();
 
+    // 初始化控件
     initWidget();
 
+    // 初始化其他（主要是配置相关）
     initOther();
 
+    // 信号槽
     settingConnection();
 
-    // 自动启动launch下所有节点
+    // todo 自动启动launch下所有节点(得根据实际情况来)
     bool res = rclcomm->initAllNodes();
     if (!res) {
         if (rclcomm != nullptr) {
@@ -37,54 +41,62 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::settingConnection() {
-    // main window右上角4个按钮
+    // main window右上角按钮 放大 缩小 菜单等
     connect(m_closeBtn_, &WinCloseButton::clicked, this, &MainWindow::close);
     connect(m_hideBtn_, &WinMaxButton::clicked, this, &MainWindow::showMinimized);
     connect(m_maxBtn_, &WinMaxButton::clicked, this, &MainWindow::slotMaxBtnClicked);
-
     connect(m_menuBtn_, &WinMenuButton::toggled, [=] {
         m_menu_->show();
         m_menu_->exec();
     });
 
-    // 工具栏按钮
+    // main window工具栏按钮
     connect(ui->sytHeadEyeBtn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
     connect(ui->sytDevModeBtn, &QPushButton::clicked, this, &MainWindow::slotShowDevLoginWindow);
     connect(ui->sytLockScreenBtn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
-
-    // todo 帮助
+    // todo 帮助未实现，应该是个文档弹出的dialog
     connect(ui->sytHelpPushButton, &QPushButton::clicked, [=] {
         // todo test
         showMessageBox(this, ERROR, "干巴爹弟兄们😆", 1, {"返回"});
         return;
     });
 
-    // todo log filter btn
+    // main window 日志栏的按钮
+    // todo log filter btn 日志过滤
     connect(ui->sytFilterPushButton, &QPushButton::clicked, [=] {
         // todo
         showMessageBox(this, ERROR, "没做,搞它😵", 1, {"返回"});
     });
-
+    // 日志清除
     connect(ui->sytClearPushButton, &QPushButton::clicked, [=] { ui->sytPlainTextEdit->clear(); });
+    // 日志定位到最后一行 继续滚动
+    connect(ui->moveToEndBtn, &QPushButton::clicked, [=] {
+        QTextCursor cursor = ui->sytPlainTextEdit->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        ui->sytPlainTextEdit->setTextCursor(cursor);
+        // 自动滚动到末尾
+        QScrollBar *scrollBar = ui->sytPlainTextEdit->verticalScrollBar();
+        scrollBar->setValue(scrollBar->maximum());
+    });
 
-    // action
+    // action 相关
     connect(minAct_, &QAction::triggered, this, &MainWindow::showMinimized);
     connect(maxAct_, &QAction::triggered, this, &MainWindow::slotMaxBtnClicked);
     connect(fullAct_, &QAction::triggered, this, &MainWindow::showFullScreen);
     connect(closeAct_, &QAction::triggered, this, &MainWindow::close);
-
     connect(helpAct_, &QAction::triggered, this, [=] { ui->sytHelpPushButton->clicked(true); });
+    connect(updateAct_, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
+    // todo 关于sewing action，应该是个模态dialog，期望他能跳转到sewing的官网等等
     connect(aboutAct_, &QAction::triggered, this, [=] {
-        // todo test
         showMessageBox(this, ERROR, "耗子尾汁🙃", 1, {"返回"});;
         return;
     });
-    connect(updateAct_, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
 
+    // main window的 翻页按钮
     connect(prev_btn, &QPushButton::clicked, this, &MainWindow::slotPrevPage);
     connect(next_btn_, &QPushButton::clicked, this, &MainWindow::slotNextPage);
 
-    // 主界面用于交互的程序按钮
+    // 主界面接界面 用于交互的3个程序按钮 开始停止复位
     connect(ui->sytResetPushButton, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
     connect(ui->sytStartPushButton, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
     connect(ui->sytStopPushButton, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
@@ -110,7 +122,6 @@ void MainWindow::settingConnection() {
             ui->rightRightVisualLabel->setText("NO IMAGE");
         }
     });
-
     connect(ui->compositeClothVisableBtn, &QPushButton::clicked, [=] {
         is_comp_cloth_on = !is_comp_cloth_on;
         if (is_comp_cloth_on) {
@@ -134,12 +145,11 @@ void MainWindow::settingConnection() {
     // ota停止
     connect(rclcomm, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow,
             Qt::QueuedConnection);
-
+    // ota安装
     connect(rclcomm, &SytRclComm::installRes, this, &MainWindow::otaInstallSuccess, Qt::QueuedConnection);
 
-    // head eye 信号槽
+    // head eye dialog 信号槽
     connect(this, &MainWindow::signHeadEyeWindowShow, [=] {
-        // todo 眼手界面
         auto head_eye_dialog = new HeadEyeDialog(this);
         connect(head_eye_dialog, &HeadEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart,
                 Qt::ConnectionType::QueuedConnection);
@@ -154,24 +164,15 @@ void MainWindow::settingConnection() {
     connect(rclcomm, &SytRclComm::compCalibRes, this, &MainWindow::slotCompCalibRes);
     connect(rclcomm, &SytRclComm::sewingCalibRes, this, &MainWindow::slotSewingCalibRes);
 
-    // ros2消息槽函数
+    // ros2 rosout回调消息的槽函数
     connect(rclcomm, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow, Qt::ConnectionType::QueuedConnection);
 
-    connect(ui->moveToEndBtn, &QPushButton::clicked, [=] {
-        QTextCursor cursor = ui->sytPlainTextEdit->textCursor();
-        cursor.movePosition(QTextCursor::End);
-        ui->sytPlainTextEdit->setTextCursor(cursor);
-        // 自动滚动到末尾
-        QScrollBar *scrollBar = ui->sytPlainTextEdit->verticalScrollBar();
-        scrollBar->setValue(scrollBar->maximum());
-
-    });
-
-    // 可视化相关槽函数
+    // 上料机可视化相关槽函数
     connect(rclcomm, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth);
 
+    // todo 合片机可视化相关槽函数
 
-    // 任务完成
+    // todo 任务完成后按钮的逻辑
     connect(this, &MainWindow::processSuccessful, [=] {
         this->btnControl({ui->sytResetPushButton}, {ui->sytStartPushButton, ui->sytStopPushButton});
         showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
@@ -182,6 +183,9 @@ void MainWindow::settingConnection() {
     connect(this, &MainWindow::signUpdateLabelState, [=](QString text) {
         ui->stateLabel->setText(text);
     });
+
+    // todo 导入配置文件相关
+    connect(ui->importCfgBtn, &QPushButton::clicked, this, &MainWindow::slotImportCfg);
 
 }
 
@@ -287,6 +291,10 @@ void MainWindow::initWidget() {
     ui->sytStopPushButton->setForeEnabled(false);
     ui->sytStopPushButton->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
+    ui->importCfgBtn->setParentEnabled(true);
+    ui->importCfgBtn->setForeEnabled(false);
+    ui->importCfgBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
     // log view btn
     ui->sytFilterPushButton->setIcon(QIcon(":m_icon/icon/filter-records.png"));
     ui->sytFilterPushButton->setToolTip(QString("日志过滤筛选"));
@@ -318,7 +326,7 @@ void MainWindow::initWidget() {
                            init_page_btn_w,
                            init_page_btn_h);
 
-    // todo 可视化的两个按钮
+    // 可视化的两个按钮
     ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
     ui->loadClothVisableBtn->setText("隐藏");
     ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
@@ -334,16 +342,16 @@ void MainWindow::initWidget() {
     this->setMutuallyLight(YELLOW);
     ui->msg_widget->setToolTip("系统暂停");
 
-    // todo 主界面任务进度条
+    // 初始状态下主界面显示的任务进度条
     ui->processWidget->setValue(100);
 
     // 移动至末尾
     ui->moveToEndBtn->setIcon(QIcon(":m_icon/icon/end.png"));
     ui->moveToEndBtn->setToolTip("移至日志末尾");
-
+    // 日志只读
     ui->sytPlainTextEdit->setReadOnly(true);
 
-    // todo 测试进度条
+    // todo 测试进度条，根据逻辑做对应的改变
     test_timer = new QTimer(this);
     test_timer->setInterval(500);
     connect(test_timer, &QTimer::timeout, [=] {
@@ -607,9 +615,8 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
         next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2,
                                init_page_btn_w,
                                init_page_btn_h);
-
+        // todo 应该有一些根据界面大小 控件resize的逻辑 不然单纯靠spacer做 界面布局比较丑
         // todo 主程序按钮
-
 
         // todo 任务进度条大小
 //        ui->processWidget->setOutterBarWidth(this->width()/20);
@@ -640,11 +647,11 @@ void MainWindow::slotNextPage() {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
+    // 一些主界面的快捷键
     switch (event->key()) {
         case Qt::Key_A:
             emit prev_btn->click();
             break;
-
         case Qt::Key_D:
             emit next_btn_->click();
             break;
@@ -655,7 +662,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 }
 
 void MainWindow::initNode() {
-//    rclcomm = std::make_shared<SytRclComm>(nullptr);
+    // rcl comm 负责处理处理业务 所有ros相关的接口调用应该由它实现
     rclcomm = new SytRclComm();
 
 }
@@ -1009,4 +1016,11 @@ void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPus
         i->setEnabled(false);
         i->setStyleSheet("color: gray;");
     }
+}
+
+void MainWindow::slotImportCfg() {
+    auto user_opt_dialog = new UserOptDialog(this);
+    user_opt_dialog->show();
+    user_opt_dialog->exec();
+
 }
