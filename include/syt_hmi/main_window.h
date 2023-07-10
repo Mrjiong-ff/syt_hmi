@@ -134,6 +134,8 @@ signals:
 
     void processSuccessful();
 
+    void signUpdateLabelState(QString);
+
 private:
     Ui::MainWindow *ui;
 

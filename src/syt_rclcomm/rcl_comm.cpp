@@ -40,6 +40,13 @@ SytRclComm::SytRclComm() {
                                                                                        std::placeholders::_1));
 
 
+    // todo 开始停止复位
+    fsm_flow_control_cmd_publisher = m_node->create_publisher<syt_msgs::msg::FSMFlowControlCommand>(
+            "/syt/robot_control/flow_control_cmd", 10);
+
+    fsm_run_mode_publisher = m_node->create_publisher<syt_msgs::msg::FSMRunMode>(
+            "/syt/robot_control/running_mode", 10);
+
 
 //    m_executor.get
     // todo 用于回调视觉显示
@@ -151,13 +158,18 @@ void SytRclComm::download_callback(const std_msgs::msg::Int32::SharedPtr msg) {
 void SytRclComm::loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg) {
     auto machine_id = msg.get()->machine_id;
     auto cam_id = msg.get()->cam_id;
+
+    int machine_id_ = static_cast<int>(machine_id);
+    int cam_id_ = static_cast<int>(cam_id);
+
     auto img_h = msg.get()->image.height;
     auto img_w = msg.get()->image.width;
     auto img_data = msg.get()->image.data;
+
     cv::Mat image(img_h, img_w, CV_8UC3, const_cast<uint8_t *>(img_data.data()), msg.get()->image.step);
     cv::cvtColor(image, image, cv::COLOR_BGR2BGRA);
     auto qimage = cvMat2QImage(image);
-    emit visualLoadClothRes(machine_id, cam_id, qimage);
+    emit visualLoadClothRes(machine_id_, cam_id_, qimage);
 }
 
 
@@ -279,4 +291,22 @@ void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
     auto location = msg->name.data();
     emit signLogPub(QString(cur_time.c_str()), level, QString(location),
                     QString(func), QString(_msg));
+}
+
+void SytRclComm::startCmd() {
+    auto message = syt_msgs::msg::FSMFlowControlCommand();
+    message.command = 1;
+    message.state.state_code = 0;
+    fsm_flow_control_cmd_publisher->publish(message);
+}
+
+void SytRclComm::resetCmd() {
+    auto message = syt_msgs::msg::FSMFlowControlCommand();
+    message.command = 2;
+    message.state.state_code = 0;
+    fsm_flow_control_cmd_publisher->publish(message);
+}
+
+void SytRclComm::stopCmd() {
+
 }

@@ -54,22 +54,17 @@ void MainWindow::settingConnection() {
 
     // todo 帮助
     connect(ui->sytHelpPushButton, &QPushButton::clicked, [=] {
-//        auto workCursor = ui->sytPlainTextEdit->textCursor();
-//        workCursor.insertText(QString("test test test"));
-//        workCursor.insertBlock();
-//        workCursor.movePosition(QTextCursor::End);
-//
-////        this->setMutuallyLight(RED);
-//
-//        //移动滚动条到底部
-//        QScrollBar *scrollbar = ui->sytPlainTextEdit->verticalScrollBar();
-//        if (scrollbar) {
-//            scrollbar->setSliderPosition(scrollbar->maximum());
-//        }
+        // todo test
+        showMessageBox(this, ERROR, "干巴爹弟兄们😆", 1, {"返回"});
+        return;
     });
 
     // todo log filter btn
-//    connect(ui->sytFilterPushButton,&QPushButton::clicked,)
+    connect(ui->sytFilterPushButton, &QPushButton::clicked, [=] {
+        // todo
+        showMessageBox(this, ERROR, "没做,搞它😵", 1, {"返回"});
+    });
+
     connect(ui->sytClearPushButton, &QPushButton::clicked, [=] { ui->sytPlainTextEdit->clear(); });
 
     // action
@@ -78,6 +73,12 @@ void MainWindow::settingConnection() {
     connect(fullAct_, &QAction::triggered, this, &MainWindow::showFullScreen);
     connect(closeAct_, &QAction::triggered, this, &MainWindow::close);
 
+    connect(helpAct_, &QAction::triggered, this, [=] { ui->sytHelpPushButton->clicked(true); });
+    connect(aboutAct_, &QAction::triggered, this, [=] {
+        // todo test
+        showMessageBox(this, ERROR, "耗子尾汁🙃", 1, {"返回"});;
+        return;
+    });
     connect(updateAct_, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
 
     connect(prev_btn, &QPushButton::clicked, this, &MainWindow::slotPrevPage);
@@ -88,7 +89,7 @@ void MainWindow::settingConnection() {
     connect(ui->sytStartPushButton, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
     connect(ui->sytStopPushButton, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
 
-    // todo 可视化两个按钮
+    // 可视化两个按钮
     connect(ui->loadClothVisableBtn, &QPushButton::clicked, [=] {
         is_load_cloth_on = !is_load_cloth_on;
         if (is_load_cloth_on) {
@@ -107,10 +108,6 @@ void MainWindow::settingConnection() {
             ui->leftRightVisualLabel->setText("NO IMAGE");
             ui->rightLeftVisualLabel->setText("NO IMAGE");
             ui->rightRightVisualLabel->setText("NO IMAGE");
-            ui->leftLeftResEdt->setText("0");
-            ui->leftRightResEdt->setText("0");
-            ui->rightLeftResEdt->setText("0");
-            ui->rightRightResEdt->setText("0");
         }
     });
 
@@ -181,6 +178,11 @@ void MainWindow::settingConnection() {
 
     });
 
+    // 状态label显示
+    connect(this, &MainWindow::signUpdateLabelState, [=](QString text) {
+        ui->stateLabel->setText(text);
+    });
+
 }
 
 void MainWindow::initWidget() {
@@ -188,8 +190,6 @@ void MainWindow::initWidget() {
     // 注意：mainwindow及其之类都要设置mouse track，不然不生效
     setMouseTracking(true);
     ui->centralwidget->setMouseTracking(true);
-
-//    setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 
     // 隐藏默认标题栏
     this->setWindowFlags(Qt::FramelessWindowHint);
@@ -345,14 +345,21 @@ void MainWindow::initWidget() {
 
     // todo 测试进度条
     test_timer = new QTimer(this);
+    test_timer->setInterval(500);
     connect(test_timer, &QTimer::timeout, [=] {
         value += 1;
-        ui->processWidget->setValue(value);
         if (value == 100) {
-            test_timer->stop();
-            emit processSuccessful();
-            return;
+            // todo
+//            ui->processWidget->setValue(value);
+            value = 0;
         }
+        ui->processWidget->setValue(value);
+        // todo
+//        if (value == 100) {
+//            test_timer->stop();
+//            emit processSuccessful();
+//            return;
+//        }
     });
 
     // 事件过滤
@@ -601,6 +608,14 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
                                init_page_btn_w,
                                init_page_btn_h);
 
+        // todo 主程序按钮
+
+
+        // todo 任务进度条大小
+//        ui->processWidget->setOutterBarWidth(this->width()/20);
+//        ui->processWidget->setInnerBarWidth(this->width()/20);
+//        updateGeometry();
+//        qDebug("resize");
     }
 
 //    QWidget::resizeEvent(event);
@@ -646,6 +661,8 @@ void MainWindow::initNode() {
 }
 
 void MainWindow::resetBtnClicked() {
+    emit signUpdateLabelState("重置中");
+
     bool res = isFastClick(ui->sytResetPushButton, 1000);
     if (!res) {
         return;
@@ -659,6 +676,12 @@ void MainWindow::resetBtnClicked() {
     // todo 进度条清0
     value = 0;
     ui->processWidget->setValue(value);
+    // todo
+    future = QtConcurrent::run([=] {
+        rclcomm->resetCmd();
+    });
+
+    emit signUpdateLabelState("重置完成");
 }
 
 void MainWindow::startBtnClicked() {
@@ -667,34 +690,42 @@ void MainWindow::startBtnClicked() {
         return;
     }
     qDebug("点击开始按钮");
-    int v = ui->processWidget->getValue();
-    std::cout << "get value: " << v << std::endl;
-    if (v != 0) {
-        if (v != 100) {
-            std::cout << "qqq" << std::endl;
-            this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
-            test_timer->start();
-            return;
-        }
-    }
-
-    auto user_opt_dialog = new UserOptDialog(this);
-    // todo
-    connect(user_opt_dialog, &UserOptDialog::systemStart,
-            [=] { setMutuallyLight(GREEN); });
-    user_opt_dialog->show();
-    auto i = user_opt_dialog->exec();
-    delete user_opt_dialog;
-    // todo
-    if (i == QDialog::Accepted) {
-        this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
-        ui->msg_widget->setToolTip("系统开始");
-    }
+    // todo 一般来说，点击开始应该要选择裁片类型，要测试暂时注释掉了
+//    int v = ui->processWidget->getValue();
+//    if (v != 0 && v != 100) {
+//        this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
+//        test_timer->start();
+//        emit signUpdateLabelState("运行中");
+//        return;
+//    }
+//
+//    auto user_opt_dialog = new UserOptDialog(this);
+//    // todo
+//    connect(user_opt_dialog, &UserOptDialog::systemStart,
+//            [=] { setMutuallyLight(GREEN); });
+//    user_opt_dialog->show();
+//    auto i = user_opt_dialog->exec();
+//    delete user_opt_dialog;
+//    // todo
+//    if (i == QDialog::Accepted) {
+//        this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
+//        ui->msg_widget->setToolTip("系统开始");
+//    }
 
     // todo 测试进度条
-    test_timer->setInterval(500);
+//    test_timer->setInterval(500);
+
+    this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
 
     test_timer->start();
+    setMutuallyLight(GREEN);
+
+    emit signUpdateLabelState("运行中");
+
+    // 发布开始指令
+    future = QtConcurrent::run([=] {
+        rclcomm->startCmd();
+    });
 
 }
 
@@ -713,6 +744,8 @@ void MainWindow::stopBtnClicked() {
     test_timer->stop();
 
     this->setMutuallyLight(YELLOW);
+
+    emit signUpdateLabelState("停止中");
 }
 
 void MainWindow::errorNodeMsgSlot(QString msg) {
@@ -862,10 +895,12 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
             image.scaled(ui->leftLeftVisualLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     if (machine_id == 0) {
         if (cam_id == 0) {
+            qDebug("left - left");
             ui->leftLeftVisualLabel->clear();
             ui->leftLeftVisualLabel->setPixmap(pix);
             ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else if (cam_id == 1) {
+            qDebug("left - right");
             ui->leftRightVisualLabel->clear();
             ui->leftRightVisualLabel->setPixmap(pix);
             ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -876,12 +911,12 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
 
     } else if (machine_id == 1) {
         if (cam_id == 0) {
-            qDebug("[右机台左相机]");
+            qDebug("right - left");
             ui->rightLeftVisualLabel->clear();
             ui->rightLeftVisualLabel->setPixmap(pix);
             ui->rightLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         } else if (cam_id == 1) {
-            qDebug("[右机台右相机]");
+            qDebug("right - right");
             ui->rightRightVisualLabel->clear();
             ui->rightRightVisualLabel->setPixmap(pix);
             ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -933,7 +968,7 @@ void MainWindow::slotSewingCalibStart() {
 }
 
 void MainWindow::slotLogShow(QString time, QString level, QString location, QString func, QString msg) {
-    Q_UNUSED(func);
+    Q_UNUSED(func)
     QString htmlText;
     if (level == "DEBUG") {
         htmlText = QString(

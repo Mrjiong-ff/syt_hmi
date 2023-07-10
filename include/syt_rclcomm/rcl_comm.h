@@ -19,6 +19,8 @@
 #include "syt_msgs/msg/load_cloth_visual.hpp"
 #include "syt_msgs/srv/run_calibration.hpp"
 #include "rcl_interfaces/msg/log.hpp"
+#include "syt_msgs/msg/fsm_flow_control_command.hpp"
+#include "syt_msgs/msg/fsm_run_mode.hpp"
 
 using namespace std::chrono_literals;
 
@@ -46,6 +48,12 @@ public:
     void compCalib();
 
     void sewingCalib();
+
+    void startCmd();
+
+    void resetCmd();
+
+    void stopCmd();
 
 private:
     void download_callback(const std_msgs::msg::Int32::SharedPtr msg);
@@ -100,6 +108,8 @@ private:
 
     rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr log_subscription;
 
+    rclcpp::Publisher<syt_msgs::msg::FSMFlowControlCommand>::SharedPtr fsm_flow_control_cmd_publisher;
+    rclcpp::Publisher<syt_msgs::msg::FSMRunMode>::SharedPtr fsm_run_mode_publisher;
 
     QProcess *process_ = nullptr;
 //    rclcpp::CallbackGroup::SharedPtr callback_group_vision;

@@ -16,22 +16,21 @@ int main(int argc, char **argv) {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
-    // todo 启动动画
-//    QPixmap pixmap(":m_bg/background/loading.gif");
-//    QSplashScreen splash(pixmap);
-//    splash.setWindowOpacity(1);  // 设置窗口透明度
-//    QLabel label(&splash);
-//    QMovie mv(":m_bg/background/loading.gif");
-//    label.setMovie(&mv);
-//    mv.start();
-//    splash.show();
-//    mv.setSpeed(mv.speed() * 2);
-//
-//    splash.setCursor(Qt::BlankCursor);
-//    for (int i = 0; i < 32000; i += mv.speed()) {
-//        app.processEvents();  //使程序在显示启动画面的同时仍能响应鼠标等其他事件
-//        QThread::msleep(10);  // 延时
-//    }
+    QPixmap pixmap(":m_bg/background/loading.gif");
+    QSplashScreen splash(pixmap);
+    splash.setWindowOpacity(1);  // 设置窗口透明度
+    QLabel label(&splash);
+    QMovie mv(":m_bg/background/loading.gif");
+    label.setMovie(&mv);
+    mv.start();
+    splash.show();
+    mv.setSpeed(mv.speed() * 2);
+
+    splash.setCursor(Qt::BlankCursor);
+    for (int i = 0; i < 32000; i += mv.speed()) {
+        app.processEvents();  //使程序在显示启动画面的同时仍能响应鼠标等其他事件
+        QThread::msleep(10);  // 延时
+    }
 
     rclcpp::init(argc, argv);
 
@@ -54,16 +53,12 @@ int main(int argc, char **argv) {
     // todo 是否要有login ui？
 
     MainWindow m;
-    m.show();
+    m.showMaximized();
 
-//    splash.finish(&m);  //在主体对象初始化完成后结束启动动画
-
+    splash.finish(&m);  //在主体对象初始化完成后结束启动动画
 
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 
-//    while (rclcpp::ok()) {
-//        app.processEvents();
-//    }
     return app.exec();
 
 }
