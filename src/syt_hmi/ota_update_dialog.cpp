@@ -40,6 +40,7 @@ void OtaUpdateDialog::clearProcessValue() {
 }
 
 void OtaUpdateDialog::getDownloadRes(bool f, QString msg) {
+    Q_UNUSED(msg);
     if (f) {
         this->done(9);
     } else {
