@@ -137,6 +137,7 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   connect(input_extra_param_back_page, &InputExtraParamPage::signSetExtraParam, this, &AutoCreateStyleWizard::slotSetExtraParam);  // 后片
 
   // 5.调用创建样式服务
+  qRegisterMetaType<syt_msgs::msg::ClothInfo>("syt_msgs::msg::ClothInfo");
   connect(create_style_page, &CreateStylePage::signCreateStyle, this, &AutoCreateStyleWizard::slotCreateStyle);
   connect(this, &AutoCreateStyleWizard::signCreateStyleResult, create_style_page, &CreateStylePage::slotCreateStyleResult);
 
@@ -159,13 +160,13 @@ void AutoCreateStyleWizard::slotDetectCloth(int cloth_type) {
   emit signDetectCloth(cloth_type);
 }
 
-void AutoCreateStyleWizard::slotDetectClothResult(bool result, int cloth_type, std::vector<cv::Point2i> contour, std::vector<cv::Point2i> keypoints) {
+void AutoCreateStyleWizard::slotDetectClothResult(bool result, int cloth_type, syt_msgs::msg::ClothInfo cloth_info) {
   if (cloth_type == 0) {
-    front_contour_   = contour;
-    front_keypoints_ = keypoints;
+    cloth_info_front_.cloth_contour = cloth_info.cloth_contour;
+    cloth_info_front_.keypoint_info = cloth_info.keypoint_info;
   } else if (cloth_type == 1) {
-    back_contour_   = contour;
-    back_keypoints_ = keypoints;
+    cloth_info_back_.cloth_contour = cloth_info.cloth_contour;
+    cloth_info_back_.keypoint_info = cloth_info.keypoint_info;
   }
   emit signDetectClothResult(result, cloth_type);
 }
@@ -179,6 +180,10 @@ void AutoCreateStyleWizard::slotSetExtraParam(syt_msgs::msg::ClothStyle cloth_st
 }
 
 void AutoCreateStyleWizard::slotCreateStyle() {
+  cloth_style_front_.cloth_contour = cloth_info_front_.cloth_contour;
+  cloth_style_front_.keypoint_info = cloth_info_front_.keypoint_info;
+  cloth_style_back_.keypoint_info = cloth_info_back_.keypoint_info;
+  cloth_style_back_.keypoint_info = cloth_info_back_.keypoint_info;
   emit signCreateStyle(cloth_style_front_, cloth_style_back_);
 }
 
@@ -205,7 +210,7 @@ void AutoCreateStyleWizard::slotRenameClothStyleResult(bool result) {
 // 1.移动抓手
 MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
   setTitle("移动抓手至安全位置");
-  move_hand_button    = new InteractiveButtonBase;
+  move_hand_button = new InteractiveButtonBase;
   QSpacerItem *spacer = new QSpacerItem(20, 100, QSizePolicy::Expanding);
   move_hand_button->setText("点击移动抓手");
   connect(move_hand_button, &QPushButton::clicked, this, [=]() {
@@ -252,7 +257,7 @@ DetectClothPage::DetectClothPage(QWidget *parent, int cloth_type) : QWizardPage(
   setTitle(QString("检测%1裁片轮廓和关键点").arg(cloth_type_ ? "后片" : "前片"));
 
   InteractiveButtonBase *detect_cloth_btn_ = new InteractiveButtonBase;
-  QSpacerItem *spacer                      = new QSpacerItem(20, 100, QSizePolicy::Expanding);
+  QSpacerItem *spacer = new QSpacerItem(20, 100, QSizePolicy::Expanding);
 
   detect_cloth_btn_->setText(QString("点击开始检测%1").arg(cloth_type_ ? "后片" : "前片"));
   connect(detect_cloth_btn_, &QPushButton::clicked, this, [=]() {
@@ -310,7 +315,7 @@ CreateStylePage::CreateStylePage(QWidget *parent) : QWizardPage(parent) {
   setTitle("创建样式");
 
   InteractiveButtonBase *create_style_button = new InteractiveButtonBase;
-  QSpacerItem *spacer                        = new QSpacerItem(20, 100, QSizePolicy::Expanding);
+  QSpacerItem *spacer = new QSpacerItem(20, 100, QSizePolicy::Expanding);
 
   create_style_button->setText("点击生成样式");
   connect(create_style_button, &QPushButton::clicked, this, [=]() {
@@ -345,11 +350,11 @@ void CreateStylePage::slotCreateStyleResult(bool result) {
 // 6. 修改样式名
 RenameClothStylePage::RenameClothStylePage(QWidget *parent) : QWizardPage(parent) {
   setTitle("修改样式名(可选)");
-  old_name_label     = new QLabel(tr("旧文件名"));
-  new_name_label     = new QLabel(tr("新文件名"));
+  old_name_label = new QLabel(tr("旧文件名"));
+  new_name_label = new QLabel(tr("新文件名"));
   old_name_line_edit = new QLineEdit;
   new_name_line_edit = new QLineEdit;
-  rename_btn         = new InteractiveButtonBase("重命名");
+  rename_btn = new InteractiveButtonBase("重命名");
 
   connect(rename_btn, &QPushButton::clicked, this, [=]() {
     if (old_name_line_edit->text() != new_name_line_edit->text()) {

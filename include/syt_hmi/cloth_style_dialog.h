@@ -2,6 +2,7 @@
 
 #include "syt_btn/interactivebuttonbase.h"
 #include "syt_hmi/input_extra_param_widget.h"
+#include "syt_msgs/msg/cloth_info.hpp"
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -57,10 +58,8 @@ public:
 class AutoCreateStyleWizard : public QWizard {
   Q_OBJECT
 private:
-  std::vector<cv::Point2i> front_contour_;
-  std::vector<cv::Point2i> back_contour_;
-  std::vector<cv::Point2i> front_keypoints_;
-  std::vector<cv::Point2i> back_keypoints_;
+  syt_msgs::msg::ClothInfo cloth_info_front_;
+  syt_msgs::msg::ClothInfo cloth_info_back_;
   syt_msgs::msg::ClothStyle cloth_style_front_;
   syt_msgs::msg::ClothStyle cloth_style_back_;
   std::string file_name_;
@@ -84,7 +83,7 @@ public slots:
   void slotMoveHand();
   void slotMoveHandResult(bool result);
   void slotDetectCloth(int cloth_type);
-  void slotDetectClothResult(bool result, int cloth_type, std::vector<cv::Point2i> contour, std::vector<cv::Point2i> keypoints);
+  void slotDetectClothResult(bool result, int cloth_type, syt_msgs::msg::ClothInfo cloth_info);
   void slotSetExtraParam(syt_msgs::msg::ClothStyle cloth_style);
   void slotCreateStyle();
   void slotCreateStyleResult(bool result, std::string file_name);

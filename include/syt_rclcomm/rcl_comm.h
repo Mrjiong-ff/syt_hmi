@@ -79,7 +79,7 @@ signals:
 
   // 控制相关信号
   void signComposeMachineMoveHandFinish(bool result);
-  void signComposeMachineDetectClothFinish(bool result, int cloth_type, std::vector<cv::Point2i> contour, std::vector<cv::Point2i> keypoints);
+  void signComposeMachineDetectClothFinish(bool result, int cloth_type, syt_msgs::msg::ClothInfo cloth_info);
   void signCreateStyleFinish(bool result, std::string file_name);
   void signRenameClothStyleFinish(bool result);
 

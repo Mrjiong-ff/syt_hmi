@@ -57,8 +57,8 @@ InputExtraParamWidget::InputExtraParamWidget(QWidget *parent) : QWidget(parent),
     QColor color = QColorDialog::getColor(QColor(255, 0, 0));
     ui->cloth_color_btn->setStyleSheet(QString("background-color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
     ui->red_spin_box->setValue(color.red());
-    ui->red_spin_box->setValue(color.green());
-    ui->red_spin_box->setValue(color.blue());
+    ui->green_spin_box->setValue(color.green());
+    ui->blue_spin_box->setValue(color.blue());
     qDebug() << (ui->red_spin_box->value() << 4 | ui->green_spin_box->value() << 2 | ui->blue_spin_box->value());
   });
 
