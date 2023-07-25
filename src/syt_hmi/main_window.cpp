@@ -253,7 +253,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   case Qt::Key_D:
     emit next_btn_->click();
     break;
-
   default:
     break;
   }
@@ -935,23 +934,7 @@ void MainWindow::slotStartHeadEyeWindow() {
 }
 
 void MainWindow::slotStartClothStyleWindow() {
-  qDebug("启动裁片样式创建");
-
-  QString tip = "<html>"
-                "<head/><b>启动裁片样式创建?</b>\n<body>"
-                "</body></html>";
-
-  auto res = showMessageBox(this, WARN, tip, 2, {"确认", "返回"});
-
-  switch (res) {
-  case 0:
-    emit signClothStyleWindowShow();
-    return;
-  case 1:
-    return;
-  default:
-    return;
-  }
+  emit signClothStyleWindowShow();
 }
 
 void MainWindow::slotDevWindow() {

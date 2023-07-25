@@ -1,22 +1,22 @@
 #ifndef POINTMENUBUTTON_H
 #define POINTMENUBUTTON_H
 
-#include <QtMath>
 #include "interactivebuttonbase.h"
+#include <QtMath>
 
 #define ANI_STEP_3 40
 
-class PointMenuButton : public InteractiveButtonBase
-{
+class PointMenuButton : public InteractiveButtonBase {
+  Q_OBJECT
 public:
-    PointMenuButton(QWidget* parent = nullptr);
+  PointMenuButton(QWidget *parent = nullptr);
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
-    void paintEvent(QPaintEvent*event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void paintEvent(QPaintEvent *event) override;
 
 private:
-    int radius;
+  int radius;
 };
 
 #endif // POINTMENUBUTTON_H

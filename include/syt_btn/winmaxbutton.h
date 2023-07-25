@@ -3,13 +3,13 @@
 
 #include "interactivebuttonbase.h"
 
-class WinMaxButton : public InteractiveButtonBase
-{
+class WinMaxButton : public InteractiveButtonBase {
+  Q_OBJECT
 public:
-    WinMaxButton(QWidget* parent = nullptr);
+  WinMaxButton(QWidget *parent = nullptr);
 
 protected:
-    void paintEvent(QPaintEvent*event);
+  void paintEvent(QPaintEvent *event);
 };
 
 #endif // WINMAXBUTTON_H

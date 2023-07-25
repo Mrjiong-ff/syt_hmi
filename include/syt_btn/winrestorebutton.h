@@ -3,12 +3,12 @@
 
 #include "interactivebuttonbase.h"
 
-class WinRestoreButton : public InteractiveButtonBase
-{
+class WinRestoreButton : public InteractiveButtonBase {
+  Q_OBJECT
 public:
-    WinRestoreButton(QWidget* parent = nullptr);
+  WinRestoreButton(QWidget *parent = nullptr);
 
-    void paintEvent(QPaintEvent* event) override;
+  void paintEvent(QPaintEvent *event) override;
 };
 
 #endif // WINRESTOREBUTTON_H
