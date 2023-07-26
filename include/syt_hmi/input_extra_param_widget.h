@@ -1,6 +1,7 @@
 #pragma once
 
 #include "syt_msgs/msg/cloth_style.hpp"
+#include "utils/utils.h"
 #include <QColorDialog>
 #include <QMap>
 #include <QWidget>
@@ -30,4 +31,5 @@ private:
 
 private slots:
   void updateColorButton();
+  void truncClothWeight(double value);
 };

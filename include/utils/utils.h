@@ -1,10 +1,4 @@
-//
-// Created by jerry on 23-4-28.
-//
-
-#ifndef SYT_HMI_UTILS_H
-#define SYT_HMI_UTILS_H
-
+#pragma once
 #include <QIcon>
 #include <QMessageBox>
 #include <QVariant>
@@ -22,6 +16,8 @@ enum STATE {
   WARN    = 1,
   ERROR
 };
+
+extern QMap<int, QString> id_style_map;
 
 /**
  * 一些消息弹窗
@@ -77,5 +73,3 @@ std::string getConfigPath();
  * @return
  */
 std::string getCurrentTime();
-
-#endif // SYT_HMI_UTILS_H

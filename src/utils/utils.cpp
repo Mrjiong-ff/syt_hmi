@@ -4,6 +4,24 @@
 
 #include "utils/utils.h"
 
+QMap<int, QString> id_style_map = {
+    std::map<int, QString>::value_type(10, "低弹性"),
+    std::map<int, QString>::value_type(11, "中弹性"),
+    std::map<int, QString>::value_type(12, "高弹性"),
+    std::map<int, QString>::value_type(20, "低厚度"),
+    std::map<int, QString>::value_type(21, "中厚度"),
+    std::map<int, QString>::value_type(22, "高厚度"),
+    std::map<int, QString>::value_type(30, "S"),
+    std::map<int, QString>::value_type(31, "M"),
+    std::map<int, QString>::value_type(32, "L"),
+    std::map<int, QString>::value_type(33, "XL"),
+    std::map<int, QString>::value_type(34, "XXL"),
+    std::map<int, QString>::value_type(35, "XXXL"),
+    std::map<int, QString>::value_type(40, "低光泽"),
+    std::map<int, QString>::value_type(41, "中光泽"),
+    std::map<int, QString>::value_type(42, "高光泽"),
+};
+
 int showMessageBox(QWidget *p, STATE state, QString text, int btn_num, QVector<QString> btn_text) {
   auto box = new QMessageBox(p);
   box->setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);

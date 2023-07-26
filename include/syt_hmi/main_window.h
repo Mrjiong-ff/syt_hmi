@@ -1,10 +1,4 @@
-//
-// Created by jerry on 23-4-26.
-//
-
-#ifndef SYT_HMI_MAIN_WINDOW_H
-#define SYT_HMI_MAIN_WINDOW_H
-
+#pragma once
 #include <QDesktopWidget>
 #include <QGraphicsOpacityEffect>
 #include <QMainWindow>
@@ -19,6 +13,7 @@
 #include "syt_btn/winmenubutton.h"
 #include "syt_btn/winminbutton.h"
 #include "syt_hmi/auto_create_wizard.h"
+#include "syt_hmi/choose_style_dialog.h"
 #include "syt_hmi/cloth_style_dialog.h"
 #include "syt_hmi/create_from_cad_wizard.h"
 #include "syt_hmi/create_from_source_wizard.h"
@@ -29,7 +24,7 @@
 #include "syt_hmi/lock_dialog.h"
 #include "syt_hmi/manual_input_param_wizard.h"
 #include "syt_hmi/ota_update_dialog.h"
-#include "syt_hmi/user_opt_dialog.h"
+#include "syt_hmi/show_color_widget.h"
 #include "ui_main_window.h"
 #include "utils/utils.h"
 #include "utils/waitingspinnerwidget.h"
@@ -119,7 +114,10 @@ private slots:
 
   ////////////////////////// 显示log槽函数 //////////////////////////
   void slotLogShow(QString, QString, QString, QString, QString);
-  void slotImportCfg();
+
+  ////////////////////////// 选择设置样式槽函数 //////////////////////////
+  void slotChooseStyleFile();
+  void slotSetCurrentStyleFile(QString prefix, QString file_name);
 
   ////////////////////////// 创建衣服样式槽函数 //////////////////////////
   void slotCreateFromCAD(ClothStyleDialog *parent);
@@ -131,12 +129,15 @@ private slots:
   void slotDetectClothByAutoCreateStyle(int cloth_type);
   void slotCreateStyleByAutoCreateStyle(syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
   void slotRenameClothStyleByAutoCreateStyle(std::string old_name, std::string new_name);
+  void slotGetClothStyle(QString prefix, QString file_name);
+  void slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
 
 signals:
   void signHeadEyeWindowShow();
   void signClothStyleWindowShow();
   void processSuccessful();
   void signUpdateLabelState(QString);
+  void signGetClothStyle(QString prefix, QString file_name);
 
 private:
   Ui::MainWindow *ui;
@@ -149,6 +150,12 @@ private:
   bool is_mouse_left_press_down_ = false;
   bool is_load_cloth_on_         = true;
   bool is_comp_cloth_on_         = true;
+
+  // 样式文件变量
+  QString style_file_prefix_;
+  QString style_file_name_;
+  syt_msgs::msg::ClothStyle cloth_style_front_;
+  syt_msgs::msg::ClothStyle cloth_style_back_;
 
   // todo 进度条测试
   int value = 0;
@@ -176,10 +183,8 @@ private:
   QAction *helpAct_;
   QAction *aboutAct_;
 
-  WaitingSpinnerWidget *localPodsSpinnerWidget_;
+  WaitingSpinnerWidget *waiting_spinner_widget_;
 
   QPoint m_mousePos_;
   Direction dir_; // 窗口大小改变时，记录改变方向
 };
-
-#endif // SYT_HMI_MAIN_WINDOW_H

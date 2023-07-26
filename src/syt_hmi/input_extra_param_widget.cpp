@@ -14,17 +14,17 @@ InputExtraParamWidget::InputExtraParamWidget(QWidget *parent) : QWidget(parent),
   ui->cloth_size_combo_box->insertItem(-1, "XXL");
   ui->cloth_size_combo_box->insertItem(-1, "XXXL");
   ui->cloth_elesticity_combo_box->insertItem(-1, "低弹性");
-  ui->cloth_elesticity_combo_box->insertItem(-1, "中等弹性");
+  ui->cloth_elesticity_combo_box->insertItem(-1, "中弹性");
   ui->cloth_elesticity_combo_box->insertItem(-1, "高弹性");
   ui->cloth_thickness_combo_box->insertItem(-1, "薄");
-  ui->cloth_thickness_combo_box->insertItem(-1, "中等");
+  ui->cloth_thickness_combo_box->insertItem(-1, "中");
   ui->cloth_thickness_combo_box->insertItem(-1, "厚");
   ui->cloth_glossiness_combo_box->insertItem(-1, "低光泽");
   ui->cloth_glossiness_combo_box->insertItem(-1, "中光泽");
   ui->cloth_glossiness_combo_box->insertItem(-1, "高光泽");
 
   elasticity_map_.insert("低弹性", 10);
-  elasticity_map_.insert("中等弹性", 11);
+  elasticity_map_.insert("中弹性", 11);
   elasticity_map_.insert("高弹性", 12);
 
   type_map_.insert("前片", 0);
@@ -62,10 +62,12 @@ InputExtraParamWidget::InputExtraParamWidget(QWidget *parent) : QWidget(parent),
     qDebug() << (ui->red_spin_box->value() << 4 | ui->green_spin_box->value() << 2 | ui->blue_spin_box->value());
   });
 
-  // 设置克数输入限制数字
-  QRegExp     weight_exp("[0-9\\.]+$");
-  QValidator *weight_validator = new QRegExpValidator(weight_exp);
-  ui->cloth_weight_line_edit->setValidator(weight_validator);
+  ui->cloth_thickness_label->setToolTip(QString("0.35~0.45mm（薄）\n0.45~1mm（中等）\n大于1mm（厚）"));
+  ui->cloth_thickness_combo_box->setToolTip(QString("0.35~0.45mm（薄）\n0.45~1mm（中等）\n大于1mm（厚）"));
+  ui->cloth_weight_label->setToolTip(QString("范围0~200.000克"));
+  ui->cloth_weight_spin_box->setToolTip(QString("范围0~200.000克"));
+
+  connect(ui->cloth_weight_spin_box, SIGNAL(valueChanged(double)), this, SLOT(truncClothWeight(double)));
 }
 
 InputExtraParamWidget::~InputExtraParamWidget() {
@@ -85,10 +87,16 @@ syt_msgs::msg::ClothStyle InputExtraParamWidget::getClothStyle() {
   cloth_style.cloth_color      = (uint32_t)ui->red_spin_box->value() << 16 | (uint32_t)ui->green_spin_box->value() << 8 | (uint32_t)ui->blue_spin_box->value();
   cloth_style.cloth_size       = size_map_.value(ui->cloth_size_combo_box->currentText());
   cloth_style.glossiness_level = glossiness_map_.value(ui->cloth_glossiness_combo_box->currentText());
-  cloth_style.cloth_weight     = ui->cloth_weight_line_edit->text().toFloat();
+  cloth_style.cloth_weight     = ui->cloth_weight_spin_box->value();
   return cloth_style;
 }
 
 void InputExtraParamWidget::updateColorButton() {
   ui->cloth_color_btn->setStyleSheet(QString("background-color: rgb(%1, %2, %3);").arg(ui->red_spin_box->value()).arg(ui->green_spin_box->value()).arg(ui->blue_spin_box->value()));
+}
+
+void InputExtraParamWidget::truncClothWeight(double value) {
+  if (value > 200.000) {
+    ui->cloth_weight_spin_box->setValue(200.000);
+  }
 }
