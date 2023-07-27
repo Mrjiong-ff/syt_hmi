@@ -1014,9 +1014,9 @@ void MainWindow::slotChooseStyleFile() {
   connect(this, SIGNAL(signGetClothStyle(QString, QString)), this, SLOT(slotGetClothStyle(QString, QString)));
   connect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish, Qt::QueuedConnection);
 
-  choose_style_dialog->exec();
   int result = choose_style_dialog->exec();
   if (result == QDialog::Accepted) {
+    qDebug() << "here";
     emit signGetClothStyle(style_file_prefix_, style_file_name_);
   }
 }
@@ -1038,6 +1038,7 @@ void MainWindow::slotGetClothStyle(QString prefix, QString file_name) {
 }
 
 void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
+  qDebug() << "获取样式结果" << result;
   if (result) {
     cloth_style_front_ = cloth_style_front;
     cloth_style_back_  = cloth_style_back;
@@ -1075,6 +1076,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     ui->cloth_style_tree_widget->expandAll(); // 展开
     waiting_spinner_widget_->stop();
   } else {
+    waiting_spinner_widget_->stop();
     QMessageBox::information(this, "警告", "获取样式信息失败", "确认");
   }
 }

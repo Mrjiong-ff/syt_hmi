@@ -2,28 +2,26 @@
 #include <memory>
 
 SytRclComm::SytRclComm() {
-  m_executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
-  m_node     = rclcpp::Node::make_shared("syt_hmi_node");
-  m_executor->add_node(m_node);
+  executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
+  node_     = rclcpp::Node::make_shared("syt_hmi_node");
+  executor_->add_node(node_);
 
   // ota sub
-  download_subscription_ = m_node->create_subscription<std_msgs::msg::Int32>(
-      "/syt/ota/ftp_topic", 10, std::bind(&SytRclComm::download_callback, this, std::placeholders::_1));
+  download_subscription_ = node_->create_subscription<std_msgs::msg::Int32>("/syt/ota/ftp_topic", 10, std::bind(&SytRclComm::download_callback, this, std::placeholders::_1));
 
   // 上料机视觉显示回调
-  load_cloth_visual_subscription_ = m_node->create_subscription<syt_msgs::msg::LoadClothVisual>(
-      "/syt/cloth_edge_pydetect/cloth_edge_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, std::placeholders::_1));
+  load_cloth_visual_subscription_ = node_->create_subscription<syt_msgs::msg::LoadClothVisual>("/syt/cloth_edge_pydetect/cloth_edge_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, std::placeholders::_1));
 
   // todo 合片机视觉显示回调
-  composer_visual_subscription_ = m_node->create_subscription<syt_msgs::msg::LoadClothVisual>("/syt/comp/comp_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, std::placeholders::_1));
+  composer_visual_subscription_ = node_->create_subscription<syt_msgs::msg::LoadClothVisual>("/syt/comp/comp_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, std::placeholders::_1));
 
   // rosout消息回调函数
-  log_subscription = m_node->create_subscription<rcl_interfaces::msg::Log>("/rosout", 10, std::bind(&SytRclComm::logCallback, this, std::placeholders::_1));
+  log_subscription_ = node_->create_subscription<rcl_interfaces::msg::Log>("/rosout", 10, std::bind(&SytRclComm::logCallback, this, std::placeholders::_1));
 
   // 开始停止复位
-  fsm_flow_control_cmd_publisher = m_node->create_publisher<syt_msgs::msg::FSMFlowControlCommand>("/syt/robot_control/flow_control_cmd", 10);
+  fsm_flow_control_cmd_publisher_ = node_->create_publisher<syt_msgs::msg::FSMFlowControlCommand>("/syt/robot_control/flow_control_cmd", 10);
   // 模式选择
-  fsm_run_mode_publisher = m_node->create_publisher<syt_msgs::msg::FSMRunMode>("/syt/robot_control/running_mode", 10);
+  fsm_run_mode_publisher_ = node_->create_publisher<syt_msgs::msg::FSMRunMode>("/syt/robot_control/running_mode", 10);
 
   this->start();
   qDebug("init syt hmi node successful!");
@@ -44,10 +42,12 @@ SytRclComm::~SytRclComm() {
 }
 
 void SytRclComm::run() {
+  // executor_->spin();
+
   rclcpp::WallRate rate(50);
 
   while (rclcpp::ok()) {
-    m_executor->spin_some();
+    executor_->spin_some();
     rate.sleep();
   }
   rclcpp::shutdown();
@@ -82,8 +82,7 @@ bool SytRclComm::initAllNodes() {
 void SytRclComm::otaUpdate() {
   total_size = 0;
 
-  rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
-      "/syt/ota/update");
+  rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = node_->create_client<std_srvs::srv::SetBool>("/syt/ota/update");
 
   while (!client->wait_for_service(1s)) {
     if (!rclcpp::ok()) {
@@ -110,7 +109,7 @@ void SytRclComm::otaUpdate() {
 
 void SytRclComm::otaDownload() {
   emit processZero();
-  rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
+  rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = node_->create_client<std_srvs::srv::SetBool>(
       "/syt/ota/download");
   auto request  = std::make_shared<std_srvs::srv::SetBool::Request>();
   request->data = true;
@@ -161,7 +160,7 @@ void SytRclComm::killProcesses(std::string process_pattern) {
 }
 
 void SytRclComm::otaInstall() {
-  rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = m_node->create_client<std_srvs::srv::SetBool>(
+  rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = node_->create_client<std_srvs::srv::SetBool>(
       "/syt/ota/install");
   // todo 杀死 除了 hmi 和 ota之外的全部进程
   //    killProcesses()
@@ -176,7 +175,7 @@ void SytRclComm::otaInstall() {
 
 void SytRclComm::compCalib() {
   qDebug("call 合片台标定");
-  rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = m_node->create_client<syt_msgs::srv::RunCalibration>(
+  rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = node_->create_client<syt_msgs::srv::RunCalibration>(
       "/syt/calibration_system/calibration_service");
 
   while (!client->wait_for_service(1s)) {
@@ -199,7 +198,7 @@ void SytRclComm::compCalib() {
 void SytRclComm::sewingCalib() {
   qDebug("call 缝纫台标定");
 
-  rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = m_node->create_client<syt_msgs::srv::RunCalibration>(
+  rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = node_->create_client<syt_msgs::srv::RunCalibration>(
       "/syt/calibration_system/calibration_service");
 
   while (!client->wait_for_service(1s)) {
@@ -251,25 +250,25 @@ void SytRclComm::startCmd() {
   auto message             = syt_msgs::msg::FSMFlowControlCommand();
   message.command          = message.RUN;
   message.state.state_code = 0;
-  fsm_flow_control_cmd_publisher->publish(message);
+  fsm_flow_control_cmd_publisher_->publish(message);
 }
 
 void SytRclComm::resetCmd() {
   auto message             = syt_msgs::msg::FSMFlowControlCommand();
   message.command          = message.RESET;
   message.state.state_code = 0;
-  fsm_flow_control_cmd_publisher->publish(message);
+  fsm_flow_control_cmd_publisher_->publish(message);
 }
 
 void SytRclComm::stopCmd() {
   auto message             = syt_msgs::msg::FSMFlowControlCommand();
   message.command          = message.STOP;
   message.state.state_code = 0;
-  fsm_flow_control_cmd_publisher->publish(message);
+  fsm_flow_control_cmd_publisher_->publish(message);
 }
 
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
-  rclcpp::Client<syt_msgs::srv::ComposeMachineMoveHand>::SharedPtr client = m_node->create_client<syt_msgs::srv::ComposeMachineMoveHand>("/syt/robot_control/compose_machine/move_hand");
+  rclcpp::Client<syt_msgs::srv::ComposeMachineMoveHand>::SharedPtr client = node_->create_client<syt_msgs::srv::ComposeMachineMoveHand>("/syt/robot_control/compose_machine/move_hand");
 
   // TODO: 删除本段
   emit signComposeMachineMoveHandFinish(true);
@@ -279,16 +278,16 @@ void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   int try_count = 0;
   while (!client->wait_for_service(1s)) {
     if (try_count++ >= 5) {
-      RCLCPP_INFO(m_node->get_logger(), "无法连接至移动合片抓手服务超过限制次数，停止连接...");
+      RCLCPP_INFO(node_->get_logger(), "无法连接至移动合片抓手服务超过限制次数，停止连接...");
       emit signComposeMachineMoveHandFinish(false);
       return;
     }
     if (!rclcpp::ok()) {
-      RCLCPP_ERROR(m_node->get_logger(), "连接至合片抓手服务被打断.");
+      RCLCPP_ERROR(node_->get_logger(), "连接至合片抓手服务被打断.");
       emit signComposeMachineMoveHandFinish(false);
       return;
     }
-    RCLCPP_INFO(m_node->get_logger(), "无法连接至移动合片抓手服务，重试...");
+    RCLCPP_INFO(node_->get_logger(), "无法连接至移动合片抓手服务，重试...");
   }
 
   auto request      = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
@@ -298,7 +297,7 @@ void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   request->target.c = c;
   auto result       = client->async_send_request(request);
   if (result.wait_for(10s) != std::future_status::ready) {
-    RCLCPP_INFO(m_node->get_logger(), "移动合片抓手调用超时!!!");
+    RCLCPP_INFO(node_->get_logger(), "移动合片抓手调用超时!!!");
     emit signComposeMachineMoveHandFinish(false);
     return;
   }
@@ -309,7 +308,7 @@ void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
 }
 
 void SytRclComm::composeMachineDetectCloth(uint8_t frame_id, int cloth_type) {
-  rclcpp::Client<syt_msgs::srv::GetClothInfo>::SharedPtr client = m_node->create_client<syt_msgs::srv::GetClothInfo>("/syt/clothes_detector/get_cloth_info");
+  rclcpp::Client<syt_msgs::srv::GetClothInfo>::SharedPtr client = node_->create_client<syt_msgs::srv::GetClothInfo>("/syt/clothes_detector/get_cloth_info");
 
   // TODO: 删除本段
   emit signComposeMachineDetectClothFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
@@ -319,16 +318,16 @@ void SytRclComm::composeMachineDetectCloth(uint8_t frame_id, int cloth_type) {
   int try_count = 0;
   while (!client->wait_for_service(1s)) {
     if (try_count++ >= 5) {
-      RCLCPP_INFO(m_node->get_logger(), "无法连接至裁片检测服务超过限制次数，停止连接...");
+      RCLCPP_INFO(node_->get_logger(), "无法连接至裁片检测服务超过限制次数，停止连接...");
       emit signComposeMachineDetectClothFinish(false, cloth_type, syt_msgs::msg::ClothInfo());
       return;
     }
     if (!rclcpp::ok()) {
-      RCLCPP_ERROR(m_node->get_logger(), "连接至裁片检测服务被打断.");
+      RCLCPP_ERROR(node_->get_logger(), "连接至裁片检测服务被打断.");
       emit signComposeMachineDetectClothFinish(false, cloth_type, syt_msgs::msg::ClothInfo());
       return;
     }
-    RCLCPP_INFO(m_node->get_logger(), "无法连接至裁片检测服务，重试...");
+    RCLCPP_INFO(node_->get_logger(), "无法连接至裁片检测服务，重试...");
   }
 
   auto request      = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
@@ -336,7 +335,7 @@ void SytRclComm::composeMachineDetectCloth(uint8_t frame_id, int cloth_type) {
 
   auto result = client->async_send_request(request);
   if (result.wait_for(10s) != std::future_status::ready) {
-    RCLCPP_INFO(m_node->get_logger(), "检测合片服务调用超时!!!");
+    RCLCPP_INFO(node_->get_logger(), "检测合片服务调用超时!!!");
     emit signComposeMachineDetectClothFinish(false, cloth_type, syt_msgs::msg::ClothInfo());
     return;
   }
@@ -348,26 +347,26 @@ void SytRclComm::composeMachineDetectCloth(uint8_t frame_id, int cloth_type) {
 
 // 创建样式文件
 void SytRclComm::createStyle(syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
-  rclcpp::Client<syt_msgs::srv::CreateStyle>::SharedPtr client = m_node->create_client<syt_msgs::srv::CreateStyle>("/syt/style_base/create_style");
+  rclcpp::Client<syt_msgs::srv::CreateStyle>::SharedPtr client = node_->create_client<syt_msgs::srv::CreateStyle>("/syt/style_base/create_style");
 
-  // TODO: 删除本段
-  emit signCreateStyleFinish(true, "yahaha");
-  std::cout << "创建样式文件结束, 执行结果: " << (true ? "成功" : "失败") << std::endl;
-  return;
+  //// TODO: 删除本段
+  // emit signCreateStyleFinish(true, "yahaha");
+  // std::cout << "创建样式文件结束, 执行结果: " << (true ? "成功" : "失败") << std::endl;
+  // return;
 
   int try_count = 0;
   while (!client->wait_for_service(1s)) {
     if (try_count++ >= 5) {
-      RCLCPP_INFO(m_node->get_logger(), "无法连接至创建样式服务超过限制次数，停止连接...");
+      RCLCPP_INFO(node_->get_logger(), "无法连接至创建样式服务超过限制次数，停止连接...");
       emit signCreateStyleFinish(false, "");
       return;
     }
     if (!rclcpp::ok()) {
-      RCLCPP_ERROR(m_node->get_logger(), "连接至创建样式服务被打断.");
+      RCLCPP_ERROR(node_->get_logger(), "连接至创建样式服务被打断.");
       emit signCreateStyleFinish(false, "");
       return;
     }
-    RCLCPP_INFO(m_node->get_logger(), "无法连接至创建样式服务，重试...");
+    RCLCPP_INFO(node_->get_logger(), "无法连接至创建样式服务，重试...");
   }
 
   auto request               = std::make_shared<syt_msgs::srv::CreateStyle::Request>();
@@ -379,7 +378,7 @@ void SytRclComm::createStyle(syt_msgs::msg::ClothStyle cloth_style_front, syt_ms
 
   auto result = client->async_send_request(request);
   if (result.wait_for(10s) != std::future_status::ready) {
-    RCLCPP_INFO(m_node->get_logger(), "创建样式服务调用超时!!!");
+    RCLCPP_INFO(node_->get_logger(), "创建样式服务调用超时!!!");
     emit signCreateStyleFinish(false, "");
     return;
   }
@@ -391,26 +390,26 @@ void SytRclComm::createStyle(syt_msgs::msg::ClothStyle cloth_style_front, syt_ms
 
 // 重命名样式文件
 void SytRclComm::renameClothStyle(std::string old_name, std::string new_name) {
-  rclcpp::Client<syt_msgs::srv::RenameClothStyle>::SharedPtr client = m_node->create_client<syt_msgs::srv::RenameClothStyle>("/syt/style_base/rename_cloth_style");
+  rclcpp::Client<syt_msgs::srv::RenameClothStyle>::SharedPtr client = node_->create_client<syt_msgs::srv::RenameClothStyle>("/syt/style_base/rename_cloth_style");
 
-  // TODO: 删除本段
-  emit signRenameClothStyleFinish(true);
-  std::cout << "重命名样式文件结束, 执行结果: " << (true ? "成功" : "失败") << std::endl;
-  return;
+  //// TODO: 删除本段
+  // emit signRenameClothStyleFinish(true);
+  // std::cout << "重命名样式文件结束, 执行结果: " << (true ? "成功" : "失败") << std::endl;
+  // return;
 
   int try_count = 0;
   while (!client->wait_for_service(1s)) {
     if (try_count++ >= 5) {
-      RCLCPP_INFO(m_node->get_logger(), "无法连接至创建样式服务超过限制次数，停止连接...");
+      RCLCPP_INFO(node_->get_logger(), "无法连接至创建样式服务超过限制次数，停止连接...");
       emit signRenameClothStyleFinish(false);
       return;
     }
     if (!rclcpp::ok()) {
-      RCLCPP_ERROR(m_node->get_logger(), "连接至创建样式服务被打断.");
+      RCLCPP_ERROR(node_->get_logger(), "连接至创建样式服务被打断.");
       emit signRenameClothStyleFinish(false);
       return;
     }
-    RCLCPP_INFO(m_node->get_logger(), "无法连接至创建样式服务，重试...");
+    RCLCPP_INFO(node_->get_logger(), "无法连接至创建样式服务，重试...");
   }
 
   auto request           = std::make_shared<syt_msgs::srv::RenameClothStyle::Request>();
@@ -419,7 +418,7 @@ void SytRclComm::renameClothStyle(std::string old_name, std::string new_name) {
 
   auto result = client->async_send_request(request);
   if (result.wait_for(10s) != std::future_status::ready) {
-    RCLCPP_INFO(m_node->get_logger(), "重命名服务调用超时!!!");
+    RCLCPP_INFO(node_->get_logger(), "重命名服务调用超时!!!");
     emit signRenameClothStyleFinish(false);
     return;
   }
@@ -430,7 +429,7 @@ void SytRclComm::renameClothStyle(std::string old_name, std::string new_name) {
 }
 
 void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
-  rclcpp::Client<syt_msgs::srv::SetCurrentClothStyle>::SharedPtr client = m_node->create_client<syt_msgs::srv::SetCurrentClothStyle>("/syt/style_base/set_current_cloth_style");
+  rclcpp::Client<syt_msgs::srv::SetCurrentClothStyle>::SharedPtr client = node_->create_client<syt_msgs::srv::SetCurrentClothStyle>("/syt/style_base/set_current_cloth_style");
 
   //// TODO: 删除本段
   // emit signSetCurrentClothStyleFinish(true);
@@ -440,16 +439,16 @@ void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
   int try_count = 0;
   while (!client->wait_for_service(1s)) {
     if (try_count++ >= 5) {
-      RCLCPP_INFO(m_node->get_logger(), "无法连接至设置当前样式服务超过限制次数，停止连接...");
+      RCLCPP_INFO(node_->get_logger(), "无法连接至设置当前样式服务超过限制次数，停止连接...");
       emit signSetCurrentClothStyleFinish(false);
       return;
     }
     if (!rclcpp::ok()) {
-      RCLCPP_ERROR(m_node->get_logger(), "连接至设置当前样式服务被打断.");
+      RCLCPP_ERROR(node_->get_logger(), "连接至设置当前样式服务被打断.");
       emit signSetCurrentClothStyleFinish(false);
       return;
     }
-    RCLCPP_INFO(m_node->get_logger(), "无法连接至设置当前样式服务，重试...");
+    RCLCPP_INFO(node_->get_logger(), "无法连接至设置当前样式服务，重试...");
   }
 
   auto request       = std::make_shared<syt_msgs::srv::SetCurrentClothStyle::Request>();
@@ -458,7 +457,7 @@ void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
 
   auto result = client->async_send_request(request);
   if (result.wait_for(10s) != std::future_status::ready) {
-    RCLCPP_INFO(m_node->get_logger(), "设置当前样式服务调用超时!!!");
+    RCLCPP_INFO(node_->get_logger(), "设置当前样式服务调用超时!!!");
     emit signSetCurrentClothStyleFinish(false);
     return;
   }
@@ -466,10 +465,11 @@ void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
   bool success = result.get()->success;
   emit signSetCurrentClothStyleFinish(success);
   std::cout << "设置当前样式结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
+  qDebug() << success;
 }
 
 void SytRclComm::getClothStyle(QString prefix, QString file_name) {
-  rclcpp::Client<syt_msgs::srv::GetClothStyle>::SharedPtr client = m_node->create_client<syt_msgs::srv::GetClothStyle>("/syt/style_base/get_cloth_style");
+  rclcpp::Client<syt_msgs::srv::GetClothStyle>::SharedPtr client = node_->create_client<syt_msgs::srv::GetClothStyle>("/syt/style_base/get_cloth_style");
 
   //// TODO: 删除本段
   // emit signGetClothStyleFinish(true, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
@@ -479,16 +479,16 @@ void SytRclComm::getClothStyle(QString prefix, QString file_name) {
   int try_count = 0;
   while (!client->wait_for_service(1s)) {
     if (try_count++ >= 5) {
-      RCLCPP_INFO(m_node->get_logger(), "无法连接至获取样式服务超过限制次数，停止连接...");
+      RCLCPP_INFO(node_->get_logger(), "无法连接至获取样式服务超过限制次数，停止连接...");
       emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
       return;
     }
     if (!rclcpp::ok()) {
-      RCLCPP_ERROR(m_node->get_logger(), "连接至获取样式服务被打断.");
+      RCLCPP_ERROR(node_->get_logger(), "连接至获取样式服务被打断.");
       emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
       return;
     }
-    RCLCPP_INFO(m_node->get_logger(), "无法连接至获取样式服务，重试...");
+    RCLCPP_INFO(node_->get_logger(), "无法连接至获取样式服务，重试...");
   }
 
   auto request       = std::make_shared<syt_msgs::srv::GetClothStyle::Request>();
@@ -497,7 +497,7 @@ void SytRclComm::getClothStyle(QString prefix, QString file_name) {
 
   auto result = client->async_send_request(request);
   if (result.wait_for(10s) != std::future_status::ready) {
-    RCLCPP_INFO(m_node->get_logger(), "获取样式服务调用超时!!!");
+    RCLCPP_INFO(node_->get_logger(), "获取样式服务调用超时!!!");
     emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
     return;
   }

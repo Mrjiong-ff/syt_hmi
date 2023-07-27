@@ -29,6 +29,34 @@ using namespace std::chrono_literals;
 
 class SytRclComm : public QThread {
   Q_OBJECT
+private:
+  // total
+  int total_size = 0;
+
+  std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor_;
+  std::shared_ptr<rclcpp::Node> node_;
+
+  rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
+  rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr load_cloth_visual_subscription_;
+
+  // todo
+  rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr composer_visual_subscription_;
+  rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr log_subscription_;
+
+  rclcpp::Publisher<syt_msgs::msg::FSMFlowControlCommand>::SharedPtr fsm_flow_control_cmd_publisher_;
+  rclcpp::Publisher<syt_msgs::msg::FSMRunMode>::SharedPtr fsm_run_mode_publisher_;
+
+  QProcess *process_ = nullptr;
+
+  void download_callback(const std_msgs::msg::Int32::SharedPtr msg);
+  void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
+  // void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
+  void killProcesses(std::string);
+  void logCallback(const rcl_interfaces::msg::Log::SharedPtr msg);
+
+protected:
+  void run() override;
+
 public:
   SytRclComm();
   ~SytRclComm() override;
@@ -48,16 +76,6 @@ public:
   void renameClothStyle(std::string old_name, std::string new_name);
   void setCurrentStyle(QString prefix, QString file_name);
   void getClothStyle(QString prefix, QString file_name);
-
-private:
-  void download_callback(const std_msgs::msg::Int32::SharedPtr msg);
-  void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
-  // void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
-  void killProcesses(std::string);
-  void logCallback(const rcl_interfaces::msg::Log::SharedPtr msg);
-
-protected:
-  void run() override;
 
 signals:
   void errorNodeMsgSign(QString msg);
@@ -80,23 +98,4 @@ signals:
   void signRenameClothStyleFinish(bool result);
   void signSetCurrentClothStyleFinish(bool result);
   void signGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
-
-private:
-  // total
-  int total_size = 0;
-
-  std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> m_executor;
-  std::shared_ptr<rclcpp::Node> m_node;
-
-  rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
-  rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr load_cloth_visual_subscription_;
-
-  // todo
-  rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr composer_visual_subscription_;
-  rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr log_subscription;
-
-  rclcpp::Publisher<syt_msgs::msg::FSMFlowControlCommand>::SharedPtr fsm_flow_control_cmd_publisher;
-  rclcpp::Publisher<syt_msgs::msg::FSMRunMode>::SharedPtr fsm_run_mode_publisher;
-
-  QProcess *process_ = nullptr;
 };
