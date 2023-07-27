@@ -74,8 +74,8 @@ public:
   void composeMachineDetectCloth(uint8_t frame_id, int cloth_type);
   void createStyle(syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
   void renameClothStyle(std::string old_name, std::string new_name);
-  void setCurrentStyle(QString prefix, QString file_name);
-  void getClothStyle(QString prefix, QString file_name);
+  bool setCurrentStyle(QString prefix, QString file_name);
+  bool getClothStyle(const QString &prefix, const QString &file_name, syt_msgs::msg::ClothStyle &cloth_style_front, syt_msgs::msg::ClothStyle &cloth_style_back);
 
 signals:
   void errorNodeMsgSign(QString msg);

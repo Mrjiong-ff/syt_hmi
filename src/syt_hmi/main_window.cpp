@@ -568,9 +568,17 @@ void MainWindow::settingConnection() {
   });
 
   // 选择样式信号槽
-  connect(ui->choose_style_btn, &QPushButton::clicked, this, &MainWindow::slotChooseStyleFile);
+  connect(
+      ui->choose_style_btn, &QPushButton::clicked, this, [=] {
+        auto choose_style_dialog = new ChooseStyleDialog(this);
+        connect(choose_style_dialog, &ChooseStyleDialog::signChoseStyle, this, &MainWindow::slotChoseStyleFile);
 
-  // cloth style 信号槽
+        choose_style_dialog->show();
+        choose_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
+      },
+      Qt::ConnectionType::UniqueConnection);
+
+  // 创建样式信号槽
   connect(this, &MainWindow::signClothStyleWindowShow, [=] {
     auto cloth_style_dialog = new ClothStyleDialog(this);
 
@@ -725,31 +733,6 @@ void MainWindow::startBtnClicked() {
   if (!res) {
     return;
   }
-  qDebug("点击开始按钮");
-  // todo 一般来说，点击开始应该要选择裁片类型，要测试暂时注释掉了
-  //    int v = ui->processWidget->getValue();
-  //    if (v != 0 && v != 100) {
-  //        this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn});
-  //        test_timer->start();
-  //        emit signUpdateLabelState("运行中");
-  //        return;
-  //    }
-  //
-  //    auto choose_style_dialog = new UserOptDialog(this);
-  //    // todo
-  //    connect(choose_style_dialog, &UserOptDialog::systemStart,
-  //            [=] { setMutuallyLight(GREEN); });
-  //    choose_style_dialog->show();
-  //    auto i = choose_style_dialog->exec();
-  //    delete choose_style_dialog;
-  //    // todo
-  //    if (i == QDialog::Accepted) {
-  //        this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn});
-  //        ui->msg_widget->setToolTip("系统开始");
-  //    }
-
-  // todo 测试进度条
-  //    test_timer->setInterval(500);
 
   this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn});
 
@@ -1005,80 +988,55 @@ void MainWindow::slotLogShow(QString time, QString level, QString location, QStr
 }
 
 ////////////////////////// 选择设置样式槽函数 //////////////////////////
-void MainWindow::slotChooseStyleFile() {
-  auto choose_style_dialog = new ChooseStyleDialog(this);
-  connect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyle, this, &MainWindow::slotSetCurrentStyleFile);
-  connect(rclcomm_, &SytRclComm::signSetCurrentClothStyleFinish, choose_style_dialog, &ChooseStyleDialog::slotSetCurrentStyleFinish, Qt::QueuedConnection);
-
-  qRegisterMetaType<syt_msgs::msg::ClothStyle>("syt_msgs::msg::ClothStyle");
-  connect(this, SIGNAL(signGetClothStyle(QString, QString)), this, SLOT(slotGetClothStyle(QString, QString)));
-  connect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish, Qt::QueuedConnection);
-
-  int result = choose_style_dialog->exec();
-  if (result == QDialog::Accepted) {
-    qDebug() << "here";
-    emit signGetClothStyle(style_file_prefix_, style_file_name_);
-  }
-}
-
-void MainWindow::slotSetCurrentStyleFile(QString prefix, QString file_name) {
+void MainWindow::slotChoseStyleFile(QString prefix, QString file_name) {
   style_file_prefix_ = prefix;
   style_file_name_   = file_name;
   ui->choose_style_line_edit->setText(prefix + QDir::separator() + file_name);
-  future_ = QtConcurrent::run([=] {
-    rclcomm_->setCurrentStyle(prefix, file_name);
-  });
-}
 
-void MainWindow::slotGetClothStyle(QString prefix, QString file_name) {
+  // 开始设置并获取当前样式
   waiting_spinner_widget_->start();
-  future_ = QtConcurrent::run([=] {
-    rclcomm_->getClothStyle(prefix, file_name);
-  });
-}
-
-void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
-  qDebug() << "获取样式结果" << result;
-  if (result) {
-    cloth_style_front_ = cloth_style_front;
-    cloth_style_back_  = cloth_style_back;
-
-    ui->cloth_style_tree_widget->clear();
-
-    // 设置信息到treewidget中
-    QTreeWidgetItem *front_item = new QTreeWidgetItem(QStringList() << "前片");
-    QTreeWidgetItem *back_item  = new QTreeWidgetItem(QStringList() << "后片");
-
-    ui->cloth_style_tree_widget->addTopLevelItem(front_item);
-    ui->cloth_style_tree_widget->addTopLevelItem(back_item);
-
-    auto fillTreeWidget = [&](QTreeWidgetItem *top_item, syt_msgs::msg::ClothStyle cloth_style) {
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "衣长" << QString::number(cloth_style.cloth_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "下摆长" << QString::number(cloth_style.bottom_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "腋下间距" << QString::number(cloth_style.oxter_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "肩缝长" << QString::number(cloth_style.shoulder_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "侧缝长" << QString::number(cloth_style.side_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "有无印花" << (cloth_style.have_printings ? QString("有") : QString("无"))));
-
-      // 设置颜色预览
-      QTreeWidgetItem *color_item = new QTreeWidgetItem(QStringList() << "颜色");
-      top_item->addChild(color_item);
-      ui->cloth_style_tree_widget->setItemWidget(color_item, 1, new ShowColorWidget(QString::number(cloth_style.cloth_color, 16)));
-
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "裁片克数" << QString::number(cloth_style.cloth_weight)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "弹性" << id_style_map.value(cloth_style.elasticity_level)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "厚度" << id_style_map.value(cloth_style.thickness_level)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "尺码" << id_style_map.value(cloth_style.cloth_size)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "光泽度" << id_style_map.value(cloth_style.glossiness_level)));
-    };
-    fillTreeWidget(front_item, cloth_style_front_);
-    fillTreeWidget(back_item, cloth_style_back_);
-    ui->cloth_style_tree_widget->expandAll(); // 展开
-    waiting_spinner_widget_->stop();
-  } else {
-    waiting_spinner_widget_->stop();
-    QMessageBox::information(this, "警告", "获取样式信息失败", "确认");
+  bool success = rclcomm_->setCurrentStyle(prefix, file_name);
+  if (!success) {
+    showMessageBox(this, WARN, "设置当前样式错误", 1, {"确认"});
   }
+
+  success = rclcomm_->getClothStyle(prefix, file_name, cloth_style_front_, cloth_style_back_);
+  if (!success) {
+    showMessageBox(this, WARN, "获取当前样式错误", 1, {"确认"});
+  }
+
+  ui->cloth_style_tree_widget->clear();
+
+  // 设置信息到treewidget中
+  QTreeWidgetItem *front_item = new QTreeWidgetItem(QStringList() << "前片");
+  QTreeWidgetItem *back_item  = new QTreeWidgetItem(QStringList() << "后片");
+
+  ui->cloth_style_tree_widget->addTopLevelItem(front_item);
+  ui->cloth_style_tree_widget->addTopLevelItem(back_item);
+
+  auto fillTreeWidget = [&](QTreeWidgetItem *top_item, syt_msgs::msg::ClothStyle cloth_style) {
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "衣长" << QString::number(cloth_style.cloth_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "下摆长" << QString::number(cloth_style.bottom_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "腋下间距" << QString::number(cloth_style.oxter_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "肩缝长" << QString::number(cloth_style.shoulder_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "侧缝长" << QString::number(cloth_style.side_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "有无印花" << (cloth_style.have_printings ? QString("有") : QString("无"))));
+
+    // 设置颜色预览
+    QTreeWidgetItem *color_item = new QTreeWidgetItem(QStringList() << "颜色");
+    top_item->addChild(color_item);
+    ui->cloth_style_tree_widget->setItemWidget(color_item, 1, new ShowColorWidget(QString::number(cloth_style.cloth_color, 16)));
+
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "裁片克数" << QString::number(cloth_style.cloth_weight)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "弹性" << id_style_map.value(cloth_style.elasticity_level)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "厚度" << id_style_map.value(cloth_style.thickness_level)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "尺码" << id_style_map.value(cloth_style.cloth_size)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "光泽度" << id_style_map.value(cloth_style.glossiness_level)));
+  };
+  fillTreeWidget(front_item, cloth_style_front_);
+  fillTreeWidget(back_item, cloth_style_back_);
+  ui->cloth_style_tree_widget->expandAll(); // 展开
+  waiting_spinner_widget_->stop();
 }
 
 ////////////////////////// 创建衣服样式槽函数 //////////////////////////
@@ -1091,19 +1049,18 @@ void MainWindow::slotCreateFromCAD(ClothStyleDialog *parent) {
 
 // 自动创建
 void MainWindow::slotAutoCreateStyle(ClothStyleDialog *parent) {
-  // qRegisterMetaType<std::vector<cv::Point2i>>("std::vector<cv::Point2i>");
   AutoCreateStyleWizard *auto_create_style_wizard = new AutoCreateStyleWizard(parent);
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this, &MainWindow::slotMoveHandByAutoCreateStyle, Qt::QueuedConnection);
-  connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult, Qt::QueuedConnection);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this, &MainWindow::slotMoveHandByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signDetectCloth, this, &MainWindow::slotDetectClothByAutoCreateStyle, Qt::QueuedConnection);
-  connect(rclcomm_, &SytRclComm::signComposeMachineDetectClothFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotDetectClothResult, Qt::QueuedConnection);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signDetectCloth, this, &MainWindow::slotDetectClothByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signComposeMachineDetectClothFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotDetectClothResult);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signCreateStyle, this, &MainWindow::slotCreateStyleByAutoCreateStyle, Qt::QueuedConnection);
-  connect(rclcomm_, &SytRclComm::signCreateStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotCreateStyleResult, Qt::QueuedConnection);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signCreateStyle, this, &MainWindow::slotCreateStyleByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signCreateStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotCreateStyleResult);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signRenameClothStyle, this, &MainWindow::slotRenameClothStyleByAutoCreateStyle, Qt::QueuedConnection);
-  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotRenameClothStyleResult, Qt::QueuedConnection);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signRenameClothStyle, this, &MainWindow::slotRenameClothStyleByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotRenameClothStyleResult);
 
   auto_create_style_wizard->show();
   auto_create_style_wizard->setAttribute(Qt::WA_DeleteOnClose);

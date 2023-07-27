@@ -175,13 +175,11 @@ void SytRclComm::otaInstall() {
 
 void SytRclComm::compCalib() {
   qDebug("call 合片台标定");
-  rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = node_->create_client<syt_msgs::srv::RunCalibration>(
-      "/syt/calibration_system/calibration_service");
+  rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = node_->create_client<syt_msgs::srv::RunCalibration>("/syt/calibration_system/calibration_service");
 
   while (!client->wait_for_service(1s)) {
     if (!rclcpp::ok()) {
-      RCLCPP_ERROR(rclcpp::get_logger("SytHmi"),
-                   "Interrupted while waiting for the /syt/calibration_system/calibration_service service. Exiting.");
+      RCLCPP_ERROR(rclcpp::get_logger("SytHmi"), "Interrupted while waiting for the /syt/calibration_system/calibration_service service. Exiting.");
     }
     RCLCPP_INFO(rclcpp::get_logger("SytHmi"), "/syt/calibration_system/calibration_service not available, waiting again...");
   }
@@ -198,8 +196,7 @@ void SytRclComm::compCalib() {
 void SytRclComm::sewingCalib() {
   qDebug("call 缝纫台标定");
 
-  rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = node_->create_client<syt_msgs::srv::RunCalibration>(
-      "/syt/calibration_system/calibration_service");
+  rclcpp::Client<syt_msgs::srv::RunCalibration>::SharedPtr client = node_->create_client<syt_msgs::srv::RunCalibration>("/syt/calibration_system/calibration_service");
 
   while (!client->wait_for_service(1s)) {
     if (!rclcpp::ok()) {
@@ -305,6 +302,7 @@ void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   bool success = result.get()->success;
   emit signComposeMachineMoveHandFinish(success);
   std::cout << "合片抓手移动结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
+  return;
 }
 
 void SytRclComm::composeMachineDetectCloth(uint8_t frame_id, int cloth_type) {
@@ -343,6 +341,7 @@ void SytRclComm::composeMachineDetectCloth(uint8_t frame_id, int cloth_type) {
   bool success = result.get()->success;
   emit signComposeMachineDetectClothFinish(success, cloth_type, result.get()->info);
   std::cout << "检测合片机裁片结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
+  return;
 }
 
 // 创建样式文件
@@ -386,6 +385,7 @@ void SytRclComm::createStyle(syt_msgs::msg::ClothStyle cloth_style_front, syt_ms
   bool success = result.get()->success;
   emit signCreateStyleFinish(success, result.get()->file_name);
   std::cout << "创建样式文件结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
+  return;
 }
 
 // 重命名样式文件
@@ -426,9 +426,10 @@ void SytRclComm::renameClothStyle(std::string old_name, std::string new_name) {
   bool success = result.get()->success;
   emit signRenameClothStyleFinish(success);
   std::cout << "重命名样式文件结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
+  return;
 }
 
-void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
+bool SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
   rclcpp::Client<syt_msgs::srv::SetCurrentClothStyle>::SharedPtr client = node_->create_client<syt_msgs::srv::SetCurrentClothStyle>("/syt/style_base/set_current_cloth_style");
 
   //// TODO: 删除本段
@@ -441,12 +442,12 @@ void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
     if (try_count++ >= 5) {
       RCLCPP_INFO(node_->get_logger(), "无法连接至设置当前样式服务超过限制次数，停止连接...");
       emit signSetCurrentClothStyleFinish(false);
-      return;
+      return false;
     }
     if (!rclcpp::ok()) {
       RCLCPP_ERROR(node_->get_logger(), "连接至设置当前样式服务被打断.");
       emit signSetCurrentClothStyleFinish(false);
-      return;
+      return false;
     }
     RCLCPP_INFO(node_->get_logger(), "无法连接至设置当前样式服务，重试...");
   }
@@ -459,34 +460,26 @@ void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
   if (result.wait_for(10s) != std::future_status::ready) {
     RCLCPP_INFO(node_->get_logger(), "设置当前样式服务调用超时!!!");
     emit signSetCurrentClothStyleFinish(false);
-    return;
+    return false;
   }
 
   bool success = result.get()->success;
   emit signSetCurrentClothStyleFinish(success);
   std::cout << "设置当前样式结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
-  qDebug() << success;
+  return success;
 }
 
-void SytRclComm::getClothStyle(QString prefix, QString file_name) {
+bool SytRclComm::getClothStyle(const QString &prefix, const QString &file_name, syt_msgs::msg::ClothStyle &cloth_style_front, syt_msgs::msg::ClothStyle &cloth_style_back) {
   rclcpp::Client<syt_msgs::srv::GetClothStyle>::SharedPtr client = node_->create_client<syt_msgs::srv::GetClothStyle>("/syt/style_base/get_cloth_style");
-
-  //// TODO: 删除本段
-  // emit signGetClothStyleFinish(true, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
-  // std::cout << "获取样式结束, 执行结果: " << (true ? "成功" : "失败") << std::endl;
-  // return;
-
   int try_count = 0;
   while (!client->wait_for_service(1s)) {
     if (try_count++ >= 5) {
       RCLCPP_INFO(node_->get_logger(), "无法连接至获取样式服务超过限制次数，停止连接...");
-      emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
-      return;
+      return false;
     }
     if (!rclcpp::ok()) {
       RCLCPP_ERROR(node_->get_logger(), "连接至获取样式服务被打断.");
-      emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
-      return;
+      return false;
     }
     RCLCPP_INFO(node_->get_logger(), "无法连接至获取样式服务，重试...");
   }
@@ -498,11 +491,12 @@ void SytRclComm::getClothStyle(QString prefix, QString file_name) {
   auto result = client->async_send_request(request);
   if (result.wait_for(10s) != std::future_status::ready) {
     RCLCPP_INFO(node_->get_logger(), "获取样式服务调用超时!!!");
-    emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
-    return;
+    return false;
   }
 
   bool success = result.get()->success;
-  emit signGetClothStyleFinish(true, result.get()->cloth_style_front, result.get()->cloth_style_back);
+  cloth_style_front = result.get()->cloth_style_front;
+  cloth_style_back = result.get()->cloth_style_back;
   std::cout << "获取样式结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
+  return success;
 }

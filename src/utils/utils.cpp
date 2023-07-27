@@ -40,7 +40,6 @@ int showMessageBox(QWidget *p, STATE state, QString text, int btn_num, QVector<Q
   }
   qimage = qimage.scaled(50, 50, Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
   box->setIconPixmap(QPixmap::fromImage(qimage));
-  //    box->addButton()
   for (int i = 0; i < btn_num; ++i) {
     box->addButton(btn_text[i], QMessageBox::ActionRole);
   }
