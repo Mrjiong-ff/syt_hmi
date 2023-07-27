@@ -5,21 +5,21 @@
 
 #include <QObject>
 
-class WinCloseButton : public InteractiveButtonBase
-{
+class WinCloseButton : public InteractiveButtonBase {
+  Q_OBJECT
 public:
-    WinCloseButton(QWidget* parent = nullptr);
+  WinCloseButton(QWidget *parent = nullptr);
 
-    void setTopRightRadius(int r);
+  void setTopRightRadius(int r);
 
 protected:
-    void paintEvent(QPaintEvent*event);
+  void paintEvent(QPaintEvent *event);
 
-    QPainterPath getBgPainterPath();
-    QPainterPath getWaterPainterPath(Water water);
+  QPainterPath getBgPainterPath();
+  QPainterPath getWaterPainterPath(Water water);
 
 private:
-	int tr_radius;
+  int tr_radius;
 };
 
 #endif // WINCLOSEBUTTON_H

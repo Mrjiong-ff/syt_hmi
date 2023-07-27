@@ -1,25 +1,23 @@
-//
-// Created by jerry on 23-4-28.
-//
-
-#ifndef SYT_HMI_UTILS_H
-#define SYT_HMI_UTILS_H
-
-#include <QWidget>
+#pragma once
+#include <QIcon>
 #include <QMessageBox>
 #include <QVariant>
-#include <QIcon>
-#include <sys/time.h>
-#include <opencv2/opencv.hpp>
+#include <QWidget>
+#include <fstream>
 #include <opencv2/highgui.hpp>
+#include <opencv2/opencv.hpp>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <fstream>
 
 enum STATE {
-    SUCCESS = 0, WARN = 1, ERROR
+  SUCCESS = 0,
+  WARN    = 1,
+  ERROR
 };
+
+extern QMap<int, QString> id_style_map;
 
 /**
  * 一些消息弹窗
@@ -45,14 +43,12 @@ unsigned long getTickCount();
  */
 bool isFastClick(QObject *target, int delayTimeMil);
 
-
 /**
  * cvmat 转 用于qt显示的qimage类型
  * @param mat
  * @return
  */
 QImage cvMat2QImage(const cv::Mat &mat);
-
 
 /**
  * qimage 转 cvmat 类型
@@ -77,5 +73,3 @@ std::string getConfigPath();
  * @return
  */
 std::string getCurrentTime();
-
-#endif //SYT_HMI_UTILS_H

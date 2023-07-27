@@ -1,7 +1,3 @@
-//
-// Created by jerry on 23-4-26.
-//
-
 #include "syt_hmi/main_window.h"
 #include <memory>
 
@@ -253,7 +249,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   case Qt::Key_D:
     emit next_btn_->click();
     break;
-
   default:
     break;
   }
@@ -334,44 +329,37 @@ void MainWindow::initWidget() {
   m_menuBtn_->setMenu(m_menu_);
 
   // tool bar btn
-  ui->syt_dev_mode_btn->setIcon(QIcon(":m_icon/icon/dev-mode.png")); // 开发者模式按钮
-  ui->syt_dev_mode_btn->setToolTip(QString("开发者调试模式"));
+  ui->developer_mode_btn->setIcon(QIcon(":m_icon/icon/dev-mode.png")); // 开发者模式按钮
+  ui->developer_mode_btn->setToolTip(QString("开发者调试模式"));
 
-  ui->syt_head_eye_btn->setIcon(QIcon(":m_icon/icon/handeye.png")); // 手眼标定模式按钮
-  ui->syt_head_eye_btn->setToolTip(QString("机器人眼手标定"));
+  ui->head_eye_calibration_btn->setIcon(QIcon(":m_icon/icon/handeye.png")); // 手眼标定模式按钮
+  ui->head_eye_calibration_btn->setToolTip(QString("机器人眼手标定"));
 
-  ui->syt_cloth_style_btn->setIcon(QIcon(":m_icon/icon/shirt-line.png")); // 创建衣服样式按钮
-  ui->syt_cloth_style_btn->setToolTip(QString("创建衣服样式"));
+  ui->create_style_btn->setIcon(QIcon(":m_icon/icon/shirt-line.png")); // 创建衣服样式按钮
+  ui->create_style_btn->setToolTip(QString("创建衣服样式"));
 
-  ui->syt_lock_screen_btn->setIcon(QIcon(":m_icon/icon/lock.png")); // 屏幕上锁/解锁按钮
-  ui->syt_lock_screen_btn->setToolTip(QString("锁屏"));
+  ui->lock_screen_btn->setIcon(QIcon(":m_icon/icon/lock.png")); // 屏幕上锁/解锁按钮
+  ui->lock_screen_btn->setToolTip(QString("锁屏"));
 
-  ui->syt_help_btn->setIcon(QIcon(":m_icon/icon/help.png"));
-  ui->syt_help_btn->setToolTip(QString("帮助说明"));
-
-  // 调整分割位置
-  ui->mainHSplitter->setStretchFactor(0, 5);
-  ui->mainHSplitter->setStretchFactor(1, 2);
-
-  ui->mainVSplitter->setStretchFactor(0, 3);
-  ui->mainVSplitter->setStretchFactor(1, 1);
+  ui->help_btn->setIcon(QIcon(":m_icon/icon/help.png"));
+  ui->help_btn->setToolTip(QString("帮助说明"));
 
   // main tab btn
-  ui->sytResetPushButton->setParentEnabled(true);
-  ui->sytResetPushButton->setForeEnabled(false);
-  ui->sytResetPushButton->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->reset_btn->setParentEnabled(true);
+  ui->reset_btn->setForeEnabled(false);
+  ui->reset_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  ui->sytStartPushButton->setParentEnabled(true);
-  ui->sytStartPushButton->setForeEnabled(false);
-  ui->sytStartPushButton->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->start_btn->setParentEnabled(true);
+  ui->start_btn->setForeEnabled(false);
+  ui->start_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  ui->sytStopPushButton->setParentEnabled(true);
-  ui->sytStopPushButton->setForeEnabled(false);
-  ui->sytStopPushButton->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->stop_btn->setParentEnabled(true);
+  ui->stop_btn->setForeEnabled(false);
+  ui->stop_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  ui->importCfgBtn->setParentEnabled(true);
-  ui->importCfgBtn->setForeEnabled(false);
-  ui->importCfgBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->choose_style_btn->setParentEnabled(true);
+  ui->choose_style_btn->setForeEnabled(false);
+  ui->choose_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
   // log view btn
   ui->sytFilterPushButton->setIcon(QIcon(":m_icon/icon/filter-records.png"));
@@ -399,9 +387,7 @@ void MainWindow::initWidget() {
   //    next_btn_->setToolTip(QString("下一页,快捷键D"));
 
   prev_btn->setGeometry(0, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
-  next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2,
-                         init_page_btn_w,
-                         init_page_btn_h);
+  next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
 
   // 可视化的两个按钮
   ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
@@ -410,10 +396,10 @@ void MainWindow::initWidget() {
   ui->compositeClothVisableBtn->setText("隐藏");
 
   // 等待动画初始化
-  localPodsSpinnerWidget_ = new WaitingSpinnerWidget(this);
+  waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
 
   // todo 初始状态下，开始和停止无法使用
-  this->btnControl({ui->sytResetPushButton}, {ui->sytStartPushButton, ui->sytStopPushButton});
+  this->btnControl({ui->reset_btn}, {ui->start_btn, ui->stop_btn});
 
   // todo 初始状态下，亮灯
   this->setMutuallyLight(YELLOW);
@@ -447,6 +433,17 @@ void MainWindow::initWidget() {
     //        }
   });
 
+  // 样式树形列表
+  ui->cloth_style_tree_widget->header()->resizeSection(0, 200);
+  ui->cloth_style_tree_widget->setAlternatingRowColors(true);
+  ui->cloth_style_tree_widget->setAnimated(true);
+  ui->cloth_style_tree_widget->setUniformRowHeights(true);
+  ui->cloth_style_tree_widget->setHeaderLabels(QStringList() << "属性"
+                                                             << "值");
+
+  // 设置样式line edit只读
+  ui->choose_style_line_edit->setReadOnly(true);
+
   // 事件过滤
   ui->sytMainTitleWidget->installEventFilter(this);
 }
@@ -462,12 +459,12 @@ void MainWindow::settingConnection() {
   });
 
   // main window工具栏按钮
-  connect(ui->syt_dev_mode_btn, &QPushButton::clicked, this, &MainWindow::slotShowDevLoginWindow);
-  connect(ui->syt_head_eye_btn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
-  connect(ui->syt_cloth_style_btn, &QPushButton::clicked, this, &MainWindow::slotStartClothStyleWindow);
-  connect(ui->syt_lock_screen_btn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
+  connect(ui->developer_mode_btn, &QPushButton::clicked, this, &MainWindow::slotShowDevLoginWindow);
+  connect(ui->head_eye_calibration_btn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
+  connect(ui->create_style_btn, &QPushButton::clicked, this, &MainWindow::slotStartClothStyleWindow);
+  connect(ui->lock_screen_btn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
   // todo 帮助未实现，应该是个文档弹出的dialog
-  connect(ui->syt_help_btn, &QPushButton::clicked, [=] {
+  connect(ui->help_btn, &QPushButton::clicked, [=] {
     // todo test
     showMessageBox(this, ERROR, "干巴爹弟兄们😆", 1, {"返回"});
     return;
@@ -496,7 +493,7 @@ void MainWindow::settingConnection() {
   connect(maxAct_, &QAction::triggered, this, &MainWindow::slotMaxBtnClicked);
   connect(fullAct_, &QAction::triggered, this, &MainWindow::showFullScreen);
   connect(closeAct_, &QAction::triggered, this, &MainWindow::close);
-  connect(helpAct_, &QAction::triggered, this, [=] { ui->syt_help_btn->clicked(true); });
+  connect(helpAct_, &QAction::triggered, this, [=] { ui->help_btn->clicked(true); });
   connect(updateAct_, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
   // todo 关于sewing action，应该是个模态dialog，期望他能跳转到sewing的官网等等
   connect(aboutAct_, &QAction::triggered, this, [=] {
@@ -510,9 +507,9 @@ void MainWindow::settingConnection() {
   connect(next_btn_, &QPushButton::clicked, this, &MainWindow::slotNextPage);
 
   // 主界面接界面 用于交互的3个程序按钮 开始停止复位
-  connect(ui->sytResetPushButton, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
-  connect(ui->sytStartPushButton, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
-  connect(ui->sytStopPushButton, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
+  connect(ui->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
+  connect(ui->start_btn, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
+  connect(ui->stop_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
 
   // 可视化两个按钮
   connect(ui->loadClothVisableBtn, &QPushButton::clicked, [=] {
@@ -567,11 +564,21 @@ void MainWindow::settingConnection() {
     connect(head_eye_dialog, &HeadEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart, Qt::ConnectionType::QueuedConnection);
     connect(head_eye_dialog, &HeadEyeDialog::signSewingStart, this, &MainWindow::slotSewingCalibStart, Qt::ConnectionType::QueuedConnection);
     head_eye_dialog->show();
-    head_eye_dialog->exec();
-    delete head_eye_dialog;
+    head_eye_dialog->setAttribute(Qt::WA_DeleteOnClose);
   });
 
-  // cloth style 信号槽
+  // 选择样式信号槽
+  connect(
+      ui->choose_style_btn, &QPushButton::clicked, this, [=] {
+        auto choose_style_dialog = new ChooseStyleDialog(this);
+        connect(choose_style_dialog, &ChooseStyleDialog::signChoseStyle, this, &MainWindow::slotChoseStyleFile);
+
+        choose_style_dialog->show();
+        choose_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
+      },
+      Qt::ConnectionType::UniqueConnection);
+
+  // 创建样式信号槽
   connect(this, &MainWindow::signClothStyleWindowShow, [=] {
     auto cloth_style_dialog = new ClothStyleDialog(this);
 
@@ -591,8 +598,8 @@ void MainWindow::settingConnection() {
     void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromSource;
     connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
 
-    cloth_style_dialog->exec();
-    delete cloth_style_dialog;
+    cloth_style_dialog->show();
+    cloth_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
   });
 
   // 标定相关
@@ -609,7 +616,7 @@ void MainWindow::settingConnection() {
 
   // todo 任务完成后按钮的逻辑
   connect(this, &MainWindow::processSuccessful, [=] {
-    this->btnControl({ui->sytResetPushButton}, {ui->sytStartPushButton, ui->sytStopPushButton});
+    this->btnControl({ui->reset_btn}, {ui->start_btn, ui->stop_btn});
     showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
   });
 
@@ -617,9 +624,6 @@ void MainWindow::settingConnection() {
   connect(this, &MainWindow::signUpdateLabelState, [=](QString text) {
     ui->stateLabel->setText(text);
   });
-
-  // todo 导入配置文件相关
-  connect(ui->importCfgBtn, &QPushButton::clicked, this, &MainWindow::slotImportCfg);
 }
 
 void MainWindow::setMutuallyLight(LIGHT_COLOR c) {
@@ -703,15 +707,15 @@ void MainWindow::slotNextPage() {
 void MainWindow::resetBtnClicked() {
   emit signUpdateLabelState("重置中");
 
-  bool res = isFastClick(ui->sytResetPushButton, 1000);
+  bool res = isFastClick(ui->reset_btn, 1000);
   if (!res) {
     return;
   }
   // todo 重置完成后可用
-  ui->sytStartPushButton->setEnabled(true);
-  ui->sytStartPushButton->setStyleSheet("");
-  ui->sytStopPushButton->setEnabled(true);
-  ui->sytStopPushButton->setStyleSheet("");
+  ui->start_btn->setEnabled(true);
+  ui->start_btn->setStyleSheet("");
+  ui->stop_btn->setEnabled(true);
+  ui->stop_btn->setStyleSheet("");
   this->setMutuallyLight(YELLOW);
   // todo 进度条清0
   value = 0;
@@ -725,37 +729,12 @@ void MainWindow::resetBtnClicked() {
 }
 
 void MainWindow::startBtnClicked() {
-  bool res = isFastClick(ui->sytStartPushButton, 1000);
+  bool res = isFastClick(ui->start_btn, 1000);
   if (!res) {
     return;
   }
-  qDebug("点击开始按钮");
-  // todo 一般来说，点击开始应该要选择裁片类型，要测试暂时注释掉了
-  //    int v = ui->processWidget->getValue();
-  //    if (v != 0 && v != 100) {
-  //        this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
-  //        test_timer->start();
-  //        emit signUpdateLabelState("运行中");
-  //        return;
-  //    }
-  //
-  //    auto user_opt_dialog = new UserOptDialog(this);
-  //    // todo
-  //    connect(user_opt_dialog, &UserOptDialog::systemStart,
-  //            [=] { setMutuallyLight(GREEN); });
-  //    user_opt_dialog->show();
-  //    auto i = user_opt_dialog->exec();
-  //    delete user_opt_dialog;
-  //    // todo
-  //    if (i == QDialog::Accepted) {
-  //        this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
-  //        ui->msg_widget->setToolTip("系统开始");
-  //    }
 
-  // todo 测试进度条
-  //    test_timer->setInterval(500);
-
-  this->btnControl({ui->sytStopPushButton}, {ui->sytStartPushButton, ui->sytResetPushButton});
+  this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn});
 
   test_timer->start();
   setMutuallyLight(GREEN);
@@ -769,14 +748,14 @@ void MainWindow::startBtnClicked() {
 }
 
 void MainWindow::stopBtnClicked() {
-  bool res = isFastClick(ui->sytStopPushButton, 1000);
+  bool res = isFastClick(ui->stop_btn, 1000);
   if (!res) {
     return;
   }
   qDebug("点击停止按钮");
 
   // todo
-  this->btnControl({ui->sytResetPushButton, ui->sytStartPushButton}, {ui->sytStopPushButton});
+  this->btnControl({ui->reset_btn, ui->start_btn}, {ui->stop_btn});
 
   // todo test
   ui->msg_widget->setToolTip("系统异常");
@@ -793,14 +772,14 @@ void MainWindow::errorNodeMsgSlot(QString msg) {
 
 void MainWindow::triggeredOTAUpdate() {
   qDebug("update");
-  localPodsSpinnerWidget_->start();
+  waiting_spinner_widget_->start();
   future_ = QtConcurrent::run([=] {
     rclcomm_->otaUpdate();
   });
 }
 
 void MainWindow::otaResultShow(bool res, QString msg) {
-  localPodsSpinnerWidget_->stop();
+  waiting_spinner_widget_->stop();
   if (res) {
     // todo show ota res
     auto res = showMessageBox(this, STATE::SUCCESS, "检测到远端存在新安装包,请选择是否升级", 2,
@@ -818,10 +797,8 @@ void MainWindow::otaResultShow(bool res, QString msg) {
 
     // todo 完成后的
     auto ota_dialog = new OtaUpdateDialog(this);
-    connect(rclcomm_, &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue,
-            Qt::ConnectionType::QueuedConnection);
-    connect(rclcomm_, &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue,
-            Qt::ConnectionType::QueuedConnection);
+    connect(rclcomm_, &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue, Qt::ConnectionType::QueuedConnection);
+    connect(rclcomm_, &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue, Qt::ConnectionType::QueuedConnection);
     connect(rclcomm_, &SytRclComm::downloadRes, ota_dialog, &OtaUpdateDialog::getDownloadRes);
     ota_dialog->show();
     auto res_ = ota_dialog->exec();
@@ -832,7 +809,7 @@ void MainWindow::otaResultShow(bool res, QString msg) {
     } else if (res_ == 9) {
       showMessageBox(this, STATE::SUCCESS, "下载完成,请点击以下按钮进行软件安装", 1, {"安装"});
       // todo call server
-      localPodsSpinnerWidget_->start();
+      waiting_spinner_widget_->start();
       future_ = QtConcurrent::run([=] {
         rclcomm_->otaInstall();
       });
@@ -849,7 +826,7 @@ void MainWindow::otaResultShow(bool res, QString msg) {
 }
 
 void MainWindow::otaInstallSuccess(bool res, QString msg) {
-  localPodsSpinnerWidget_->stop();
+  waiting_spinner_widget_->stop();
   if (!res) {
     showMessageBox(this, ERROR, msg, 1, {"返回"});
     return;
@@ -905,21 +882,21 @@ void MainWindow::slotShowDevLoginWindow() {
 void MainWindow::slotLockScreen() {
   auto lock_dialog = new LockDialog(this);
   lock_dialog->show();
-  lock_dialog->exec();
-  delete lock_dialog;
+  lock_dialog->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void MainWindow::slotStartHeadEyeWindow() {
   qDebug("启动眼手标定");
 
-  QString tip = "<html>"
-                "<head/><b>启动机器人眼手标定</b>\n<body>"
-                "<b>注意:</b>"
-                "<p>1.标定过程中,<font color=\"red\"><b>禁止靠近机台</b></font>;\n</p>"
-                "<p>2.请确认机器人处在一个<font color=\"red\"><b>良好的位置</b></font>,避免启动时发生碰撞;\n</p>"
-                "<p>3.请时刻<font color=\"red\"><b>保持专注</b></font>,并<font color=\"red\"><b>手持急停开关</b></font>,务必保证危险时刻能按下;\n</p>"
-                "<p>4.确保机器人当前为<font color=\"red\"><b>停止状态</b></font>;\n</p>"
-                "</body></html>";
+  QString tip =
+      "<html>"
+      "<head/><b>启动机器人眼手标定</b>\n<body>"
+      "<b>注意:</b>"
+      "<p>1.标定过程中,<font color=\"red\"><b>禁止靠近机台</b></font>;\n</p>"
+      "<p>2.请确认机器人处在一个<font color=\"red\"><b>良好的位置</b></font>,避免启动时发生碰撞;\n</p>"
+      "<p>3.请时刻<font color=\"red\"><b>保持专注</b></font>,并<font color=\"red\"><b>手持急停开关</b></font>,务必保证危险时刻能按下;\n</p>"
+      "<p>4.确保机器人当前为<font color=\"red\"><b>停止状态</b></font>;\n</p>"
+      "</body></html>";
 
   auto res = showMessageBox(this, WARN, tip, 2, {"确认", "返回"});
 
@@ -935,23 +912,7 @@ void MainWindow::slotStartHeadEyeWindow() {
 }
 
 void MainWindow::slotStartClothStyleWindow() {
-  qDebug("启动裁片样式创建");
-
-  QString tip = "<html>"
-                "<head/><b>启动裁片样式创建?</b>\n<body>"
-                "</body></html>";
-
-  auto res = showMessageBox(this, WARN, tip, 2, {"确认", "返回"});
-
-  switch (res) {
-  case 0:
-    emit signClothStyleWindowShow();
-    return;
-  case 1:
-    return;
-  default:
-    return;
-  }
+  emit signClothStyleWindowShow();
 }
 
 void MainWindow::slotDevWindow() {
@@ -965,13 +926,12 @@ void MainWindow::slotDevWindow() {
   //    dev_window->show();
   auto dev_sel_dialog = new DevSelectDialog(this);
   dev_sel_dialog->show();
-  dev_sel_dialog->exec();
-  delete dev_sel_dialog;
+  dev_sel_dialog->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 ////////////////////////// 标定槽函数 //////////////////////////
 void MainWindow::slotCompCalibRes(bool f) {
-  localPodsSpinnerWidget_->stop();
+  waiting_spinner_widget_->stop();
   if (f) {
     showMessageBox(this, SUCCESS, "合片台标定成功", 1, {"退出"});
     return;
@@ -982,7 +942,7 @@ void MainWindow::slotCompCalibRes(bool f) {
 }
 
 void MainWindow::slotSewingCalibRes(bool f) {
-  localPodsSpinnerWidget_->stop();
+  waiting_spinner_widget_->stop();
   if (f) {
     showMessageBox(this, SUCCESS, "缝纫台标定成功", 1, {"退出"});
     return;
@@ -993,14 +953,14 @@ void MainWindow::slotSewingCalibRes(bool f) {
 }
 
 void MainWindow::slotCompCalibStart() {
-  localPodsSpinnerWidget_->start();
+  waiting_spinner_widget_->start();
   future_ = QtConcurrent::run([=] {
     rclcomm_->compCalib();
   });
 }
 
 void MainWindow::slotSewingCalibStart() {
-  localPodsSpinnerWidget_->start();
+  waiting_spinner_widget_->start();
   future_ = QtConcurrent::run([=] {
     rclcomm_->sewingCalib();
   });
@@ -1011,39 +971,15 @@ void MainWindow::slotLogShow(QString time, QString level, QString location, QStr
   Q_UNUSED(func)
   QString htmlText;
   if (level == "DEBUG") {
-    htmlText = QString(
-                   "<span style=\"background-color: green; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-                   .arg(level)
-                   .arg(time)
-                   .arg(location)
-                   .arg(msg);
+    htmlText = QString("<span style=\"background-color: green; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
   } else if (level == "INFO") {
-    htmlText = QString(
-                   "<span style=\"background-color: white; color: black; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-                   .arg(level)
-                   .arg(time)
-                   .arg(location)
-                   .arg(msg);
+    htmlText = QString("<span style=\"background-color: white; color: black; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
   } else if (level == "WARN") {
-    htmlText = QString(
-                   "<span style=\"background-color: orange; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-                   .arg(level)
-                   .arg(time)
-                   .arg(location)
-                   .arg(msg);
+    htmlText = QString("<span style=\"background-color: orange; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
   } else if (level == "ERROR") {
-    htmlText = QString(
-                   "<span style=\"background-color: darkred; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-                   .arg(level)
-                   .arg(time)
-                   .arg(location)
-                   .arg(msg);
+    htmlText = QString("<span style=\"background-color: darkred; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
   } else if (level == "FATAL") {
-    htmlText = QString("<span style=\"background-color: red; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-                   .arg(level)
-                   .arg(time)
-                   .arg(location)
-                   .arg(msg);
+    htmlText = QString("<span style=\"background-color: red; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
   } else {
     qDebug("敲尼玛？");
     return;
@@ -1051,45 +987,97 @@ void MainWindow::slotLogShow(QString time, QString level, QString location, QStr
   ui->sytPlainTextEdit->appendHtml(htmlText);
 }
 
-void MainWindow::slotImportCfg() {
-  auto user_opt_dialog = new UserOptDialog(this);
-  user_opt_dialog->show();
-  user_opt_dialog->exec();
+////////////////////////// 选择设置样式槽函数 //////////////////////////
+void MainWindow::slotChoseStyleFile(QString prefix, QString file_name) {
+  style_file_prefix_ = prefix;
+  style_file_name_   = file_name;
+  ui->choose_style_line_edit->setText(prefix + QDir::separator() + file_name);
+
+  // 开始设置并获取当前样式
+  waiting_spinner_widget_->start();
+  bool success = rclcomm_->setCurrentStyle(prefix, file_name);
+  if (!success) {
+    showMessageBox(this, WARN, "设置当前样式错误", 1, {"确认"});
+  }
+
+  success = rclcomm_->getClothStyle(prefix, file_name, cloth_style_front_, cloth_style_back_);
+  if (!success) {
+    showMessageBox(this, WARN, "获取当前样式错误", 1, {"确认"});
+  }
+
+  ui->cloth_style_tree_widget->clear();
+
+  // 设置信息到treewidget中
+  QTreeWidgetItem *front_item = new QTreeWidgetItem(QStringList() << "前片");
+  QTreeWidgetItem *back_item  = new QTreeWidgetItem(QStringList() << "后片");
+
+  ui->cloth_style_tree_widget->addTopLevelItem(front_item);
+  ui->cloth_style_tree_widget->addTopLevelItem(back_item);
+
+  auto fillTreeWidget = [&](QTreeWidgetItem *top_item, syt_msgs::msg::ClothStyle cloth_style) {
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "衣长" << QString::number(cloth_style.cloth_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "下摆长" << QString::number(cloth_style.bottom_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "腋下间距" << QString::number(cloth_style.oxter_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "肩缝长" << QString::number(cloth_style.shoulder_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "侧缝长" << QString::number(cloth_style.side_length)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "有无印花" << (cloth_style.have_printings ? QString("有") : QString("无"))));
+
+    // 设置颜色预览
+    QTreeWidgetItem *color_item = new QTreeWidgetItem(QStringList() << "颜色");
+    top_item->addChild(color_item);
+    ui->cloth_style_tree_widget->setItemWidget(color_item, 1, new ShowColorWidget(QString::number(cloth_style.cloth_color, 16)));
+
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "裁片克数" << QString::number(cloth_style.cloth_weight)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "弹性" << id_style_map.value(cloth_style.elasticity_level)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "厚度" << id_style_map.value(cloth_style.thickness_level)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "尺码" << id_style_map.value(cloth_style.cloth_size)));
+    top_item->addChild(new QTreeWidgetItem(QStringList() << "光泽度" << id_style_map.value(cloth_style.glossiness_level)));
+  };
+  fillTreeWidget(front_item, cloth_style_front_);
+  fillTreeWidget(back_item, cloth_style_back_);
+  ui->cloth_style_tree_widget->expandAll(); // 展开
+  waiting_spinner_widget_->stop();
 }
 
 ////////////////////////// 创建衣服样式槽函数 //////////////////////////
+// 从CAD创建
 void MainWindow::slotCreateFromCAD(ClothStyleDialog *parent) {
   CreateFromCADWizard *create_from_cad_wizard = new CreateFromCADWizard(parent);
   create_from_cad_wizard->show();
+  create_from_cad_wizard->setAttribute(Qt::WA_DeleteOnClose);
 }
 
+// 自动创建
 void MainWindow::slotAutoCreateStyle(ClothStyleDialog *parent) {
-  qRegisterMetaType<std::vector<cv::Point2i>>("std::vector<cv::Point2i>");
   AutoCreateStyleWizard *auto_create_style_wizard = new AutoCreateStyleWizard(parent);
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this, &MainWindow::slotMoveHandByAutoCreateStyle, Qt::QueuedConnection);
-  connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult, Qt::QueuedConnection);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this, &MainWindow::slotMoveHandByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signDetectCloth, this, &MainWindow::slotDetectClothByAutoCreateStyle, Qt::QueuedConnection);
-  connect(rclcomm_, &SytRclComm::signComposeMachineDetectClothFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotDetectClothResult, Qt::QueuedConnection);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signDetectCloth, this, &MainWindow::slotDetectClothByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signComposeMachineDetectClothFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotDetectClothResult);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signCreateStyle, this, &MainWindow::slotCreateStyleByAutoCreateStyle, Qt::QueuedConnection);
-  connect(rclcomm_, &SytRclComm::signCreateStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotCreateStyleResult, Qt::QueuedConnection);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signCreateStyle, this, &MainWindow::slotCreateStyleByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signCreateStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotCreateStyleResult);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signRenameClothStyle, this, &MainWindow::slotRenameClothStyleByAutoCreateStyle, Qt::QueuedConnection);
-  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotRenameClothStyleResult, Qt::QueuedConnection);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signRenameClothStyle, this, &MainWindow::slotRenameClothStyleByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotRenameClothStyleResult);
 
   auto_create_style_wizard->show();
   auto_create_style_wizard->setAttribute(Qt::WA_DeleteOnClose);
 }
 
+// 手动输入创建
 void MainWindow::slotManualInputParam(ClothStyleDialog *parent) {
   ManualInputParamWizard *manual_input_param_wizard = new ManualInputParamWizard(parent);
   manual_input_param_wizard->show();
+  manual_input_param_wizard->setAttribute(Qt::WA_DeleteOnClose);
 }
 
+// 从已有文件创建
 void MainWindow::slotCreateFromSource(ClothStyleDialog *parent) {
   CreateFromSourceWizard *create_from_source_wizard = new CreateFromSourceWizard(parent);
   create_from_source_wizard->show();
+  create_from_source_wizard->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void MainWindow::slotMoveHandByAutoCreateStyle() {

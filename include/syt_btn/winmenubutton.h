@@ -3,14 +3,14 @@
 
 #include "interactivebuttonbase.h"
 
-class WinMenuButton : public InteractiveButtonBase
-{
+class WinMenuButton : public InteractiveButtonBase {
+  Q_OBJECT
 public:
-    WinMenuButton(QWidget* parent = nullptr);
+  WinMenuButton(QWidget *parent = nullptr);
 
 protected:
-    void paintEvent(QPaintEvent*event);
-    void slotClicked();
+  void paintEvent(QPaintEvent *event);
+  void slotClicked();
 };
 
 #endif // WINMENUBUTTON_H

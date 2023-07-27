@@ -3,17 +3,17 @@
 
 #include "interactivebuttonbase.h"
 
-class InfoButton : public InteractiveButtonBase
-{
+class InfoButton : public InteractiveButtonBase {
+  Q_OBJECT
 public:
-    InfoButton(QWidget* parent = nullptr);
+  InfoButton(QWidget *parent = nullptr);
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
+  void paintEvent(QPaintEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
 
 private:
-    bool tongue = false;
+  bool tongue = false;
 };
 
 #endif // INFOBUTTON_H
