@@ -2,14 +2,16 @@
 
 #include "syt_btn/interactivebuttonbase.h"
 #include "syt_hmi/input_extra_param_widget.h"
+#include "syt_hmi/input_length_param_widget.h"
 
 #include <QLabel>
+#include <QLayout>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QLayout>
 #include <QRegExpValidator>
 #include <QSpacerItem>
 #include <QWizardPage>
+#include <QComboBox>
 
 // 1.移动抓手
 class MoveHandPage : public QWizardPage {
@@ -101,8 +103,6 @@ public slots:
 class RenameClothStylePage : public QWizardPage {
   Q_OBJECT
 private:
-  int rename_result_ = false;
-
   QLabel *old_name_label;
   QLabel *new_name_label;
   QLineEdit *old_name_line_edit;
@@ -123,8 +123,7 @@ public slots:
   void slotRenameClothStyleResult(bool result);
 };
 
-//////////////// 从CAD创建(向导) ////////////////
-// 选择cad文件page
+// 7.选择cad文件page
 class ChooseCADPage : public QWizardPage {
   Q_OBJECT
 public:
@@ -132,3 +131,31 @@ public:
   ~ChooseCADPage(){};
 };
 
+// 8.输入长度参数
+class InputLengthParamPage : public QWizardPage {
+  Q_OBJECT
+private:
+  //QLabel *cloth_length_label;
+  //QLabel *bottom_length_label;
+  //QLabel *oxter_length_label;
+  //QLabel *shoulder_length_label;
+  //QLabel *side_length_label;
+
+  //QLineEdit *cloth_length_line_edit;
+  //QLineEdit *bottom_length_line_edit;
+  //QLineEdit *oxter_length_line_edit;
+  //QLineEdit *shoulder_length_line_edit;
+  //QLineEdit *side_length_line_edit;
+
+  int cloth_type_;
+  InputLengthParamWidget *input_length_param_widget;
+
+public:
+  InputLengthParamPage(QWidget *parent = nullptr, int cloth_type = 0);
+  ~InputLengthParamPage(){};
+
+  bool validatePage() override;
+
+signals:
+  void signSetLengthParam(syt_msgs::msg::ClothStyle cloth_style);
+};

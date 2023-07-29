@@ -72,10 +72,10 @@ public:
   void stopCmd();
   void composeMachineMoveHand(float x, float y, float z, float c);
   void composeMachineDetectCloth(uint8_t frame_id, int cloth_type);
-  void createStyle(syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
-  void renameClothStyle(std::string old_name, std::string new_name);
-  bool setCurrentStyle(QString prefix, QString file_name);
-  bool getClothStyle(const QString &prefix, const QString &file_name, syt_msgs::msg::ClothStyle &cloth_style_front, syt_msgs::msg::ClothStyle &cloth_style_back);
+  void createStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
+  void renameClothStyle(QString old_name, QString new_name);
+  void setCurrentStyle(QString prefix, QString file_name);
+  void getClothStyle(QString prefix, QString file_name);
 
 signals:
   void errorNodeMsgSign(QString msg);
@@ -94,7 +94,7 @@ signals:
   // 控制相关信号
   void signComposeMachineMoveHandFinish(bool result);
   void signComposeMachineDetectClothFinish(bool result, int cloth_type, syt_msgs::msg::ClothInfo cloth_info);
-  void signCreateStyleFinish(bool result, std::string file_name);
+  void signCreateStyleFinish(bool result, QString file_name);
   void signRenameClothStyleFinish(bool result);
   void signSetCurrentClothStyleFinish(bool result);
   void signGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);

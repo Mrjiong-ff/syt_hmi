@@ -27,8 +27,9 @@ public:
   ~ChooseStyleDialog() override;
 
 signals:
-  void signChoseStyle(QString prefix, QString file_name);
+  void signSetCurrentStyle(QString prefix, QString file_name);
 
 public slots:
   void slotSetStylePath();
+  void slotSetCurrentStyleFinish(bool result);
 };

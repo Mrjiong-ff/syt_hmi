@@ -1,6 +1,5 @@
 #include "syt_hmi/choose_style_dialog.h"
 #include "ui_choose_style_dialog.h"
-#include <iostream>
 
 ChooseStyleDialog::ChooseStyleDialog(QWidget *parent) : QDialog(parent), ui(new Ui::ChooseStyleDialog) {
   ui->setupUi(this);
@@ -39,18 +38,12 @@ ChooseStyleDialog::ChooseStyleDialog(QWidget *parent) : QDialog(parent), ui(new 
   ui->style_file_list_view->setRootIndex(style_file_model_.index(style_directory_));
   ui->style_file_list_view->show();
 
-  // 等待条
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
 
-  // 选择样式信号槽
-  connect(ui->style_path_btn, &QPushButton::clicked, this, &ChooseStyleDialog::slotSetStylePath);
+  connect(ui->style_path_btn, SIGNAL(clicked()), this, SLOT(slotSetStylePath()));
   connect(ui->confirm_btn, &QPushButton::clicked, [=]() {
-    if (ui->style_file_list_view->currentIndex().row() != -1) {
-      this->accept();
-      emit signChoseStyle(ui->style_path_line_edit->text(), ui->style_file_list_view->currentIndex().data().toString());
-    } else {
-      showMessageBox(this, WARN, "请选择样式文件后再点击确定。", 1, {"确认"});
-    }
+    waiting_spinner_widget_->start();
+    emit signSetCurrentStyle(ui->style_path_line_edit->text(), ui->style_file_list_view->currentIndex().data().toString());
   });
   connect(ui->return_btn, &QPushButton::clicked, [=]() {
     this->reject();
@@ -79,5 +72,14 @@ void ChooseStyleDialog::slotSetStylePath() {
     // 设置ListView的显示模式
     ui->style_file_list_view->setRootIndex(style_file_model_.index(style_directory_));
     ui->style_file_list_view->show();
+  }
+}
+
+void ChooseStyleDialog::slotSetCurrentStyleFinish(bool result) {
+  waiting_spinner_widget_->stop();
+  if (result) {
+    this->accept();
+  } else {
+    QMessageBox::information(this, "警告", "设置样式失败！", "确认");
   }
 }
