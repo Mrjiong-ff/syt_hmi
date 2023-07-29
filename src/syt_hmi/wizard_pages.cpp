@@ -23,17 +23,17 @@ bool MoveHandPage::validatePage() {
   if (moved_hand_) {
     return true;
   }
-  QMessageBox::warning(this, "提示", "请点击移动按钮并等待合片抓手移动完毕...", "确认");
+  showMessageBox(this, WARN, "请点击移动按钮并等待合片抓手移动完毕...", 1, {"确认"});
   return false;
 }
 
 void MoveHandPage::slotMoveHandResult(bool result) {
   moved_hand_ = result;
   if (result == false) {
-    QMessageBox::warning(this, "警告", "移动合片抓手失败!", "确认");
+    showMessageBox(this, WARN, "移动合片抓手失败!", 1, {"确认"});
     return;
   }
-  QMessageBox::information(this, "提示", "移动合片抓手成功，请点击下一步.", "确认");
+  showMessageBox(this, SUCCESS, "移动合片抓手成功，请点击下一步。", 1, {"确认"});
 }
 
 // 2.提醒放置裁片
@@ -69,7 +69,7 @@ bool DetectClothPage::validatePage() {
   if (detected_result_) {
     return true;
   }
-  QMessageBox::warning(this, "提示", "请点击检测按钮并等待检测完毕...", "确认");
+  showMessageBox(this, WARN, "请点击检测按钮并等待检测完毕...", 1, {"确认"});
   return false;
 }
 
@@ -79,15 +79,15 @@ void DetectClothPage::slotDetectClothResult(bool result, int cloth_type) {
   }
   detected_result_ = result;
   if (result == false) {
-    QMessageBox::warning(this, "警告", QString("%1检测失败!").arg(cloth_type_ ? "后片" : "前片"), "确认");
+    showMessageBox(this, WARN, QString("%1检测失败!").arg(cloth_type_ ? "后片" : "前片"), 1, {"确认"});
     return;
   }
-  QMessageBox::information(this, "提示", QString("%1检测成功，请点击下一步.").arg(cloth_type_ ? "后片" : "前片"), "确认");
+  showMessageBox(this, SUCCESS, QString("%1检测成功，请点击下一步。").arg(cloth_type_ ? "后片" : "前片"), 1, {"确认"});
 }
 
 // 4.手动输入额外参数
 InputExtraParamPage::InputExtraParamPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
-  setTitle(QString("输入额外参数%1").arg(cloth_type_ ? "后片" : "前片"));
+  setTitle(QString("输入%1额外参数").arg(cloth_type_ ? "后片" : "前片"));
 
   input_extra_param_widget = new InputExtraParamWidget(parent);
   input_extra_param_widget->setClothType(cloth_type_);
@@ -128,17 +128,17 @@ bool CreateStylePage::validatePage() {
     emit signSetRenameEdit();
     return true;
   }
-  QMessageBox::warning(this, "提示", "请点击创建按钮并等待样式文件创建完毕...", "确认");
+  showMessageBox(this, WARN, "请点击创建按钮并等待样式文件创建完毕...", 1, {"确认"});
   return false;
 }
 
 void CreateStylePage::slotCreateStyleResult(bool result) {
   create_result_ = result;
   if (result == false) {
-    QMessageBox::warning(this, "警告", "样式文件创建失败!", "确认");
+    showMessageBox(this, WARN, "样式文件创建失败!", 1, {"确认"});
     return;
   }
-  QMessageBox::information(this, "提示", "样式文件创建成功，请点击下一步.", "确认");
+  showMessageBox(this, SUCCESS, "样式文件创建成功，请点击下一步。", 1, {"确认"});
 }
 
 // 6. 修改样式名
@@ -154,7 +154,7 @@ RenameClothStylePage::RenameClothStylePage(QWidget *parent) : QWizardPage(parent
     if (old_name_line_edit->text() != new_name_line_edit->text()) {
       emit signRenameClothStyle();
     } else {
-      QMessageBox::information(this, "提示", "如需重命名，请修改新文件名", "确认");
+      showMessageBox(this, WARN, "如需重命名，请修改新文件名。", 1, {"确认"});
     }
   });
 
@@ -180,10 +180,7 @@ bool RenameClothStylePage::validatePage() {
     return true;
   }
 
-  if (rename_result_) {
-    return true;
-  }
-  QMessageBox::warning(this, "提示", "请点击重命名并等待重命名完毕...", "确认");
+  showMessageBox(this, WARN, "请点击重命名并等待重命名完毕...", 1, {"确认"});
   return false;
 }
 
@@ -193,15 +190,15 @@ void RenameClothStylePage::slotSetRenameEdit(QString file_name) {
 }
 
 void RenameClothStylePage::slotRenameClothStyleResult(bool result) {
-  rename_result_ = result;
   if (result == false) {
-    QMessageBox::warning(this, "警告", "重命名失败!", "确认");
+    showMessageBox(this, WARN, "重命名失败!", 1, {"确认"});
     return;
   }
-  QMessageBox::information(this, "提示", "重命名成功，请点击完成.", "确认");
+  slotSetRenameEdit(new_name_line_edit->text());
+  showMessageBox(this, SUCCESS, "重命名成功，请点击完成。", 1, {"确认"});
 }
 
-// 选择cad文件page
+// 7.选择cad文件page
 ChooseCADPage::ChooseCADPage(QWidget *parent) : QWizardPage(parent) {
   setTitle("选择CAD文件");
   QLabel *label1 = new QLabel("page1.");
@@ -211,3 +208,23 @@ ChooseCADPage::ChooseCADPage(QWidget *parent) : QWizardPage(parent) {
   setLayout(layout);
 }
 
+// 8.输入长度参数
+InputLengthParamPage::InputLengthParamPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
+  setTitle(QString("输入%1长度参数").arg(cloth_type_ ? "后片" : "前片"));
+
+  input_length_param_widget = new InputLengthParamWidget(parent);
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(input_length_param_widget);
+  setLayout(layout);
+}
+
+bool InputLengthParamPage::validatePage() {
+  if (input_length_param_widget->filled()) {
+    syt_msgs::msg::ClothStyle cloth_style = input_length_param_widget->getClothStyle();
+
+    emit signSetLengthParam(cloth_style);
+    return true;
+  }
+  return false;
+}

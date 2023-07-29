@@ -61,7 +61,6 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
 
   // 4.输入额外参数
   qRegisterMetaType<syt_msgs::msg::ClothStyle>("syt_msgs::msg::ClothStyle");
-  qRegisterMetaType<std::string>("std::string");
   connect(input_extra_param_front_page, &InputExtraParamPage::signSetExtraParam, this, &AutoCreateStyleWizard::slotSetExtraParam); // 前片
   connect(input_extra_param_back_page, &InputExtraParamPage::signSetExtraParam, this, &AutoCreateStyleWizard::slotSetExtraParam);  // 后片
 
@@ -111,25 +110,25 @@ void AutoCreateStyleWizard::slotSetExtraParam(syt_msgs::msg::ClothStyle cloth_st
 void AutoCreateStyleWizard::slotCreateStyle() {
   cloth_style_front_.cloth_contour = cloth_info_front_.cloth_contour;
   cloth_style_front_.keypoint_info = cloth_info_front_.keypoint_info;
+  cloth_style_back_.cloth_contour  = cloth_info_back_.cloth_contour;
   cloth_style_back_.keypoint_info  = cloth_info_back_.keypoint_info;
-  cloth_style_back_.keypoint_info  = cloth_info_back_.keypoint_info;
-  emit signCreateStyle(cloth_style_front_, cloth_style_back_);
+  emit signCreateStyle(0, cloth_style_front_, cloth_style_back_);
 }
 
-void AutoCreateStyleWizard::slotCreateStyleResult(bool result, std::string file_name) {
+void AutoCreateStyleWizard::slotCreateStyleResult(bool result, QString file_name) {
   if (result) {
     file_name_ = file_name;
-    qDebug() << QString(file_name.c_str());
+    qDebug() << file_name;
   }
   emit signCreateStyleResult(result);
 }
 
 void AutoCreateStyleWizard::slotSetRenameEdit() {
-  emit signSetRenameEdit(QString(file_name_.c_str()));
+  emit signSetRenameEdit(file_name_);
 }
 
 void AutoCreateStyleWizard::slotRenameClothStyle() {
-  emit signRenameClothStyle(field("old_name").toString().toStdString(), field("new_name").toString().toStdString());
+  emit signRenameClothStyle(field("old_name").toString(), field("new_name").toString());
 }
 
 void AutoCreateStyleWizard::slotRenameClothStyleResult(bool result) {

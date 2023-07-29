@@ -1,10 +1,10 @@
 #include "syt_hmi/input_extra_param_widget.h"
 #include "ui_input_extra_param_widget.h"
-#include <QDebug>
 
 InputExtraParamWidget::InputExtraParamWidget(QWidget *parent) : QWidget(parent),
                                                                 ui(new Ui::InputExtraParamWidget) {
   ui->setupUi(this);
+  ui->cloth_type_combo_box->setDisabled(true);
   ui->cloth_type_combo_box->insertItem(-1, "前片");
   ui->cloth_type_combo_box->insertItem(-1, "后片");
   ui->cloth_size_combo_box->insertItem(-1, "S");
@@ -59,7 +59,6 @@ InputExtraParamWidget::InputExtraParamWidget(QWidget *parent) : QWidget(parent),
     ui->red_spin_box->setValue(color.red());
     ui->green_spin_box->setValue(color.green());
     ui->blue_spin_box->setValue(color.blue());
-    qDebug() << (ui->red_spin_box->value() << 4 | ui->green_spin_box->value() << 2 | ui->blue_spin_box->value());
   });
 
   ui->cloth_thickness_label->setToolTip(QString("0.35~0.45mm（薄）\n0.45~1mm（中等）\n大于1mm（厚）"));

@@ -116,7 +116,10 @@ private slots:
   void slotLogShow(QString, QString, QString, QString, QString);
 
   ////////////////////////// 选择设置样式槽函数 //////////////////////////
-  void slotChoseStyleFile(QString prefix, QString file_name);
+  void slotChooseStyleFile();
+  void slotSetCurrentStyleFile(QString prefix, QString file_name);
+  void slotGetClothStyle(QString prefix, QString file_name);
+  void slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
 
   ////////////////////////// 创建衣服样式槽函数 //////////////////////////
   void slotCreateFromCAD(ClothStyleDialog *parent);
@@ -126,8 +129,8 @@ private slots:
 
   void slotMoveHandByAutoCreateStyle();
   void slotDetectClothByAutoCreateStyle(int cloth_type);
-  void slotCreateStyleByAutoCreateStyle(syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
-  void slotRenameClothStyleByAutoCreateStyle(std::string old_name, std::string new_name);
+  void slotCreateStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
+  void slotRenameClothStyle(QString old_name, QString new_name);
 
 signals:
   void signHeadEyeWindowShow();
