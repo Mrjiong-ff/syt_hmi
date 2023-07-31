@@ -80,6 +80,6 @@ void ChooseStyleDialog::slotSetCurrentStyleFinish(bool result) {
   if (result) {
     this->accept();
   } else {
-    QMessageBox::information(this, "警告", "设置样式失败！", "确认");
+    showMessageBox(this, WARN, "设置样式失败！", 1, {"确认"});
   }
 }

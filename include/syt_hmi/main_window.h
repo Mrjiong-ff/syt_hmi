@@ -127,7 +127,7 @@ private slots:
   void slotManualInputParam(ClothStyleDialog *parent);
   void slotCreateFromSource(ClothStyleDialog *parent);
 
-  void slotMoveHandByAutoCreateStyle();
+  void slotMoveHand();
   void slotDetectClothByAutoCreateStyle(int cloth_type);
   void slotCreateStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
   void slotRenameClothStyle(QString old_name, QString new_name);

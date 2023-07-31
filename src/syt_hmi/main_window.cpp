@@ -18,13 +18,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   settingConnection();
 
   // todo 自动启动launch下所有节点(得根据实际情况来)
-  //bool res = rclcomm_->initAllNodes();
-  //if (!res) {
-    //if (rclcomm_ != nullptr) {
-      //delete rclcomm_;
-    //}
-    //delete ui;
-    //exit(-1);
+  // bool res = rclcomm_->initAllNodes();
+  // if (!res) {
+  // if (rclcomm_ != nullptr) {
+  // delete rclcomm_;
+  //}
+  // delete ui;
+  // exit(-1);
   //}
 }
 
@@ -973,7 +973,7 @@ void MainWindow::slotLogShow(QString time, QString level, QString location, QStr
   } else if (level == "FATAL") {
     htmlText = QString("<span style=\"background-color: red; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
   } else {
-    qDebug("敲尼玛？");
+    qDebug("前面的路以后再来探索吧");
     return;
   }
   ui->sytPlainTextEdit->appendHtml(htmlText);
@@ -988,16 +988,16 @@ void MainWindow::slotChooseStyleFile() {
   connect(rclcomm_, &SytRclComm::signSetCurrentClothStyleFinish, choose_style_dialog, &ChooseStyleDialog::slotSetCurrentStyleFinish);
 
   qRegisterMetaType<syt_msgs::msg::ClothStyle>("syt_msgs::msg::ClothStyle");
+  connect(choose_style_dialog, &ChooseStyleDialog::accepted, this, [=] {
+    emit signGetClothStyle(style_file_prefix_, style_file_name_);
+  });
   disconnect(this, SIGNAL(signGetClothStyle(QString, QString)), this, SLOT(slotGetClothStyle(QString, QString)));
   connect(this, SIGNAL(signGetClothStyle(QString, QString)), this, SLOT(slotGetClothStyle(QString, QString)));
   disconnect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish);
   connect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish);
 
-  // choose_style_dialog->exec();
-  int result = choose_style_dialog->exec();
-  if (result == QDialog::Accepted) {
-    emit signGetClothStyle(style_file_prefix_, style_file_name_);
-  }
+  choose_style_dialog->show();
+  choose_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void MainWindow::slotSetCurrentStyleFile(QString prefix, QString file_name) {
@@ -1054,7 +1054,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     ui->cloth_style_tree_widget->expandAll(); // 展开
     waiting_spinner_widget_->stop();
   } else {
-    QMessageBox::information(this, "警告", "获取样式信息失败", "确认");
+    showMessageBox(this, WARN, "获取样式信息失败", 1, {"确认"});
   }
 }
 
@@ -1069,7 +1069,7 @@ void MainWindow::slotCreateFromCAD(ClothStyleDialog *parent) {
 // 自动创建
 void MainWindow::slotAutoCreateStyle(ClothStyleDialog *parent) {
   AutoCreateStyleWizard *auto_create_style_wizard = new AutoCreateStyleWizard(parent);
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this, &MainWindow::slotMoveHandByAutoCreateStyle);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this, &MainWindow::slotMoveHand);
   connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult);
 
   connect(auto_create_style_wizard, &AutoCreateStyleWizard::signDetectCloth, this, &MainWindow::slotDetectClothByAutoCreateStyle);
@@ -1106,7 +1106,7 @@ void MainWindow::slotCreateFromSource(ClothStyleDialog *parent) {
   create_from_source_wizard->setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void MainWindow::slotMoveHandByAutoCreateStyle() {
+void MainWindow::slotMoveHand() {
   future_ = QtConcurrent::run([=] {
     rclcomm_->composeMachineMoveHand(0, 900, 0, 0);
   });
