@@ -14,18 +14,24 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>100</number>
+   </property>
+   <property name="rightMargin">
+    <number>100</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
       <widget class="QLabel" name="cloth_length_label">
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>150</width>
          <height>0</height>
         </size>
        </property>
        <property name="text">
-        <string>衣长</string>
+        <string>衣长（单位毫米）</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -68,7 +74,7 @@
         </size>
        </property>
        <property name="text">
-        <string>下摆长度</string>
+        <string>下摆长度（单位毫米）</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -111,7 +117,7 @@
         </size>
        </property>
        <property name="text">
-        <string>腋下长度</string>
+        <string>腋下长度（单位毫米）</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -154,7 +160,7 @@
         </size>
        </property>
        <property name="text">
-        <string>肩缝长度</string>
+        <string>肩缝长度（单位毫米）</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -197,7 +203,7 @@
         </size>
        </property>
        <property name="text">
-        <string>侧缝长度</string>
+        <string>侧缝长度（单位毫米）</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>

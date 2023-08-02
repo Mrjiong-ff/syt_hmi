@@ -27,7 +27,6 @@
 #include "syt_hmi/show_color_widget.h"
 #include "ui_main_window.h"
 #include "utils/utils.h"
-#include "utils/waitingspinnerwidget.h"
 
 #include "syt_rclcomm/rcl_comm.h"
 

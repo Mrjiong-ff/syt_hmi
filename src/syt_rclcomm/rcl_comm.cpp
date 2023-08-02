@@ -1,13 +1,13 @@
 #include "syt_rclcomm/rcl_comm.h"
 #include <memory>
 
-SytRclComm::SytRclComm() {
+SytRclComm::SytRclComm() : rate_(100) {
   executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   node_     = rclcpp::Node::make_shared("syt_hmi_node");
   executor_->add_node(node_);
 
   // ota sub
-  download_subscription_ = node_->create_subscription<std_msgs::msg::Int32>("/syt/ota/ftp_topic", 10, std::bind(&SytRclComm::download_callback, this, std::placeholders::_1));
+  download_subscription_ = node_->create_subscription<std_msgs::msg::Int32>("/syt/ota/ftp_topic", 10, std::bind(&SytRclComm::downloadCallback, this, std::placeholders::_1));
 
   // 上料机视觉显示回调
   load_cloth_visual_subscription_ = node_->create_subscription<syt_msgs::msg::LoadClothVisual>("/syt/cloth_edge_pydetect/cloth_edge_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, std::placeholders::_1));
@@ -17,6 +17,9 @@ SytRclComm::SytRclComm() {
 
   // rosout消息回调函数
   log_subscription_ = node_->create_subscription<rcl_interfaces::msg::Log>("/rosout", 10, std::bind(&SytRclComm::logCallback, this, std::placeholders::_1));
+
+  // 运行状态回调函数
+  run_state_subscription_ = node_->create_subscription<syt_msgs::msg::MotionPlannerState>("/syt/motion_planner/run_state", 10, std::bind(&SytRclComm::runStateCallback, this, std::placeholders::_1));
 
   // 开始停止复位
   fsm_flow_control_cmd_publisher_ = node_->create_publisher<syt_msgs::msg::FSMFlowControlCommand>("/syt/robot_control/flow_control_cmd", 10);
@@ -125,7 +128,7 @@ void SytRclComm::otaDownload() {
   emit downloadRes(success, QString(result.get()->message.data()));
 }
 
-void SytRclComm::download_callback(const std_msgs::msg::Int32::SharedPtr msg) {
+void SytRclComm::downloadCallback(const std_msgs::msg::Int32::SharedPtr msg) {
   int val = msg.get()->data;
   emit updateProcess(val, total_size);
 }
@@ -242,25 +245,107 @@ void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
   emit signLogPub(QString(cur_time.c_str()), level, QString(location), QString(func), QString(_msg));
 }
 
+// 监听全流程运行状态
+void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::SharedPtr msg) {
+  rate_.sleep();
+  if (start_flag_) {
+    switch (msg->state) {
+    case syt_msgs::msg::MotionPlannerState::LOAD_CLOTH_INITIALIZE:
+    case syt_msgs::msg::MotionPlannerState::INITIALIZE: {
+      fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
+      break;
+    }
+    case syt_msgs::msg::MotionPlannerState::SAFE_POSITION:
+    case syt_msgs::msg::MotionPlannerState::STEP_ONE:
+    case syt_msgs::msg::MotionPlannerState::STEP_TWO:
+    case syt_msgs::msg::MotionPlannerState::STEP_THREE:
+    case syt_msgs::msg::MotionPlannerState::STEP_FOUR:
+    case syt_msgs::msg::MotionPlannerState::ERROR:
+      break;
+    default:
+      break;
+    }
+  } else {
+    fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
+  }
+}
+
 void SytRclComm::startCmd() {
-  auto message             = syt_msgs::msg::FSMFlowControlCommand();
-  message.command          = message.RUN;
-  message.state.state_code = 0;
-  fsm_flow_control_cmd_publisher_->publish(message);
+  start_flag_       = true;
+  auto mode_message = syt_msgs::msg::FSMRunMode();
+  mode_message.mode = mode_message.LOOP_ONCE;
+  fsm_run_mode_publisher_->publish(mode_message);
+  fsm_flow_control_command_.command = fsm_flow_control_command_.RUN;
 }
 
 void SytRclComm::resetCmd() {
-  auto message             = syt_msgs::msg::FSMFlowControlCommand();
-  message.command          = message.RESET;
-  message.state.state_code = 0;
-  fsm_flow_control_cmd_publisher_->publish(message);
+  start_flag_                       = false;
+  fsm_flow_control_command_.command = fsm_flow_control_command_.RESET;
+  resetWholeMachine();
 }
 
 void SytRclComm::stopCmd() {
-  auto message             = syt_msgs::msg::FSMFlowControlCommand();
-  message.command          = message.STOP;
-  message.state.state_code = 0;
-  fsm_flow_control_cmd_publisher_->publish(message);
+  start_flag_                       = false;
+  fsm_flow_control_command_.command = fsm_flow_control_command_.STOP;
+  stopWholeMachine();
+}
+
+void SytRclComm::resetWholeMachine() {
+  rclcpp::Client<syt_msgs::srv::WholeMachineCMD>::SharedPtr client = node_->create_client<syt_msgs::srv::WholeMachineCMD>("/syt/robot_control/whole_machine/command");
+
+  int try_count = 0;
+  while (!client->wait_for_service(1s)) {
+    if (try_count++ >= 5) {
+      RCLCPP_INFO(node_->get_logger(), "无法连接至整机流程控制服务超过限制次数，停止连接...");
+      return;
+    }
+    if (!rclcpp::ok()) {
+      RCLCPP_ERROR(node_->get_logger(), "连接至整机流程控制服务被打断.");
+      return;
+    }
+    RCLCPP_INFO(node_->get_logger(), "无法连接至整机流程控制服务，重试...");
+  }
+
+  auto request          = std::make_shared<syt_msgs::srv::WholeMachineCMD::Request>();
+  request->command.data = request->command.RESET;
+  auto result           = client->async_send_request(request);
+  if (result.wait_for(10s) != std::future_status::ready) {
+    RCLCPP_INFO(node_->get_logger(), "整机流程控制调用超时!!!");
+    return;
+  }
+
+  bool success = result.get()->success;
+  std::cout << "整机流程控制结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
+  return;
+}
+
+void SytRclComm::stopWholeMachine() {
+  rclcpp::Client<syt_msgs::srv::WholeMachineCMD>::SharedPtr client = node_->create_client<syt_msgs::srv::WholeMachineCMD>("/syt/robot_control/whole_machine/command");
+
+  int try_count = 0;
+  while (!client->wait_for_service(1s)) {
+    if (try_count++ >= 5) {
+      RCLCPP_INFO(node_->get_logger(), "无法连接至整机流程控制服务超过限制次数，停止连接...");
+      return;
+    }
+    if (!rclcpp::ok()) {
+      RCLCPP_ERROR(node_->get_logger(), "连接至整机流程控制服务被打断.");
+      return;
+    }
+    RCLCPP_INFO(node_->get_logger(), "无法连接至整机流程控制服务，重试...");
+  }
+
+  auto request          = std::make_shared<syt_msgs::srv::WholeMachineCMD::Request>();
+  request->command.data = request->command.STOP;
+  auto result           = client->async_send_request(request);
+  if (result.wait_for(10s) != std::future_status::ready) {
+    RCLCPP_INFO(node_->get_logger(), "整机流程控制调用超时!!!");
+    return;
+  }
+
+  bool success = result.get()->success;
+  std::cout << "整机流程控制结束, 执行结果: " << (success ? "成功" : "失败") << std::endl;
+  return;
 }
 
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
@@ -327,8 +412,9 @@ void SytRclComm::composeMachineDetectCloth(uint8_t frame_id, int cloth_type) {
     RCLCPP_INFO(node_->get_logger(), "无法连接至裁片检测服务，重试...");
   }
 
-  auto request      = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
-  request->frame_id = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机
+  auto request           = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
+  request->frame_id.data = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机
+  request->compare_flag  = 0;
 
   auto result = client->async_send_request(request);
   if (result.wait_for(10s) != std::future_status::ready) {
@@ -366,12 +452,6 @@ void SytRclComm::createStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_fro
     }
     RCLCPP_INFO(node_->get_logger(), "无法连接至创建样式服务，重试...");
   }
-
-  qDebug() << cloth_style_front.cloth_length;
-  qDebug() << cloth_style_front.bottom_length;
-  qDebug() << cloth_style_front.oxter_length;
-  qDebug() << cloth_style_front.shoulder_length;
-  qDebug() << cloth_style_front.side_length;
 
   auto request               = std::make_shared<syt_msgs::srv::CreateStyle::Request>();
   request->mode.data         = mode;

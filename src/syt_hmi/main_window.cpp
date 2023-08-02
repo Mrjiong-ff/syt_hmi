@@ -574,21 +574,25 @@ void MainWindow::settingConnection() {
   connect(this, &MainWindow::signClothStyleWindowShow, [=] {
     auto cloth_style_dialog = new ClothStyleDialog(this);
 
-    void (ClothStyleDialog::*create_from_cad_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromCAD;
-    void (MainWindow::*create_from_cad_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromCAD;
-    connect(cloth_style_dialog, create_from_cad_signal, this, create_from_cad_slot, Qt::ConnectionType::QueuedConnection);
+    //// 从CAD创建
+    //void (ClothStyleDialog::*create_from_cad_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromCAD;
+    //void (MainWindow::*create_from_cad_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromCAD;
+    //connect(cloth_style_dialog, create_from_cad_signal, this, create_from_cad_slot, Qt::ConnectionType::QueuedConnection);
 
+    // 自动创建
     void (ClothStyleDialog::*auto_create_style_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signAutoCreateStyle;
     void (MainWindow::*auto_create_style_slot)(ClothStyleDialog *parent)         = &MainWindow::slotAutoCreateStyle;
     connect(cloth_style_dialog, auto_create_style_signal, this, auto_create_style_slot, Qt::ConnectionType::QueuedConnection);
 
+    // 手动创建
     void (ClothStyleDialog::*manual_input_param_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signManualInputParam;
     void (MainWindow::*manual_input_param_slot)(ClothStyleDialog *parent)         = &MainWindow::slotManualInputParam;
     connect(cloth_style_dialog, manual_input_param_signal, this, manual_input_param_slot, Qt::ConnectionType::QueuedConnection);
 
-    void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
-    void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromSource;
-    connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
+    //// 从已有文件创建
+    //void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
+    //void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromSource;
+    //connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
 
     cloth_style_dialog->show();
     cloth_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -678,6 +682,7 @@ void MainWindow::slotMaxBtnClicked() {
   }
 }
 
+// 导航至上一页
 void MainWindow::slotPrevPage() {
   int currentIndex = ui->stackedWidget->currentIndex();
   if (currentIndex == 0) {
@@ -687,6 +692,7 @@ void MainWindow::slotPrevPage() {
   }
 }
 
+// 导航至下一页
 void MainWindow::slotNextPage() {
   int currentIndex = ui->stackedWidget->currentIndex();
   if (currentIndex == ui->stackedWidget->count() - 1) {
@@ -696,6 +702,7 @@ void MainWindow::slotNextPage() {
   }
 }
 
+// 复位按钮槽函数
 void MainWindow::resetBtnClicked() {
   emit signUpdateLabelState("重置中");
 
@@ -703,61 +710,61 @@ void MainWindow::resetBtnClicked() {
   if (!res) {
     return;
   }
-  // todo 重置完成后可用
-  ui->start_btn->setEnabled(true);
-  ui->start_btn->setStyleSheet("");
-  ui->stop_btn->setEnabled(true);
-  ui->stop_btn->setStyleSheet("");
-  this->setMutuallyLight(YELLOW);
+
   // todo 进度条清0
   value = 0;
   ui->processWidget->setValue(value);
-  // todo
+
+  this->btnControl({ui->start_btn, ui->stop_btn}, {});
+  this->setMutuallyLight(YELLOW);
+  emit signUpdateLabelState("重置完成");
+
+  // 复位指令
   future_ = QtConcurrent::run([=] {
     rclcomm_->resetCmd();
   });
-
-  emit signUpdateLabelState("重置完成");
 }
 
+// 开始按钮槽函数
 void MainWindow::startBtnClicked() {
   bool res = isFastClick(ui->start_btn, 1000);
   if (!res) {
     return;
   }
 
-  this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn});
-
   test_timer->start();
-  setMutuallyLight(GREEN);
 
+  this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn});
+  setMutuallyLight(GREEN);
   emit signUpdateLabelState("运行中");
 
-  // 发布开始指令
+  // 开始指令
   future_ = QtConcurrent::run([=] {
     rclcomm_->startCmd();
   });
 }
 
+// 停止按钮槽函数
 void MainWindow::stopBtnClicked() {
   bool res = isFastClick(ui->stop_btn, 1000);
   if (!res) {
     return;
   }
-  qDebug("点击停止按钮");
 
-  // todo
-  this->btnControl({ui->reset_btn, ui->start_btn}, {ui->stop_btn});
-
-  // todo test
   ui->msg_widget->setToolTip("系统异常");
   test_timer->stop();
 
+  this->btnControl({ui->reset_btn}, {ui->stop_btn, ui->start_btn});
   this->setMutuallyLight(YELLOW);
-
   emit signUpdateLabelState("停止中");
+
+  // 停止指令
+  future_ = QtConcurrent::run([=] {
+    rclcomm_->stopCmd();
+  });
 }
 
+// 错误提示槽函数
 void MainWindow::errorNodeMsgSlot(QString msg) {
   showMessageBox(this, STATE::ERROR, msg, 1, {"退出"});
 }

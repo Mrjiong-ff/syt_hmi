@@ -222,6 +222,7 @@ InputLengthParamPage::InputLengthParamPage(QWidget *parent, int cloth_type) : QW
 bool InputLengthParamPage::validatePage() {
   if (input_length_param_widget->filled()) {
     syt_msgs::msg::ClothStyle cloth_style = input_length_param_widget->getClothStyle();
+    cloth_style.cloth_type                = cloth_type_;
 
     emit signSetLengthParam(cloth_style);
     return true;

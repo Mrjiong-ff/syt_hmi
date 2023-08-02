@@ -2,6 +2,7 @@
 
 #include "syt_hmi/wizard_pages.h"
 #include "syt_msgs/msg/cloth_info.hpp"
+#include "utils/waitingspinnerwidget.h"
 
 #include <QWizard>
 
@@ -14,6 +15,7 @@ private:
   syt_msgs::msg::ClothStyle cloth_style_back_;
   QString file_name_;
 
+  WaitingSpinnerWidget *waiting_spinner_widget_;
 public:
   AutoCreateStyleWizard(QWidget *parent = nullptr);
   ~AutoCreateStyleWizard(){};

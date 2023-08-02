@@ -9,6 +9,8 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   setButtonText(WizardButton::FinishButton, "完成");
   setModal(true);
 
+  waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
+
   // ----- wizard流程 -----
   // 1.移动抓手
   MoveHandPage *move_hand_and_notify_page = new MoveHandPage(parent);
@@ -77,18 +79,22 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
 }
 
 void AutoCreateStyleWizard::slotMoveHand() {
+  waiting_spinner_widget_->start();
   emit signMoveHand();
 }
 
 void AutoCreateStyleWizard::slotMoveHandResult(bool result) {
+  waiting_spinner_widget_->stop();
   emit signMoveHandResult(result);
 }
 
 void AutoCreateStyleWizard::slotDetectCloth(int cloth_type) {
+  waiting_spinner_widget_->start();
   emit signDetectCloth(cloth_type);
 }
 
 void AutoCreateStyleWizard::slotDetectClothResult(bool result, int cloth_type, syt_msgs::msg::ClothInfo cloth_info) {
+  waiting_spinner_widget_->stop();
   if (cloth_type == 0) {
     cloth_info_front_.cloth_contour = cloth_info.cloth_contour;
     cloth_info_front_.keypoint_info = cloth_info.keypoint_info;
@@ -108,6 +114,7 @@ void AutoCreateStyleWizard::slotSetExtraParam(syt_msgs::msg::ClothStyle cloth_st
 }
 
 void AutoCreateStyleWizard::slotCreateStyle() {
+  waiting_spinner_widget_->start();
   cloth_style_front_.cloth_contour = cloth_info_front_.cloth_contour;
   cloth_style_front_.keypoint_info = cloth_info_front_.keypoint_info;
   cloth_style_back_.cloth_contour  = cloth_info_back_.cloth_contour;
@@ -116,6 +123,7 @@ void AutoCreateStyleWizard::slotCreateStyle() {
 }
 
 void AutoCreateStyleWizard::slotCreateStyleResult(bool result, QString file_name) {
+  waiting_spinner_widget_->stop();
   if (result) {
     file_name_ = file_name;
     qDebug() << file_name;
@@ -128,9 +136,11 @@ void AutoCreateStyleWizard::slotSetRenameEdit() {
 }
 
 void AutoCreateStyleWizard::slotRenameClothStyle() {
+  waiting_spinner_widget_->start();
   emit signRenameClothStyle(field("old_name").toString(), field("new_name").toString());
 }
 
 void AutoCreateStyleWizard::slotRenameClothStyleResult(bool result) {
+  waiting_spinner_widget_->stop();
   emit signRenameClothStyleResult(result);
 }
