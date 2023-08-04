@@ -19,7 +19,7 @@ class MoveHandPage : public QWizardPage {
 private:
   bool moved_hand_ = false;
 
-  InteractiveButtonBase *move_hand_button;
+  InteractiveButtonBase *move_hand_btn_;
 
 public:
   MoveHandPage(QWidget *parent = nullptr);
@@ -67,7 +67,7 @@ class InputExtraParamPage : public QWizardPage {
   Q_OBJECT
 private:
   int cloth_type_;
-  InputExtraParamWidget *input_extra_param_widget;
+  InputExtraParamWidget *input_extra_param_widget_;
 
 public:
   InputExtraParamPage(QWidget *parent = nullptr, int cloth_type = 0);
@@ -103,11 +103,11 @@ public slots:
 class RenameClothStylePage : public QWizardPage {
   Q_OBJECT
 private:
-  QLabel *old_name_label;
-  QLabel *new_name_label;
-  QLineEdit *old_name_line_edit;
-  QLineEdit *new_name_line_edit;
-  InteractiveButtonBase *rename_btn;
+  QLabel *old_name_label_;
+  QLabel *new_name_label_;
+  QLineEdit *old_name_line_edit_;
+  QLineEdit *new_name_line_edit_;
+  InteractiveButtonBase *rename_btn_;
 
 public:
   RenameClothStylePage(QWidget *parent = nullptr);

@@ -4,10 +4,14 @@
 // 1.移动抓手
 MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
   setTitle("移动抓手至安全位置");
-  move_hand_button    = new InteractiveButtonBase;
+  move_hand_btn_ = new InteractiveButtonBase;
+  move_hand_btn_->setParentEnabled(true);
+  move_hand_btn_->setForeEnabled(false);
+  move_hand_btn_->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
   QSpacerItem *spacer = new QSpacerItem(20, 100, QSizePolicy::Expanding);
-  move_hand_button->setText("点击移动抓手");
-  connect(move_hand_button, &QPushButton::clicked, this, [=]() {
+  move_hand_btn_->setText("点击移动抓手");
+  connect(move_hand_btn_, &QPushButton::clicked, this, [=]() {
     // 未移动抓手时发送
     if (!moved_hand_) {
       emit signMoveHand();
@@ -15,7 +19,7 @@ MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
   });
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer);
-  layout->addWidget(move_hand_button);
+  layout->addWidget(move_hand_btn_);
   setLayout(layout);
 }
 
@@ -51,7 +55,10 @@ DetectClothPage::DetectClothPage(QWidget *parent, int cloth_type) : QWizardPage(
   setTitle(QString("检测%1裁片轮廓和关键点").arg(cloth_type_ ? "后片" : "前片"));
 
   InteractiveButtonBase *detect_cloth_btn_ = new InteractiveButtonBase;
-  QSpacerItem *spacer                      = new QSpacerItem(20, 100, QSizePolicy::Expanding);
+  detect_cloth_btn_->setParentEnabled(true);
+  detect_cloth_btn_->setForeEnabled(false);
+  detect_cloth_btn_->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  QSpacerItem *spacer = new QSpacerItem(20, 100, QSizePolicy::Expanding);
 
   detect_cloth_btn_->setText(QString("点击开始检测%1").arg(cloth_type_ ? "后片" : "前片"));
   connect(detect_cloth_btn_, &QPushButton::clicked, this, [=]() {
@@ -89,16 +96,16 @@ void DetectClothPage::slotDetectClothResult(bool result, int cloth_type) {
 InputExtraParamPage::InputExtraParamPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
   setTitle(QString("输入%1额外参数").arg(cloth_type_ ? "后片" : "前片"));
 
-  input_extra_param_widget = new InputExtraParamWidget(parent);
-  input_extra_param_widget->setClothType(cloth_type_);
+  input_extra_param_widget_ = new InputExtraParamWidget(parent);
+  input_extra_param_widget_->setClothType(cloth_type_);
 
   QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(input_extra_param_widget);
+  layout->addWidget(input_extra_param_widget_);
   setLayout(layout);
 }
 
 bool InputExtraParamPage::validatePage() {
-  syt_msgs::msg::ClothStyle cloth_style = input_extra_param_widget->getClothStyle();
+  syt_msgs::msg::ClothStyle cloth_style = input_extra_param_widget_->getClothStyle();
 
   emit signSetExtraParam(cloth_style);
   return true;
@@ -144,39 +151,42 @@ void CreateStylePage::slotCreateStyleResult(bool result) {
 // 6. 修改样式名
 RenameClothStylePage::RenameClothStylePage(QWidget *parent) : QWizardPage(parent) {
   setTitle("修改样式名(可选)");
-  old_name_label     = new QLabel(tr("旧文件名"));
-  new_name_label     = new QLabel(tr("新文件名"));
-  old_name_line_edit = new QLineEdit;
-  new_name_line_edit = new QLineEdit;
-  rename_btn         = new InteractiveButtonBase("重命名");
+  old_name_label_     = new QLabel(tr("旧文件名"));
+  new_name_label_     = new QLabel(tr("新文件名"));
+  old_name_line_edit_ = new QLineEdit;
+  new_name_line_edit_ = new QLineEdit;
+  rename_btn_         = new InteractiveButtonBase("重命名");
+  rename_btn_->setParentEnabled(true);
+  rename_btn_->setForeEnabled(false);
+  rename_btn_->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  connect(rename_btn, &QPushButton::clicked, this, [=]() {
-    if (old_name_line_edit->text() != new_name_line_edit->text()) {
+  connect(rename_btn_, &QPushButton::clicked, this, [=]() {
+    if (old_name_line_edit_->text() != new_name_line_edit_->text()) {
       emit signRenameClothStyle();
     } else {
       showMessageBox(this, WARN, "如需重命名，请修改新文件名。", 1, {"确认"});
     }
   });
 
-  registerField("old_name", old_name_line_edit);
-  registerField("new_name", new_name_line_edit);
+  registerField("old_name", old_name_line_edit_);
+  registerField("new_name", new_name_line_edit_);
 
-  old_name_line_edit->setEnabled(false);
+  old_name_line_edit_->setEnabled(false);
   QRegExp exp("[a-zA-Z0-9_]+.syt");
   QValidator *validator = new QRegExpValidator(exp);
-  new_name_line_edit->setValidator(validator);
+  new_name_line_edit_->setValidator(validator);
 
   QGridLayout *layout = new QGridLayout;
-  layout->addWidget(old_name_label, 0, 0);
-  layout->addWidget(old_name_line_edit, 0, 1);
-  layout->addWidget(new_name_label, 1, 0);
-  layout->addWidget(new_name_line_edit, 1, 1);
-  layout->addWidget(rename_btn, 2, 1);
+  layout->addWidget(old_name_label_, 0, 0);
+  layout->addWidget(old_name_line_edit_, 0, 1);
+  layout->addWidget(new_name_label_, 1, 0);
+  layout->addWidget(new_name_line_edit_, 1, 1);
+  layout->addWidget(rename_btn_, 2, 1);
   setLayout(layout);
 }
 
 bool RenameClothStylePage::validatePage() {
-  if (old_name_line_edit->text() == new_name_line_edit->text()) {
+  if (old_name_line_edit_->text() == new_name_line_edit_->text()) {
     return true;
   }
 
@@ -185,8 +195,8 @@ bool RenameClothStylePage::validatePage() {
 }
 
 void RenameClothStylePage::slotSetRenameEdit(QString file_name) {
-  old_name_line_edit->setText(file_name);
-  new_name_line_edit->setText(file_name);
+  old_name_line_edit_->setText(file_name);
+  new_name_line_edit_->setText(file_name);
 }
 
 void RenameClothStylePage::slotRenameClothStyleResult(bool result) {
@@ -194,7 +204,7 @@ void RenameClothStylePage::slotRenameClothStyleResult(bool result) {
     showMessageBox(this, WARN, "重命名失败!", 1, {"确认"});
     return;
   }
-  slotSetRenameEdit(new_name_line_edit->text());
+  slotSetRenameEdit(new_name_line_edit_->text());
   showMessageBox(this, SUCCESS, "重命名成功，请点击完成。", 1, {"确认"});
 }
 

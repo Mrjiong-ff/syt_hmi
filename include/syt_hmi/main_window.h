@@ -91,10 +91,13 @@ private slots:
   void resetBtnClicked();
   void startBtnClicked();
   void stopBtnClicked();
+  void addClothBtnClicked();
+  void changePlateBtnClicked();
   void errorNodeMsgSlot(QString msg);
   void triggeredOTAUpdate();
   void otaResultShow(bool res, QString msg);
   void otaInstallSuccess(bool res, QString msg);
+  void slotAddClothResult(bool result, int id);
   void slotVisualLoadCloth(int machine_id, int cam_id, QImage image);
 
   ////////////////////////// 工具栏函数 //////////////////////////
@@ -134,7 +137,6 @@ private slots:
 signals:
   void signHeadEyeWindowShow();
   void signClothStyleWindowShow();
-  void processSuccessful();
   void signUpdateLabelState(QString);
   void signGetClothStyle(QString prefix, QString file_name);
 
@@ -149,6 +151,10 @@ private:
   bool is_mouse_left_press_down_ = false;
   bool is_load_cloth_on_         = true;
   bool is_comp_cloth_on_         = true;
+
+  int add_cloth_count_    = 0;
+  bool add_cloth_result_A_ = 0;
+  bool add_cloth_result_B_ = 0;
 
   // 样式文件变量
   QString style_file_prefix_;

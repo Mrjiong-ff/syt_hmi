@@ -357,6 +357,14 @@ void MainWindow::initWidget() {
   ui->stop_btn->setForeEnabled(false);
   ui->stop_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
+  ui->add_cloth_btn->setParentEnabled(true);
+  ui->add_cloth_btn->setForeEnabled(false);
+  ui->add_cloth_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->change_board_btn->setParentEnabled(true);
+  ui->change_board_btn->setForeEnabled(false);
+  ui->change_board_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
   ui->choose_style_btn->setParentEnabled(true);
   ui->choose_style_btn->setForeEnabled(false);
   ui->choose_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
@@ -398,40 +406,18 @@ void MainWindow::initWidget() {
   // 等待动画初始化
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
 
-  // todo 初始状态下，开始和停止无法使用
-  this->btnControl({ui->reset_btn}, {ui->start_btn, ui->stop_btn});
-
-  // todo 初始状态下，亮灯
-  this->setMutuallyLight(YELLOW);
-  ui->msg_widget->setToolTip("系统暂停");
+  // todo 初始状态下按钮状态
+  this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
 
   // 初始状态下主界面显示的任务进度条
-  ui->processWidget->setValue(100);
+  // ui->processWidget->setValue(100);
 
   // 移动至末尾
   ui->moveToEndBtn->setIcon(QIcon(":m_icon/icon/end.png"));
   ui->moveToEndBtn->setToolTip("移至日志末尾");
+
   // 日志只读
   ui->sytPlainTextEdit->setReadOnly(true);
-
-  // todo 测试进度条，根据逻辑做对应的改变
-  test_timer = new QTimer(this);
-  test_timer->setInterval(500);
-  connect(test_timer, &QTimer::timeout, [=] {
-    value += 1;
-    if (value == 100) {
-      // todo
-      //            ui->processWidget->setValue(value);
-      value = 0;
-    }
-    ui->processWidget->setValue(value);
-    // todo
-    //        if (value == 100) {
-    //            test_timer->stop();
-    //            emit processSuccessful();
-    //            return;
-    //        }
-  });
 
   // 样式树形列表
   ui->cloth_style_tree_widget->header()->resizeSection(0, 200);
@@ -446,6 +432,10 @@ void MainWindow::initWidget() {
 
   // 事件过滤
   ui->sytMainTitleWidget->installEventFilter(this);
+
+  // todo 初始状态下，亮灯
+  this->setMutuallyLight(RED);
+  ui->msg_widget->setToolTip("系统暂停");
 }
 
 void MainWindow::settingConnection() {
@@ -497,7 +487,7 @@ void MainWindow::settingConnection() {
   connect(updateAct_, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
   // todo 关于sewing action，应该是个模态dialog，期望他能跳转到sewing的官网等等
   connect(aboutAct_, &QAction::triggered, this, [=] {
-    showMessageBox(this, ERROR, "耗子尾汁🙃", 1, {"返回"});
+    showMessageBox(this, ERROR, "帮助", 1, {"返回"});
     ;
     return;
   });
@@ -510,6 +500,8 @@ void MainWindow::settingConnection() {
   connect(ui->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
   connect(ui->start_btn, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
   connect(ui->stop_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
+  connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
+  connect(ui->change_board_btn, &QPushButton::clicked, this, &MainWindow::changePlateBtnClicked);
 
   // 可视化两个按钮
   connect(ui->loadClothVisableBtn, &QPushButton::clicked, [=] {
@@ -561,11 +553,15 @@ void MainWindow::settingConnection() {
   // head eye dialog 信号槽
   connect(this, &MainWindow::signHeadEyeWindowShow, [=] {
     auto head_eye_dialog = new HeadEyeDialog(this);
-    connect(head_eye_dialog, &HeadEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart, Qt::ConnectionType::QueuedConnection);
-    connect(head_eye_dialog, &HeadEyeDialog::signSewingStart, this, &MainWindow::slotSewingCalibStart, Qt::ConnectionType::QueuedConnection);
+    connect(head_eye_dialog, &HeadEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart);
+    connect(head_eye_dialog, &HeadEyeDialog::signSewingStart, this, &MainWindow::slotSewingCalibStart);
     head_eye_dialog->show();
     head_eye_dialog->setAttribute(Qt::WA_DeleteOnClose);
   });
+
+  // 标定相关
+  connect(rclcomm_, &SytRclComm::compCalibRes, this, &MainWindow::slotCompCalibRes);
+  connect(rclcomm_, &SytRclComm::sewingCalibRes, this, &MainWindow::slotSewingCalibRes);
 
   // 选择样式信号槽
   connect(ui->choose_style_btn, &QPushButton::clicked, this, &MainWindow::slotChooseStyleFile);
@@ -575,9 +571,9 @@ void MainWindow::settingConnection() {
     auto cloth_style_dialog = new ClothStyleDialog(this);
 
     //// 从CAD创建
-    //void (ClothStyleDialog::*create_from_cad_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromCAD;
-    //void (MainWindow::*create_from_cad_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromCAD;
-    //connect(cloth_style_dialog, create_from_cad_signal, this, create_from_cad_slot, Qt::ConnectionType::QueuedConnection);
+    // void (ClothStyleDialog::*create_from_cad_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromCAD;
+    // void (MainWindow::*create_from_cad_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromCAD;
+    // connect(cloth_style_dialog, create_from_cad_signal, this, create_from_cad_slot, Qt::ConnectionType::QueuedConnection);
 
     // 自动创建
     void (ClothStyleDialog::*auto_create_style_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signAutoCreateStyle;
@@ -590,20 +586,19 @@ void MainWindow::settingConnection() {
     connect(cloth_style_dialog, manual_input_param_signal, this, manual_input_param_slot, Qt::ConnectionType::QueuedConnection);
 
     //// 从已有文件创建
-    //void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
-    //void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromSource;
-    //connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
+    // void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
+    // void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromSource;
+    // connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
 
     cloth_style_dialog->show();
     cloth_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
   });
 
-  // 标定相关
-  connect(rclcomm_, &SytRclComm::compCalibRes, this, &MainWindow::slotCompCalibRes);
-  connect(rclcomm_, &SytRclComm::sewingCalibRes, this, &MainWindow::slotSewingCalibRes);
-
   // ros2 rosout回调消息的槽函数
   connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow, Qt::ConnectionType::QueuedConnection);
+
+  // 补料模式结束
+  connect(rclcomm_, &SytRclComm::signAddClothFinish, this, &MainWindow::slotAddClothResult);
 
   // 上料机可视化相关槽函数
   connect(rclcomm_, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth);
@@ -611,9 +606,11 @@ void MainWindow::settingConnection() {
   // todo 合片机可视化相关槽函数
 
   // todo 任务完成后按钮的逻辑
-  connect(this, &MainWindow::processSuccessful, [=] {
-    this->btnControl({ui->reset_btn}, {ui->start_btn, ui->stop_btn});
-    showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
+  connect(rclcomm_, &SytRclComm::machineIdle, [=](bool idle) {
+    if (idle) {
+      this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn, ui->stop_btn}, {});
+    }
+    // showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
   });
 
   // 状态label显示
@@ -624,22 +621,25 @@ void MainWindow::settingConnection() {
 
 void MainWindow::setMutuallyLight(LIGHT_COLOR c) {
   std::map<LIGHT_COLOR, std::string> m;
-  m[RED]    = "background-color: rgb(238, 99, 99);border: 3px solid black;border-radius: 15px;";
-  m[YELLOW] = "background-color: rgb(255 ,215, 0);border: 3px solid black;border-radius: 15px;";
-  m[GREEN]  = "background-color: rgb(0 ,255, 150);border: 3px solid black;border-radius: 15px;";
+  m[RED]    = "background-color: rgb(255, 0, 0);border: 3px solid black;border-radius: 15px;";
+  m[YELLOW] = "background-color: rgb(255 ,255, 0);border: 3px solid black;border-radius: 15px;";
+  m[GREEN]  = "background-color: rgb(0 ,255, 0);border: 3px solid black;border-radius: 15px;";
   m[GRAY]   = "background-color: gray;border: 3px solid black;border-radius: 15px;";
   switch (c) {
   case RED:
+    // qDebug() << "red";
     ui->red_label->setStyleSheet(m[RED].data());
     ui->yellow_label->setStyleSheet(m[GRAY].data());
     ui->green_label->setStyleSheet(m[GRAY].data());
     break;
   case YELLOW:
+    // qDebug() << "yellow";
     ui->red_label->setStyleSheet(m[GRAY].data());
     ui->yellow_label->setStyleSheet(m[YELLOW].data());
     ui->green_label->setStyleSheet(m[GRAY].data());
     break;
   case GREEN:
+    // qDebug() << "green";
     ui->red_label->setStyleSheet(m[GRAY].data());
     ui->yellow_label->setStyleSheet(m[GRAY].data());
     ui->green_label->setStyleSheet(m[GREEN].data());
@@ -713,9 +713,9 @@ void MainWindow::resetBtnClicked() {
 
   // todo 进度条清0
   value = 0;
-  ui->processWidget->setValue(value);
+  // ui->processWidget->setValue(value);
 
-  this->btnControl({ui->start_btn, ui->stop_btn}, {});
+  this->btnControl({ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
   this->setMutuallyLight(YELLOW);
   emit signUpdateLabelState("重置完成");
 
@@ -732,9 +732,9 @@ void MainWindow::startBtnClicked() {
     return;
   }
 
-  test_timer->start();
+  // test_timer->start();
 
-  this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn});
+  this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn});
   setMutuallyLight(GREEN);
   emit signUpdateLabelState("运行中");
 
@@ -752,15 +752,61 @@ void MainWindow::stopBtnClicked() {
   }
 
   ui->msg_widget->setToolTip("系统异常");
-  test_timer->stop();
+  // test_timer->stop();
 
-  this->btnControl({ui->reset_btn}, {ui->stop_btn, ui->start_btn});
+  this->btnControl({ui->reset_btn, ui->stop_btn}, {ui->start_btn, ui->add_cloth_btn, ui->change_board_btn});
   this->setMutuallyLight(YELLOW);
-  emit signUpdateLabelState("停止中");
+  emit signUpdateLabelState("运行完本次流程即将停止");
 
   // 停止指令
   future_ = QtConcurrent::run([=] {
     rclcomm_->stopCmd();
+  });
+}
+
+// 补料按钮槽函数
+void MainWindow::addClothBtnClicked() {
+  bool res = isFastClick(ui->stop_btn, 1000);
+  if (!res) {
+    return;
+  }
+
+  waiting_spinner_widget_->start();
+  ui->msg_widget->setToolTip("系统暂停");
+  // test_timer->stop();
+
+  this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->change_board_btn, ui->add_cloth_btn}, {});
+  this->setMutuallyLight(YELLOW);
+  emit signUpdateLabelState("换料模式");
+
+  future_ = QtConcurrent::run([=] {
+    rclcomm_->addCloth(0);
+  });
+
+  QThread::msleep(100);
+
+  future_ = QtConcurrent::run([=] {
+    rclcomm_->addCloth(1);
+  });
+}
+
+// 换板按钮槽函数
+void MainWindow::changePlateBtnClicked() {
+  bool res = isFastClick(ui->stop_btn, 1000);
+  if (!res) {
+    return;
+  }
+
+  ui->msg_widget->setToolTip("系统暂停");
+  // test_timer->stop();
+
+  this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->change_board_btn, ui->add_cloth_btn}, {});
+  this->setMutuallyLight(YELLOW);
+  emit signUpdateLabelState("换压板模式");
+
+  // 停止指令
+  future_ = QtConcurrent::run([=] {
+    // rclcomm_->stopCmd(); // TODO
   });
 }
 
@@ -796,8 +842,8 @@ void MainWindow::otaResultShow(bool res, QString msg) {
 
     // todo 完成后的
     auto ota_dialog = new OtaUpdateDialog(this);
-    connect(rclcomm_, &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue, Qt::ConnectionType::QueuedConnection);
-    connect(rclcomm_, &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue, Qt::ConnectionType::QueuedConnection);
+    connect(rclcomm_, &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue);
+    connect(rclcomm_, &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue);
     connect(rclcomm_, &SytRclComm::downloadRes, ota_dialog, &OtaUpdateDialog::getDownloadRes);
     ota_dialog->show();
     auto res_ = ota_dialog->exec();
@@ -833,6 +879,24 @@ void MainWindow::otaInstallSuccess(bool res, QString msg) {
   showMessageBox(this, SUCCESS, msg, 1, {"重启"});
   this->deleteAll();
   exit(0);
+}
+
+void MainWindow::slotAddClothResult(bool result, int id) {
+  if (id == 0) {
+    add_cloth_result_B_ = result;
+  } else if (id == 1) {
+    add_cloth_result_A_ = result;
+  }
+
+  if (++add_cloth_count_ == 2) {
+    waiting_spinner_widget_->stop();
+    if (add_cloth_result_A_ && add_cloth_result_B_) {
+      showMessageBox(this, SUCCESS, "上料模式设置成功", 1, {"确认"});
+    } else {
+      showMessageBox(this, ERROR, "上料模式设置失败", 1, {"确认"});
+    }
+    add_cloth_count_ = 0;
+  }
 }
 
 void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
@@ -929,9 +993,9 @@ void MainWindow::slotDevWindow() {
 }
 
 ////////////////////////// 标定槽函数 //////////////////////////
-void MainWindow::slotCompCalibRes(bool f) {
+void MainWindow::slotCompCalibRes(bool result) {
   waiting_spinner_widget_->stop();
-  if (f) {
+  if (result) {
     showMessageBox(this, SUCCESS, "合片台标定成功", 1, {"退出"});
     return;
   } else {
@@ -940,9 +1004,9 @@ void MainWindow::slotCompCalibRes(bool f) {
   }
 }
 
-void MainWindow::slotSewingCalibRes(bool f) {
+void MainWindow::slotSewingCalibRes(bool result) {
   waiting_spinner_widget_->stop();
-  if (f) {
+  if (result) {
     showMessageBox(this, SUCCESS, "缝纫台标定成功", 1, {"退出"});
     return;
   } else {

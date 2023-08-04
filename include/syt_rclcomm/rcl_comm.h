@@ -11,6 +11,7 @@
 #include "syt_msgs/srv/get_break_point_y.hpp"
 #include "syt_msgs/srv/get_cloth_info.hpp"
 #include "syt_msgs/srv/get_cloth_style.hpp"
+#include "syt_msgs/srv/load_machine_add_cloth.hpp"
 #include "syt_msgs/srv/rename_cloth_style.hpp"
 #include "syt_msgs/srv/run_calibration.hpp"
 #include "syt_msgs/srv/set_current_cloth_style.hpp"
@@ -34,7 +35,8 @@ class SytRclComm : public QThread {
 private:
   // total
   bool start_flag_ = false;
-  int total_size   = 0;
+
+  int total_size = 0;
 
   QProcess *process_ = nullptr;
 
@@ -71,11 +73,14 @@ public:
   SytRclComm();
   ~SytRclComm() override;
 
-  void startCmd();          // 开始全流程指令
-  void resetCmd();          // 复位指令
-  void stopCmd();           // 急停指令
+  void startCmd(); // 开始全流程指令
+  void resetCmd(); // 复位指令
+  void stopCmd();  // 急停指令
+
   void resetWholeMachine(); // 复位整机
   void stopWholeMachine();  // 停止整机
+  void addCloth(int id);    // 补料模式
+  void ChangeBoard();       // 换压板模式
 
   void otaUpdate();   // OTA更新
   void otaDownload(); // 下载更新包
@@ -99,6 +104,7 @@ signals:
   void installRes(bool, QString);
   void visualLoadClothRes(int, int, QImage);
   void signLogPub(QString, QString, QString, QString, QString);
+  void machineIdle(bool idle); // 处于空闲状态
 
   // 标定相关信号
   void compCalibRes(bool);
@@ -111,4 +117,5 @@ signals:
   void signRenameClothStyleFinish(bool result);
   void signSetCurrentClothStyleFinish(bool result);
   void signGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
+  void signAddClothFinish(bool result, int id);
 };
