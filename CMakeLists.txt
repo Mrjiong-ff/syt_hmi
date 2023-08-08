@@ -74,6 +74,10 @@ install(TARGETS ${PROJECT_NAME}
         DESTINATION lib/${PROJECT_NAME}
         )
 
+install(DIRECTORY launch
+	DESTINATION share/${PROJECT_NAME}/
+	)
+
 # exprot package
 ament_export_include_directories(
         include

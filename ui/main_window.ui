@@ -1150,7 +1150,7 @@
                <enum>Qt::NoContextMenu</enum>
               </property>
               <property name="title">
-               <string>右上料台</string>
+               <string>上料台A</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -1349,7 +1349,7 @@
                <enum>Qt::NoContextMenu</enum>
               </property>
               <property name="title">
-               <string>左上料台</string>
+               <string>上料台B</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignHCenter|Qt::AlignTop</set>

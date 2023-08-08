@@ -148,13 +148,20 @@ private:
   QFuture<void> future_;
 
   // 定义的一些bool类型标志位
+  bool is_style_seted_ = false;
+
   bool is_mouse_left_press_down_ = false;
   bool is_load_cloth_on_         = true;
   bool is_comp_cloth_on_         = true;
 
-  int add_cloth_count_    = 0;
+  int add_cloth_count_     = 0;
   bool add_cloth_result_A_ = 0;
   bool add_cloth_result_B_ = 0;
+
+  QPixmap pix_B_left_;
+  QPixmap pix_B_right_;
+  QPixmap pix_A_left_;
+  QPixmap pix_A_right_;
 
   // 样式文件变量
   QString style_file_prefix_;

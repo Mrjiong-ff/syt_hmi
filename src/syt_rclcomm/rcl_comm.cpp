@@ -39,7 +39,11 @@ SytRclComm::~SytRclComm() {
 
   rclcpp::shutdown();
 
-  killProcesses("ros-args");
+  for (int i = 0; i < 3; ++i) {
+    killProcesses("thanos.launch.py");
+    killProcesses("ros-args");
+    system("ros2 daemon stop");
+  }
 
   qDebug("shut down rclcomm.");
 }
@@ -173,7 +177,8 @@ void SytRclComm::killProcesses(std::string process_pattern) {
   while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
     int pid = atoi(buffer);
     if (pid != 0 && pid != self_pid) {
-      kill(pid, SIGINT);
+      int result = kill(pid, SIGINT);
+      qDebug() << pid << ":" << result;
     }
   }
 }
@@ -276,7 +281,7 @@ void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
 
 // 监听全流程运行状态
 void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::SharedPtr msg) {
-  rate_.sleep();
+  //rate_.sleep();
   switch (msg->state) {
   case syt_msgs::msg::MotionPlannerState::LOAD_CLOTH_INITIALIZE:
     break;
@@ -295,7 +300,7 @@ void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::Share
     break;
   }
 
-  // if (start_flag_) {
+  //if (start_flag_) {
   // switch (msg->state) {
   // case syt_msgs::msg::MotionPlannerState::LOAD_CLOTH_INITIALIZE:
   // case syt_msgs::msg::MotionPlannerState::INITIALIZE: {
@@ -321,6 +326,7 @@ void SytRclComm::startCmd() {
   start_flag_       = true;
   auto mode_message = syt_msgs::msg::FSMRunMode();
   mode_message.mode = mode_message.LOOP_ONCE;
+  //mode_message.mode = mode_message.COMPOSE_CLOTH;
   fsm_run_mode_publisher_->publish(mode_message);
   fsm_flow_control_command_.command = fsm_flow_control_command_.RUN;
   fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
@@ -336,8 +342,8 @@ void SytRclComm::stopCmd() {
   start_flag_                       = false;
   fsm_flow_control_command_.command = fsm_flow_control_command_.STOP;
   fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-  //emit machineIdle(true);
-  // TODO stopWholeMachine();
+  // emit machineIdle(true);
+  //  TODO stopWholeMachine();
 }
 
 void SytRclComm::resetWholeMachine() {
@@ -630,7 +636,7 @@ void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
   request->file_name = file_name.toStdString();
 
   auto result = client->async_send_request(request);
-  if (result.wait_for(10s) != std::future_status::ready) {
+  if (result.wait_for(50s) != std::future_status::ready) {
     RCLCPP_INFO(node_->get_logger(), "设置当前样式服务调用超时");
     emit signSetCurrentClothStyleFinish(false);
     return;
@@ -669,7 +675,7 @@ void SytRclComm::getClothStyle(QString prefix, QString file_name) {
   request->file_name = file_name.toStdString();
 
   auto result = client->async_send_request(request);
-  if (result.wait_for(10s) != std::future_status::ready) {
+  if (result.wait_for(50s) != std::future_status::ready) {
     RCLCPP_INFO(node_->get_logger(), "获取样式服务调用超时");
     emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
     return;

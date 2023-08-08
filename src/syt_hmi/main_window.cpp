@@ -439,6 +439,34 @@ void MainWindow::initWidget() {
 }
 
 void MainWindow::settingConnection() {
+  connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=]() {
+    if (ui->stackedWidget->currentWidget() == ui->page1) {
+      if (!pix_A_left_.isNull()) {
+        ui->rightLeftVisualLabel->clear();
+        ui->rightLeftVisualLabel->setPixmap(pix_A_left_);
+        ui->rightLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      }
+
+      if (!pix_A_right_.isNull()) {
+        ui->rightRightVisualLabel->clear();
+        ui->rightRightVisualLabel->setPixmap(pix_A_right_);
+        ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      }
+
+      if (!pix_B_left_.isNull()) {
+        ui->leftLeftVisualLabel->clear();
+        ui->leftLeftVisualLabel->setPixmap(pix_B_left_);
+        ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      }
+
+      if (!pix_B_right_.isNull()) {
+        ui->leftRightVisualLabel->clear();
+        ui->leftRightVisualLabel->setPixmap(pix_B_right_);
+        ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      }
+    }
+  });
+
   // main window右上角按钮 放大 缩小 菜单等
   connect(m_closeBtn_, &WinCloseButton::clicked, this, &MainWindow::close);
   connect(m_hideBtn_, &WinMaxButton::clicked, this, &MainWindow::showMinimized);
@@ -672,6 +700,13 @@ void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPus
     i->setEnabled(false);
     i->setStyleSheet("color: gray;");
   }
+  // TODO
+  ui->stop_btn->setEnabled(false);
+  ui->stop_btn->setStyleSheet("color: gray;");
+  ui->change_board_btn->setEnabled(false);
+  ui->change_board_btn->setStyleSheet("color: gray;");
+  ui->reset_btn->setEnabled(false);
+  ui->reset_btn->setStyleSheet("color: gray;");
 }
 
 void MainWindow::slotMaxBtnClicked() {
@@ -727,6 +762,10 @@ void MainWindow::resetBtnClicked() {
 
 // 开始按钮槽函数
 void MainWindow::startBtnClicked() {
+  if (!is_style_seted_) {
+    showMessageBox(this, WARN, "请先设置裁片样式。", 1, {"确认"});
+    return;
+  }
   bool res = isFastClick(ui->start_btn, 1000);
   if (!res) {
     return;
@@ -734,7 +773,7 @@ void MainWindow::startBtnClicked() {
 
   // test_timer->start();
 
-  this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn});
+  this->btnControl({ui->stop_btn, ui->start_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
   setMutuallyLight(GREEN);
   emit signUpdateLabelState("运行中");
 
@@ -754,7 +793,8 @@ void MainWindow::stopBtnClicked() {
   ui->msg_widget->setToolTip("系统异常");
   // test_timer->stop();
 
-  this->btnControl({ui->reset_btn, ui->stop_btn}, {ui->start_btn, ui->add_cloth_btn, ui->change_board_btn});
+  // this->btnControl({ui->reset_btn, ui->stop_btn}, {ui->start_btn, ui->add_cloth_btn, ui->change_board_btn});
+  this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
   this->setMutuallyLight(YELLOW);
   emit signUpdateLabelState("运行完本次流程即将停止");
 
@@ -891,7 +931,7 @@ void MainWindow::slotAddClothResult(bool result, int id) {
   if (++add_cloth_count_ == 2) {
     waiting_spinner_widget_->stop();
     if (add_cloth_result_A_ && add_cloth_result_B_) {
-      showMessageBox(this, SUCCESS, "上料模式设置成功", 1, {"确认"});
+      showMessageBox(this, SUCCESS, "上料模式设置成功，请在手动补充裁片后再点击确认。", 1, {"确认"});
     } else {
       showMessageBox(this, ERROR, "上料模式设置失败", 1, {"确认"});
     }
@@ -910,10 +950,12 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
       ui->leftLeftVisualLabel->clear();
       ui->leftLeftVisualLabel->setPixmap(pix);
       ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      pix_B_left_ = pix;
     } else if (cam_id == 1) {
       ui->leftRightVisualLabel->clear();
       ui->leftRightVisualLabel->setPixmap(pix);
       ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      pix_B_right_ = pix;
     } else {
       return;
     }
@@ -923,10 +965,12 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
       ui->rightLeftVisualLabel->clear();
       ui->rightLeftVisualLabel->setPixmap(pix);
       ui->rightLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      pix_A_left_ = pix;
     } else if (cam_id == 1) {
       ui->rightRightVisualLabel->clear();
       ui->rightRightVisualLabel->setPixmap(pix);
       ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      pix_A_right_ = pix;
     } else {
       return;
     }
@@ -1124,6 +1168,8 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     fillTreeWidget(back_item, cloth_style_back_);
     ui->cloth_style_tree_widget->expandAll(); // 展开
     waiting_spinner_widget_->stop();
+
+    is_style_seted_ = true;
   } else {
     showMessageBox(this, WARN, "获取样式信息失败", 1, {"确认"});
   }
