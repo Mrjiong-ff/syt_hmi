@@ -6,7 +6,7 @@
 #include <QScreen>
 #include <QScrollBar>
 #include <QtConcurrent/QtConcurrent>
-#include <iostream>
+#include <memory>
 
 #include "syt_btn/winclosebutton.h"
 #include "syt_btn/winmaxbutton.h"
@@ -18,8 +18,7 @@
 #include "syt_hmi/create_from_cad_wizard.h"
 #include "syt_hmi/create_from_source_wizard.h"
 #include "syt_hmi/dev_login_window.h"
-#include "syt_hmi/dev_select_dialog.h"
-#include "syt_hmi/dev_window.h"
+#include "syt_hmi/developer_widget.h"
 #include "syt_hmi/head_eye_dialog.h"
 #include "syt_hmi/lock_dialog.h"
 #include "syt_hmi/manual_input_param_wizard.h"
@@ -76,71 +75,6 @@ protected:
   virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
-  void initNode();
-  void initWidget();
-  void settingConnection();
-  void setMutuallyLight(LIGHT_COLOR);
-  void deleteAll();
-  void initOther();
-  void btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables);
-
-private slots:
-  void slotMaxBtnClicked();
-  void slotPrevPage();
-  void slotNextPage();
-  void resetBtnClicked();
-  void startBtnClicked();
-  void stopBtnClicked();
-  void addClothBtnClicked();
-  void changePlateBtnClicked();
-  void errorNodeMsgSlot(QString msg);
-  void triggeredOTAUpdate();
-  void otaResultShow(bool res, QString msg);
-  void otaInstallSuccess(bool res, QString msg);
-  void slotAddClothResult(bool result, int id);
-  void slotVisualLoadCloth(int machine_id, int cam_id, QImage image);
-
-  ////////////////////////// 工具栏函数 //////////////////////////
-  void slotShowDevLoginWindow();
-  void slotLockScreen();
-  void slotStartHeadEyeWindow();
-  void slotStartClothStyleWindow();
-
-  void slotDevWindow();
-
-  ////////////////////////// 标定槽函数 //////////////////////////
-  void slotCompCalibRes(bool f);
-  void slotSewingCalibRes(bool f);
-  void slotCompCalibStart();
-  void slotSewingCalibStart();
-
-  ////////////////////////// 显示log槽函数 //////////////////////////
-  void slotLogShow(QString, QString, QString, QString, QString);
-
-  ////////////////////////// 选择设置样式槽函数 //////////////////////////
-  void slotChooseStyleFile();
-  void slotSetCurrentStyleFile(QString prefix, QString file_name);
-  void slotGetClothStyle(QString prefix, QString file_name);
-  void slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
-
-  ////////////////////////// 创建衣服样式槽函数 //////////////////////////
-  void slotCreateFromCAD(ClothStyleDialog *parent);
-  void slotAutoCreateStyle(ClothStyleDialog *parent);
-  void slotManualInputParam(ClothStyleDialog *parent);
-  void slotCreateFromSource(ClothStyleDialog *parent);
-
-  void slotMoveHand();
-  void slotDetectClothByAutoCreateStyle(int cloth_type);
-  void slotCreateStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
-  void slotRenameClothStyle(QString old_name, QString new_name);
-
-signals:
-  void signHeadEyeWindowShow();
-  void signClothStyleWindowShow();
-  void signUpdateLabelState(QString);
-  void signGetClothStyle(QString prefix, QString file_name);
-
-private:
   Ui::MainWindow *ui;
 
   SytRclComm *rclcomm_ = nullptr;
@@ -173,13 +107,17 @@ private:
   int value = 0;
   QTimer *test_timer;
 
+  // 显示时间:
+  QTimer* time_timer_;
+
   // 一些自定义的按钮控件
   WinMenuButton *m_menuBtn_;
   WinMinButton *m_hideBtn_;
   WinMaxButton *m_maxBtn_;
   WinCloseButton *m_closeBtn_;
 
-  DevLoginWindow *dev_login_window_;
+  DeveloperWidget* developer_widget_; // 
+
   InteractiveButtonBase *prev_btn;
   InteractiveButtonBase *next_btn_;
 
@@ -199,4 +137,70 @@ private:
 
   QPoint m_mousePos_;
   Direction dir_; // 窗口大小改变时，记录改变方向
+
+private:
+  void initNode();
+  void initWidget();
+  void settingConnection();
+  void bindDeveloperConnection();
+  void setMutuallyLight(LIGHT_COLOR);
+  void deleteAll();
+  void initOther();
+  void btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables);
+
+signals:
+  void signHeadEyeWindowShow();
+  void signClothStyleWindowShow();
+  void signUpdateLabelState(QString);
+  void signGetClothStyle(QString prefix, QString file_name);
+
+private slots:
+  void slotMaxBtnClicked();
+  void slotPrevPage();
+  void slotNextPage();
+  void resetBtnClicked();
+  void startBtnClicked();
+  void stopBtnClicked();
+  void addClothBtnClicked();
+  void changePlateBtnClicked();
+  void errorNodeMsgSlot(QString msg);
+  void triggeredOTAUpdate();
+  void otaResultShow(bool res, QString msg);
+  void otaInstallSuccess(bool res, QString msg);
+  void slotAddClothResult(bool result, int id);
+  void slotVisualLoadCloth(int machine_id, int cam_id, QImage image);
+
+  ////////////////////////// 工具栏函数 //////////////////////////
+  void slotShowDevLoginWindow();
+  void slotLockScreen();
+  void slotStartHeadEyeWindow();
+  void slotStartClothStyleWindow();
+
+  void slotDeveloperMode();
+
+  ////////////////////////// 标定槽函数 //////////////////////////
+  void slotCompCalibRes(bool f);
+  void slotSewingCalibRes(bool f);
+  void slotCompCalibStart();
+  void slotSewingCalibStart();
+
+  ////////////////////////// 显示log槽函数 //////////////////////////
+  void slotLogShow(QString, QString, QString, QString, QString);
+
+  ////////////////////////// 选择设置样式槽函数 //////////////////////////
+  void slotChooseStyleFile();
+  void slotSetCurrentStyleFile(QString prefix, QString file_name);
+  void slotGetClothStyle(QString prefix, QString file_name);
+  void slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
+
+  ////////////////////////// 创建衣服样式槽函数 //////////////////////////
+  void slotCreateFromCAD(ClothStyleDialog *parent);
+  void slotAutoCreateStyle(ClothStyleDialog *parent);
+  void slotManualInputParam(ClothStyleDialog *parent);
+  void slotCreateFromSource(ClothStyleDialog *parent);
+
+  void slotMoveHand();
+  void slotDetectClothByAutoCreateStyle(int cloth_type);
+  void slotCreateStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
+  void slotRenameClothStyle(QString old_name, QString new_name);
 };

@@ -1,8 +1,6 @@
 #include "syt_hmi/main_window.h"
-#include <memory>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
-
   ui->setupUi(this);
 
   // 初始化节点
@@ -16,16 +14,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   // 信号槽
   settingConnection();
-
-  // todo 自动启动launch下所有节点(得根据实际情况来)
-  // bool res = rclcomm_->initAllNodes();
-  // if (!res) {
-  // if (rclcomm_ != nullptr) {
-  // delete rclcomm_;
-  //}
-  // delete ui;
-  // exit(-1);
-  //}
 }
 
 MainWindow::~MainWindow() {
@@ -224,9 +212,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     int init_page_btn_h = this->height() / 9;
 
     prev_btn->setGeometry(0, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
-    next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2,
-                           init_page_btn_w,
-                           init_page_btn_h);
+    next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
     // todo 应该有一些根据界面大小 控件resize的逻辑 不然单纯靠spacer做 界面布局比较丑
     // todo 主程序按钮
 
@@ -237,7 +223,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     //        qDebug("resize");
   }
 
-  //    QWidget::resizeEvent(event);
+  // QWidget::resizeEvent(event);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -417,7 +403,7 @@ void MainWindow::initWidget() {
   ui->moveToEndBtn->setToolTip("移至日志末尾");
 
   // 日志只读
-  ui->sytPlainTextEdit->setReadOnly(true);
+  ui->log_plain_text_edit->setReadOnly(true);
 
   // 样式树形列表
   ui->cloth_style_tree_widget->header()->resizeSection(0, 200);
@@ -435,7 +421,15 @@ void MainWindow::initWidget() {
 
   // todo 初始状态下，亮灯
   this->setMutuallyLight(RED);
-  ui->msg_widget->setToolTip("系统暂停");
+
+  // 开发者界面
+  developer_widget_ = new DeveloperWidget(this);
+
+  // 时间显示定时器
+  time_timer_ = new QTimer(this);
+  time_timer_->start(1000);
+  QTime time_now = QTime::currentTime();
+  ui->current_time_label->setText(QString("时间：%1").arg(time_now.toString()));
 }
 
 void MainWindow::settingConnection() {
@@ -495,15 +489,16 @@ void MainWindow::settingConnection() {
     showMessageBox(this, ERROR, "没做,搞它😵", 1, {"返回"});
   });
   // 日志清除
-  connect(ui->sytClearPushButton, &QPushButton::clicked, [=] { ui->sytPlainTextEdit->clear(); });
+  connect(ui->sytClearPushButton, &QPushButton::clicked, [=] { ui->log_plain_text_edit->clear(); });
   // 日志定位到最后一行 继续滚动
   connect(ui->moveToEndBtn, &QPushButton::clicked, [=] {
-    QTextCursor cursor = ui->sytPlainTextEdit->textCursor();
+    QTextCursor cursor = ui->log_plain_text_edit->textCursor();
     cursor.movePosition(QTextCursor::End);
-    ui->sytPlainTextEdit->setTextCursor(cursor);
+    ui->log_plain_text_edit->setTextCursor(cursor);
     // 自动滚动到末尾
-    QScrollBar *scrollBar = ui->sytPlainTextEdit->verticalScrollBar();
+    QScrollBar *scrollBar = ui->log_plain_text_edit->verticalScrollBar();
     scrollBar->setValue(scrollBar->maximum());
+    ui->log_plain_text_edit->verticalScrollBar()->show();
   });
 
   // action 相关
@@ -516,7 +511,6 @@ void MainWindow::settingConnection() {
   // todo 关于sewing action，应该是个模态dialog，期望他能跳转到sewing的官网等等
   connect(aboutAct_, &QAction::triggered, this, [=] {
     showMessageBox(this, ERROR, "帮助", 1, {"返回"});
-    ;
     return;
   });
 
@@ -626,7 +620,7 @@ void MainWindow::settingConnection() {
   connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow, Qt::ConnectionType::QueuedConnection);
 
   // 补料模式结束
-  connect(rclcomm_, &SytRclComm::signAddClothFinish, this, &MainWindow::slotAddClothResult);
+  connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::slotAddClothResult);
 
   // 上料机可视化相关槽函数
   connect(rclcomm_, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth);
@@ -644,6 +638,175 @@ void MainWindow::settingConnection() {
   // 状态label显示
   connect(this, &MainWindow::signUpdateLabelState, [=](QString text) {
     ui->stateLabel->setText(text);
+  });
+
+  // 绑定开发者界面按钮
+  bindDeveloperConnection();
+
+  // 动态显示时间
+  connect(time_timer_, &QTimer::timeout, ui->current_time_label, [=]() {
+    QTime time_now = QTime::currentTime();
+    ui->current_time_label->setText(QString("时间：%1").arg(time_now.toString()));
+  });
+}
+
+void MainWindow::bindDeveloperConnection() {
+  // 合片反馈
+  qRegisterMetaType<syt_msgs::msg::ComposeMachineState>("syt_msgs::msg::ComposeMachineState");
+  connect(rclcomm_, &SytRclComm::updateComposeMachineState, [=](syt_msgs::msg::ComposeMachineState state) {
+    developer_widget_->setComposeMachineState(state);
+  });
+
+  connect(rclcomm_, &SytRclComm::updateSewingMachineState, [=](syt_msgs::msg::SewingMachineState state) {
+    developer_widget_->setSewingMachineState(state);
+  });
+
+  // 缝纫反馈
+
+  // 上料机-复位
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineReset, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineReset(id);
+    });
+  });
+
+  // 上料机-补料
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineAddCloth, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineAddCloth(id);
+    });
+  });
+
+  // 上料机-清台
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineClearTable, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineClearTable(id);
+    });
+  });
+
+  // 上料机-裁片尺寸
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineClothSize, [=](int id, uint32_t width, uint32_t length) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineClothSize(id, width, length);
+    });
+  });
+
+  // 上料机-裁片尺寸
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineLoadDistance, [=](int id, uint32_t distance) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineLoadDistance(id, distance);
+    });
+  });
+
+  // 上料机-上料间隔
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayGap, [=](int id, uint32_t height) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineTrayGap(id, height);
+    });
+  });
+
+  // 上料机-上料偏移
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineOffset, [=](int id, int offset) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineOffset(id, offset);
+    });
+  });
+
+  // 上料机-抓住裁片
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineHoldCloth, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineHoldCloth(id);
+    });
+  });
+
+  // 上料机-上裁片
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineGrabCloth, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineGrabCloth(id);
+    });
+  });
+
+  // 合片机-复位
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineReset, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineReset();
+    });
+  });
+
+  // 合片机-停止
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineStop, [=]() {
+    // QtConcurrent::run([=]() {
+    // rclcomm_->composeMachineReset();
+    //});
+  });
+
+  // 合片机-除褶
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineWipeFold, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineWipeFold();
+    });
+  });
+
+  // 合片机-出针
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineExtendNeedle, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineExtendNeedle();
+    });
+  });
+
+  // 合片机-收针
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineWithdrawNeedle, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineWithdrawNeedle();
+    });
+  });
+
+  // 合片机-吹气
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineBlowWind, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineBlowWind();
+    });
+  });
+
+  // 合片机-停气
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineStopBlow, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineStopBlow();
+    });
+  });
+
+  // 合片机-移动抓手
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineMoveHand, [=](float x, float y, float z, float c) {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineMoveHand(x, y, z, c);
+    });
+  });
+
+  // 合片机-移动吸盘
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineMoveSucker, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineMoveSucker();
+    });
+  });
+
+  // 缝纫机-复位
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineReset, [=]() {
+    // QtConcurrent::run([=]() {
+    // });
+  });
+
+  // 缝纫机-移动抓手
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineMoveHand, [=](float x, float y, float c, bool z) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineMoveHand(x, y, c, z);
+    });
+  });
+
+  // 缝纫机-发送关键点
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineSendKeypoints, [=](syt_msgs::msg::ClothKeypoints2f keypoints) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineSendKeypoints(keypoints);
+    });
   });
 }
 
@@ -790,7 +953,6 @@ void MainWindow::stopBtnClicked() {
     return;
   }
 
-  ui->msg_widget->setToolTip("系统异常");
   // test_timer->stop();
 
   // this->btnControl({ui->reset_btn, ui->stop_btn}, {ui->start_btn, ui->add_cloth_btn, ui->change_board_btn});
@@ -812,7 +974,6 @@ void MainWindow::addClothBtnClicked() {
   }
 
   waiting_spinner_widget_->start();
-  ui->msg_widget->setToolTip("系统暂停");
   // test_timer->stop();
 
   this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->change_board_btn, ui->add_cloth_btn}, {});
@@ -820,13 +981,13 @@ void MainWindow::addClothBtnClicked() {
   emit signUpdateLabelState("换料模式");
 
   future_ = QtConcurrent::run([=] {
-    rclcomm_->addCloth(0);
+    rclcomm_->loadMachineAddCloth(0);
   });
 
   QThread::msleep(100);
 
   future_ = QtConcurrent::run([=] {
-    rclcomm_->addCloth(1);
+    rclcomm_->loadMachineAddCloth(1);
   });
 }
 
@@ -836,8 +997,6 @@ void MainWindow::changePlateBtnClicked() {
   if (!res) {
     return;
   }
-
-  ui->msg_widget->setToolTip("系统暂停");
   // test_timer->stop();
 
   this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->change_board_btn, ui->add_cloth_btn}, {});
@@ -981,9 +1140,11 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
 
 ////////////////////////// 工具栏函数 //////////////////////////
 void MainWindow::slotShowDevLoginWindow() {
-  dev_login_window_ = new DevLoginWindow(this);
-  connect(dev_login_window_, &DevLoginWindow::signDevMode, this, &MainWindow::slotDevWindow);
-  dev_login_window_->show();
+  DevLoginWindow *dev_login_window = new DevLoginWindow(this);
+  // 开发者界面
+  connect(dev_login_window, &DevLoginWindow::signDevMode, this, &MainWindow::slotDeveloperMode);
+  dev_login_window->show();
+  dev_login_window->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void MainWindow::slotLockScreen() {
@@ -1022,18 +1183,8 @@ void MainWindow::slotStartClothStyleWindow() {
   emit signClothStyleWindowShow();
 }
 
-void MainWindow::slotDevWindow() {
-  dev_login_window_->deleteLater();
-  dev_login_window_ = nullptr;
-  // dev main window
-  //    auto dev_window = new DevWindow(this);
-  //    dev_window->setAttribute(Qt::WA_DeleteOnClose);
-  //    connect(dev_window, &DevWindow::closeDevWindow, [=] { this->show(); });
-  //    connect(dev_window, &DevWindow::destroyed, [=] { dev_window->deleteLater(); });
-  //    dev_window->show();
-  auto dev_sel_dialog = new DevSelectDialog(this);
-  dev_sel_dialog->show();
-  dev_sel_dialog->setAttribute(Qt::WA_DeleteOnClose);
+void MainWindow::slotDeveloperMode() {
+  developer_widget_->show();
 }
 
 ////////////////////////// 标定槽函数 //////////////////////////
@@ -1091,7 +1242,7 @@ void MainWindow::slotLogShow(QString time, QString level, QString location, QStr
     qDebug("前面的路以后再来探索吧");
     return;
   }
-  ui->sytPlainTextEdit->appendHtml(htmlText);
+  ui->log_plain_text_edit->appendHtml(htmlText);
 }
 
 ////////////////////////// 选择设置样式槽函数 //////////////////////////
@@ -1190,7 +1341,7 @@ void MainWindow::slotAutoCreateStyle(ClothStyleDialog *parent) {
   connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult);
 
   connect(auto_create_style_wizard, &AutoCreateStyleWizard::signDetectCloth, this, &MainWindow::slotDetectClothByAutoCreateStyle);
-  connect(rclcomm_, &SytRclComm::signComposeMachineDetectClothFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotDetectClothResult);
+  connect(rclcomm_, &SytRclComm::signGetClothInfoFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotDetectClothResult);
 
   connect(auto_create_style_wizard, &AutoCreateStyleWizard::signCreateStyle, this, &MainWindow::slotCreateStyle);
   connect(rclcomm_, &SytRclComm::signCreateStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotCreateStyleResult);
@@ -1231,7 +1382,7 @@ void MainWindow::slotMoveHand() {
 
 void MainWindow::slotDetectClothByAutoCreateStyle(int cloth_type) {
   future_ = QtConcurrent::run([=] {
-    rclcomm_->composeMachineDetectCloth(1, cloth_type);
+    rclcomm_->getClothInfo(1, cloth_type);
   });
 }
 

@@ -116,7 +116,11 @@ CreateStylePage::CreateStylePage(QWidget *parent) : QWizardPage(parent) {
   setTitle("创建样式");
 
   InteractiveButtonBase *create_style_button = new InteractiveButtonBase;
-  QSpacerItem *spacer                        = new QSpacerItem(20, 100, QSizePolicy::Expanding);
+  create_style_button->setParentEnabled(true);
+  create_style_button->setForeEnabled(false);
+  create_style_button->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  QSpacerItem *spacer = new QSpacerItem(20, 100, QSizePolicy::Expanding);
 
   create_style_button->setText("点击生成样式");
   connect(create_style_button, &QPushButton::clicked, this, [=]() {
