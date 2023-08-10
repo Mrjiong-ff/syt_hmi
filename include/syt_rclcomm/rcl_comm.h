@@ -48,6 +48,7 @@ using namespace std::placeholders;
 
 class SytRclComm : public QThread {
   Q_OBJECT
+
 public:
   SytRclComm();
   ~SytRclComm() override;
@@ -162,7 +163,7 @@ signals:
   void downloadRes(bool, QString);
   void installRes(bool, QString);
   void visualLoadClothRes(int, int, QImage);
-  void signLogPub(QString, QString, QString, QString, QString);
+  void signLogPub(QString current_time, int level, QString, QString, QString);
   void machineIdle(bool idle); // 处于空闲状态
 
   // 标定相关信号

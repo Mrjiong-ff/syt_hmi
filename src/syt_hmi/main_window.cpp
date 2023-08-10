@@ -355,13 +355,38 @@ void MainWindow::initWidget() {
   ui->choose_style_btn->setForeEnabled(false);
   ui->choose_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
+  //////////////////////////////// 日志 ///////////////////////////////////
   // log view btn
-  ui->sytFilterPushButton->setIcon(QIcon(":m_icon/icon/filter-records.png"));
-  ui->sytFilterPushButton->setToolTip(QString("日志过滤筛选"));
+  ui->log_filter_tool_btn->setIcon(QIcon(":m_icon/icon/filter-records.png"));
+  ui->log_filter_tool_btn->setToolTip(QString("日志过滤筛选"));
+  set_log_level_debug_act_ = new QAction("DEBUG", this);
+  set_log_level_info_act_  = new QAction("INFO", this);
+  set_log_level_warn_act_  = new QAction("WARN", this);
+  set_log_level_error_act_ = new QAction("ERROR", this);
+  set_log_level_fatal_act_ = new QAction("FATAL", this);
+  ui->log_filter_tool_btn->addAction(set_log_level_debug_act_);
+  ui->log_filter_tool_btn->addAction(set_log_level_info_act_);
+  ui->log_filter_tool_btn->addAction(set_log_level_warn_act_);
+  ui->log_filter_tool_btn->addAction(set_log_level_error_act_);
+  ui->log_filter_tool_btn->addAction(set_log_level_fatal_act_);
 
-  ui->sytClearPushButton->setIcon(QIcon(":m_icon/icon/clear.png"));
-  ui->sytClearPushButton->setToolTip(QString("日志清除"));
+  ui->log_clear_btn->setIcon(QIcon(":m_icon/icon/clear.png"));
+  ui->log_clear_btn->setToolTip(QString("日志清除"));
+  ui->log_clear_btn->setParentEnabled(true);
+  ui->log_clear_btn->setForeEnabled(false);
+  ui->log_clear_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
+  // 移动至末尾
+  ui->log_end_btn->setIcon(QIcon(":m_icon/icon/end.png"));
+  ui->log_end_btn->setToolTip("移至日志末尾");
+  ui->log_end_btn->setParentEnabled(true);
+  ui->log_end_btn->setForeEnabled(false);
+  ui->log_end_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  // 日志只读
+  ui->log_plain_text_edit->setReadOnly(true);
+
+  //////////////////////////////// 左右翻页 ///////////////////////////////////
   // 添加左右翻页按钮
   int init_page_btn_w = this->width() / 50;
   int init_page_btn_h = this->height() / 9;
@@ -397,13 +422,6 @@ void MainWindow::initWidget() {
 
   // 初始状态下主界面显示的任务进度条
   // ui->processWidget->setValue(100);
-
-  // 移动至末尾
-  ui->moveToEndBtn->setIcon(QIcon(":m_icon/icon/end.png"));
-  ui->moveToEndBtn->setToolTip("移至日志末尾");
-
-  // 日志只读
-  ui->log_plain_text_edit->setReadOnly(true);
 
   // 样式树形列表
   ui->cloth_style_tree_widget->header()->resizeSection(0, 200);
@@ -483,15 +501,17 @@ void MainWindow::settingConnection() {
   });
 
   // main window 日志栏的按钮
-  // todo log filter btn 日志过滤
-  connect(ui->sytFilterPushButton, &QPushButton::clicked, [=] {
-    // todo
-    showMessageBox(this, ERROR, "没做,搞它😵", 1, {"返回"});
-  });
+  connect(set_log_level_debug_act_, &QAction::triggered, [=] { log_level_ = LOG_DEBUG; });
+  connect(set_log_level_info_act_, &QAction::triggered, [=] { log_level_ = LOG_INFO; });
+  connect(set_log_level_warn_act_, &QAction::triggered, [=] { log_level_ = LOG_WARN; });
+  connect(set_log_level_error_act_, &QAction::triggered, [=] { log_level_ = LOG_ERROR; });
+  connect(set_log_level_fatal_act_, &QAction::triggered, [=] { log_level_ = LOG_FATAL; });
+
   // 日志清除
-  connect(ui->sytClearPushButton, &QPushButton::clicked, [=] { ui->log_plain_text_edit->clear(); });
+  connect(ui->log_clear_btn, &QPushButton::clicked, [=] { ui->log_plain_text_edit->clear(); });
+
   // 日志定位到最后一行 继续滚动
-  connect(ui->moveToEndBtn, &QPushButton::clicked, [=] {
+  connect(ui->log_end_btn, &QPushButton::clicked, [=] {
     QTextCursor cursor = ui->log_plain_text_edit->textCursor();
     cursor.movePosition(QTextCursor::End);
     ui->log_plain_text_edit->setTextCursor(cursor);
@@ -1225,22 +1245,32 @@ void MainWindow::slotSewingCalibStart() {
 }
 
 ////////////////////////// 显示log槽函数 //////////////////////////
-void MainWindow::slotLogShow(QString time, QString level, QString location, QString func, QString msg) {
+void MainWindow::slotLogShow(QString time, int level, QString location, QString func, QString msg) {
   Q_UNUSED(func)
-  QString htmlText;
-  if (level == "DEBUG") {
-    htmlText = QString("<span style=\"background-color: green; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
-  } else if (level == "INFO") {
-    htmlText = QString("<span style=\"background-color: white; color: black; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
-  } else if (level == "WARN") {
-    htmlText = QString("<span style=\"background-color: orange; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
-  } else if (level == "ERROR") {
-    htmlText = QString("<span style=\"background-color: darkred; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
-  } else if (level == "FATAL") {
-    htmlText = QString("<span style=\"background-color: red; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg(level).arg(time).arg(location).arg(msg);
-  } else {
-    qDebug("前面的路以后再来探索吧");
+
+  if (level < log_level_) {
     return;
+  }
+
+  QString htmlText;
+  switch (level) {
+  case 10:
+    htmlText = QString("<span style=\"background-color: green; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("DEBUG").arg(time).arg(location).arg(msg);
+    break;
+  case 20:
+    htmlText = QString("<span style=\"background-color: white; color: black; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("INFO").arg(time).arg(location).arg(msg);
+    break;
+  case 30:
+    htmlText = QString("<span style=\"background-color: orange; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("WARN").arg(time).arg(location).arg(msg);
+    break;
+  case 40:
+    htmlText = QString("<span style=\"background-color: darkred; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("ERROR").arg(time).arg(location).arg(msg);
+    break;
+  case 50:
+    htmlText = QString("<span style=\"background-color: red; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("FATAL").arg(time).arg(location).arg(msg);
+    break;
+  default:
+    break;
   }
   ui->log_plain_text_edit->appendHtml(htmlText);
 }

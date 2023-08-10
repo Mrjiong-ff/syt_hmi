@@ -117,7 +117,7 @@ SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::strin
       RCLCPP_ERROR(node_->get_logger(), "连接至" + info + "服务被打断");
       return CALL_INTERRUPT;
     }
-    RCLCPP_INFO(node_->get_logger(), "无法连接至" + info + "服务，重试...");
+    RCLCPP_WARN(node_->get_logger(), "无法连接至" + info + "服务，重试...");
   }
 
   auto result = client->async_send_request(request);
@@ -297,31 +297,11 @@ void SytRclComm::sewingCalib() {
 }
 
 void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
-  auto cur_time = getCurrentTime();
-  // 枚举详情信息看官方
-  auto level_bt = msg->level;
-  QString level;
-  switch (level_bt) {
-  case 10:
-    level = "DEBUG";
-    break;
-  case 20:
-    level = "INFO";
-    break;
-  case 30:
-    level = "WARN";
-    break;
-  case 40:
-    level = "ERROR";
-    break;
-  case 50:
-    level = "FATAL";
-    break;
-  }
-  auto _msg     = msg->msg.data();
-  auto func     = msg->function.data();
-  auto location = msg->name.data();
-  emit signLogPub(QString(cur_time.c_str()), level, QString(location), QString(func), QString(_msg));
+  auto cur_time  = getCurrentTime();
+  auto msg_data  = msg->msg.data();
+  auto func      = msg->function.data();
+  auto node_name = msg->name.data();
+  emit signLogPub(QString(cur_time.c_str()), msg->level, QString(node_name), QString(func), QString(msg_data));
 }
 
 // 监听全流程运行状态

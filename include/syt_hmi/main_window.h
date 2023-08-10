@@ -58,8 +58,20 @@ enum LIGHT_COLOR {
   GRAY
 };
 
+enum LOG_LEVEL {
+  LOG_DEBUG = 10,
+  LOG_INFO  = 20,
+  LOG_WARN  = 30,
+  LOG_ERROR = 40,
+  LOG_FATAL = 50,
+};
+
 class MainWindow : public QMainWindow {
   Q_OBJECT
+
+  Q_ENUM(Direction)
+  Q_ENUM(LIGHT_COLOR)
+  Q_ENUM(LOG_LEVEL)
 
 public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -88,6 +100,7 @@ private:
   bool is_load_cloth_on_         = true;
   bool is_comp_cloth_on_         = true;
 
+  // 上料用标志位
   int add_cloth_count_     = 0;
   bool add_cloth_result_A_ = 0;
   bool add_cloth_result_B_ = 0;
@@ -108,7 +121,7 @@ private:
   QTimer *test_timer;
 
   // 显示时间:
-  QTimer* time_timer_;
+  QTimer *time_timer_;
 
   // 一些自定义的按钮控件
   WinMenuButton *m_menuBtn_;
@@ -116,7 +129,7 @@ private:
   WinMaxButton *m_maxBtn_;
   WinCloseButton *m_closeBtn_;
 
-  DeveloperWidget* developer_widget_; // 
+  DeveloperWidget *developer_widget_; //
 
   InteractiveButtonBase *prev_btn;
   InteractiveButtonBase *next_btn_;
@@ -132,6 +145,14 @@ private:
   QAction *updateAct_;
   QAction *helpAct_;
   QAction *aboutAct_;
+
+  // 日志等级过滤动作
+  LOG_LEVEL log_level_ = LOG_WARN;
+  QAction *set_log_level_debug_act_;
+  QAction *set_log_level_info_act_;
+  QAction *set_log_level_warn_act_;
+  QAction *set_log_level_error_act_;
+  QAction *set_log_level_fatal_act_;
 
   WaitingSpinnerWidget *waiting_spinner_widget_;
 
@@ -185,7 +206,7 @@ private slots:
   void slotSewingCalibStart();
 
   ////////////////////////// 显示log槽函数 //////////////////////////
-  void slotLogShow(QString, QString, QString, QString, QString);
+  void slotLogShow(QString, int, QString, QString, QString);
 
   ////////////////////////// 选择设置样式槽函数 //////////////////////////
   void slotChooseStyleFile();
