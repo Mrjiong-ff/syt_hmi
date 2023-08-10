@@ -884,12 +884,12 @@ void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPus
     i->setStyleSheet("color: gray;");
   }
   // TODO
-  ui->stop_btn->setEnabled(false);
-  ui->stop_btn->setStyleSheet("color: gray;");
-  ui->change_board_btn->setEnabled(false);
-  ui->change_board_btn->setStyleSheet("color: gray;");
-  ui->reset_btn->setEnabled(false);
-  ui->reset_btn->setStyleSheet("color: gray;");
+  //ui->stop_btn->setEnabled(false);
+  //ui->stop_btn->setStyleSheet("color: gray;");
+  //ui->change_board_btn->setEnabled(false);
+  //ui->change_board_btn->setStyleSheet("color: gray;");
+  //ui->reset_btn->setEnabled(false);
+  //ui->reset_btn->setStyleSheet("color: gray;");
 }
 
 void MainWindow::slotMaxBtnClicked() {
@@ -935,12 +935,12 @@ void MainWindow::resetBtnClicked() {
 
   this->btnControl({ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
   this->setMutuallyLight(YELLOW);
-  emit signUpdateLabelState("重置完成");
 
   // 复位指令
   future_ = QtConcurrent::run([=] {
     rclcomm_->resetCmd();
   });
+  emit signUpdateLabelState("重置完成");
 }
 
 // 开始按钮槽函数
@@ -978,7 +978,7 @@ void MainWindow::stopBtnClicked() {
   // this->btnControl({ui->reset_btn, ui->stop_btn}, {ui->start_btn, ui->add_cloth_btn, ui->change_board_btn});
   this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
   this->setMutuallyLight(YELLOW);
-  emit signUpdateLabelState("运行完本次流程即将停止");
+  emit signUpdateLabelState("停止中");
 
   // 停止指令
   future_ = QtConcurrent::run([=] {

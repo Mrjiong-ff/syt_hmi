@@ -27,6 +27,7 @@ SytRclComm::SytRclComm() : rate_(100) {
 
   // 开始停止复位
   fsm_flow_control_cmd_publisher_ = node_->create_publisher<syt_msgs::msg::FSMFlowControlCommand>("/syt/robot_control/flow_control_cmd", 10);
+
   // 模式选择
   fsm_run_mode_publisher_ = node_->create_publisher<syt_msgs::msg::FSMRunMode>("/syt/robot_control/running_mode", 10);
 
@@ -360,6 +361,7 @@ void SytRclComm::startCmd() {
 void SytRclComm::resetCmd() {
   start_flag_                       = false;
   fsm_flow_control_command_.command = fsm_flow_control_command_.RESET;
+  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
   // TODO resetWholeMachine();
 }
 
