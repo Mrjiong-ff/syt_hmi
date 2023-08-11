@@ -127,7 +127,11 @@
     </layout>
    </item>
    <item row="2" column="0">
-    <widget class="QListView" name="style_file_list_view"/>
+    <widget class="QListView" name="style_file_list_view">
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
