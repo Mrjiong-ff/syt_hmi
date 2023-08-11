@@ -7,6 +7,8 @@ InputExtraParamWidget::InputExtraParamWidget(QWidget *parent) : QWidget(parent),
   ui->cloth_type_combo_box->setDisabled(true);
   ui->cloth_type_combo_box->insertItem(-1, "前片");
   ui->cloth_type_combo_box->insertItem(-1, "后片");
+  ui->cloth_size_combo_box->insertItem(-1, "XXS");
+  ui->cloth_size_combo_box->insertItem(-1, "XS");
   ui->cloth_size_combo_box->insertItem(-1, "S");
   ui->cloth_size_combo_box->insertItem(-1, "M");
   ui->cloth_size_combo_box->insertItem(-1, "L");
@@ -34,12 +36,14 @@ InputExtraParamWidget::InputExtraParamWidget(QWidget *parent) : QWidget(parent),
   thickness_map_.insert("中等", 21);
   thickness_map_.insert("后", 22);
 
-  size_map_.insert("S", 30);
-  size_map_.insert("M", 31);
-  size_map_.insert("L", 32);
-  size_map_.insert("XL", 33);
-  size_map_.insert("XXL", 34);
-  size_map_.insert("XXXL", 35);
+  size_map_.insert("XXS", 30);
+  size_map_.insert("XS", 31);
+  size_map_.insert("S", 32);
+  size_map_.insert("M", 33);
+  size_map_.insert("L", 34);
+  size_map_.insert("XL", 35);
+  size_map_.insert("XXL", 36);
+  size_map_.insert("XXXL", 37);
 
   glossiness_map_.insert("低光泽", 40);
   glossiness_map_.insert("中光泽", 41);

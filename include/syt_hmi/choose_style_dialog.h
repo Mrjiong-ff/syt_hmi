@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QFileSystemModel>
+#include <QMenu>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -16,6 +17,9 @@ class ChooseStyleDialog : public QDialog {
 
 private:
   Ui::ChooseStyleDialog *ui;
+
+  QMenu *pop_menu_;
+  QAction *delete_act_;
 
   WaitingSpinnerWidget *waiting_spinner_widget_;
 
@@ -32,4 +36,8 @@ signals:
 public slots:
   void slotSetStylePath();
   void slotSetCurrentStyleFinish(bool result);
+
+private slots:
+  void deleteStyleFile();
+  void showContextMenu(const QPoint &pos);
 };
