@@ -94,7 +94,8 @@ void DetectClothPage::slotDetectClothResult(bool result, int cloth_type) {
 
 // 4.手动输入额外参数
 InputExtraParamPage::InputExtraParamPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
-  setTitle(QString("输入%1额外参数").arg(cloth_type_ ? "后片" : "前片"));
+  setTitle(QString("输入%1额外参数，提交前请检查无误。").arg(cloth_type_ ? "后片" : "前片"));
+  setCommitPage(true);
 
   input_extra_param_widget_ = new InputExtraParamWidget(parent);
   input_extra_param_widget_->setClothType(cloth_type_);

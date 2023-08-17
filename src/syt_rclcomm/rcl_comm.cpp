@@ -16,7 +16,7 @@ SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   // 上料机视觉显示回调
   load_cloth_visual_subscription_ = node_->create_subscription<syt_msgs::msg::LoadClothVisual>("/syt/cloth_edge_pydetect/cloth_edge_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, _1));
 
-  // todo 合片机视觉显示回调
+  // TODO 合片机视觉显示回调
   composer_visual_subscription_ = node_->create_subscription<syt_msgs::msg::LoadClothVisual>("/syt/comp/comp_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, _1));
 
   // rosout消息回调函数
@@ -178,7 +178,7 @@ void SytRclComm::loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::S
 // OTA安装
 void SytRclComm::otaInstall() {
   rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = node_->create_client<std_srvs::srv::SetBool>("/syt/ota/install");
-  // todo 杀死 除了 hmi 和 ota之外的全部进程
+  // TODO 杀死 除了 hmi 和 ota之外的全部进程
   //    killProcesses()
 
   auto request  = std::make_shared<std_srvs::srv::SetBool::Request>();
@@ -742,8 +742,8 @@ void SytRclComm::composeMachineStopBlow() {
 // 合片抓手移动
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   //// TODO: delete
-  // emit signComposeMachineMoveHandFinish(true);
-  // return;
+   //emit signComposeMachineMoveHandFinish(true);
+   //return;
 
   auto request      = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
   request->target.x = x;
@@ -834,8 +834,8 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   //// TODO: delete
-  // emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
-  // return;
+   //emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
+   //return;
 
   auto request           = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
   request->frame_id.data = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机

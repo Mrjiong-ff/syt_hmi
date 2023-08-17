@@ -7,6 +7,7 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   setButtonText(WizardButton::NextButton, "下一步");
   setButtonText(WizardButton::CancelButton, "取消");
   setButtonText(WizardButton::FinishButton, "完成");
+  setButtonText(WizardButton::CommitButton, "提交");
   setModal(true);
 
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this);

@@ -6,9 +6,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   // 初始化节点
   rclcomm_ = new SytRclComm(this);
 
-  // 初始化控件
-  initWidget();
-
   // 设置各组件
   setLogComponent();
   setTimeComponent();
@@ -19,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   setBaseComponet();
   setChooseStyleComponet();
   setDeveloperWidget();
+
+  // 初始化控件
+  initWidget();
+
 
   // 初始化其他（主要是配置相关）
   // initOther();
