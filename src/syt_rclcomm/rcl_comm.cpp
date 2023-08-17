@@ -6,6 +6,8 @@ SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   node_     = rclcpp::Node::make_shared("syt_hmi_node");
   executor_->add_node(node_);
 
+  run_mode_.mode = syt_msgs::msg::FSMRunMode::LOOP_ONCE;
+
   // 设备状态订阅
   compose_machine_state_subscription_ = node_->create_subscription<syt_msgs::msg::ComposeMachineState>("/syt/robot_control/compose_machine/state", 10, std::bind(&SytRclComm::composeMachineStateCallback, this, _1));
   sewing_machine_state_subscription_  = node_->create_subscription<syt_msgs::msg::SewingMachineState>("/syt/robot_control/sewing_machine/state", 10, std::bind(&SytRclComm::sewingMachineStateCallback, this, _1));
@@ -244,9 +246,13 @@ void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::Share
   case syt_msgs::msg::MotionPlannerState::LOAD_CLOTH_INITIALIZE:
     break;
   case syt_msgs::msg::MotionPlannerState::INITIALIZE:
-    // if (!start_flag_) {
-    // emit machineIdle(true);
-    //}
+    if (start_flag_) {
+      if (last_state_ == syt_msgs::msg::MotionPlannerState::STEP_FOUR && run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE) {
+        emit machineIdle(true);
+      }
+    } else if (!start_flag_) {
+      emit machineIdle(true);
+    }
   case syt_msgs::msg::MotionPlannerState::SAFE_POSITION:
   case syt_msgs::msg::MotionPlannerState::STEP_ONE:
   case syt_msgs::msg::MotionPlannerState::STEP_TWO:
@@ -257,33 +263,11 @@ void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::Share
   default:
     break;
   }
-
-  // if (start_flag_) {
-  //  switch (msg->state) {
-  //  case syt_msgs::msg::MotionPlannerState::LOAD_CLOTH_INITIALIZE:
-  //  case syt_msgs::msg::MotionPlannerState::INITIALIZE: {
-  //  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-  //  break;
-  // }
-  //  case syt_msgs::msg::MotionPlannerState::SAFE_POSITION:
-  //  case syt_msgs::msg::MotionPlannerState::STEP_ONE:
-  //  case syt_msgs::msg::MotionPlannerState::STEP_TWO:
-  //  case syt_msgs::msg::MotionPlannerState::STEP_THREE:
-  //  case syt_msgs::msg::MotionPlannerState::STEP_FOUR:
-  //  case syt_msgs::msg::MotionPlannerState::ERROR:
-  //  break;
-  //  default:
-  //  break;
-  // }
-  // } else {
-  //  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-  // }
+  last_state_ = msg->state;
 }
 
 void SytRclComm::startCmd() {
-  start_flag_ = true;
-
-  // changeMode(syt_msgs::msg::FSMRunMode::LOOP);
+  start_flag_                       = true;
   fsm_flow_control_command_.command = fsm_flow_control_command_.RUN;
   fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
 }
@@ -305,9 +289,8 @@ void SytRclComm::stopCmd() {
 
 // 转换运行模式
 void SytRclComm::changeMode(int mode) {
-  auto mode_message = syt_msgs::msg::FSMRunMode();
-  mode_message.mode = mode;
-  fsm_run_mode_publisher_->publish(mode_message);
+  run_mode_.mode = mode;
+  fsm_run_mode_publisher_->publish(run_mode_);
 }
 
 template <class T>
@@ -742,8 +725,8 @@ void SytRclComm::composeMachineStopBlow() {
 // 合片抓手移动
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   //// TODO: delete
-   //emit signComposeMachineMoveHandFinish(true);
-   //return;
+  // emit signComposeMachineMoveHandFinish(true);
+  // return;
 
   auto request      = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
   request->target.x = x;
@@ -834,8 +817,8 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   //// TODO: delete
-   //emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
-   //return;
+  // emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
+  // return;
 
   auto request           = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
   request->frame_id.data = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机

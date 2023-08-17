@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   // 初始化控件
   initWidget();
 
-
   // 初始化其他（主要是配置相关）
   // initOther();
 
@@ -647,12 +646,12 @@ void MainWindow::settingConnection() {
   connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::slotAddClothResult);
 
   // TODO 任务完成后按钮的逻辑
-  // connect(rclcomm_, &SytRclComm::machineIdle, [=](bool idle) {
-  // if (idle) {
-  // this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn, ui->stop_btn}, {});
-  //}
-  //// showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
-  //});
+  connect(rclcomm_, &SytRclComm::machineIdle, [=](bool idle) {
+    if (idle) {
+      this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn}, {ui->stop_btn});
+    }
+    // showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
+  });
 }
 
 void MainWindow::bindControlConnection() {

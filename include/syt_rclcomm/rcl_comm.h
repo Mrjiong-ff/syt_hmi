@@ -120,11 +120,12 @@ protected:
   void run() override;
 
 private:
-  // total
   bool start_flag_ = false;
+  int last_state_  = 0;
+  syt_msgs::msg::FSMRunMode run_mode_;
 
-  int total_size = 0;
-
+  // total
+  int total_size     = 0;
   QProcess *process_ = nullptr;
 
   //////////////// ros相关 ///////////////////
