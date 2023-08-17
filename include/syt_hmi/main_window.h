@@ -87,87 +87,24 @@ protected:
   virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
-  Ui::MainWindow *ui;
-
-  SytRclComm *rclcomm_ = nullptr;
-
-  QFuture<void> future_;
-
-  // 定义的一些bool类型标志位
-  bool is_style_seted_ = false;
-
-  bool is_mouse_left_press_down_ = false;
-  bool is_load_cloth_on_         = true;
-  bool is_comp_cloth_on_         = true;
-
-  // 上料用标志位
-  int add_cloth_count_     = 0;
-  bool add_cloth_result_A_ = 0;
-  bool add_cloth_result_B_ = 0;
-
-  QPixmap pix_B_left_;
-  QPixmap pix_B_right_;
-  QPixmap pix_A_left_;
-  QPixmap pix_A_right_;
-
-  // 样式文件变量
-  QString style_file_prefix_;
-  QString style_file_name_;
-  syt_msgs::msg::ClothStyle cloth_style_front_;
-  syt_msgs::msg::ClothStyle cloth_style_back_;
-
-  // todo 进度条测试
-  int value = 0;
-  QTimer *test_timer;
-
-  // 显示时间:
-  QTimer *time_timer_;
-
-  // 一些自定义的按钮控件
-  WinMenuButton *m_menuBtn_;
-  WinMinButton *m_hideBtn_;
-  WinMaxButton *m_maxBtn_;
-  WinCloseButton *m_closeBtn_;
-
-  DeveloperWidget *developer_widget_; //
-
-  InteractiveButtonBase *prev_btn;
-  InteractiveButtonBase *next_btn_;
-
-  // about action
-  QMenu *m_titleMenu_;
-  QMenu *m_menu_;
-  QAction *minAct_;
-  QAction *maxAct_;
-  QAction *closeAct_;
-  QAction *fullAct_;
-
-  QAction *updateAct_;
-  QAction *helpAct_;
-  QAction *aboutAct_;
-
-  // 日志等级过滤动作
-  LOG_LEVEL log_level_ = LOG_WARN;
-  QAction *set_log_level_debug_act_;
-  QAction *set_log_level_info_act_;
-  QAction *set_log_level_warn_act_;
-  QAction *set_log_level_error_act_;
-  QAction *set_log_level_fatal_act_;
-
-  WaitingSpinnerWidget *waiting_spinner_widget_;
-
-  QPoint m_mousePos_;
-  Direction dir_; // 窗口大小改变时，记录改变方向
-
-private:
-  void initNode();
   void initWidget();
   void settingConnection();
-  void bindDeveloperConnection();
+  void bindControlConnection();
   void setMutuallyLight(LIGHT_COLOR);
   void deleteAll();
   void initOther();
   void btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables);
+
+  // 设置各个组件的属性和信号槽
+  void setLogComponent();
+  void setTimeComponent();
+  void setToolBar();
+  void setMainControlButton();
+  void setPageJump();
+  void setVisualComponent();
+  void setBaseComponet();
+  void setChooseStyleComponet();
+  void setDeveloperWidget();
 
 signals:
   void signHeadEyeWindowShow();
@@ -224,4 +161,52 @@ private slots:
   void slotDetectClothByAutoCreateStyle(int cloth_type);
   void slotCreateStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
   void slotRenameClothStyle(QString old_name, QString new_name);
+
+private:
+  Ui::MainWindow *ui;
+
+  SytRclComm *rclcomm_ = nullptr;
+
+  QFuture<void> future_;
+
+  // 定义的一些bool类型标志位
+  bool is_style_seted_ = false;
+
+  // 日志等级过滤动作
+  LOG_LEVEL log_level_ = LOG_WARN;
+
+  bool is_mouse_left_press_down_ = false;
+  bool is_load_cloth_on_         = true;
+  bool is_comp_cloth_on_         = true;
+
+  // 上料用标志位
+  int add_cloth_count_     = 0;
+  bool add_cloth_result_A_ = 0;
+  bool add_cloth_result_B_ = 0;
+
+  QPixmap pix_B_left_;
+  QPixmap pix_B_right_;
+  QPixmap pix_A_left_;
+  QPixmap pix_A_right_;
+
+  // 样式文件变量
+  QString style_file_prefix_;
+  QString style_file_name_;
+  syt_msgs::msg::ClothStyle cloth_style_front_;
+  syt_msgs::msg::ClothStyle cloth_style_back_;
+
+  // 显示时间:
+  QTimer *time_timer_;
+
+  QMenu *title_menu_;
+
+  InteractiveButtonBase *prev_btn_;
+  InteractiveButtonBase *next_btn_;
+
+  DeveloperWidget *developer_widget_; // 开发者界面
+
+  WaitingSpinnerWidget *waiting_spinner_widget_;
+
+  QPoint m_mousePos_;
+  Direction dir_; // 窗口大小改变时，记录改变方向
 };

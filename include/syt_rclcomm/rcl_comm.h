@@ -21,8 +21,10 @@
 #include "syt_msgs/srv/load_machine_clear_table.hpp"
 #include "syt_msgs/srv/load_machine_cloth_size.hpp"
 #include "syt_msgs/srv/load_machine_grab_cloth.hpp"
+#include "syt_msgs/srv/load_machine_load_cloth.hpp"
 #include "syt_msgs/srv/load_machine_load_distance.hpp"
 #include "syt_msgs/srv/load_machine_offset.hpp"
+#include "syt_msgs/srv/load_machine_pre_setup.hpp"
 #include "syt_msgs/srv/load_machine_reset.hpp"
 #include "syt_msgs/srv/load_machine_tray_gap.hpp"
 #include "syt_msgs/srv/rename_cloth_style.hpp"
@@ -50,7 +52,7 @@ class SytRclComm : public QThread {
   Q_OBJECT
 
 public:
-  SytRclComm();
+  SytRclComm(QObject *parent = nullptr);
   ~SytRclComm() override;
 
   enum CALL_RESULT { CALL_SUCCESS    = 0,
@@ -59,22 +61,23 @@ public:
                      CALL_DISCONNECT = 3 };
   Q_ENUM(CALL_RESULT);
 
-  void startCmd(); // 开始全流程指令
-  void resetCmd(); // 复位指令
-  void stopCmd();  // 急停指令
+  void startCmd();           // 开始全流程指令
+  void resetCmd();           // 复位指令
+  void stopCmd();            // 急停指令
+  void changeMode(int mode); // 转换运行模式
+
+  template <class T>
+  CALL_RESULT callService(std::string srv_name, std::string info, uint32_t timeout_ms, std::shared_ptr<typename T::Request> request, typename T::Response &response);
 
   void resetWholeMachine(); // 复位整机
   void stopWholeMachine();  // 停止整机
-  void ChangeBoard();       // 换压板模式
+  void changeBoard();       // 换压板模式
 
   void otaUpdate();   // OTA更新
   void otaDownload(); // 下载更新包
   void otaInstall();  // 安装到指定位置
   void compCalib();   // 合片标定
   void sewingCalib(); // 缝纫标定
-
-  template <class T>
-  CALL_RESULT callService(std::string srv_name, std::string info, uint32_t timeout_ms, std::shared_ptr<typename T::Request> request, typename T::Response &response);
 
   // 上料机
   void loadMachineReset(int id);                                      // 上料机复位
@@ -86,17 +89,19 @@ public:
   void loadMachineTrayGap(int id, uint32_t height);                   // 上料间隔
   void loadMachineHoldCloth(int id);                                  // 抓住裁片
   void loadMachineGrabCloth(int id);                                  // 上裁片
+  void loadMachinePreSetup(int id);                                   // 预备设置
+  void loadMachineVisualAlign(int id);                                // 视觉对位
 
   // 合片机
-  void composeMachineReset();                                      // 合片机复位
-  void composeMachineStop();                                       // 停止
-  void composeMachineWipeFold();                                   // 除褶
-  void composeMachineExtendNeedle();                               // 出针
-  void composeMachineWithdrawNeedle();                             // 收针
-  void composeMachineBlowWind();                                   // 吹气
-  void composeMachineStopBlow();                                   // 停气
-  void composeMachineMoveHand(float x, float y, float z, float c); // 移动抓手
-  void composeMachineMoveSucker();                                 // 移动吸盘
+  void composeMachineReset();                                                             // 合片机复位
+  void composeMachineStop();                                                              // 停止
+  void composeMachineWipeFold();                                                          // 除褶
+  void composeMachineExtendNeedle();                                                      // 出针
+  void composeMachineWithdrawNeedle();                                                    // 收针
+  void composeMachineBlowWind();                                                          // 吹气
+  void composeMachineStopBlow();                                                          // 停气
+  void composeMachineMoveHand(float x, float y, float z, float c);                        // 移动抓手
+  void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states); // 移动吸盘
 
   // 缝纫机
   void sewingMachineMoveHand(float x, float y, float c, bool z);              // 移动抓手
@@ -180,6 +185,8 @@ signals:
   void signLoadMachineTrayGapFinish(bool result, int id);      // 上料间隔
   void signLoadMachineHoldClothFinish(bool result, int id);    // 抓住裁片
   void signLoadMachineGrabClothFinish(bool result, int id);    // 上裁片
+  void signLoadMachinePreSetupFinish(bool result, int id);     // 预备设置
+  void signLoadMachineVisualAlignFinish(bool result, int id);  // 视觉对位
 
   // 控制合片机相关信号
   void signComposeMachineResetFinish(bool result);          // 合片机复位

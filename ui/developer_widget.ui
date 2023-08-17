@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
    <item>
     <widget class="QWidget" name="title_widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_16">
@@ -36,7 +36,10 @@
          <widget class="QLabel" name="current_page_label">
           <property name="font">
            <font>
-            <pointsize>20</pointsize>
+            <family>Ubuntu Condensed</family>
+            <pointsize>25</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="text">
@@ -151,6 +154,24 @@
          </widget>
         </item>
         <item>
+         <widget class="WaterZoomButton" name="other_btn">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>其他</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -181,10 +202,7 @@
         <number>0</number>
        </property>
        <widget class="QWidget" name="page_load">
-        <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,0,0">
-         <property name="spacing">
-          <number>15</number>
-         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_24">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
@@ -215,8 +233,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>17</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -307,8 +325,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>17</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -420,8 +438,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>17</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -497,8 +515,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>17</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -574,8 +592,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>17</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -651,8 +669,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>17</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -700,6 +718,59 @@
              </item>
             </layout>
            </item>
+           <item>
+            <spacer name="verticalSpacer_22">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>412</width>
+               <height>13</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_23">
+             <item>
+              <widget class="WaterZoomButton" name="pre_setup_btn_B">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>预备上料</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="WaterZoomButton" name="visual_align_btn_B">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>视觉对位</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
           </layout>
          </item>
          <item>
@@ -739,8 +810,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>412</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -831,8 +902,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>412</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -944,8 +1015,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>412</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -1021,8 +1092,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>412</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -1098,8 +1169,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>412</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -1175,8 +1246,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>412</width>
+               <height>13</height>
               </size>
              </property>
             </spacer>
@@ -1219,6 +1290,59 @@
                </property>
                <property name="text">
                 <string>上裁片</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_21">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>412</width>
+               <height>13</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <item>
+              <widget class="WaterZoomButton" name="pre_setup_btn_A">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>预备上料</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="WaterZoomButton" name="visual_align_btn_A">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>抓住裁片</string>
                </property>
               </widget>
              </item>
@@ -1359,7 +1483,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>抓手坐标</string>
+                <string>当前抓手坐标</string>
                </property>
               </widget>
              </item>
@@ -2409,7 +2533,7 @@
               </font>
              </property>
              <property name="text">
-              <string>抓手坐标</string>
+              <string>当前抓手坐标</string>
              </property>
             </widget>
            </item>
@@ -2703,7 +2827,7 @@
               <double>1.600000000000000</double>
              </property>
              <property name="singleStep">
-              <double>10.000000000000000</double>
+              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>
@@ -3426,7 +3550,19 @@
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="sewing_cloth_size_combobox"/>
+              <widget class="QComboBox" name="sewing_cloth_size_combobox">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -3501,6 +3637,41 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="page_other">
+        <widget class="QComboBox" name="choose_mode_combo_box">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>80</y>
+           <width>171</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_72">
+         <property name="geometry">
+          <rect>
+           <x>80</x>
+           <y>20</y>
+           <width>81</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>模式切换</string>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -3508,6 +3679,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>WaterZoomButton</class>
+   <extends>QPushButton</extends>
+   <header>syt_btn/waterzoombutton.h</header>
+  </customwidget>
   <customwidget>
    <class>WinMaxButton</class>
    <extends>QPushButton</extends>
@@ -3517,11 +3693,6 @@
    <class>WinCloseButton</class>
    <extends>QPushButton</extends>
    <header>syt_btn/winclosebutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WaterZoomButton</class>
-   <extends>QPushButton</extends>
-   <header>syt_btn/waterzoombutton.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

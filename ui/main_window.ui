@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1508</width>
-    <height>1016</height>
+    <height>1043</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,19 +26,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_5">
-    <property name="leftMargin">
-     <number>6</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>6</number>
-    </property>
-    <property name="bottomMargin">
-     <number>3</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QWidget" name="sytMainTitleWidget" native="true">
       <property name="sizePolicy">
@@ -59,22 +47,7 @@
         <height>50</height>
        </size>
       </property>
-      <layout class="QHBoxLayout" name="mainHorizontalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QLabel" name="sytLogoLabel">
          <property name="sizePolicy">
@@ -116,13 +89,13 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>40</width>
-           <height>20</height>
+           <width>314</width>
+           <height>17</height>
           </size>
          </property>
         </spacer>
        </item>
-       <item alignment="Qt::AlignHCenter">
+       <item>
         <widget class="QLabel" name="sytTitleLabel">
          <property name="font">
           <font>
@@ -134,6 +107,9 @@
          </property>
          <property name="text">
           <string>速英科技</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -147,17 +123,93 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>40</width>
-           <height>20</height>
+           <width>314</width>
+           <height>17</height>
           </size>
          </property>
         </spacer>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="mainLayout">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
          <property name="spacing">
-          <number>15</number>
+          <number>8</number>
          </property>
+         <item>
+          <widget class="WinMenuButton" name="menu_btn">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="WinMinButton" name="min_btn">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="WinMaxButton" name="max_btn">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="WinCloseButton" name="close_btn">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -452,7 +504,23 @@
           <widget class="QWidget" name="layoutWidget_1">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <layout class="QGridLayout" name="gridLayout" columnstretch="2,6,2">
+             <layout class="QGridLayout" name="gridLayout" columnstretch="2,2,2">
+              <item row="1" column="0">
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>397</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item row="1" column="2">
                <spacer name="horizontalSpacer_8">
                 <property name="orientation">
@@ -469,8 +537,34 @@
                 </property>
                </spacer>
               </item>
+              <item row="0" column="0">
+               <spacer name="verticalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>45</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="2" column="1">
+               <spacer name="verticalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>41</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item row="0" column="1">
-               <widget class="QLabel" name="stateLabel">
+               <widget class="QLabel" name="running_state_label">
                 <property name="minimumSize">
                  <size>
                   <width>400</width>
@@ -511,35 +605,6 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <spacer name="verticalSpacer_7">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>41</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="1" column="0">
-               <spacer name="horizontalSpacer_7">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>60</width>
-                  <height>397</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
               <item row="1" column="1">
                <widget class="RoundProgressBar" name="processWidget" native="true">
                 <property name="sizePolicy">
@@ -555,19 +620,6 @@
                  </size>
                 </property>
                </widget>
-              </item>
-              <item row="0" column="0">
-               <spacer name="verticalSpacer_6">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>45</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
              </layout>
             </item>
@@ -807,7 +859,7 @@
                    <enum>Qt::Vertical</enum>
                   </property>
                   <property name="sizeType">
-                   <enum>QSizePolicy::Maximum</enum>
+                   <enum>QSizePolicy::Preferred</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
@@ -912,9 +964,9 @@
                <property name="currentIndex">
                 <number>0</number>
                </property>
-               <widget class="QWidget" name="tab">
+               <widget class="QWidget" name="style_tab">
                 <attribute name="title">
-                 <string>样式</string>
+                 <string>样式选择</string>
                 </attribute>
                 <layout class="QGridLayout" name="gridLayout_2">
                  <item row="6" column="2">
@@ -1229,7 +1281,7 @@
                    <number>0</number>
                   </property>
                   <item row="0" column="0">
-                   <widget class="QLabel" name="rightLeftVisualLabel">
+                   <widget class="QLabel" name="A_left_visual_label">
                     <property name="font">
                      <font>
                       <pointsize>45</pointsize>
@@ -1280,7 +1332,7 @@
                    <number>0</number>
                   </property>
                   <item row="0" column="0">
-                   <widget class="QLabel" name="rightRightVisualLabel">
+                   <widget class="QLabel" name="A_right_visual_label">
                     <property name="font">
                      <font>
                       <pointsize>45</pointsize>
@@ -1303,7 +1355,7 @@
              </widget>
             </item>
             <item row="0" column="0">
-             <widget class="WaterZoomButton" name="loadClothVisableBtn">
+             <widget class="WaterZoomButton" name="load_machine_visible_btn">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -1428,7 +1480,7 @@
                    <number>0</number>
                   </property>
                   <item row="0" column="0">
-                   <widget class="QLabel" name="leftLeftVisualLabel">
+                   <widget class="QLabel" name="B_left_visual_label">
                     <property name="font">
                      <font>
                       <pointsize>45</pointsize>
@@ -1479,7 +1531,7 @@
                    <number>0</number>
                   </property>
                   <item row="0" column="0">
-                   <widget class="QLabel" name="leftRightVisualLabel">
+                   <widget class="QLabel" name="B_right_visual_label">
                     <property name="font">
                      <font>
                       <pointsize>45</pointsize>
@@ -1517,7 +1569,7 @@
            </attribute>
            <layout class="QGridLayout" name="gridLayout_13">
             <item row="0" column="0">
-             <widget class="WaterZoomButton" name="compositeClothVisableBtn">
+             <widget class="WaterZoomButton" name="compose_machine_visible_btn">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -1701,6 +1753,26 @@
    <extends>QWidget</extends>
    <header>syt_process/roundprogressbar.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WinMaxButton</class>
+   <extends>QPushButton</extends>
+   <header>syt_btn/winmaxbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WinCloseButton</class>
+   <extends>QPushButton</extends>
+   <header>syt_btn/winclosebutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WinMinButton</class>
+   <extends>QPushButton</extends>
+   <header>syt_btn/winminbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WinMenuButton</class>
+   <extends>QPushButton</extends>
+   <header>syt_btn/winmenubutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
