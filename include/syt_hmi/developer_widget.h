@@ -4,6 +4,7 @@
 #include "syt_msgs/msg/compose_machine_state.hpp"
 #include "syt_msgs/msg/compose_machine_sucker_states.hpp"
 #include "syt_msgs/msg/sewing_machine_state.hpp"
+#include "syt_msgs/msg/fsm_run_mode.hpp"
 #include <QWidget>
 
 namespace Ui {
@@ -30,6 +31,7 @@ private:
   QPoint mouse_pos_;
 
 private:
+  void setChooseMode();
   void setButtonFrame();
   void switchPage();
   void bindLoadMachine();
@@ -37,6 +39,9 @@ private:
   void bindSewingMachine();
 
 signals:
+  // 模式切换
+  void signChooseMode(int mode);
+
   // 上料机
   void signLoadMachineReset(int id);
   void signLoadMachineAddCloth(int id);
@@ -47,6 +52,8 @@ signals:
   void signLoadMachineOffset(int id, int offset);
   void signLoadMachineHoldCloth(int id);
   void signLoadMachineGrabCloth(int id);
+  void signLoadMachinePreSetup(int id);
+  void signLoadMachineVisualAlign(int id);
 
   // 合片机
   void signComposeMachineReset();

@@ -4,13 +4,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   ui->setupUi(this);
 
   // 初始化节点
-  initNode();
+  rclcomm_ = new SytRclComm(this);
+
+  // 设置各组件
+  setLogComponent();
+  setTimeComponent();
+  setToolBar();
+  setMainControlButton();
+  setPageJump();
+  setVisualComponent();
+  setBaseComponet();
+  setChooseStyleComponet();
+  setDeveloperWidget();
 
   // 初始化控件
   initWidget();
 
   // 初始化其他（主要是配置相关）
-  initOther();
+  // initOther();
 
   // 信号槽
   settingConnection();
@@ -81,7 +92,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
     }
     break;
   case Qt::RightButton:
-    //            this->setWindowState(Qt::WindowMinimized);
+    // this->setWindowState(Qt::WindowMinimized);
     break;
   default:
     return;
@@ -197,7 +208,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *ev) {
       emit slotMaxBtnClicked();
       return true;
     } else if (ev->type() == QEvent::ContextMenu) {
-      m_titleMenu_->exec(QCursor::pos());
+      title_menu_->exec(QCursor::pos());
       return true;
     }
     return false;
@@ -211,7 +222,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     int init_page_btn_w = this->width() / 50;
     int init_page_btn_h = this->height() / 9;
 
-    prev_btn->setGeometry(0, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
+    prev_btn_->setGeometry(0, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
     next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
     // todo 应该有一些根据界面大小 控件resize的逻辑 不然单纯靠spacer做 界面布局比较丑
     // todo 主程序按钮
@@ -230,7 +241,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   // 一些主界面的快捷键
   switch (event->key()) {
   case Qt::Key_A:
-    emit prev_btn->click();
+    emit prev_btn_->click();
     break;
   case Qt::Key_D:
     emit next_btn_->click();
@@ -240,81 +251,100 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   }
 }
 
-void MainWindow::initNode() {
-  // rcl comm 负责处理业务 所有ros相关的接口调用应该由它实现
-  rclcomm_ = new SytRclComm();
-}
-
 void MainWindow::initWidget() {
-  // 用于捕获鼠标移动事件
-  // 注意：mainwindow及其之类都要设置mouse track，不然不生效
-  setMouseTracking(true);
-  ui->centralwidget->setMouseTracking(true);
-
-  // 隐藏默认标题栏
-  this->setWindowFlags(Qt::FramelessWindowHint);
-
-  // icon
+  setMouseTracking(true);                           // 用于捕获鼠标移动事件
+  ui->centralwidget->setMouseTracking(true);        // 注意：mainwindow及其之类都要设置mouse track，不然不生效
+  ui->sytMainTitleWidget->installEventFilter(this); // 事件过滤
+  this->setMutuallyLight(RED);                      // 初始状态下，亮灯
+  this->setWindowFlags(Qt::FramelessWindowHint);    // 隐藏默认标题栏
   this->setWindowIcon(QIcon(":m_logo/logo/bg_logo.png"));
+
+  // 初始状态下按钮状态
+  this->btnControl({ui->reset_btn}, {ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn});
+
+  waiting_spinner_widget_ = new WaitingSpinnerWidget(this); // 旋转条初始化
+  // 初始状态下主界面显示的任务进度条
+  // ui->processWidget->setValue(100);
 
   // title logo
   auto tit_logo = QPixmap(":m_logo/logo/logo2.png");
-  tit_logo      = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(),
-                                  Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
+  tit_logo      = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(), Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
   ui->sytLogoLabel->setPixmap(tit_logo);
 
   // 移动到中心
   QScreen *desktop = QApplication::screenAt(QCursor::pos());
   QRect rect       = desktop->availableGeometry();
   move(rect.left() + (rect.width() - width()) / 2, (rect.height() - height()) / 2);
+}
 
-  int btn_size = 40;
-  m_menuBtn_   = new WinMenuButton(this);
-  m_menuBtn_->setFixedSize(btn_size, btn_size);
-  m_hideBtn_ = new WinMinButton(this);
-  m_hideBtn_->setFixedSize(btn_size, btn_size);
-  m_maxBtn_ = new WinMaxButton(this);
-  m_maxBtn_->setFixedSize(btn_size, btn_size);
-  m_closeBtn_ = new WinCloseButton(this);
-  m_closeBtn_->setFixedSize(btn_size, btn_size);
-  ui->mainLayout->addWidget(m_menuBtn_);
-  ui->mainLayout->addWidget(m_hideBtn_);
-  ui->mainLayout->addWidget(m_maxBtn_);
-  ui->mainLayout->addWidget(m_closeBtn_);
+void MainWindow::setLogComponent() {
+  // 日志过滤筛选
+  ui->log_filter_tool_btn->setIcon(QIcon(":m_icon/icon/filter-records.png"));
+  ui->log_filter_tool_btn->setToolTip(QString("日志过滤筛选"));
+  QAction *set_log_level_debug_act = new QAction("DEBUG", this);
+  QAction *set_log_level_info_act  = new QAction("INFO", this);
+  QAction *set_log_level_warn_act  = new QAction("WARN", this);
+  QAction *set_log_level_error_act = new QAction("ERROR", this);
+  QAction *set_log_level_fatal_act = new QAction("FATAL", this);
+  ui->log_filter_tool_btn->addAction(set_log_level_debug_act);
+  ui->log_filter_tool_btn->addAction(set_log_level_info_act);
+  ui->log_filter_tool_btn->addAction(set_log_level_warn_act);
+  ui->log_filter_tool_btn->addAction(set_log_level_error_act);
+  ui->log_filter_tool_btn->addAction(set_log_level_fatal_act);
 
-  // 为title widget设置上下文菜单
-  ui->sytMainTitleWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-  m_titleMenu_ = new QMenu(this);
-  minAct_      = new QAction(this);
-  maxAct_      = new QAction(this);
-  fullAct_     = new QAction(this);
-  closeAct_    = new QAction(this);
-  minAct_->setText("最小化");
-  maxAct_->setText("最大化");
-  fullAct_->setText("全屏窗口化");
-  closeAct_->setText("关闭");
-  m_titleMenu_->addAction(minAct_);
-  m_titleMenu_->addAction(maxAct_);
-  m_titleMenu_->addAction(fullAct_);
-  m_titleMenu_->addAction(closeAct_);
+  ui->log_clear_btn->setIcon(QIcon(":m_icon/icon/clear.png"));
+  ui->log_clear_btn->setToolTip(QString("日志清除"));
+  ui->log_clear_btn->setParentEnabled(true);
+  ui->log_clear_btn->setForeEnabled(false);
+  ui->log_clear_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  // menu btn上下文
-  m_menu_    = new QMenu(this);
-  updateAct_ = new QAction(this);
-  helpAct_   = new QAction(this);
-  aboutAct_  = new QAction(this);
-  updateAct_->setText("检查更新");
-  updateAct_->setIcon(QIcon(":m_icon/icon/update.png"));
-  helpAct_->setText("帮助文档");
-  helpAct_->setIcon(QIcon(":m_icon/icon/help.png"));
-  aboutAct_->setText("关于速英");
-  aboutAct_->setIcon(QIcon(":m_icon/icon/about.png"));
-  m_menu_->addAction(updateAct_);
-  m_menu_->addAction(helpAct_);
-  m_menu_->addAction(aboutAct_);
-  m_menuBtn_->setMenu(m_menu_);
+  // 移动至日志末尾
+  ui->log_end_btn->setIcon(QIcon(":m_icon/icon/end.png"));
+  ui->log_end_btn->setToolTip("移至日志末尾");
+  ui->log_end_btn->setParentEnabled(true);
+  ui->log_end_btn->setForeEnabled(false);
+  ui->log_end_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  // tool bar btn
+  // 日志只读
+  ui->log_plain_text_edit->setReadOnly(true);
+
+  // 信号绑定
+  connect(set_log_level_debug_act, &QAction::triggered, [=] { log_level_ = LOG_DEBUG; });
+  connect(set_log_level_info_act, &QAction::triggered, [=] { log_level_ = LOG_INFO; });
+  connect(set_log_level_warn_act, &QAction::triggered, [=] { log_level_ = LOG_WARN; });
+  connect(set_log_level_error_act, &QAction::triggered, [=] { log_level_ = LOG_ERROR; });
+  connect(set_log_level_fatal_act, &QAction::triggered, [=] { log_level_ = LOG_FATAL; });
+
+  // 日志清除
+  connect(ui->log_clear_btn, &QPushButton::clicked, [=] { ui->log_plain_text_edit->clear(); });
+
+  // 日志定位到最后一行 继续滚动
+  connect(ui->log_end_btn, &QPushButton::clicked, [=] {
+    QTextCursor cursor = ui->log_plain_text_edit->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    ui->log_plain_text_edit->setTextCursor(cursor);
+    // 自动滚动到末尾
+    QScrollBar *scrollBar = ui->log_plain_text_edit->verticalScrollBar();
+    scrollBar->setValue(scrollBar->maximum());
+    ui->log_plain_text_edit->verticalScrollBar()->show();
+  });
+}
+
+void MainWindow::setTimeComponent() {
+  // 时间显示定时器
+  time_timer_ = new QTimer(this);
+  time_timer_->start(1000);
+  QTime time_now = QTime::currentTime();
+  ui->current_time_label->setText(QString("时间：%1").arg(time_now.toString()));
+
+  // 动态显示时间
+  connect(time_timer_, &QTimer::timeout, ui->current_time_label, [=]() {
+    QTime time_now = QTime::currentTime();
+    ui->current_time_label->setText(QString("时间：%1").arg(time_now.toString()));
+  });
+}
+
+void MainWindow::setToolBar() {
   ui->developer_mode_btn->setIcon(QIcon(":m_icon/icon/dev-mode.png")); // 开发者模式按钮
   ui->developer_mode_btn->setToolTip(QString("开发者调试模式"));
 
@@ -330,283 +360,27 @@ void MainWindow::initWidget() {
   ui->help_btn->setIcon(QIcon(":m_icon/icon/help.png"));
   ui->help_btn->setToolTip(QString("帮助说明"));
 
-  // main tab btn
-  ui->reset_btn->setParentEnabled(true);
-  ui->reset_btn->setForeEnabled(false);
-  ui->reset_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->start_btn->setParentEnabled(true);
-  ui->start_btn->setForeEnabled(false);
-  ui->start_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->stop_btn->setParentEnabled(true);
-  ui->stop_btn->setForeEnabled(false);
-  ui->stop_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->add_cloth_btn->setParentEnabled(true);
-  ui->add_cloth_btn->setForeEnabled(false);
-  ui->add_cloth_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->change_board_btn->setParentEnabled(true);
-  ui->change_board_btn->setForeEnabled(false);
-  ui->change_board_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->choose_style_btn->setParentEnabled(true);
-  ui->choose_style_btn->setForeEnabled(false);
-  ui->choose_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  //////////////////////////////// 日志 ///////////////////////////////////
-  // log view btn
-  ui->log_filter_tool_btn->setIcon(QIcon(":m_icon/icon/filter-records.png"));
-  ui->log_filter_tool_btn->setToolTip(QString("日志过滤筛选"));
-  set_log_level_debug_act_ = new QAction("DEBUG", this);
-  set_log_level_info_act_  = new QAction("INFO", this);
-  set_log_level_warn_act_  = new QAction("WARN", this);
-  set_log_level_error_act_ = new QAction("ERROR", this);
-  set_log_level_fatal_act_ = new QAction("FATAL", this);
-  ui->log_filter_tool_btn->addAction(set_log_level_debug_act_);
-  ui->log_filter_tool_btn->addAction(set_log_level_info_act_);
-  ui->log_filter_tool_btn->addAction(set_log_level_warn_act_);
-  ui->log_filter_tool_btn->addAction(set_log_level_error_act_);
-  ui->log_filter_tool_btn->addAction(set_log_level_fatal_act_);
-
-  ui->log_clear_btn->setIcon(QIcon(":m_icon/icon/clear.png"));
-  ui->log_clear_btn->setToolTip(QString("日志清除"));
-  ui->log_clear_btn->setParentEnabled(true);
-  ui->log_clear_btn->setForeEnabled(false);
-  ui->log_clear_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  // 移动至末尾
-  ui->log_end_btn->setIcon(QIcon(":m_icon/icon/end.png"));
-  ui->log_end_btn->setToolTip("移至日志末尾");
-  ui->log_end_btn->setParentEnabled(true);
-  ui->log_end_btn->setForeEnabled(false);
-  ui->log_end_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  // 日志只读
-  ui->log_plain_text_edit->setReadOnly(true);
-
-  //////////////////////////////// 左右翻页 ///////////////////////////////////
-  // 添加左右翻页按钮
-  int init_page_btn_w = this->width() / 50;
-  int init_page_btn_h = this->height() / 9;
-
-  prev_btn = new InteractiveButtonBase(this);
-  prev_btn->setIcon(QIcon(":m_icon/icon/l-page.png"));
-  prev_btn->setParentEnabled(true);
-  prev_btn->setForeEnabled(false);
-  prev_btn->setStyleSheet("background-color: rgba(150,150,150, 0.3);qproperty-press_color: rgba(0,0,100,0.3);");
-  //    prev_btn->setToolTip(QString("上一页,快捷键A"));
-
-  next_btn_ = new InteractiveButtonBase(this);
-  next_btn_->setIcon(QIcon(":m_icon/icon/r-page.png"));
-  next_btn_->setParentEnabled(true);
-  next_btn_->setForeEnabled(false);
-  next_btn_->setStyleSheet("background-color:  rgba(150,150,150, 0.3);qproperty-press_color: rgba(0,0,100,0.3);");
-  //    next_btn_->setToolTip(QString("下一页,快捷键D"));
-
-  prev_btn->setGeometry(0, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
-  next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
-
-  // 可视化的两个按钮
-  ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
-  ui->loadClothVisableBtn->setText("隐藏");
-  ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
-  ui->compositeClothVisableBtn->setText("隐藏");
-
-  // 等待动画初始化
-  waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
-
-  // todo 初始状态下按钮状态
-  this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
-
-  // 初始状态下主界面显示的任务进度条
-  // ui->processWidget->setValue(100);
-
-  // 样式树形列表
-  ui->cloth_style_tree_widget->header()->resizeSection(0, 200);
-  ui->cloth_style_tree_widget->setAlternatingRowColors(true);
-  ui->cloth_style_tree_widget->setAnimated(true);
-  ui->cloth_style_tree_widget->setUniformRowHeights(true);
-  ui->cloth_style_tree_widget->setHeaderLabels(QStringList() << "属性"
-                                                             << "值");
-
-  // 设置样式line edit只读
-  ui->choose_style_line_edit->setReadOnly(true);
-
-  // 事件过滤
-  ui->sytMainTitleWidget->installEventFilter(this);
-
-  // todo 初始状态下，亮灯
-  this->setMutuallyLight(RED);
-
-  // 开发者界面
-  developer_widget_ = new DeveloperWidget(this);
-
-  // 时间显示定时器
-  time_timer_ = new QTimer(this);
-  time_timer_->start(1000);
-  QTime time_now = QTime::currentTime();
-  ui->current_time_label->setText(QString("时间：%1").arg(time_now.toString()));
-}
-
-void MainWindow::settingConnection() {
-  connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=]() {
-    if (ui->stackedWidget->currentWidget() == ui->page1) {
-      if (!pix_A_left_.isNull()) {
-        ui->rightLeftVisualLabel->clear();
-        ui->rightLeftVisualLabel->setPixmap(pix_A_left_);
-        ui->rightLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      }
-
-      if (!pix_A_right_.isNull()) {
-        ui->rightRightVisualLabel->clear();
-        ui->rightRightVisualLabel->setPixmap(pix_A_right_);
-        ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      }
-
-      if (!pix_B_left_.isNull()) {
-        ui->leftLeftVisualLabel->clear();
-        ui->leftLeftVisualLabel->setPixmap(pix_B_left_);
-        ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      }
-
-      if (!pix_B_right_.isNull()) {
-        ui->leftRightVisualLabel->clear();
-        ui->leftRightVisualLabel->setPixmap(pix_B_right_);
-        ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      }
-    }
-  });
-
-  // main window右上角按钮 放大 缩小 菜单等
-  connect(m_closeBtn_, &WinCloseButton::clicked, this, &MainWindow::close);
-  connect(m_hideBtn_, &WinMaxButton::clicked, this, &MainWindow::showMinimized);
-  connect(m_maxBtn_, &WinMaxButton::clicked, this, &MainWindow::slotMaxBtnClicked);
-  connect(m_menuBtn_, &WinMenuButton::toggled, [=] {
-    m_menu_->show();
-    m_menu_->exec();
-  });
-
-  // main window工具栏按钮
+  // 工具栏信号槽
   connect(ui->developer_mode_btn, &QPushButton::clicked, this, &MainWindow::slotShowDevLoginWindow);
   connect(ui->head_eye_calibration_btn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
   connect(ui->create_style_btn, &QPushButton::clicked, this, &MainWindow::slotStartClothStyleWindow);
   connect(ui->lock_screen_btn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
-  // todo 帮助未实现，应该是个文档弹出的dialog
   connect(ui->help_btn, &QPushButton::clicked, [=] {
-    // todo test
-    showMessageBox(this, ERROR, "干巴爹弟兄们😆", 1, {"返回"});
+    // TODO: 帮助文档
+    showMessageBox(this, ERROR, "", 1, {"返回"});
     return;
   });
-
-  // main window 日志栏的按钮
-  connect(set_log_level_debug_act_, &QAction::triggered, [=] { log_level_ = LOG_DEBUG; });
-  connect(set_log_level_info_act_, &QAction::triggered, [=] { log_level_ = LOG_INFO; });
-  connect(set_log_level_warn_act_, &QAction::triggered, [=] { log_level_ = LOG_WARN; });
-  connect(set_log_level_error_act_, &QAction::triggered, [=] { log_level_ = LOG_ERROR; });
-  connect(set_log_level_fatal_act_, &QAction::triggered, [=] { log_level_ = LOG_FATAL; });
-
-  // 日志清除
-  connect(ui->log_clear_btn, &QPushButton::clicked, [=] { ui->log_plain_text_edit->clear(); });
-
-  // 日志定位到最后一行 继续滚动
-  connect(ui->log_end_btn, &QPushButton::clicked, [=] {
-    QTextCursor cursor = ui->log_plain_text_edit->textCursor();
-    cursor.movePosition(QTextCursor::End);
-    ui->log_plain_text_edit->setTextCursor(cursor);
-    // 自动滚动到末尾
-    QScrollBar *scrollBar = ui->log_plain_text_edit->verticalScrollBar();
-    scrollBar->setValue(scrollBar->maximum());
-    ui->log_plain_text_edit->verticalScrollBar()->show();
-  });
-
-  // action 相关
-  connect(minAct_, &QAction::triggered, this, &MainWindow::showMinimized);
-  connect(maxAct_, &QAction::triggered, this, &MainWindow::slotMaxBtnClicked);
-  connect(fullAct_, &QAction::triggered, this, &MainWindow::showFullScreen);
-  connect(closeAct_, &QAction::triggered, this, &MainWindow::close);
-  connect(helpAct_, &QAction::triggered, this, [=] { ui->help_btn->clicked(true); });
-  connect(updateAct_, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
-  // todo 关于sewing action，应该是个模态dialog，期望他能跳转到sewing的官网等等
-  connect(aboutAct_, &QAction::triggered, this, [=] {
-    showMessageBox(this, ERROR, "帮助", 1, {"返回"});
-    return;
-  });
-
-  // main window的 翻页按钮
-  connect(prev_btn, &QPushButton::clicked, this, &MainWindow::slotPrevPage);
-  connect(next_btn_, &QPushButton::clicked, this, &MainWindow::slotNextPage);
-
-  // 主界面接界面 用于交互的3个程序按钮 开始停止复位
-  connect(ui->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
-  connect(ui->start_btn, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
-  connect(ui->stop_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
-  connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
-  connect(ui->change_board_btn, &QPushButton::clicked, this, &MainWindow::changePlateBtnClicked);
-
-  // 可视化两个按钮
-  connect(ui->loadClothVisableBtn, &QPushButton::clicked, [=] {
-    is_load_cloth_on_ = !is_load_cloth_on_;
-    if (is_load_cloth_on_) {
-      qDebug("打开 上料视觉显示");
-      ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
-      ui->loadClothVisableBtn->setText("隐藏");
-    } else {
-      qDebug("关闭 上料视觉显示");
-      ui->loadClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
-      ui->loadClothVisableBtn->setText("显示");
-      ui->leftLeftVisualLabel->clear();
-      ui->leftRightVisualLabel->clear();
-      ui->rightLeftVisualLabel->clear();
-      ui->rightRightVisualLabel->clear();
-      ui->leftLeftVisualLabel->setText("NO IMAGE");
-      ui->leftRightVisualLabel->setText("NO IMAGE");
-      ui->rightLeftVisualLabel->setText("NO IMAGE");
-      ui->rightRightVisualLabel->setText("NO IMAGE");
-    }
-  });
-  connect(ui->compositeClothVisableBtn, &QPushButton::clicked, [=] {
-    is_comp_cloth_on_ = !is_comp_cloth_on_;
-    if (is_comp_cloth_on_) {
-      qDebug("打开 合片视觉显示");
-      ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/unvisable.png"));
-      ui->compositeClothVisableBtn->setText("隐藏");
-    } else {
-      qDebug("关闭 合片视觉显示");
-      ui->compositeClothVisableBtn->setIcon(QIcon(":m_icon/icon/visable.png"));
-      ui->compositeClothVisableBtn->setText("显示");
-      ui->leftCompLabel->clear();
-      ui->rightCompLabel->clear();
-      ui->leftCompLabel->setText("NO IMAGE");
-      ui->rightCompLabel->setText("NO IMAGE");
-    }
-  });
-
-  // 一些节点相关的报错槽
-  connect(rclcomm_, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);
-
-  // ota停止
-  connect(rclcomm_, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow, Qt::QueuedConnection);
-
-  // ota安装
-  connect(rclcomm_, &SytRclComm::installRes, this, &MainWindow::otaInstallSuccess, Qt::QueuedConnection);
 
   // head eye dialog 信号槽
   connect(this, &MainWindow::signHeadEyeWindowShow, [=] {
     auto head_eye_dialog = new HeadEyeDialog(this);
     connect(head_eye_dialog, &HeadEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart);
     connect(head_eye_dialog, &HeadEyeDialog::signSewingStart, this, &MainWindow::slotSewingCalibStart);
+    connect(rclcomm_, &SytRclComm::compCalibRes, this, &MainWindow::slotCompCalibRes);
+    connect(rclcomm_, &SytRclComm::sewingCalibRes, this, &MainWindow::slotSewingCalibRes);
     head_eye_dialog->show();
     head_eye_dialog->setAttribute(Qt::WA_DeleteOnClose);
   });
-
-  // 标定相关
-  connect(rclcomm_, &SytRclComm::compCalibRes, this, &MainWindow::slotCompCalibRes);
-  connect(rclcomm_, &SytRclComm::sewingCalibRes, this, &MainWindow::slotSewingCalibRes);
-
-  // 选择样式信号槽
-  connect(ui->choose_style_btn, &QPushButton::clicked, this, &MainWindow::slotChooseStyleFile);
 
   // 创建样式信号槽
   connect(this, &MainWindow::signClothStyleWindowShow, [=] {
@@ -635,53 +409,267 @@ void MainWindow::settingConnection() {
     cloth_style_dialog->show();
     cloth_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
   });
+}
 
-  // ros2 rosout回调消息的槽函数
-  connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow, Qt::ConnectionType::QueuedConnection);
+// 主体按钮
+void MainWindow::setMainControlButton() {
+  // 主控组件
+  ui->reset_btn->setParentEnabled(true);
+  ui->reset_btn->setForeEnabled(false);
+  ui->reset_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  // 补料模式结束
-  connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::slotAddClothResult);
+  ui->start_btn->setParentEnabled(true);
+  ui->start_btn->setForeEnabled(false);
+  ui->start_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->stop_btn->setParentEnabled(true);
+  ui->stop_btn->setForeEnabled(false);
+  ui->stop_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->add_cloth_btn->setParentEnabled(true);
+  ui->add_cloth_btn->setForeEnabled(false);
+  ui->add_cloth_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->change_board_btn->setParentEnabled(true);
+  ui->change_board_btn->setForeEnabled(false);
+  ui->change_board_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->choose_style_btn->setParentEnabled(true);
+  ui->choose_style_btn->setForeEnabled(false);
+  ui->choose_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  connect(ui->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
+  connect(ui->start_btn, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
+  connect(ui->stop_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
+  connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
+  connect(ui->change_board_btn, &QPushButton::clicked, this, &MainWindow::changePlateBtnClicked);
+}
+
+// 添加左右翻页按钮
+void MainWindow::setPageJump() {
+  int init_page_btn_w = this->width() / 50;
+  int init_page_btn_h = this->height() / 9;
+
+  prev_btn_ = new InteractiveButtonBase(this);
+  prev_btn_->setIcon(QIcon(":m_icon/icon/l-page.png"));
+  prev_btn_->setParentEnabled(true);
+  prev_btn_->setForeEnabled(false);
+  prev_btn_->setStyleSheet("background-color: rgba(150,150,150, 0.3);qproperty-press_color: rgba(0,0,100,0.3);");
+
+  next_btn_ = new InteractiveButtonBase(this);
+  next_btn_->setIcon(QIcon(":m_icon/icon/r-page.png"));
+  next_btn_->setParentEnabled(true);
+  next_btn_->setForeEnabled(false);
+  next_btn_->setStyleSheet("background-color:  rgba(150,150,150, 0.3);qproperty-press_color: rgba(0,0,100,0.3);");
+
+  prev_btn_->setGeometry(0, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
+  next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
+
+  connect(prev_btn_, &QPushButton::clicked, this, &MainWindow::slotPrevPage);
+  connect(next_btn_, &QPushButton::clicked, this, &MainWindow::slotNextPage);
+}
+
+// 视觉功能可视化
+void MainWindow::setVisualComponent() {
+  // 可视化的两个按钮
+  ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/invisible.png"));
+  ui->load_machine_visible_btn->setText("隐藏");
+  ui->compose_machine_visible_btn->setIcon(QIcon(":m_icon/icon/invisible.png"));
+  ui->compose_machine_visible_btn->setText("隐藏");
+
+  connect(ui->load_machine_visible_btn, &QPushButton::clicked, [=] {
+    is_load_cloth_on_ = !is_load_cloth_on_;
+    if (is_load_cloth_on_) {
+      qDebug("打开 上料视觉显示");
+      ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/invisible.png"));
+      ui->load_machine_visible_btn->setText("隐藏");
+    } else {
+      qDebug("关闭 上料视觉显示");
+      ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/visible.png"));
+      ui->load_machine_visible_btn->setText("显示");
+      ui->B_left_visual_label->clear();
+      ui->B_right_visual_label->clear();
+      ui->A_left_visual_label->clear();
+      ui->A_right_visual_label->clear();
+      ui->B_left_visual_label->setText("NO IMAGE");
+      ui->B_right_visual_label->setText("NO IMAGE");
+      ui->A_left_visual_label->setText("NO IMAGE");
+      ui->A_right_visual_label->setText("NO IMAGE");
+    }
+  });
+  connect(ui->compose_machine_visible_btn, &QPushButton::clicked, [=] {
+    is_comp_cloth_on_ = !is_comp_cloth_on_;
+    if (is_comp_cloth_on_) {
+      qDebug("打开 合片视觉显示");
+      ui->compose_machine_visible_btn->setIcon(QIcon(":m_icon/icon/invisible.png"));
+      ui->compose_machine_visible_btn->setText("隐藏");
+    } else {
+      qDebug("关闭 合片视觉显示");
+      ui->compose_machine_visible_btn->setIcon(QIcon(":m_icon/icon/visible.png"));
+      ui->compose_machine_visible_btn->setText("显示");
+      ui->leftCompLabel->clear();
+      ui->rightCompLabel->clear();
+      ui->leftCompLabel->setText("NO IMAGE");
+      ui->rightCompLabel->setText("NO IMAGE");
+    }
+  });
+}
+
+void MainWindow::setBaseComponet() {
+  // 右上角菜单按钮
+  QMenu *menu = new QMenu(this);
+
+  QAction *update_act = new QAction(this);
+  QAction *help_act   = new QAction(this);
+  QAction *about_act  = new QAction(this);
+
+  update_act->setText("检查更新");
+  update_act->setIcon(QIcon(":m_icon/icon/update.png"));
+  help_act->setText("帮助文档");
+  help_act->setIcon(QIcon(":m_icon/icon/help.png"));
+  about_act->setText("关于速英");
+  about_act->setIcon(QIcon(":m_icon/icon/about.png"));
+
+  menu->addAction(update_act);
+  menu->addAction(help_act);
+  menu->addAction(about_act);
+  ui->menu_btn->setMenu(menu);
+
+  // 标题栏右键菜单
+  ui->sytMainTitleWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+  title_menu_ = new QMenu(this);
+
+  QAction *min_act   = new QAction(this);
+  QAction *max_act   = new QAction(this);
+  QAction *full_act  = new QAction(this);
+  QAction *close_act = new QAction(this);
+
+  min_act->setText("最小化");
+  max_act->setText("最大化");
+  full_act->setText("全屏窗口化");
+  close_act->setText("关闭");
+
+  title_menu_->addAction(min_act);
+  title_menu_->addAction(max_act);
+  title_menu_->addAction(full_act);
+  title_menu_->addAction(close_act);
+
+  // main window右上角按钮 放大 缩小 菜单等
+  connect(ui->close_btn, &WinCloseButton::clicked, this, &MainWindow::close);
+  connect(ui->min_btn, &WinMaxButton::clicked, this, &MainWindow::showMinimized);
+  connect(ui->max_btn, &WinMaxButton::clicked, this, &MainWindow::slotMaxBtnClicked);
+  connect(ui->menu_btn, &WinMenuButton::toggled, [=] { menu->exec(); });
+
+  // action 相关
+  connect(min_act, &QAction::triggered, this, &MainWindow::showMinimized);
+  connect(max_act, &QAction::triggered, this, &MainWindow::slotMaxBtnClicked);
+  connect(full_act, &QAction::triggered, this, &MainWindow::showFullScreen);
+  connect(close_act, &QAction::triggered, this, &MainWindow::close);
+  connect(help_act, &QAction::triggered, this, [=] { ui->help_btn->clicked(true); });
+  connect(update_act, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
+  // TODO: 帮助界面
+  connect(about_act, &QAction::triggered, this, [=] {
+    showMessageBox(this, ERROR, "帮助", 1, {"返回"});
+    return;
+  });
+}
+
+void MainWindow::setChooseStyleComponet() {
+  // 样式树形列表
+  ui->cloth_style_tree_widget->header()->resizeSection(0, 200);
+  ui->cloth_style_tree_widget->setAlternatingRowColors(true);
+  ui->cloth_style_tree_widget->setAnimated(true);
+  ui->cloth_style_tree_widget->setUniformRowHeights(true);
+  ui->cloth_style_tree_widget->setHeaderLabels(QStringList() << "属性"
+                                                             << "值");
+  // 设置样式line edit只读
+  ui->choose_style_line_edit->setReadOnly(true);
+
+  connect(ui->choose_style_btn, &QPushButton::clicked, this, &MainWindow::slotChooseStyleFile); // 选择样式信号槽
+}
+
+// 开发者界面
+void MainWindow::setDeveloperWidget() {
+  developer_widget_ = new DeveloperWidget(this);
+
+  // 绑定机器控制按钮
+  bindControlConnection();
+}
+
+void MainWindow::settingConnection() {
+  // 状态label显示
+  connect(this, &MainWindow::signUpdateLabelState, [=](QString text) {
+    ui->running_state_label->setText(text);
+  });
+
+  // 跳转界面显示上料机监控
+  connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=]() {
+    if (ui->stackedWidget->currentWidget() == ui->page1) {
+      if (!pix_A_left_.isNull()) {
+        ui->A_left_visual_label->clear();
+        ui->A_left_visual_label->setPixmap(pix_A_left_);
+        ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      }
+
+      if (!pix_A_right_.isNull()) {
+        ui->A_right_visual_label->clear();
+        ui->A_right_visual_label->setPixmap(pix_A_right_);
+        ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      }
+
+      if (!pix_B_left_.isNull()) {
+        ui->B_left_visual_label->clear();
+        ui->B_left_visual_label->setPixmap(pix_B_left_);
+        ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      }
+
+      if (!pix_B_right_.isNull()) {
+        ui->B_right_visual_label->clear();
+        ui->B_right_visual_label->setPixmap(pix_B_right_);
+        ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      }
+    }
+  });
 
   // 上料机可视化相关槽函数
   connect(rclcomm_, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth);
 
-  // todo 合片机可视化相关槽函数
+  // TODO 合片机可视化相关槽函数
 
-  // todo 任务完成后按钮的逻辑
+  // 一些节点相关的报错槽
+  connect(rclcomm_, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);                            // 错误提示
+  connect(rclcomm_, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow, Qt::QueuedConnection);  // ota停止
+  connect(rclcomm_, &SytRclComm::installRes, this, &MainWindow::otaInstallSuccess, Qt::QueuedConnection);           // ota安装
+  connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow, Qt::ConnectionType::QueuedConnection); // rosout回调消息
+
+  // 补料模式结束
+  connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::slotAddClothResult);
+
+  // TODO 任务完成后按钮的逻辑
   connect(rclcomm_, &SytRclComm::machineIdle, [=](bool idle) {
     if (idle) {
-      this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn, ui->stop_btn}, {});
+      this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn}, {ui->stop_btn});
     }
     // showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
   });
-
-  // 状态label显示
-  connect(this, &MainWindow::signUpdateLabelState, [=](QString text) {
-    ui->stateLabel->setText(text);
-  });
-
-  // 绑定开发者界面按钮
-  bindDeveloperConnection();
-
-  // 动态显示时间
-  connect(time_timer_, &QTimer::timeout, ui->current_time_label, [=]() {
-    QTime time_now = QTime::currentTime();
-    ui->current_time_label->setText(QString("时间：%1").arg(time_now.toString()));
-  });
 }
 
-void MainWindow::bindDeveloperConnection() {
+void MainWindow::bindControlConnection() {
+  // 切换模式
+  connect(developer_widget_, &DeveloperWidget::signChooseMode, [=](int mode) {
+    rclcomm_->changeMode(mode);
+  });
+
   // 合片反馈
   qRegisterMetaType<syt_msgs::msg::ComposeMachineState>("syt_msgs::msg::ComposeMachineState");
   connect(rclcomm_, &SytRclComm::updateComposeMachineState, [=](syt_msgs::msg::ComposeMachineState state) {
     developer_widget_->setComposeMachineState(state);
   });
 
+  // 缝纫反馈
   connect(rclcomm_, &SytRclComm::updateSewingMachineState, [=](syt_msgs::msg::SewingMachineState state) {
     developer_widget_->setSewingMachineState(state);
   });
-
-  // 缝纫反馈
 
   // 上料机-复位
   connect(developer_widget_, &DeveloperWidget::signLoadMachineReset, [=](int id) {
@@ -746,6 +734,20 @@ void MainWindow::bindDeveloperConnection() {
     });
   });
 
+  // 上料机-预备设置
+  connect(developer_widget_, &DeveloperWidget::signLoadMachinePreSetup, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachinePreSetup(id);
+    });
+  });
+
+  // 上料机-视觉对位
+  connect(developer_widget_, &DeveloperWidget::signLoadMachinePreSetup, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineVisualAlign(id);
+    });
+  });
+
   // 合片机-复位
   connect(developer_widget_, &DeveloperWidget::signComposeMachineReset, [=]() {
     QtConcurrent::run([=]() {
@@ -803,9 +805,9 @@ void MainWindow::bindDeveloperConnection() {
   });
 
   // 合片机-移动吸盘
-  connect(developer_widget_, &DeveloperWidget::signComposeMachineMoveSucker, [=]() {
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineMoveSucker, [=](syt_msgs::msg::ComposeMachineSuckerStates sucker_states) {
     QtConcurrent::run([=]() {
-      rclcomm_->composeMachineMoveSucker();
+      rclcomm_->composeMachineMoveSucker(sucker_states);
     });
   });
 
@@ -874,22 +876,15 @@ void MainWindow::initOther() {
   checkConfigsExist();
 }
 
-void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables) {
+void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> disables) {
   for (auto i : enables) {
     i->setEnabled(true);
-    i->setStyleSheet("");
+    i->setStyleSheet("color: black;");
   }
-  for (auto i : unables) {
+  for (auto i : disables) {
     i->setEnabled(false);
     i->setStyleSheet("color: gray;");
   }
-  // TODO
-  //ui->stop_btn->setEnabled(false);
-  //ui->stop_btn->setStyleSheet("color: gray;");
-  //ui->change_board_btn->setEnabled(false);
-  //ui->change_board_btn->setStyleSheet("color: gray;");
-  //ui->reset_btn->setEnabled(false);
-  //ui->reset_btn->setStyleSheet("color: gray;");
 }
 
 void MainWindow::slotMaxBtnClicked() {
@@ -922,48 +917,38 @@ void MainWindow::slotNextPage() {
 
 // 复位按钮槽函数
 void MainWindow::resetBtnClicked() {
-  emit signUpdateLabelState("重置中");
+  if (!is_style_seted_) {
+    showMessageBox(this, WARN, "请先设置裁片样式。", 1, {"确认"});
+    return;
+  }
 
   bool res = isFastClick(ui->reset_btn, 1000);
   if (!res) {
     return;
   }
-
-  // todo 进度条清0
-  value = 0;
-  // ui->processWidget->setValue(value);
-
-  this->btnControl({ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
   this->setMutuallyLight(YELLOW);
 
   // 复位指令
-  future_ = QtConcurrent::run([=] {
-    rclcomm_->resetCmd();
-  });
-  emit signUpdateLabelState("重置完成");
+  emit signUpdateLabelState("复位中");
+  rclcomm_->resetCmd();
+  emit signUpdateLabelState("复位完成");
+
+  this->btnControl({ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {ui->reset_btn});
 }
 
 // 开始按钮槽函数
 void MainWindow::startBtnClicked() {
-  if (!is_style_seted_) {
-    showMessageBox(this, WARN, "请先设置裁片样式。", 1, {"确认"});
-    return;
-  }
   bool res = isFastClick(ui->start_btn, 1000);
   if (!res) {
     return;
   }
-
-  // test_timer->start();
-
-  this->btnControl({ui->stop_btn, ui->start_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
   setMutuallyLight(GREEN);
-  emit signUpdateLabelState("运行中");
 
   // 开始指令
-  future_ = QtConcurrent::run([=] {
-    rclcomm_->startCmd();
-  });
+  rclcomm_->startCmd();
+  emit signUpdateLabelState("运行中");
+
+  this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn});
 }
 
 // 停止按钮槽函数
@@ -972,18 +957,14 @@ void MainWindow::stopBtnClicked() {
   if (!res) {
     return;
   }
-
-  // test_timer->stop();
-
-  // this->btnControl({ui->reset_btn, ui->stop_btn}, {ui->start_btn, ui->add_cloth_btn, ui->change_board_btn});
-  this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {});
   this->setMutuallyLight(YELLOW);
-  emit signUpdateLabelState("停止中");
 
   // 停止指令
-  future_ = QtConcurrent::run([=] {
-    rclcomm_->stopCmd();
-  });
+  emit signUpdateLabelState("停止运行中");
+  rclcomm_->stopCmd();
+  emit signUpdateLabelState("停止");
+
+  this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn}, {ui->start_btn, ui->stop_btn});
 }
 
 // 补料按钮槽函数
@@ -994,21 +975,24 @@ void MainWindow::addClothBtnClicked() {
   }
 
   waiting_spinner_widget_->start();
-  // test_timer->stop();
 
-  this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->change_board_btn, ui->add_cloth_btn}, {});
   this->setMutuallyLight(YELLOW);
   emit signUpdateLabelState("换料模式");
 
-  future_ = QtConcurrent::run([=] {
+  QFuture<void> future_B = QtConcurrent::run([=] {
     rclcomm_->loadMachineAddCloth(0);
   });
 
   QThread::msleep(100);
 
-  future_ = QtConcurrent::run([=] {
+  QFuture<void> future_A = QtConcurrent::run([=] {
     rclcomm_->loadMachineAddCloth(1);
   });
+
+  // future_A.waitForFinished();
+  // future_B.waitForFinished();
+
+  this->btnControl({ui->reset_btn, ui->change_board_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn});
 }
 
 // 换板按钮槽函数
@@ -1017,16 +1001,13 @@ void MainWindow::changePlateBtnClicked() {
   if (!res) {
     return;
   }
-  // test_timer->stop();
 
-  this->btnControl({ui->reset_btn, ui->start_btn, ui->stop_btn, ui->change_board_btn, ui->add_cloth_btn}, {});
+  this->btnControl({ui->reset_btn, ui->change_board_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn});
   this->setMutuallyLight(YELLOW);
   emit signUpdateLabelState("换压板模式");
 
-  // 停止指令
-  future_ = QtConcurrent::run([=] {
-    // rclcomm_->stopCmd(); // TODO
-  });
+  // 换压板模式
+  // rclcomm_->stopCmd(); // TODO
 }
 
 // 错误提示槽函数
@@ -1052,8 +1033,7 @@ void MainWindow::otaResultShow(bool res, QString msg) {
       future_ = QtConcurrent::run([=] {
         rclcomm_->otaDownload();
       });
-      //            future2.waitForFinished();
-
+      // future2.waitForFinished();
     } else if (res == 1) {
       qDebug("取消更新");
       return;
@@ -1123,17 +1103,17 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
     return;
   }
   auto pix = QPixmap::fromImage(
-      image.scaled(ui->leftLeftVisualLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+      image.scaled(ui->B_left_visual_label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
   if (machine_id == 0) {
     if (cam_id == 0) {
-      ui->leftLeftVisualLabel->clear();
-      ui->leftLeftVisualLabel->setPixmap(pix);
-      ui->leftLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      ui->B_left_visual_label->clear();
+      ui->B_left_visual_label->setPixmap(pix);
+      ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
       pix_B_left_ = pix;
     } else if (cam_id == 1) {
-      ui->leftRightVisualLabel->clear();
-      ui->leftRightVisualLabel->setPixmap(pix);
-      ui->leftRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      ui->B_right_visual_label->clear();
+      ui->B_right_visual_label->setPixmap(pix);
+      ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
       pix_B_right_ = pix;
     } else {
       return;
@@ -1141,14 +1121,14 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
 
   } else if (machine_id == 1) {
     if (cam_id == 0) {
-      ui->rightLeftVisualLabel->clear();
-      ui->rightLeftVisualLabel->setPixmap(pix);
-      ui->rightLeftVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      ui->A_left_visual_label->clear();
+      ui->A_left_visual_label->setPixmap(pix);
+      ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
       pix_A_left_ = pix;
     } else if (cam_id == 1) {
-      ui->rightRightVisualLabel->clear();
-      ui->rightRightVisualLabel->setPixmap(pix);
-      ui->rightRightVisualLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+      ui->A_right_visual_label->clear();
+      ui->A_right_visual_label->setPixmap(pix);
+      ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
       pix_A_right_ = pix;
     } else {
       return;
@@ -1187,15 +1167,8 @@ void MainWindow::slotStartHeadEyeWindow() {
       "</body></html>";
 
   auto res = showMessageBox(this, WARN, tip, 2, {"确认", "返回"});
-
-  switch (res) {
-  case 0:
+  if (res == 0) {
     emit signHeadEyeWindowShow();
-    return;
-  case 1:
-    return;
-  default:
-    return;
   }
 }
 
@@ -1351,6 +1324,9 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     waiting_spinner_widget_->stop();
 
     is_style_seted_ = true;
+
+    QString text = QString("请将前片放置于上料台%1，后片放置于上料台%2").arg(cloth_style_front.cloth_location == syt_msgs::msg::ClothStyle::TABLE_A ? "A" : "B").arg(cloth_style_back.cloth_location == syt_msgs::msg::ClothStyle::TABLE_A ? "A" : "B");
+    showMessageBox(this, SUCCESS, text, 1, {"确认"});
   } else {
     showMessageBox(this, WARN, "获取样式信息失败", 1, {"确认"});
   }

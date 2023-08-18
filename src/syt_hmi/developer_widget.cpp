@@ -22,6 +22,7 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
   connect(ui->switch_load_btn, &QPushButton::clicked, this, &DeveloperWidget::switchPage, Qt::UniqueConnection);
   connect(ui->switch_compose_btn, &QPushButton::clicked, this, &DeveloperWidget::switchPage, Qt::UniqueConnection);
   connect(ui->switch_sewing_btn, &QPushButton::clicked, this, &DeveloperWidget::switchPage, Qt::UniqueConnection);
+  connect(ui->other_btn, &QPushButton::clicked, this, &DeveloperWidget::switchPage, Qt::UniqueConnection);
 
   // 上料机功能绑定
   bindLoadMachine();
@@ -31,10 +32,34 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
 
   // 缝纫机功能
   bindSewingMachine();
+
+  // 模式切换
+  setChooseMode();
 }
 
 DeveloperWidget::~DeveloperWidget() {
   delete ui;
+}
+
+void DeveloperWidget::setChooseMode() {
+  // 模式选择界面
+  // ui->choose_mode_combo_box->insertItem(-1, "缝纫模式");
+  ui->choose_mode_combo_box->insertItem(-1, "单次模式");
+  ui->choose_mode_combo_box->insertItem(-1, "循环模式");
+  ui->choose_mode_combo_box->insertItem(-1, "合片模式");
+
+  void (QComboBox::*index_change_signal)(int index) = &QComboBox::currentIndexChanged;
+  connect(ui->choose_mode_combo_box, index_change_signal, [=]() {
+    if ("单次模式" == ui->choose_mode_combo_box->currentText()) {
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP_ONCE);
+    }
+    if ("循环模式" == ui->choose_mode_combo_box->currentText()) {
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP);
+    }
+    if ("合片模式" == ui->choose_mode_combo_box->currentText()) {
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH);
+    }
+  });
 }
 
 void DeveloperWidget::mousePressEvent(QMouseEvent *event) {
@@ -75,6 +100,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->switch_load_btn);
   setFrame(ui->switch_compose_btn);
   setFrame(ui->switch_sewing_btn);
+  setFrame(ui->other_btn);
 
   // 上料机界面
   setFrame(ui->load_reset_btn_B);
@@ -86,6 +112,8 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->set_offset_btn_B);
   setFrame(ui->hold_cloth_btn_B);
   setFrame(ui->grab_cloth_btn_B);
+  setFrame(ui->pre_setup_btn_B);
+  setFrame(ui->visual_align_btn_B);
 
   setFrame(ui->load_reset_btn_A);
   setFrame(ui->add_cloth_btn_A);
@@ -96,6 +124,8 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->set_offset_btn_A);
   setFrame(ui->hold_cloth_btn_A);
   setFrame(ui->grab_cloth_btn_A);
+  setFrame(ui->pre_setup_btn_A);
+  setFrame(ui->visual_align_btn_A);
 
   // 合片机界面
   setFrame(ui->compose_reset_btn);
@@ -128,6 +158,9 @@ void DeveloperWidget::switchPage() {
   } else if (sender() == ui->switch_sewing_btn) {
     ui->current_page_label->setText(ui->switch_sewing_btn->getText());
     ui->stackedWidget->setCurrentIndex(2);
+  } else if (sender() == ui->other_btn) {
+    ui->current_page_label->setText(ui->other_btn->getText());
+    ui->stackedWidget->setCurrentIndex(3);
   }
 }
 
@@ -170,6 +203,14 @@ void DeveloperWidget::bindLoadMachine() {
     emit signLoadMachineGrabCloth(0);
   });
 
+  connect(ui->pre_setup_btn_B, &QPushButton::clicked, [=]() {
+    emit signLoadMachinePreSetup(0);
+  });
+
+  connect(ui->visual_align_btn_B, &QPushButton::clicked, [=]() {
+    emit signLoadMachineVisualAlign(0);
+  });
+
   // 上料台A
   connect(ui->load_reset_btn_A, &QPushButton::clicked, [=]() {
     emit signLoadMachineReset(1);
@@ -205,6 +246,14 @@ void DeveloperWidget::bindLoadMachine() {
 
   connect(ui->grab_cloth_btn_A, &QPushButton::clicked, [=]() {
     emit signLoadMachineGrabCloth(1);
+  });
+
+  connect(ui->pre_setup_btn_A, &QPushButton::clicked, [=]() {
+    emit signLoadMachinePreSetup(1);
+  });
+
+  connect(ui->visual_align_btn_A, &QPushButton::clicked, [=]() {
+    emit signLoadMachineVisualAlign(0);
   });
 }
 
@@ -333,29 +382,29 @@ void DeveloperWidget::bindSewingMachine() {
 }
 
 void DeveloperWidget::setComposeMachineState(syt_msgs::msg::ComposeMachineState state) {
-    ui->compose_hand_x_line_edit->setText(QString::number(state.hand_position.x));
-    ui->compose_hand_y_line_edit->setText(QString::number(state.hand_position.y));
-    ui->compose_hand_z_line_edit->setText(QString::number(state.hand_position.z));
-    ui->compose_hand_c_line_edit->setText(QString::number(state.hand_position.c));
+  ui->compose_hand_x_line_edit->setText(QString::number(state.hand_position.x));
+  ui->compose_hand_y_line_edit->setText(QString::number(state.hand_position.y));
+  ui->compose_hand_z_line_edit->setText(QString::number(state.hand_position.z));
+  ui->compose_hand_c_line_edit->setText(QString::number(state.hand_position.c));
 
-    ui->sucker_left_bottom_x_line_edit->setText(QString::number(state.suckers_position.left_bottom.x));
-    ui->sucker_left_bottom_y_line_edit->setText(QString::number(state.suckers_position.left_bottom.y));
-    ui->sucker_left_oxter_x_line_edit->setText(QString::number(state.suckers_position.left_oxter.x));
-    ui->sucker_left_oxter_y_line_edit->setText(QString::number(state.suckers_position.left_oxter.y));
-    ui->sucker_left_shoulder_x_line_edit->setText(QString::number(state.suckers_position.left_shoulder.x));
-    ui->sucker_left_shoulder_y_line_edit->setText(QString::number(state.suckers_position.left_shoulder.y));
-    ui->sucker_left_shoulder_c_line_edit->setText(QString::number(state.suckers_position.left_shoulder.c));
-    ui->sucker_right_shoulder_x_line_edit->setText(QString::number(state.suckers_position.right_shoulder.x));
-    ui->sucker_right_shoulder_y_line_edit->setText(QString::number(state.suckers_position.right_shoulder.y));
-    ui->sucker_right_shoulder_c_line_edit->setText(QString::number(state.suckers_position.right_shoulder.c));
-    ui->sucker_right_oxter_x_line_edit->setText(QString::number(state.suckers_position.right_oxter.x));
-    ui->sucker_right_oxter_y_line_edit->setText(QString::number(state.suckers_position.right_oxter.y));
-    ui->sucker_right_bottom_x_line_edit->setText(QString::number(state.suckers_position.right_bottom.x));
-    ui->sucker_right_bottom_y_line_edit->setText(QString::number(state.suckers_position.right_bottom.y));
+  ui->sucker_left_bottom_x_line_edit->setText(QString::number(state.suckers_position.left_bottom.x));
+  ui->sucker_left_bottom_y_line_edit->setText(QString::number(state.suckers_position.left_bottom.y));
+  ui->sucker_left_oxter_x_line_edit->setText(QString::number(state.suckers_position.left_oxter.x));
+  ui->sucker_left_oxter_y_line_edit->setText(QString::number(state.suckers_position.left_oxter.y));
+  ui->sucker_left_shoulder_x_line_edit->setText(QString::number(state.suckers_position.left_shoulder.x));
+  ui->sucker_left_shoulder_y_line_edit->setText(QString::number(state.suckers_position.left_shoulder.y));
+  ui->sucker_left_shoulder_c_line_edit->setText(QString::number(state.suckers_position.left_shoulder.c));
+  ui->sucker_right_shoulder_x_line_edit->setText(QString::number(state.suckers_position.right_shoulder.x));
+  ui->sucker_right_shoulder_y_line_edit->setText(QString::number(state.suckers_position.right_shoulder.y));
+  ui->sucker_right_shoulder_c_line_edit->setText(QString::number(state.suckers_position.right_shoulder.c));
+  ui->sucker_right_oxter_x_line_edit->setText(QString::number(state.suckers_position.right_oxter.x));
+  ui->sucker_right_oxter_y_line_edit->setText(QString::number(state.suckers_position.right_oxter.y));
+  ui->sucker_right_bottom_x_line_edit->setText(QString::number(state.suckers_position.right_bottom.x));
+  ui->sucker_right_bottom_y_line_edit->setText(QString::number(state.suckers_position.right_bottom.y));
 }
 
 void DeveloperWidget::setSewingMachineState(syt_msgs::msg::SewingMachineState state) {
-    ui->sewing_hand_x_line_edit->setText(QString::number(state.hand_position.x));
-    ui->sewing_hand_y_line_edit->setText(QString::number(state.hand_position.y));
-    ui->sewing_hand_c_line_edit->setText(QString::number(state.hand_position.c));
+  ui->sewing_hand_x_line_edit->setText(QString::number(state.hand_position.x));
+  ui->sewing_hand_y_line_edit->setText(QString::number(state.hand_position.y));
+  ui->sewing_hand_c_line_edit->setText(QString::number(state.hand_position.c));
 }
