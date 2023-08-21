@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1508</width>
-    <height>1043</height>
+    <height>1045</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,7 +38,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>60</height>
+        <height>80</height>
        </size>
       </property>
       <property name="maximumSize">
@@ -99,7 +99,7 @@
         <widget class="QLabel" name="sytTitleLabel">
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>18</pointsize>
            <weight>75</weight>
            <italic>false</italic>
            <bold>true</bold>

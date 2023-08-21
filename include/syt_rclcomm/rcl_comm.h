@@ -170,7 +170,8 @@ signals:
   void installRes(bool, QString);
   void visualLoadClothRes(int, int, QImage);
   void signLogPub(QString current_time, int level, QString, QString, QString);
-  void machineIdle(bool idle); // 处于空闲状态
+  void machineIdle();
+  void finishOneRound();
 
   // 标定相关信号
   void compCalibRes(bool);

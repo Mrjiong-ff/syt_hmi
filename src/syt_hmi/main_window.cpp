@@ -224,16 +224,12 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
     prev_btn_->setGeometry(0, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
     next_btn_->setGeometry(this->width() - init_page_btn_w, this->height() / 2 - init_page_btn_h / 2, init_page_btn_w, init_page_btn_h);
-    // todo 应该有一些根据界面大小 控件resize的逻辑 不然单纯靠spacer做 界面布局比较丑
-    // todo 主程序按钮
-
     // todo 任务进度条大小
     //        ui->processWidget->setOutterBarWidth(this->width()/20);
     //        ui->processWidget->setInnerBarWidth(this->width()/20);
     //        updateGeometry();
     //        qDebug("resize");
   }
-
   // QWidget::resizeEvent(event);
 }
 
@@ -258,6 +254,7 @@ void MainWindow::initWidget() {
   this->setMutuallyLight(RED);                      // 初始状态下，亮灯
   this->setWindowFlags(Qt::FramelessWindowHint);    // 隐藏默认标题栏
   this->setWindowIcon(QIcon(":m_logo/logo/bg_logo.png"));
+  ui->running_state_label->setText(QString("请选择样式文件"));
 
   // 初始状态下按钮状态
   this->btnControl({ui->reset_btn}, {ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn});
@@ -346,10 +343,10 @@ void MainWindow::setTimeComponent() {
 
 void MainWindow::setToolBar() {
   ui->developer_mode_btn->setIcon(QIcon(":m_icon/icon/dev-mode.png")); // 开发者模式按钮
-  ui->developer_mode_btn->setToolTip(QString("开发者调试模式"));
+  ui->developer_mode_btn->setToolTip(QString("开发者界面"));
 
   ui->head_eye_calibration_btn->setIcon(QIcon(":m_icon/icon/handeye.png")); // 手眼标定模式按钮
-  ui->head_eye_calibration_btn->setToolTip(QString("机器人眼手标定"));
+  ui->head_eye_calibration_btn->setToolTip(QString("相机标定标定"));
 
   ui->create_style_btn->setIcon(QIcon(":m_icon/icon/shirt-line.png")); // 创建衣服样式按钮
   ui->create_style_btn->setToolTip(QString("创建衣服样式"));
@@ -365,11 +362,11 @@ void MainWindow::setToolBar() {
   connect(ui->head_eye_calibration_btn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
   connect(ui->create_style_btn, &QPushButton::clicked, this, &MainWindow::slotStartClothStyleWindow);
   connect(ui->lock_screen_btn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
-  connect(ui->help_btn, &QPushButton::clicked, [=] {
-    // TODO: 帮助文档
-    showMessageBox(this, ERROR, "", 1, {"返回"});
-    return;
-  });
+  // connect(ui->help_btn, &QPushButton::clicked, [=] {
+  //// TODO: 帮助文档
+  // showMessageBox(this, ERROR, "", 1, {"返回"});
+  // return;
+  //});
 
   // head eye dialog 信号槽
   connect(this, &MainWindow::signHeadEyeWindowShow, [=] {
@@ -520,18 +517,14 @@ void MainWindow::setBaseComponet() {
   QMenu *menu = new QMenu(this);
 
   QAction *update_act = new QAction(this);
-  QAction *help_act   = new QAction(this);
   QAction *about_act  = new QAction(this);
 
   update_act->setText("检查更新");
   update_act->setIcon(QIcon(":m_icon/icon/update.png"));
-  help_act->setText("帮助文档");
-  help_act->setIcon(QIcon(":m_icon/icon/help.png"));
   about_act->setText("关于速英");
   about_act->setIcon(QIcon(":m_icon/icon/about.png"));
 
   menu->addAction(update_act);
-  menu->addAction(help_act);
   menu->addAction(about_act);
   ui->menu_btn->setMenu(menu);
 
@@ -565,7 +558,6 @@ void MainWindow::setBaseComponet() {
   connect(max_act, &QAction::triggered, this, &MainWindow::slotMaxBtnClicked);
   connect(full_act, &QAction::triggered, this, &MainWindow::showFullScreen);
   connect(close_act, &QAction::triggered, this, &MainWindow::close);
-  connect(help_act, &QAction::triggered, this, [=] { ui->help_btn->clicked(true); });
   connect(update_act, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
   // TODO: 帮助界面
   connect(about_act, &QAction::triggered, this, [=] {
@@ -645,12 +637,20 @@ void MainWindow::settingConnection() {
   // 补料模式结束
   connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::slotAddClothResult);
 
-  // TODO 任务完成后按钮的逻辑
-  connect(rclcomm_, &SytRclComm::machineIdle, [=](bool idle) {
-    if (idle) {
-      this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn}, {ui->stop_btn});
-    }
-    // showMessageBox(this, SUCCESS, "当前批次任务完成,请手动完成上料后继续开始", 1, {"确认"});
+  // 成功率统计
+  connect(rclcomm_, &SytRclComm::machineIdle, [=]() {
+    this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn}, {ui->stop_btn});
+    ++success_count_;
+    ++round_count_; // TODO: 增加异常次数计数，统计成功率
+    ui->processWidget->setRange(0, round_count_);
+    ui->processWidget->setValue(success_count_);
+  });
+
+  connect(rclcomm_, &SytRclComm::finishOneRound, [=]() {
+    ++success_count_;
+    ++round_count_;
+    ui->processWidget->setRange(0, round_count_);
+    ui->processWidget->setValue(success_count_);
   });
 }
 
@@ -928,6 +928,19 @@ void MainWindow::resetBtnClicked() {
   }
   this->setMutuallyLight(YELLOW);
 
+  // 清空可视化
+  ui->B_left_visual_label->clear();
+  ui->B_right_visual_label->clear();
+  ui->A_left_visual_label->clear();
+  ui->A_right_visual_label->clear();
+  ui->B_left_visual_label->setText("NO IMAGE");
+  ui->B_right_visual_label->setText("NO IMAGE");
+  ui->A_left_visual_label->setText("NO IMAGE");
+  ui->A_right_visual_label->setText("NO IMAGE");
+
+  round_count_   = 0;
+  success_count_ = 0;
+
   // 复位指令
   emit signUpdateLabelState("复位中");
   rclcomm_->resetCmd();
@@ -1102,8 +1115,7 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
   if (!is_load_cloth_on_) {
     return;
   }
-  auto pix = QPixmap::fromImage(
-      image.scaled(ui->B_left_visual_label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+  auto pix = QPixmap::fromImage(image.scaled(ui->B_left_visual_label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
   if (machine_id == 0) {
     if (cam_id == 0) {
       ui->B_left_visual_label->clear();

@@ -7,6 +7,7 @@ ManualInputParamWizard::ManualInputParamWizard(QWidget *parent) : QWizard(parent
   setButtonText(WizardButton::NextButton, "下一步");
   setButtonText(WizardButton::CancelButton, "取消");
   setButtonText(WizardButton::FinishButton, "完成");
+  setButtonText(WizardButton::CommitButton, "提交");
   setModal(true);
 
   // ----- wizard流程 -----
@@ -53,6 +54,14 @@ ManualInputParamWizard::ManualInputParamWizard(QWidget *parent) : QWizard(parent
   connect(this, &ManualInputParamWizard::signSetRenameEdit, rename_cloth_style_page, &RenameClothStylePage::slotSetRenameEdit);
   connect(rename_cloth_style_page, &RenameClothStylePage::signRenameClothStyle, this, &ManualInputParamWizard::slotRenameClothStyle);
   connect(this, &ManualInputParamWizard::signRenameClothStyleResult, rename_cloth_style_page, &RenameClothStylePage::slotRenameClothStyleResult);
+
+  // 取消按键
+  QAbstractButton *cancel_btn = this->button(QWizard::CancelButton);
+  connect(cancel_btn, &QPushButton::clicked, this, [=]() {
+    if (!file_name_.isEmpty()) {
+      QFile::remove(QString("/home/syt/style") + QDir::separator() + file_name_ + QString(".sty"));
+    }
+  });
 }
 
 void ManualInputParamWizard::slotSetLengthParam(syt_msgs::msg::ClothStyle cloth_style) {

@@ -3,7 +3,7 @@
 //////////////// 自动创建(向导) ////////////////
 // 1.移动抓手
 MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
-  setTitle("移动抓手至安全位置");
+  setTitle("请确认台面上无人员后，移动抓手至检测位置");
   move_hand_btn_ = new InteractiveButtonBase;
   move_hand_btn_->setParentEnabled(true);
   move_hand_btn_->setForeEnabled(false);
@@ -15,6 +15,8 @@ MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
     // 未移动抓手时发送
     if (!moved_hand_) {
       emit signMoveHand();
+    } else {
+      showMessageBox(this, SUCCESS, "抓手已移动成功，请点击下一步。", 1, {"确认"});
     }
   });
   QVBoxLayout *layout = new QVBoxLayout;
@@ -62,9 +64,7 @@ DetectClothPage::DetectClothPage(QWidget *parent, int cloth_type) : QWizardPage(
 
   detect_cloth_btn_->setText(QString("点击开始检测%1").arg(cloth_type_ ? "后片" : "前片"));
   connect(detect_cloth_btn_, &QPushButton::clicked, this, [=]() {
-    if (!detected_result_) {
-      emit signDetectCloth(cloth_type_);
-    }
+    emit signDetectCloth(cloth_type_);
   });
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer);
@@ -94,8 +94,11 @@ void DetectClothPage::slotDetectClothResult(bool result, int cloth_type) {
 
 // 4.手动输入额外参数
 InputExtraParamPage::InputExtraParamPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
-  setTitle(QString("输入%1额外参数，提交前请检查无误。").arg(cloth_type_ ? "后片" : "前片"));
-  setCommitPage(true);
+  setTitle(QString("输入%1额外参数").arg(cloth_type_ ? "后片" : "前片"));
+  if (cloth_type_) {
+    setSubTitle("提交前请检查参数无误，提交后将不可修改。");
+    setCommitPage(true);
+  }
 
   input_extra_param_widget_ = new InputExtraParamWidget(parent);
   input_extra_param_widget_->setClothType(cloth_type_);

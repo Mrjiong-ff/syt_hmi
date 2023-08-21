@@ -48,7 +48,6 @@ SytRclComm::~SytRclComm() {
   for (int i = 0; i < 3; ++i) {
     killProcesses("thanos.launch.py");
     killProcesses("ros-args");
-    // system("ros2 daemon stop");
   }
 
   qDebug("shut down rclcomm.");
@@ -247,11 +246,16 @@ void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::Share
     break;
   case syt_msgs::msg::MotionPlannerState::INITIALIZE:
     if (start_flag_) {
-      if (last_state_ == syt_msgs::msg::MotionPlannerState::STEP_FOUR && run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE) {
-        emit machineIdle(true);
+      if (last_state_ == syt_msgs::msg::MotionPlannerState::STEP_FOUR) {
+        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE) {
+          emit machineIdle();
+        }
+        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP) {
+          emit finishOneRound();
+        }
       }
     } else if (!start_flag_) {
-      emit machineIdle(true);
+      emit machineIdle();
     }
   case syt_msgs::msg::MotionPlannerState::SAFE_POSITION:
   case syt_msgs::msg::MotionPlannerState::STEP_ONE:
@@ -725,6 +729,7 @@ void SytRclComm::composeMachineStopBlow() {
 // 合片抓手移动
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   //// TODO: delete
+  // usleep(1000000);
   // emit signComposeMachineMoveHandFinish(true);
   // return;
 
@@ -817,6 +822,7 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   //// TODO: delete
+  // usleep(1000000);
   // emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
   // return;
 

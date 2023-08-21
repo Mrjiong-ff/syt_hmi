@@ -179,6 +179,10 @@ private:
   bool is_load_cloth_on_         = true;
   bool is_comp_cloth_on_         = true;
 
+  // 统计运行次数
+  int round_count_   = 0;
+  int success_count_ = 0;
+
   // 上料用标志位
   int add_cloth_count_     = 0;
   bool add_cloth_result_A_ = 0;

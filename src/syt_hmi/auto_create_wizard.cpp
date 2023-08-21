@@ -77,6 +77,14 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   connect(this, &AutoCreateStyleWizard::signSetRenameEdit, rename_cloth_style_page, &RenameClothStylePage::slotSetRenameEdit);
   connect(rename_cloth_style_page, &RenameClothStylePage::signRenameClothStyle, this, &AutoCreateStyleWizard::slotRenameClothStyle);
   connect(this, &AutoCreateStyleWizard::signRenameClothStyleResult, rename_cloth_style_page, &RenameClothStylePage::slotRenameClothStyleResult);
+
+  // 取消按键
+  QAbstractButton *cancel_btn = this->button(QWizard::CancelButton);
+  connect(cancel_btn, &QPushButton::clicked, this, [=]() {
+    if (!file_name_.isEmpty()) {
+      QFile::remove(QString("/home/syt/style") + QDir::separator() + file_name_ + QString(".sty"));
+    }
+  });
 }
 
 void AutoCreateStyleWizard::slotMoveHand() {
@@ -143,5 +151,8 @@ void AutoCreateStyleWizard::slotRenameClothStyle() {
 
 void AutoCreateStyleWizard::slotRenameClothStyleResult(bool result) {
   waiting_spinner_widget_->stop();
+  if (result) {
+    file_name_ = field("new_name").toString();
+  }
   emit signRenameClothStyleResult(result);
 }
