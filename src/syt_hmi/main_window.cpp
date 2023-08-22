@@ -623,16 +623,11 @@ void MainWindow::settingConnection() {
     }
   });
 
-  // 上料机可视化相关槽函数
-  connect(rclcomm_, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth);
-
-  // TODO 合片机可视化相关槽函数
-
-  // 一些节点相关的报错槽
-  connect(rclcomm_, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);                            // 错误提示
-  connect(rclcomm_, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow, Qt::QueuedConnection);  // ota停止
-  connect(rclcomm_, &SytRclComm::installRes, this, &MainWindow::otaInstallSuccess, Qt::QueuedConnection);           // ota安装
-  connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow, Qt::ConnectionType::QueuedConnection); // rosout回调消息
+  connect(rclcomm_, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth); // 上料机可视化
+  connect(rclcomm_, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);      // 错误提示
+  connect(rclcomm_, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow);  // ota停止
+  connect(rclcomm_, &SytRclComm::installRes, this, &MainWindow::otaInstallSuccess);           // ota安装
+  connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow);                 // rosout回调消息
 
   // 补料模式结束
   connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::slotAddClothResult);
@@ -669,6 +664,27 @@ void MainWindow::bindControlConnection() {
   // 缝纫反馈
   connect(rclcomm_, &SytRclComm::updateSewingMachineState, [=](syt_msgs::msg::SewingMachineState state) {
     developer_widget_->setSewingMachineState(state);
+  });
+
+  // 更新固件-上料机
+  connect(developer_widget_, &DeveloperWidget::signUpdateLoadMachine, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->updateLoadMachine();
+    });
+  });
+
+  // 更新固件-合片机
+  connect(developer_widget_, &DeveloperWidget::signUpdateComposeMachine, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->updateComposeMachine();
+    });
+  });
+
+  // 更新固件-缝纫机
+  connect(developer_widget_, &DeveloperWidget::signUpdateSewingMachine, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->updateSewingMachine();
+    });
   });
 
   // 上料机-复位

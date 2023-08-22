@@ -188,3 +188,15 @@ std::string getCurrentTime() {
   timestamp_str[std::min(wsize, MAX_BUFFER_SIZE - 1)] = '\0';
   return std::string(timestamp_str);
 }
+
+void killProcesses(std::string process_pattern) {
+  pid_t self_pid = getpid();
+  FILE *pipe     = popen(("ps -x | grep -v grep | grep -i " + process_pattern + " | awk '{print $1}'").c_str(), "r");
+  char buffer[128];
+  while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+    int pid = atoi(buffer);
+    if (pid != 0 && pid != self_pid) {
+      int result = kill(pid, SIGKILL);
+    }
+  }
+}

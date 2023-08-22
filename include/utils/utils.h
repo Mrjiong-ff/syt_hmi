@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QVariant>
 #include <QWidget>
+#include <csignal>
 #include <fstream>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
@@ -73,3 +74,9 @@ std::string getConfigPath();
  * @return
  */
 std::string getCurrentTime();
+
+/**
+ * 杀死进程
+ * @return
+ */
+void killProcesses(std::string process_pattern);
