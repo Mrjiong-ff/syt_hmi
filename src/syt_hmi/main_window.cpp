@@ -638,14 +638,14 @@ void MainWindow::settingConnection() {
     ++success_count_;
     ++round_count_; // TODO: 增加异常次数计数，统计成功率
     ui->processWidget->setRange(0, round_count_);
-    ui->processWidget->setValue(success_count_);
+    //ui->processWidget->setValue(success_count_);
   });
 
   connect(rclcomm_, &SytRclComm::finishOneRound, [=]() {
     ++success_count_;
     ++round_count_;
     ui->processWidget->setRange(0, round_count_);
-    ui->processWidget->setValue(success_count_);
+    //ui->processWidget->setValue(success_count_);
   });
 }
 
