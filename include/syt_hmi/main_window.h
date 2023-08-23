@@ -105,6 +105,8 @@ private:
   void setBaseComponet();
   void setChooseStyleComponet();
   void setDeveloperWidget();
+  void showLoadMachineImage();
+
 
 signals:
   void signHeadEyeWindowShow();

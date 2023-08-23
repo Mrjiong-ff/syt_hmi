@@ -213,6 +213,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *ev) {
     }
     return false;
   }
+
   return QObject::eventFilter(obj, ev);
 }
 
@@ -588,6 +589,36 @@ void MainWindow::setDeveloperWidget() {
   bindControlConnection();
 }
 
+void MainWindow::showLoadMachineImage() {
+  if (!pix_A_left_.isNull()) {
+    pix_A_left_ = pix_A_left_.scaled(ui->A_left_visual_label->width(), ui->A_left_visual_label->height(), Qt::KeepAspectRatio);
+    ui->A_left_visual_label->clear();
+    ui->A_left_visual_label->setPixmap(pix_A_left_);
+    ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  }
+
+  if (!pix_A_right_.isNull()) {
+    pix_A_right_ = pix_A_right_.scaled(ui->A_right_visual_label->width(), ui->A_right_visual_label->height(), Qt::KeepAspectRatio);
+    ui->A_right_visual_label->clear();
+    ui->A_right_visual_label->setPixmap(pix_A_right_);
+    ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  }
+
+  if (!pix_B_left_.isNull()) {
+    pix_B_left_ = pix_B_left_.scaled(ui->B_left_visual_label->width(), ui->B_left_visual_label->height(), Qt::KeepAspectRatio);
+    ui->B_left_visual_label->clear();
+    ui->B_left_visual_label->setPixmap(pix_B_left_);
+    ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  }
+
+  if (!pix_B_right_.isNull()) {
+    pix_B_right_ = pix_B_right_.scaled(ui->B_right_visual_label->width(), ui->B_right_visual_label->height(), Qt::KeepAspectRatio);
+    ui->B_right_visual_label->clear();
+    ui->B_right_visual_label->setPixmap(pix_B_right_);
+    ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  }
+}
+
 void MainWindow::settingConnection() {
   // 状态label显示
   connect(this, &MainWindow::signUpdateLabelState, [=](QString text) {
@@ -597,29 +628,7 @@ void MainWindow::settingConnection() {
   // 跳转界面显示上料机监控
   connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=]() {
     if (ui->stackedWidget->currentWidget() == ui->page1) {
-      if (!pix_A_left_.isNull()) {
-        ui->A_left_visual_label->clear();
-        ui->A_left_visual_label->setPixmap(pix_A_left_);
-        ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      }
-
-      if (!pix_A_right_.isNull()) {
-        ui->A_right_visual_label->clear();
-        ui->A_right_visual_label->setPixmap(pix_A_right_);
-        ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      }
-
-      if (!pix_B_left_.isNull()) {
-        ui->B_left_visual_label->clear();
-        ui->B_left_visual_label->setPixmap(pix_B_left_);
-        ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      }
-
-      if (!pix_B_right_.isNull()) {
-        ui->B_right_visual_label->clear();
-        ui->B_right_visual_label->setPixmap(pix_B_right_);
-        ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      }
+      showLoadMachineImage();
     }
   });
 
@@ -638,14 +647,14 @@ void MainWindow::settingConnection() {
     ++success_count_;
     ++round_count_; // TODO: 增加异常次数计数，统计成功率
     ui->processWidget->setRange(0, round_count_);
-    //ui->processWidget->setValue(success_count_);
+    // ui->processWidget->setValue(success_count_);
   });
 
   connect(rclcomm_, &SytRclComm::finishOneRound, [=]() {
     ++success_count_;
     ++round_count_;
     ui->processWidget->setRange(0, round_count_);
-    //ui->processWidget->setValue(success_count_);
+    // ui->processWidget->setValue(success_count_);
   });
 }
 
@@ -1006,7 +1015,7 @@ void MainWindow::addClothBtnClicked() {
   waiting_spinner_widget_->start();
 
   this->setMutuallyLight(YELLOW);
-  emit signUpdateLabelState("换料模式");
+  emit signUpdateLabelState("补料模式");
 
   QFuture<void> future_B = QtConcurrent::run([=] {
     rclcomm_->loadMachineAddCloth(0);
@@ -1017,9 +1026,6 @@ void MainWindow::addClothBtnClicked() {
   QFuture<void> future_A = QtConcurrent::run([=] {
     rclcomm_->loadMachineAddCloth(1);
   });
-
-  // future_A.waitForFinished();
-  // future_B.waitForFinished();
 
   this->btnControl({ui->reset_btn, ui->change_board_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn});
 }
@@ -1035,8 +1041,8 @@ void MainWindow::changePlateBtnClicked() {
   this->setMutuallyLight(YELLOW);
   emit signUpdateLabelState("换压板模式");
 
+  // TODO
   // 换压板模式
-  // rclcomm_->stopCmd(); // TODO
 }
 
 // 错误提示槽函数
@@ -1119,9 +1125,11 @@ void MainWindow::slotAddClothResult(bool result, int id) {
   if (++add_cloth_count_ == 2) {
     waiting_spinner_widget_->stop();
     if (add_cloth_result_A_ && add_cloth_result_B_) {
-      showMessageBox(this, SUCCESS, "上料模式设置成功，请在手动补充裁片后再点击确认。", 1, {"确认"});
+      emit signUpdateLabelState("补料模式设置完成");
+      showMessageBox(this, SUCCESS, "补料模式设置成功，请在手动补充裁片后再点击确认。", 1, {"确认"});
     } else {
-      showMessageBox(this, ERROR, "上料模式设置失败", 1, {"确认"});
+      emit signUpdateLabelState("补料模式设置失败");
+      showMessageBox(this, ERROR, "补料模式设置失败", 1, {"确认"});
     }
     add_cloth_count_ = 0;
   }
@@ -1131,36 +1139,24 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
   if (!is_load_cloth_on_) {
     return;
   }
-  auto pix = QPixmap::fromImage(image.scaled(ui->B_left_visual_label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
   if (machine_id == 0) {
     if (cam_id == 0) {
-      ui->B_left_visual_label->clear();
-      ui->B_left_visual_label->setPixmap(pix);
-      ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      pix_B_left_ = pix;
+      pix_B_left_ = QPixmap::fromImage(image);
     } else if (cam_id == 1) {
-      ui->B_right_visual_label->clear();
-      ui->B_right_visual_label->setPixmap(pix);
-      ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      pix_B_right_ = pix;
+      pix_B_right_ = QPixmap::fromImage(image);
     } else {
       return;
     }
-
   } else if (machine_id == 1) {
     if (cam_id == 0) {
-      ui->A_left_visual_label->clear();
-      ui->A_left_visual_label->setPixmap(pix);
-      ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      pix_A_left_ = pix;
+      pix_A_left_ = QPixmap::fromImage(image);
     } else if (cam_id == 1) {
-      ui->A_right_visual_label->clear();
-      ui->A_right_visual_label->setPixmap(pix);
-      ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-      pix_A_right_ = pix;
+      pix_A_right_ = QPixmap::fromImage(image);
     } else {
       return;
     }
+    showLoadMachineImage();
   } else {
     return;
   }
@@ -1205,6 +1201,7 @@ void MainWindow::slotStartClothStyleWindow() {
 }
 
 void MainWindow::slotDeveloperMode() {
+  developer_widget_->move(this->geometry().center() - QPoint(developer_widget_->width() / 2, developer_widget_->height() / 2));
   developer_widget_->show();
 }
 
@@ -1352,6 +1349,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     waiting_spinner_widget_->stop();
 
     is_style_seted_ = true;
+    emit signUpdateLabelState("已设置样式，允许运行");
 
     QString text = QString("请将前片放置于上料台%1，后片放置于上料台%2").arg(cloth_style_front.cloth_location == syt_msgs::msg::ClothStyle::TABLE_A ? "A" : "B").arg(cloth_style_back.cloth_location == syt_msgs::msg::ClothStyle::TABLE_A ? "A" : "B");
     showMessageBox(this, SUCCESS, text, 1, {"确认"});
