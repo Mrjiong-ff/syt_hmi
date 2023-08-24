@@ -591,29 +591,29 @@ void MainWindow::setDeveloperWidget() {
 
 void MainWindow::showLoadMachineImage() {
   if (!pix_A_left_.isNull()) {
-    pix_A_left_ = pix_A_left_.scaled(ui->A_left_visual_label->width(), ui->A_left_visual_label->height(), Qt::KeepAspectRatio);
     ui->A_left_visual_label->clear();
+    pix_A_left_ = pix_A_left_.scaled(ui->A_left_visual_label->width(), ui->A_left_visual_label->height(), Qt::KeepAspectRatio);
     ui->A_left_visual_label->setPixmap(pix_A_left_);
     ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   }
 
   if (!pix_A_right_.isNull()) {
-    pix_A_right_ = pix_A_right_.scaled(ui->A_right_visual_label->width(), ui->A_right_visual_label->height(), Qt::KeepAspectRatio);
     ui->A_right_visual_label->clear();
+    pix_A_right_ = pix_A_right_.scaled(ui->A_right_visual_label->width(), ui->A_right_visual_label->height(), Qt::KeepAspectRatio);
     ui->A_right_visual_label->setPixmap(pix_A_right_);
     ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   }
 
   if (!pix_B_left_.isNull()) {
-    pix_B_left_ = pix_B_left_.scaled(ui->B_left_visual_label->width(), ui->B_left_visual_label->height(), Qt::KeepAspectRatio);
     ui->B_left_visual_label->clear();
+    pix_B_left_ = pix_B_left_.scaled(ui->B_left_visual_label->width(), ui->B_left_visual_label->height(), Qt::KeepAspectRatio);
     ui->B_left_visual_label->setPixmap(pix_B_left_);
     ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   }
 
   if (!pix_B_right_.isNull()) {
-    pix_B_right_ = pix_B_right_.scaled(ui->B_right_visual_label->width(), ui->B_right_visual_label->height(), Qt::KeepAspectRatio);
     ui->B_right_visual_label->clear();
+    pix_B_right_ = pix_B_right_.scaled(ui->B_right_visual_label->width(), ui->B_right_visual_label->height(), Qt::KeepAspectRatio);
     ui->B_right_visual_label->setPixmap(pix_B_right_);
     ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   }
@@ -1156,7 +1156,6 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
     } else {
       return;
     }
-    showLoadMachineImage();
   } else {
     return;
   }
