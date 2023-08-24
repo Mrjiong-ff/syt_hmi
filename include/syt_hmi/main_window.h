@@ -105,6 +105,8 @@ private:
   void setBaseComponet();
   void setChooseStyleComponet();
   void setDeveloperWidget();
+  void showLoadMachineImage();
+
 
 signals:
   void signHeadEyeWindowShow();
@@ -178,6 +180,10 @@ private:
   bool is_mouse_left_press_down_ = false;
   bool is_load_cloth_on_         = true;
   bool is_comp_cloth_on_         = true;
+
+  // 统计运行次数
+  int round_count_   = 0;
+  int success_count_ = 0;
 
   // 上料用标志位
   int add_cloth_count_     = 0;

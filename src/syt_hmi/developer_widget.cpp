@@ -8,6 +8,8 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
   setButtonFrame();
   ui->current_page_label->setText(ui->switch_load_btn->getText());
 
+  waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
+
   // 窗口操作
   connect(ui->close_btn, &QPushButton::clicked, this, &DeveloperWidget::close);
   connect(ui->max_btn, &QPushButton::clicked, this, [=]() {
@@ -35,6 +37,9 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
 
   // 模式切换
   setChooseMode();
+
+  // 固件更新
+  setUpdateBin();
 }
 
 DeveloperWidget::~DeveloperWidget() {
@@ -58,6 +63,57 @@ void DeveloperWidget::setChooseMode() {
     }
     if ("合片模式" == ui->choose_mode_combo_box->currentText()) {
       emit signChooseMode(syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH);
+    }
+  });
+}
+
+void DeveloperWidget::setUpdateBin() {
+  // 选择端口
+  ui->choose_port_combo_box->insertItem(-1, "上料机");
+  ui->choose_port_combo_box->insertItem(-1, "合片机");
+  ui->choose_port_combo_box->insertItem(-1, "缝纫机");
+
+  // 保存bin文件路径
+  connect(ui->choose_bin_btn, &QPushButton::clicked, this, [=]() {
+    update_bin_path_ = QFileDialog::getOpenFileName(this, "请选择模板路径", QDir::homePath(), "*.bin");
+    if (!update_bin_path_.isEmpty()) {
+      ui->bin_file_line_edit->setText(update_bin_path_);
+    }
+  });
+
+  connect(ui->flash_btn, &QPushButton::clicked, [=]() {
+    if (QFile::exists(update_bin_path_)) {
+      QMap<QString, QString> port_map;
+      port_map.insert("上料机", "/dev/load_machine");
+      port_map.insert("合片机", "/dev/compose_machine");
+      port_map.insert("缝纫机", "/dev/sewing_machine");
+
+      if (ui->choose_port_combo_box->currentText() == "上料机") {
+        emit signUpdateLoadMachine();
+      }
+      if (ui->choose_port_combo_box->currentText() == "合片机") {
+        emit signUpdateComposeMachine();
+      }
+      if (ui->choose_port_combo_box->currentText() == "缝纫机") {
+        emit signUpdateSewingMachine();
+      }
+
+      QThread::msleep(200);
+      for (int i = 0; i < 3; ++i) {
+        killProcesses("thanos.launch.py");
+        killProcesses("ros-args");
+      }
+
+      QString command = QString("download %1 %2").arg(port_map.value(ui->choose_port_combo_box->currentText())).arg(update_bin_path_);
+      int result      = system(command.toStdString().c_str());
+
+      if (0 == result) {
+        showMessageBox(this, SUCCESS, ui->choose_port_combo_box->currentText() + "更新成功", 1, {"确认"});
+      } else {
+        showMessageBox(this, ERROR, ui->choose_port_combo_box->currentText() + "更新失败", 1, {"确认"});
+      }
+    } else {
+      showMessageBox(this, WARN, "所选文件不存在", 1, {"确认"});
     }
   });
 }

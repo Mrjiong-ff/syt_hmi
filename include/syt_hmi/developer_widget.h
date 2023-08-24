@@ -3,9 +3,14 @@
 #include "syt_msgs/msg/cloth_keypoints2f.hpp"
 #include "syt_msgs/msg/compose_machine_state.hpp"
 #include "syt_msgs/msg/compose_machine_sucker_states.hpp"
-#include "syt_msgs/msg/sewing_machine_state.hpp"
 #include "syt_msgs/msg/fsm_run_mode.hpp"
+#include "syt_msgs/msg/sewing_machine_state.hpp"
+#include "utils/utils.h"
+#include "utils/waitingspinnerwidget.h"
+
+#include <QFileDialog>
 #include <QWidget>
+#include <QtConcurrent/QtConcurrent>
 
 namespace Ui {
 class DeveloperWidget;
@@ -26,12 +31,18 @@ protected:
 private:
   Ui::DeveloperWidget *ui;
 
+  WaitingSpinnerWidget *waiting_spinner_widget_;
+
   // 移动窗口
   bool is_mouse_left_press_down_;
   QPoint mouse_pos_;
 
+  // 更新固件
+  QString update_bin_path_;
+
 private:
   void setChooseMode();
+  void setUpdateBin();
   void setButtonFrame();
   void switchPage();
   void bindLoadMachine();
@@ -41,6 +52,11 @@ private:
 signals:
   // 模式切换
   void signChooseMode(int mode);
+
+  // 更新固件
+  void signUpdateLoadMachine();
+  void signUpdateComposeMachine();
+  void signUpdateSewingMachine();
 
   // 上料机
   void signLoadMachineReset(int id);

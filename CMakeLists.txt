@@ -1,19 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(syt_hmi)
-
-# Default to C99
-if (NOT CMAKE_C_STANDARD)
-    set(CMAKE_C_STANDARD 99)
-endif ()
-
-# Default to C++14
-if (NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 14)
-endif ()
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif ()
+set(CMAKE_CXX_STANDARD 14)
+# TODO
+set(CMAKE_BUILD_TYPE "Debug")
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -30,7 +19,6 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
         rclcpp_components
         )
 
-# Note that ament_target_dependencies() in algo cannot export Boost::thread to downstream. As a result, qt_example_node, as a downstream of libalgo.so, needs to explicitly find_package() for Boost again so that qt_example_node is able to link to Boost::thread.
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 file(GLOB PRO_FORM_DIR RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
 file(GLOB PRO_RESOURCES_DIR RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resource/*.qrc)
@@ -58,7 +46,6 @@ add_executable(${PROJECT_NAME}
         ${PRO_FORM_DIR}
         )
 
-# Note that ament_target_dependencies() in algo cannot export Boost::thread to downstream. As a result, qt_example_node, as a downstream of libalgo.so, needs to explicitly ament_target_dependencies() for Boost again so that qt_example_node is able to link to Boost::thread.
 ament_target_dependencies(${PROJECT_NAME}
         rclcpp
         std_srvs

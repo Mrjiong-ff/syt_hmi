@@ -4,6 +4,7 @@
 #include "syt_msgs/msg/cloth_style.hpp"
 
 #include <QWizard>
+#include <QDir>
 
 class ManualInputParamWizard : public QWizard {
   Q_OBJECT

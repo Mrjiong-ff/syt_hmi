@@ -5,6 +5,7 @@
 #include "utils/waitingspinnerwidget.h"
 
 #include <QWizard>
+#include <QDir>
 
 class AutoCreateStyleWizard : public QWizard {
   Q_OBJECT
@@ -13,9 +14,11 @@ private:
   syt_msgs::msg::ClothInfo cloth_info_back_;
   syt_msgs::msg::ClothStyle cloth_style_front_;
   syt_msgs::msg::ClothStyle cloth_style_back_;
+  QString file_prefix_;
   QString file_name_;
 
   WaitingSpinnerWidget *waiting_spinner_widget_;
+
 public:
   AutoCreateStyleWizard(QWidget *parent = nullptr);
   ~AutoCreateStyleWizard(){};

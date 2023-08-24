@@ -27,6 +27,7 @@
 #include "syt_msgs/srv/load_machine_pre_setup.hpp"
 #include "syt_msgs/srv/load_machine_reset.hpp"
 #include "syt_msgs/srv/load_machine_tray_gap.hpp"
+#include "syt_msgs/srv/mcu_restart.hpp"
 #include "syt_msgs/srv/rename_cloth_style.hpp"
 #include "syt_msgs/srv/run_calibration.hpp"
 #include "syt_msgs/srv/set_current_cloth_style.hpp"
@@ -40,6 +41,7 @@
 #include <QThread>
 #include <QWidget>
 #include <chrono>
+#include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/int32.hpp>
 #include <std_srvs/srv/set_bool.hpp>
@@ -78,6 +80,11 @@ public:
   void otaInstall();  // 安装到指定位置
   void compCalib();   // 合片标定
   void sewingCalib(); // 缝纫标定
+
+  // 更新固件
+  void updateLoadMachine();
+  void updateComposeMachine();
+  void updateSewingMachine();
 
   // 上料机
   void loadMachineReset(int id);                                      // 上料机复位
@@ -149,7 +156,6 @@ private:
   rclcpp::Publisher<syt_msgs::msg::FSMRunMode>::SharedPtr fsm_run_mode_publisher_;
 
 private:
-  void killProcesses(std::string);
   bool initAllNodes();
 
   void composeMachineStateCallback(const syt_msgs::msg::ComposeMachineState::SharedPtr msg);
@@ -170,7 +176,8 @@ signals:
   void installRes(bool, QString);
   void visualLoadClothRes(int, int, QImage);
   void signLogPub(QString current_time, int level, QString, QString, QString);
-  void machineIdle(bool idle); // 处于空闲状态
+  void machineIdle();
+  void finishOneRound();
 
   // 标定相关信号
   void compCalibRes(bool);

@@ -4,6 +4,7 @@
 #include "syt_hmi/input_extra_param_widget.h"
 #include "syt_hmi/input_length_param_widget.h"
 
+#include <QComboBox>
 #include <QLabel>
 #include <QLayout>
 #include <QLineEdit>
@@ -11,7 +12,6 @@
 #include <QRegExpValidator>
 #include <QSpacerItem>
 #include <QWizardPage>
-#include <QComboBox>
 
 // 1.移动抓手
 class MoveHandPage : public QWizardPage {
@@ -135,17 +135,17 @@ public:
 class InputLengthParamPage : public QWizardPage {
   Q_OBJECT
 private:
-  //QLabel *cloth_length_label;
-  //QLabel *bottom_length_label;
-  //QLabel *oxter_length_label;
-  //QLabel *shoulder_length_label;
-  //QLabel *side_length_label;
+  // QLabel *cloth_length_label;
+  // QLabel *bottom_length_label;
+  // QLabel *oxter_length_label;
+  // QLabel *shoulder_length_label;
+  // QLabel *side_length_label;
 
-  //QLineEdit *cloth_length_line_edit;
-  //QLineEdit *bottom_length_line_edit;
-  //QLineEdit *oxter_length_line_edit;
-  //QLineEdit *shoulder_length_line_edit;
-  //QLineEdit *side_length_line_edit;
+  // QLineEdit *cloth_length_line_edit;
+  // QLineEdit *bottom_length_line_edit;
+  // QLineEdit *oxter_length_line_edit;
+  // QLineEdit *shoulder_length_line_edit;
+  // QLineEdit *side_length_line_edit;
 
   int cloth_type_;
   InputLengthParamWidget *input_length_param_widget;

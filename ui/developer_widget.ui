@@ -97,7 +97,7 @@
       <widget class="QWidget" name="widget" native="true">
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
-         <number>36</number>
+         <number>26</number>
         </property>
         <item>
          <widget class="WaterZoomButton" name="switch_load_btn">
@@ -1342,7 +1342,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>抓住裁片</string>
+                <string>视觉对位</string>
                </property>
               </widget>
              </item>
@@ -3638,38 +3638,164 @@
         </layout>
        </widget>
        <widget class="QWidget" name="page_other">
-        <widget class="QComboBox" name="choose_mode_combo_box">
+        <widget class="QWidget" name="">
          <property name="geometry">
           <rect>
-           <x>30</x>
-           <y>80</y>
-           <width>171</width>
-           <height>91</height>
+           <x>40</x>
+           <y>30</y>
+           <width>251</width>
+           <height>101</height>
           </rect>
          </property>
-         <property name="font">
-          <font>
-           <pointsize>20</pointsize>
-          </font>
-         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_25">
+          <item>
+           <widget class="QLabel" name="label_72">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>模式切换</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_24">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>18</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QComboBox" name="choose_mode_combo_box">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>80</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
-        <widget class="QLabel" name="label_72">
+        <widget class="QWidget" name="">
          <property name="geometry">
           <rect>
-           <x>80</x>
-           <y>20</y>
-           <width>81</width>
-           <height>51</height>
+           <x>330</x>
+           <y>30</y>
+           <width>531</width>
+           <height>101</height>
           </rect>
          </property>
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>模式切换</string>
-         </property>
+         <layout class="QGridLayout" name="gridLayout_17">
+          <item row="0" column="0" rowspan="2">
+           <widget class="QLabel" name="label_73">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>固件升级</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" rowspan="2">
+           <spacer name="horizontalSpacer_25">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>68</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="2" colspan="2">
+           <widget class="QLineEdit" name="bin_file_line_edit">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QPushButton" name="choose_bin_btn">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>选择文件</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QComboBox" name="choose_port_combo_box">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <spacer name="horizontalSpacer_26">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>178</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="4">
+           <widget class="QPushButton" name="flash_btn">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>写入</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
       </widget>

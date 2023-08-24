@@ -1,5 +1,4 @@
 #include "syt_rclcomm/rcl_comm.h"
-#include <memory>
 
 SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
@@ -48,23 +47,9 @@ SytRclComm::~SytRclComm() {
   for (int i = 0; i < 3; ++i) {
     killProcesses("thanos.launch.py");
     killProcesses("ros-args");
-    // system("ros2 daemon stop");
   }
 
   qDebug("shut down rclcomm.");
-}
-
-void SytRclComm::killProcesses(std::string process_pattern) {
-  pid_t self_pid = getpid();
-  FILE *pipe     = popen(("ps -elf | grep -v grep | grep -i " + process_pattern + " | awk '{print $4}'").c_str(), "r");
-  char buffer[128];
-  while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-    int pid = atoi(buffer);
-    if (pid != 0 && pid != self_pid) {
-      int result = kill(pid, SIGINT);
-      qDebug() << pid << ":" << result;
-    }
-  }
 }
 
 void SytRclComm::run() {
@@ -247,11 +232,16 @@ void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::Share
     break;
   case syt_msgs::msg::MotionPlannerState::INITIALIZE:
     if (start_flag_) {
-      if (last_state_ == syt_msgs::msg::MotionPlannerState::STEP_FOUR && run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE) {
-        emit machineIdle(true);
+      if (last_state_ == syt_msgs::msg::MotionPlannerState::STEP_FOUR) {
+        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE) {
+          emit machineIdle();
+        }
+        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP) {
+          emit finishOneRound();
+        }
       }
     } else if (!start_flag_) {
-      emit machineIdle(true);
+      emit machineIdle();
     }
   case syt_msgs::msg::MotionPlannerState::SAFE_POSITION:
   case syt_msgs::msg::MotionPlannerState::STEP_ONE:
@@ -358,6 +348,67 @@ void SytRclComm::stopWholeMachine() {
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
+    break;
+  }
+}
+
+/* -----------------------------固件更新---------------------------- */
+// 上料机
+void SytRclComm::updateLoadMachine() {
+  auto request    = std::make_shared<syt_msgs::srv::MCURestart::Request>();
+  request->enable = true;
+
+  syt_msgs::srv::MCURestart::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::MCURestart>("/syt/robot_control/load_machine/primal/mcu_restart", "上料机重启单片机", 20000, request, response);
+  qDebug() << "上料机重启单片机：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    // emit signLoadMachineResetFinish(response.success, id);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    // emit signLoadMachineResetFinish(false, id);
+    break;
+  }
+}
+
+// 合片机
+void SytRclComm::updateComposeMachine() {
+  auto request    = std::make_shared<syt_msgs::srv::MCURestart::Request>();
+  request->enable = true;
+
+  syt_msgs::srv::MCURestart::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::MCURestart>("/syt/robot_control/compose_machine/primal/mcu_restart", "合片机重启单片机", 20000, request, response);
+  qDebug() << "合片机重启单片机：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    // emit signLoadMachineResetFinish(response.success, id);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    // emit signLoadMachineResetFinish(false, id);
+    break;
+  }
+}
+
+// 缝纫机
+void SytRclComm::updateSewingMachine() {
+  auto request    = std::make_shared<syt_msgs::srv::MCURestart::Request>();
+  request->enable = true;
+
+  syt_msgs::srv::MCURestart::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::MCURestart>("/syt/robot_control/sewing_machine/primal/mcu_restart", "缝纫机重启单片机", 20000, request, response);
+  qDebug() << "缝纫机重启单片机：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    // emit signLoadMachineResetFinish(response.success, id);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    // emit signLoadMachineResetFinish(false, id);
     break;
   }
 }
@@ -725,6 +776,7 @@ void SytRclComm::composeMachineStopBlow() {
 // 合片抓手移动
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   //// TODO: delete
+  // usleep(1000000);
   // emit signComposeMachineMoveHandFinish(true);
   // return;
 
@@ -817,6 +869,7 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   //// TODO: delete
+  // usleep(1000000);
   // emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
   // return;
 

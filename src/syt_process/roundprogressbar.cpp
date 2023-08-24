@@ -1,7 +1,3 @@
-//
-// Created by jerry on 23-7-6.
-//
-
 #include "syt_process/roundprogressbar.h"
 #include "qmath.h"
 #include <QDebug>
@@ -9,13 +5,13 @@
 
 RoundProgressBar::RoundProgressBar(QWidget *parent) : QWidget(parent), _min(0), _max(100), _value(0), _precision(0) {
   // 设置初始角度，顺时针逆时针
-  setdefault(90, true);
+  setDefault(90, true);
   // 设置默认外圈宽度
   setOutterBarWidth(60);
   // 设置默认内圈宽度
   setInnerBarWidth(60);
   // 设置默认范围
-  setRange(0, 100);
+  setRange(0, 0);
   // 设置默认值
   setValue(0);
   // 设置外圈颜色
@@ -36,7 +32,7 @@ RoundProgressBar::~RoundProgressBar() {
 
 //********************************************** 外部接口 ****************************************
 // 设置初始角度，顺时针逆时针
-void RoundProgressBar::setdefault(int startAngle, bool clockWise) {
+void RoundProgressBar::setDefault(int startAngle, bool clockWise) {
   _startAngle = startAngle;
   _clockWise  = clockWise;
 }
@@ -100,7 +96,7 @@ void RoundProgressBar::setDefaultTextColor(const QColor &textColor) {
 
 // 设置控制
 void RoundProgressBar::setControlFlags(int flags) {
-  this->_controlFlags |= flags;
+  _controlFlags |= flags;
 }
 
 // 设置显示数字精度
