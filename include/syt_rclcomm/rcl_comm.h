@@ -26,6 +26,7 @@
 #include "syt_msgs/srv/load_machine_offset.hpp"
 #include "syt_msgs/srv/load_machine_pre_setup.hpp"
 #include "syt_msgs/srv/load_machine_reset.hpp"
+#include "syt_msgs/srv/load_machine_rough_align.hpp"
 #include "syt_msgs/srv/load_machine_tray_gap.hpp"
 #include "syt_msgs/srv/mcu_restart.hpp"
 #include "syt_msgs/srv/rename_cloth_style.hpp"
@@ -94,6 +95,7 @@ public:
   void loadMachineLoadDistance(int id, uint32_t distance);            // 上料行程
   void loadMachineOffset(int id, int offset);                         // 夹爪偏移
   void loadMachineTrayGap(int id, uint32_t height);                   // 上料间隔
+  void loadMachineRoughAlign(int id);                                 // 粗对位
   void loadMachineHoldCloth(int id);                                  // 抓住裁片
   void loadMachineGrabCloth(int id);                                  // 上裁片
   void loadMachinePreSetup(int id);                                   // 预备设置
@@ -107,6 +109,8 @@ public:
   void composeMachineWithdrawNeedle();                                                    // 收针
   void composeMachineBlowWind();                                                          // 吹气
   void composeMachineStopBlow();                                                          // 停气
+  void composeMachineFastenSheet();                                                       // 开吸风台
+  void composeMachineUnfastenSheet();                                                     // 关吸风台
   void composeMachineMoveHand(float x, float y, float z, float c);                        // 移动抓手
   void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states); // 移动吸盘
 

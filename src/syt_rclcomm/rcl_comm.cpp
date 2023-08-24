@@ -582,6 +582,25 @@ void SytRclComm::loadMachineHoldCloth(int id) {
   }
 }
 
+// 粗对位
+void SytRclComm::loadMachineRoughAlign(int id) {
+  auto request     = std::make_shared<syt_msgs::srv::LoadMachineRoughAlign::Request>();
+  request->id.data = id;
+  request->enable  = true;
+
+  syt_msgs::srv::LoadMachineRoughAlign::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineRoughAlign>("/syt/robot_control/load_machine/primal/rough_align", "粗对位", 5000, request, response);
+  qDebug() << "粗对位：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
 // 上裁片
 void SytRclComm::loadMachineGrabCloth(int id) {
   auto request        = std::make_shared<syt_msgs::srv::LoadMachineGrabCloth::Request>();
@@ -655,12 +674,10 @@ void SytRclComm::composeMachineReset() {
   qDebug() << "合片复位：" << result;
   switch (result) {
   case CALL_SUCCESS:
-    emit signComposeMachineResetFinish(response.success);
     break;
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
-    emit signComposeMachineResetFinish(false);
     break;
   }
 }
@@ -769,6 +786,42 @@ void SytRclComm::composeMachineStopBlow() {
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
     emit signComposeMachineStopBlowFinish(false);
+    break;
+  }
+}
+
+// 开吸风台
+void SytRclComm::composeMachineFastenSheet() {
+  auto request                   = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  request->commands.fasten_sheet = true;
+
+  syt_msgs::srv::ComposeMachineFunction::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "开吸风台", 5000, request, response);
+  qDebug() << "开吸风台：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+// 关吸风台
+void SytRclComm::composeMachineUnfastenSheet() {
+  auto request                   = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  request->commands.fasten_sheet = false;
+
+  syt_msgs::srv::ComposeMachineFunction::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "关吸风台", 5000, request, response);
+  qDebug() << "关吸风台：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
     break;
   }
 }

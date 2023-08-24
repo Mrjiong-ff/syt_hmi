@@ -40,7 +40,23 @@ private:
   // 更新固件
   QString update_bin_path_;
 
+  float left_bottom_init_x_    = 0;
+  float left_bottom_init_y_    = 0;
+  float left_oxter_init_x_     = 0;
+  float left_oxter_init_y_     = 0;
+  float left_shoulder_init_x_  = 0;
+  float left_shoulder_init_y_  = 0;
+  float left_shoulder_init_c_  = 0;
+  float right_shoulder_init_x_ = 0;
+  float right_shoulder_init_y_ = 0;
+  float right_shoulder_init_c_ = 0;
+  float right_oxter_init_x_    = 0;
+  float right_oxter_init_y_    = 0;
+  float right_bottom_init_x_   = 0;
+  float right_bottom_init_y_   = 0;
+
 private:
+  void setParam();
   void setChooseMode();
   void setUpdateBin();
   void setButtonFrame();
@@ -65,6 +81,7 @@ signals:
   void signLoadMachineClothSize(int id, uint32_t width, uint32_t height);
   void signLoadMachineLoadDistance(int id, uint32_t distance);
   void signLoadMachineTrayGap(int id, uint32_t height);
+  void signLoadMachineRoughAlign(int id);
   void signLoadMachineOffset(int id, int offset);
   void signLoadMachineHoldCloth(int id);
   void signLoadMachineGrabCloth(int id);
@@ -79,6 +96,8 @@ signals:
   void signComposeMachineWithdrawNeedle();
   void signComposeMachineBlowWind();
   void signComposeMachineStopBlow();
+  void signComposeMachineFastenSheet();
+  void signComposeMachineUnfastenSheet();
   void signComposeMachineMoveHand(float x, float y, float z, float c);
   void signComposeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states);
 

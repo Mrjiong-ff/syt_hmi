@@ -738,6 +738,13 @@ void MainWindow::bindControlConnection() {
     });
   });
 
+  // 上料机-粗对位
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineRoughAlign, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineRoughAlign(id);
+    });
+  });
+
   // 上料机-上料偏移
   connect(developer_widget_, &DeveloperWidget::signLoadMachineOffset, [=](int id, int offset) {
     QtConcurrent::run([=]() {
@@ -819,6 +826,20 @@ void MainWindow::bindControlConnection() {
   connect(developer_widget_, &DeveloperWidget::signComposeMachineStopBlow, [=]() {
     QtConcurrent::run([=]() {
       rclcomm_->composeMachineStopBlow();
+    });
+  });
+
+  // 合片机-开吸风台
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineFastenSheet, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineFastenSheet();
+    });
+  });
+
+  // 合片机-关吸风台
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineUnfastenSheet, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineUnfastenSheet();
     });
   });
 
