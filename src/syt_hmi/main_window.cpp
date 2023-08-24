@@ -347,7 +347,7 @@ void MainWindow::setToolBar() {
   ui->developer_mode_btn->setToolTip(QString("开发者界面"));
 
   ui->head_eye_calibration_btn->setIcon(QIcon(":m_icon/icon/handeye.png")); // 手眼标定模式按钮
-  ui->head_eye_calibration_btn->setToolTip(QString("相机标定标定"));
+  ui->head_eye_calibration_btn->setToolTip(QString("手眼标定"));
 
   ui->create_style_btn->setIcon(QIcon(":m_icon/icon/shirt-line.png")); // 创建衣服样式按钮
   ui->create_style_btn->setToolTip(QString("创建衣服样式"));
