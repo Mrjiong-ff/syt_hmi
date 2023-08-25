@@ -6,6 +6,7 @@
 #include "syt_msgs/msg/compose_machine_state.hpp"
 #include "syt_msgs/msg/fsm_flow_control_command.hpp"
 #include "syt_msgs/msg/fsm_run_mode.hpp"
+#include "syt_msgs/msg/fsm_state.hpp"
 #include "syt_msgs/msg/load_cloth_visual.hpp"
 #include "syt_msgs/msg/motion_planner_state.hpp"
 #include "syt_msgs/msg/sewing_machine_state.hpp"
@@ -14,6 +15,8 @@
 #include "syt_msgs/srv/compose_machine_move_sucker.hpp"
 #include "syt_msgs/srv/compose_machine_reset.hpp"
 #include "syt_msgs/srv/create_style.hpp"
+#include "syt_msgs/srv/fsm_change_mode.hpp"
+#include "syt_msgs/srv/fsm_control_flow.hpp"
 #include "syt_msgs/srv/get_break_point_y.hpp"
 #include "syt_msgs/srv/get_cloth_info.hpp"
 #include "syt_msgs/srv/get_cloth_style.hpp"
@@ -26,6 +29,7 @@
 #include "syt_msgs/srv/load_machine_offset.hpp"
 #include "syt_msgs/srv/load_machine_pre_setup.hpp"
 #include "syt_msgs/srv/load_machine_reset.hpp"
+#include "syt_msgs/srv/load_machine_rough_align.hpp"
 #include "syt_msgs/srv/load_machine_tray_gap.hpp"
 #include "syt_msgs/srv/mcu_restart.hpp"
 #include "syt_msgs/srv/rename_cloth_style.hpp"
@@ -63,8 +67,9 @@ public:
                      CALL_DISCONNECT = 3 };
   Q_ENUM(CALL_RESULT);
 
-  void startCmd();           // 开始全流程指令
   void resetCmd();           // 复位指令
+  void startCmd();           // 开始全流程指令
+  void pauseCmd();           // 暂停指令
   void stopCmd();            // 急停指令
   void changeMode(int mode); // 转换运行模式
 
@@ -94,6 +99,7 @@ public:
   void loadMachineLoadDistance(int id, uint32_t distance);            // 上料行程
   void loadMachineOffset(int id, int offset);                         // 夹爪偏移
   void loadMachineTrayGap(int id, uint32_t height);                   // 上料间隔
+  void loadMachineRoughAlign(int id);                                 // 粗对位
   void loadMachineHoldCloth(int id);                                  // 抓住裁片
   void loadMachineGrabCloth(int id);                                  // 上裁片
   void loadMachinePreSetup(int id);                                   // 预备设置
@@ -107,6 +113,8 @@ public:
   void composeMachineWithdrawNeedle();                                                    // 收针
   void composeMachineBlowWind();                                                          // 吹气
   void composeMachineStopBlow();                                                          // 停气
+  void composeMachineFastenSheet();                                                       // 开吸风台
+  void composeMachineUnfastenSheet();                                                     // 关吸风台
   void composeMachineMoveHand(float x, float y, float z, float c);                        // 移动抓手
   void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states); // 移动吸盘
 
@@ -136,8 +144,6 @@ private:
   QProcess *process_ = nullptr;
 
   //////////////// ros相关 ///////////////////
-  syt_msgs::msg::FSMFlowControlCommand fsm_flow_control_command_;
-
   rclcpp::WallRate rate_;
   std::shared_ptr<rclcpp::Node> node_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor_;
@@ -149,7 +155,7 @@ private:
   rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr load_cloth_visual_subscription_;
   rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr composer_visual_subscription_;
   rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr log_subscription_;
-  rclcpp::Subscription<syt_msgs::msg::MotionPlannerState>::SharedPtr run_state_subscription_;
+  rclcpp::Subscription<syt_msgs::msg::FSMState>::SharedPtr run_state_subscription_;
 
   // publisher
   rclcpp::Publisher<syt_msgs::msg::FSMFlowControlCommand>::SharedPtr fsm_flow_control_cmd_publisher_;
@@ -163,9 +169,14 @@ private:
   void downloadCallback(const std_msgs::msg::Int32::SharedPtr msg);
   void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
   void logCallback(const rcl_interfaces::msg::Log::SharedPtr msg);
-  void runStateCallback(const syt_msgs::msg::MotionPlannerState::SharedPtr msg);
+  void runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg);
 
 signals:
+  void signResetFinish(bool);
+  void signStartFinish(bool);
+  void signPauseFinish(bool);
+  void signStopFinish(bool);
+
   void updateComposeMachineState(syt_msgs::msg::ComposeMachineState state);
   void updateSewingMachineState(syt_msgs::msg::SewingMachineState state);
   void errorNodeMsgSign(QString msg);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1181</width>
-    <height>702</height>
+    <width>1221</width>
+    <height>736</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -313,6 +313,24 @@
                </property>
                <property name="text">
                 <string>清台</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="WaterZoomButton" name="rough_align_btn_B">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>粗对位</string>
                </property>
               </widget>
              </item>
@@ -893,6 +911,24 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="WaterZoomButton" name="rough_align_btn_A">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>粗对位</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -1365,7 +1401,7 @@
               <widget class="WaterZoomButton" name="wipe_fold_btn">
                <property name="minimumSize">
                 <size>
-                 <width>80</width>
+                 <width>60</width>
                  <height>60</height>
                 </size>
                </property>
@@ -1383,7 +1419,7 @@
               <widget class="WaterZoomButton" name="extend_needle_btn">
                <property name="minimumSize">
                 <size>
-                 <width>80</width>
+                 <width>60</width>
                  <height>60</height>
                 </size>
                </property>
@@ -1401,7 +1437,7 @@
               <widget class="WaterZoomButton" name="withdraw_needle_btn">
                <property name="minimumSize">
                 <size>
-                 <width>80</width>
+                 <width>60</width>
                  <height>60</height>
                 </size>
                </property>
@@ -1419,7 +1455,7 @@
               <widget class="WaterZoomButton" name="blow_wind_btn">
                <property name="minimumSize">
                 <size>
-                 <width>80</width>
+                 <width>60</width>
                  <height>60</height>
                 </size>
                </property>
@@ -1437,7 +1473,7 @@
               <widget class="WaterZoomButton" name="stop_blow_btn">
                <property name="minimumSize">
                 <size>
-                 <width>80</width>
+                 <width>60</width>
                  <height>60</height>
                 </size>
                </property>
@@ -1448,6 +1484,42 @@
                </property>
                <property name="text">
                 <string>停气</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="WaterZoomButton" name="fasten_sheet_btn">
+               <property name="minimumSize">
+                <size>
+                 <width>60</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>吸风台开</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="WaterZoomButton" name="unfasten_sheet_btn">
+               <property name="minimumSize">
+                <size>
+                 <width>60</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>吸风台关</string>
                </property>
               </widget>
              </item>
@@ -2499,6 +2571,13 @@
                </property>
                <property name="text">
                 <string>停止</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="switch_sucker_axis_ratio_button">
+               <property name="text">
+                <string>切换吸盘系</string>
                </property>
               </widget>
              </item>
@@ -3638,7 +3717,7 @@
         </layout>
        </widget>
        <widget class="QWidget" name="page_other">
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>40</x>
@@ -3693,7 +3772,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>330</x>
@@ -3742,7 +3821,7 @@
            </widget>
           </item>
           <item row="0" column="4">
-           <widget class="QPushButton" name="choose_bin_btn">
+           <widget class="WaterZoomButton" name="choose_bin_btn">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -3783,7 +3862,7 @@
            </spacer>
           </item>
           <item row="1" column="4">
-           <widget class="QPushButton" name="flash_btn">
+           <widget class="WaterZoomButton" name="flash_btn">
             <property name="minimumSize">
              <size>
               <width>0</width>

@@ -24,7 +24,7 @@ SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   log_subscription_ = node_->create_subscription<rcl_interfaces::msg::Log>("/rosout", 10, std::bind(&SytRclComm::logCallback, this, _1));
 
   // 运行状态回调函数
-  run_state_subscription_ = node_->create_subscription<syt_msgs::msg::MotionPlannerState>("/syt/motion_planner/run_state", 10, std::bind(&SytRclComm::runStateCallback, this, _1));
+  run_state_subscription_ = node_->create_subscription<syt_msgs::msg::FSMState>("/syt/motion_planner/run_state", 10, std::bind(&SytRclComm::runStateCallback, this, _1));
 
   // 开始停止复位
   fsm_flow_control_cmd_publisher_ = node_->create_publisher<syt_msgs::msg::FSMFlowControlCommand>("/syt/robot_control/flow_control_cmd", 10);
@@ -225,62 +225,27 @@ void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
 }
 
 // 监听全流程运行状态
-void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::SharedPtr msg) {
+void SytRclComm::runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg) {
   // rate_.sleep();
-  switch (msg->state) {
-  case syt_msgs::msg::MotionPlannerState::LOAD_CLOTH_INITIALIZE:
-    break;
-  case syt_msgs::msg::MotionPlannerState::INITIALIZE:
+  switch (msg->state_code) {
+  case syt_msgs::msg::FSMState::IDLE:
     if (start_flag_) {
-      if (last_state_ == syt_msgs::msg::MotionPlannerState::STEP_FOUR) {
+      if (last_state_ != syt_msgs::msg::FSMState::IDLE) {
+        emit finishOneRound();
         if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE) {
           emit machineIdle();
         }
-        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP) {
-          emit finishOneRound();
-        }
       }
-    } else if (!start_flag_) {
-      emit machineIdle();
     }
-  case syt_msgs::msg::MotionPlannerState::SAFE_POSITION:
-  case syt_msgs::msg::MotionPlannerState::STEP_ONE:
-  case syt_msgs::msg::MotionPlannerState::STEP_TWO:
-  case syt_msgs::msg::MotionPlannerState::STEP_THREE:
-  case syt_msgs::msg::MotionPlannerState::STEP_FOUR:
-  case syt_msgs::msg::MotionPlannerState::ERROR:
+    break;
+  case syt_msgs::msg::FSMState::PAUSE:
+  case syt_msgs::msg::FSMState::STOP:
+  case syt_msgs::msg::FSMState::RUN:
     break;
   default:
     break;
   }
-  last_state_ = msg->state;
-}
-
-void SytRclComm::startCmd() {
-  start_flag_                       = true;
-  fsm_flow_control_command_.command = fsm_flow_control_command_.RUN;
-  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-}
-
-void SytRclComm::resetCmd() {
-  start_flag_                       = false;
-  fsm_flow_control_command_.command = fsm_flow_control_command_.RESET;
-  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-  // TODO resetWholeMachine();
-}
-
-void SytRclComm::stopCmd() {
-  start_flag_                       = false;
-  fsm_flow_control_command_.command = fsm_flow_control_command_.STOP;
-  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-  // TODO stopWholeMachine();
-  // emit machineIdle(true);
-}
-
-// 转换运行模式
-void SytRclComm::changeMode(int mode) {
-  run_mode_.mode = mode;
-  fsm_run_mode_publisher_->publish(run_mode_);
+  last_state_ = msg->state_code;
 }
 
 template <class T>
@@ -314,6 +279,96 @@ SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::strin
 
   response = *result.get();
   return CALL_SUCCESS;
+}
+
+void SytRclComm::resetCmd() {
+  start_flag_                  = false;
+  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::RESET;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机复位", 60000, request, response);
+  qDebug() << "整机复位：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signResetFinish(response.success);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signResetFinish(false);
+    break;
+  }
+}
+
+void SytRclComm::startCmd() {
+  start_flag_                  = true;
+  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::RUN;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机启动", 5000, request, response);
+  qDebug() << "整机启动：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signStartFinish(response.success);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signStartFinish(false);
+    break;
+  }
+}
+
+void SytRclComm::pauseCmd() {
+  start_flag_                  = false;
+  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::PAUSE;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机暂停", 5000, request, response);
+  qDebug() << "整机暂停：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signPauseFinish(response.success);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signPauseFinish(false);
+    break;
+  }
+}
+
+void SytRclComm::stopCmd() {
+  start_flag_                  = false;
+  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::STOP;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机停止", 60000, request, response);
+  qDebug() << "整机停止：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signStopFinish(response.success);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signStopFinish(false);
+    break;
+  }
+}
+
+// 转换运行模式
+void SytRclComm::changeMode(int mode) {
+  auto request           = std::make_shared<syt_msgs::srv::FSMChangeMode::Request>();
+  request->mode_cmd.mode = mode;
+
+  syt_msgs::srv::FSMChangeMode::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMChangeMode>("/syt/motion_planner/change_mode", "切换模式", 5000, request, response);
+  qDebug() << "切换模式：" << result;
 }
 
 void SytRclComm::resetWholeMachine() {
@@ -582,6 +637,25 @@ void SytRclComm::loadMachineHoldCloth(int id) {
   }
 }
 
+// 粗对位
+void SytRclComm::loadMachineRoughAlign(int id) {
+  auto request     = std::make_shared<syt_msgs::srv::LoadMachineRoughAlign::Request>();
+  request->id.data = id;
+  request->enable  = true;
+
+  syt_msgs::srv::LoadMachineRoughAlign::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineRoughAlign>("/syt/robot_control/load_machine/primal/rough_align", "粗对位", 5000, request, response);
+  qDebug() << "粗对位：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
 // 上裁片
 void SytRclComm::loadMachineGrabCloth(int id) {
   auto request        = std::make_shared<syt_msgs::srv::LoadMachineGrabCloth::Request>();
@@ -655,12 +729,10 @@ void SytRclComm::composeMachineReset() {
   qDebug() << "合片复位：" << result;
   switch (result) {
   case CALL_SUCCESS:
-    emit signComposeMachineResetFinish(response.success);
     break;
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
-    emit signComposeMachineResetFinish(false);
     break;
   }
 }
@@ -769,6 +841,42 @@ void SytRclComm::composeMachineStopBlow() {
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
     emit signComposeMachineStopBlowFinish(false);
+    break;
+  }
+}
+
+// 开吸风台
+void SytRclComm::composeMachineFastenSheet() {
+  auto request                   = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  request->commands.fasten_sheet = true;
+
+  syt_msgs::srv::ComposeMachineFunction::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "开吸风台", 5000, request, response);
+  qDebug() << "开吸风台：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+// 关吸风台
+void SytRclComm::composeMachineUnfastenSheet() {
+  auto request                   = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  request->commands.fasten_sheet = false;
+
+  syt_msgs::srv::ComposeMachineFunction::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "关吸风台", 5000, request, response);
+  qDebug() << "关吸风台：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
     break;
   }
 }

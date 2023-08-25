@@ -26,6 +26,9 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
   connect(ui->switch_sewing_btn, &QPushButton::clicked, this, &DeveloperWidget::switchPage, Qt::UniqueConnection);
   connect(ui->other_btn, &QPushButton::clicked, this, &DeveloperWidget::switchPage, Qt::UniqueConnection);
 
+  // 设置一些参数
+  setParam();
+
   // 上料机功能绑定
   bindLoadMachine();
 
@@ -44,6 +47,103 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
 
 DeveloperWidget::~DeveloperWidget() {
   delete ui;
+}
+
+void DeveloperWidget::setParam() {
+  std::string load_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/load_machine_config.yaml";
+  cv::FileStorage load_config_fs(load_config_path, cv::FileStorage::READ);
+  int max_load_distance = 0;
+  int min_load_distance = 0;
+  load_config_fs["max_load_distance"] >> max_load_distance;
+  load_config_fs["min_load_distance"] >> min_load_distance;
+  ui->load_distance_spinbox_A->setMaximum(max_load_distance);
+  ui->load_distance_spinbox_A->setMinimum(min_load_distance);
+  ui->load_distance_spinbox_B->setMaximum(max_load_distance);
+  ui->load_distance_spinbox_B->setMinimum(min_load_distance);
+
+  int max_cloth_width = 0;
+  int min_cloth_width = 0;
+  load_config_fs["max_cloth_width"] >> max_cloth_width;
+  load_config_fs["min_cloth_width"] >> min_cloth_width;
+  ui->cloth_width_spinbox_A->setMaximum(max_cloth_width);
+  ui->cloth_width_spinbox_A->setMinimum(min_cloth_width);
+  ui->cloth_width_spinbox_B->setMaximum(max_cloth_width);
+  ui->cloth_width_spinbox_B->setMinimum(min_cloth_width);
+  load_config_fs.release();
+
+  std::string compose_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/compose_machine_config.yaml";
+  cv::FileStorage compose_config_fs(compose_config_path, cv::FileStorage::READ);
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_bottom"]["x"] >> left_bottom_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_bottom"]["y"] >> left_bottom_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_oxter"]["x"] >> left_oxter_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_oxter"]["y"] >> left_oxter_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["x"] >> left_shoulder_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["y"] >> left_shoulder_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["c"] >> left_shoulder_init_c_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["x"] >> right_shoulder_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["y"] >> right_shoulder_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["c"] >> right_shoulder_init_c_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_oxter"]["x"] >> right_oxter_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_oxter"]["y"] >> right_oxter_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_bottom"]["x"] >> right_bottom_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_bottom"]["y"] >> right_bottom_init_y_;
+
+  float compose_max_hand_x = 0;
+  float compose_min_hand_x = -120;
+  float compose_max_hand_y = 1168;
+  float compose_min_hand_y = 0;
+  float compose_max_hand_z = 0;
+  float compose_min_hand_z = -162;
+  float compose_max_hand_c = 0.35;
+  float compose_min_hand_c = -0.94;
+
+  compose_config_fs["hand_limit_position"]["x_max"] >> compose_max_hand_x;
+  compose_config_fs["hand_limit_position"]["x_min"] >> compose_min_hand_x;
+  ui->compose_hand_x_spinbox->setMaximum(compose_max_hand_x);
+  ui->compose_hand_x_spinbox->setMinimum(compose_min_hand_x);
+
+  compose_config_fs["hand_limit_position"]["y_max"] >> compose_max_hand_y;
+  compose_config_fs["hand_limit_position"]["y_min"] >> compose_min_hand_y;
+  ui->compose_hand_y_spinbox->setMaximum(compose_max_hand_y);
+  ui->compose_hand_y_spinbox->setMinimum(compose_min_hand_y);
+
+  compose_config_fs["hand_limit_position"]["z_max"] >> compose_max_hand_z;
+  compose_config_fs["hand_limit_position"]["z_min"] >> compose_min_hand_z;
+  ui->compose_hand_z_spinbox->setMaximum(compose_max_hand_z);
+  ui->compose_hand_z_spinbox->setMinimum(compose_min_hand_z);
+
+  compose_config_fs["hand_limit_position"]["c_max"] >> compose_max_hand_c;
+  compose_config_fs["hand_limit_position"]["c_min"] >> compose_min_hand_c;
+  ui->compose_hand_c_spinbox->setMaximum(compose_max_hand_c);
+  ui->compose_hand_c_spinbox->setMinimum(compose_min_hand_c);
+
+  compose_config_fs.release();
+
+  std::string sewing_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/sewing_machine_config.yaml";
+  cv::FileStorage sewing_config_fs(sewing_config_path, cv::FileStorage::READ);
+  float sewing_max_hand_x = 0;
+  float sewing_min_hand_x = -120;
+  float sewing_max_hand_y = 1168;
+  float sewing_min_hand_y = 0;
+  float sewing_max_hand_c = 0.35;
+  float sewing_min_hand_c = -0.94;
+
+  sewing_config_fs["hand_limit_position"]["x_max"] >> sewing_max_hand_x;
+  sewing_config_fs["hand_limit_position"]["x_min"] >> sewing_min_hand_x;
+  ui->sewing_hand_x_spinbox->setMaximum(sewing_max_hand_x);
+  ui->sewing_hand_x_spinbox->setMinimum(sewing_min_hand_x);
+
+  sewing_config_fs["hand_limit_position"]["y_max"] >> sewing_max_hand_y;
+  sewing_config_fs["hand_limit_position"]["y_min"] >> sewing_min_hand_y;
+  ui->sewing_hand_y_spinbox->setMaximum(sewing_max_hand_y);
+  ui->sewing_hand_y_spinbox->setMinimum(sewing_min_hand_y);
+
+  sewing_config_fs["hand_limit_position"]["c_max"] >> sewing_max_hand_c;
+  sewing_config_fs["hand_limit_position"]["c_min"] >> sewing_min_hand_c;
+  ui->sewing_hand_c_spinbox->setMaximum(sewing_max_hand_c);
+  ui->sewing_hand_c_spinbox->setMinimum(sewing_min_hand_c);
+
+  sewing_config_fs.release();
 }
 
 void DeveloperWidget::setChooseMode() {
@@ -170,6 +270,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->grab_cloth_btn_B);
   setFrame(ui->pre_setup_btn_B);
   setFrame(ui->visual_align_btn_B);
+  setFrame(ui->rough_align_btn_B);
 
   setFrame(ui->load_reset_btn_A);
   setFrame(ui->add_cloth_btn_A);
@@ -182,6 +283,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->grab_cloth_btn_A);
   setFrame(ui->pre_setup_btn_A);
   setFrame(ui->visual_align_btn_A);
+  setFrame(ui->rough_align_btn_A);
 
   // 合片机界面
   setFrame(ui->compose_reset_btn);
@@ -191,6 +293,8 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->withdraw_needle_btn);
   setFrame(ui->blow_wind_btn);
   setFrame(ui->stop_blow_btn);
+  setFrame(ui->fasten_sheet_btn);
+  setFrame(ui->unfasten_sheet_btn);
   setFrame(ui->set_current_compose_hand_btn);
   setFrame(ui->compose_move_hand_btn);
   setFrame(ui->sucker_dilate_btn);
@@ -202,6 +306,10 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->set_current_sewing_hand_btn);
   setFrame(ui->sewing_move_hand_btn);
   setFrame(ui->send_keypoints_btn);
+
+  // 其他界面
+  setFrame(ui->choose_bin_btn);
+  setFrame(ui->flash_btn);
 }
 
 void DeveloperWidget::switchPage() {
@@ -247,6 +355,10 @@ void DeveloperWidget::bindLoadMachine() {
     emit signLoadMachineTrayGap(0, ui->tray_gap_spinbox_B->value());
   });
 
+  connect(ui->rough_align_btn_B, &QPushButton::clicked, [=]() {
+    emit signLoadMachineRoughAlign(0);
+  });
+
   connect(ui->set_offset_btn_B, &QPushButton::clicked, [=]() {
     emit signLoadMachineOffset(0, ui->offset_spinbox_B->value());
   });
@@ -290,6 +402,10 @@ void DeveloperWidget::bindLoadMachine() {
 
   connect(ui->set_tray_gap_btn_A, &QPushButton::clicked, [=]() {
     emit signLoadMachineTrayGap(1, ui->tray_gap_spinbox_A->value());
+  });
+
+  connect(ui->rough_align_btn_A, &QPushButton::clicked, [=]() {
+    emit signLoadMachineRoughAlign(1);
   });
 
   connect(ui->set_offset_btn_A, &QPushButton::clicked, [=]() {
@@ -350,6 +466,14 @@ void DeveloperWidget::bindComposeMachine() {
     emit signComposeMachineStopBlow();
   });
 
+  connect(ui->fasten_sheet_btn, &QPushButton::clicked, [=]() {
+    emit signComposeMachineFastenSheet();
+  });
+
+  connect(ui->unfasten_sheet_btn, &QPushButton::clicked, [=]() {
+    emit signComposeMachineUnfastenSheet();
+  });
+
   connect(ui->compose_move_hand_btn, &QPushButton::clicked, [=]() {
     emit signComposeMachineMoveHand(ui->compose_hand_x_spinbox->value(), ui->compose_hand_y_spinbox->value(), ui->compose_hand_z_spinbox->value(), ui->compose_hand_c_spinbox->value());
   });
@@ -357,39 +481,39 @@ void DeveloperWidget::bindComposeMachine() {
   qRegisterMetaType<syt_msgs::msg::ComposeMachineSuckerStates>("syt_msgs::msg::ComposeMachineSuckerStates");
   connect(ui->sucker_dilate_btn, &QPushButton::clicked, [=]() {
     syt_msgs::msg::ComposeMachineSuckerStates sucker_states;
-    sucker_states.left_bottom.x    = ui->sucker_left_bottom_x_line_edit->text().toFloat() + 5;
-    sucker_states.left_bottom.y    = ui->sucker_left_bottom_y_line_edit->text().toFloat() + 5;
-    sucker_states.left_oxter.x     = ui->sucker_left_oxter_x_line_edit->text().toFloat() + 5;
-    sucker_states.left_oxter.y     = ui->sucker_left_oxter_y_line_edit->text().toFloat() + 5;
-    sucker_states.left_shoulder.x  = ui->sucker_left_shoulder_x_line_edit->text().toFloat() + 5;
-    sucker_states.left_shoulder.y  = ui->sucker_left_shoulder_y_line_edit->text().toFloat() + 5;
-    sucker_states.left_shoulder.c  = ui->sucker_left_shoulder_c_line_edit->text().toFloat() + 5;
-    sucker_states.right_shoulder.x = ui->sucker_right_shoulder_x_line_edit->text().toFloat() + 5;
-    sucker_states.right_shoulder.y = ui->sucker_right_shoulder_y_line_edit->text().toFloat() + 5;
-    sucker_states.right_shoulder.c = ui->sucker_right_shoulder_c_line_edit->text().toFloat() + 5;
-    sucker_states.right_oxter.x    = ui->sucker_right_oxter_x_line_edit->text().toFloat() + 5;
-    sucker_states.right_oxter.y    = ui->sucker_right_oxter_y_line_edit->text().toFloat() + 5;
-    sucker_states.right_bottom.x   = ui->sucker_right_bottom_x_line_edit->text().toFloat() + 5;
-    sucker_states.right_bottom.y   = ui->sucker_right_bottom_y_line_edit->text().toFloat() + 5;
+    sucker_states.left_bottom.x    = ui->sucker_left_bottom_x_line_edit->text().toFloat() + 5 - left_bottom_init_x_;
+    sucker_states.left_bottom.y    = ui->sucker_left_bottom_y_line_edit->text().toFloat() + 5 - left_bottom_init_y_;
+    sucker_states.left_oxter.x     = ui->sucker_left_oxter_x_line_edit->text().toFloat() + 5 - left_oxter_init_x_;
+    sucker_states.left_oxter.y     = ui->sucker_left_oxter_y_line_edit->text().toFloat() + 5 - left_oxter_init_y_;
+    sucker_states.left_shoulder.x  = ui->sucker_left_shoulder_x_line_edit->text().toFloat() + 5 - left_shoulder_init_x_;
+    sucker_states.left_shoulder.y  = ui->sucker_left_shoulder_y_line_edit->text().toFloat() + 5 - left_shoulder_init_y_;
+    sucker_states.left_shoulder.c  = ui->sucker_left_shoulder_c_line_edit->text().toFloat() + 5 - left_shoulder_init_c_;
+    sucker_states.right_shoulder.x = ui->sucker_right_shoulder_x_line_edit->text().toFloat() + 5 - right_shoulder_init_x_;
+    sucker_states.right_shoulder.y = ui->sucker_right_shoulder_y_line_edit->text().toFloat() + 5 - right_shoulder_init_y_;
+    sucker_states.right_shoulder.c = ui->sucker_right_shoulder_c_line_edit->text().toFloat() + 5 - right_shoulder_init_c_;
+    sucker_states.right_oxter.x    = ui->sucker_right_oxter_x_line_edit->text().toFloat() + 5 - right_oxter_init_x_;
+    sucker_states.right_oxter.y    = ui->sucker_right_oxter_y_line_edit->text().toFloat() + 5 - right_oxter_init_y_;
+    sucker_states.right_bottom.x   = ui->sucker_right_bottom_x_line_edit->text().toFloat() + 5 - right_bottom_init_x_;
+    sucker_states.right_bottom.y   = ui->sucker_right_bottom_y_line_edit->text().toFloat() + 5 - right_bottom_init_y_;
     emit signComposeMachineMoveSucker(sucker_states);
   });
 
   connect(ui->sucker_shrink_btn, &QPushButton::clicked, [=]() {
     syt_msgs::msg::ComposeMachineSuckerStates sucker_states;
-    sucker_states.left_bottom.x    = ui->sucker_left_bottom_x_line_edit->text().toFloat() - 5;
-    sucker_states.left_bottom.y    = ui->sucker_left_bottom_y_line_edit->text().toFloat() - 5;
-    sucker_states.left_oxter.x     = ui->sucker_left_oxter_x_line_edit->text().toFloat() - 5;
-    sucker_states.left_oxter.y     = ui->sucker_left_oxter_y_line_edit->text().toFloat() - 5;
-    sucker_states.left_shoulder.x  = ui->sucker_left_shoulder_x_line_edit->text().toFloat() - 5;
-    sucker_states.left_shoulder.y  = ui->sucker_left_shoulder_y_line_edit->text().toFloat() - 5;
-    sucker_states.left_shoulder.c  = ui->sucker_left_shoulder_c_line_edit->text().toFloat() - 5;
-    sucker_states.right_shoulder.x = ui->sucker_right_shoulder_x_line_edit->text().toFloat() - 5;
-    sucker_states.right_shoulder.y = ui->sucker_right_shoulder_y_line_edit->text().toFloat() - 5;
-    sucker_states.right_shoulder.c = ui->sucker_right_shoulder_c_line_edit->text().toFloat() - 5;
-    sucker_states.right_oxter.x    = ui->sucker_right_oxter_x_line_edit->text().toFloat() - 5;
-    sucker_states.right_oxter.y    = ui->sucker_right_oxter_y_line_edit->text().toFloat() - 5;
-    sucker_states.right_bottom.x   = ui->sucker_right_bottom_x_line_edit->text().toFloat() - 5;
-    sucker_states.right_bottom.y   = ui->sucker_right_bottom_y_line_edit->text().toFloat() - 5;
+    sucker_states.left_bottom.x    = ui->sucker_left_bottom_x_line_edit->text().toFloat() - 5 - left_bottom_init_x_;
+    sucker_states.left_bottom.y    = ui->sucker_left_bottom_y_line_edit->text().toFloat() - 5 - left_bottom_init_y_;
+    sucker_states.left_oxter.x     = ui->sucker_left_oxter_x_line_edit->text().toFloat() - 5 - left_oxter_init_x_;
+    sucker_states.left_oxter.y     = ui->sucker_left_oxter_y_line_edit->text().toFloat() - 5 - left_oxter_init_y_;
+    sucker_states.left_shoulder.x  = ui->sucker_left_shoulder_x_line_edit->text().toFloat() - 5 - left_shoulder_init_x_;
+    sucker_states.left_shoulder.y  = ui->sucker_left_shoulder_y_line_edit->text().toFloat() - 5 - left_shoulder_init_y_;
+    sucker_states.left_shoulder.c  = ui->sucker_left_shoulder_c_line_edit->text().toFloat() - 5 - left_shoulder_init_c_;
+    sucker_states.right_shoulder.x = ui->sucker_right_shoulder_x_line_edit->text().toFloat() - 5 - right_shoulder_init_x_;
+    sucker_states.right_shoulder.y = ui->sucker_right_shoulder_y_line_edit->text().toFloat() - 5 - right_shoulder_init_y_;
+    sucker_states.right_shoulder.c = ui->sucker_right_shoulder_c_line_edit->text().toFloat() - 5 - right_shoulder_init_c_;
+    sucker_states.right_oxter.x    = ui->sucker_right_oxter_x_line_edit->text().toFloat() - 5 - right_oxter_init_x_;
+    sucker_states.right_oxter.y    = ui->sucker_right_oxter_y_line_edit->text().toFloat() - 5 - right_oxter_init_y_;
+    sucker_states.right_bottom.x   = ui->sucker_right_bottom_x_line_edit->text().toFloat() - 5 - right_bottom_init_x_;
+    sucker_states.right_bottom.y   = ui->sucker_right_bottom_y_line_edit->text().toFloat() - 5 - right_bottom_init_y_;
     emit signComposeMachineMoveSucker(sucker_states);
   });
 }
@@ -443,20 +567,37 @@ void DeveloperWidget::setComposeMachineState(syt_msgs::msg::ComposeMachineState 
   ui->compose_hand_z_line_edit->setText(QString::number(state.hand_position.z));
   ui->compose_hand_c_line_edit->setText(QString::number(state.hand_position.c));
 
-  ui->sucker_left_bottom_x_line_edit->setText(QString::number(state.suckers_position.left_bottom.x));
-  ui->sucker_left_bottom_y_line_edit->setText(QString::number(state.suckers_position.left_bottom.y));
-  ui->sucker_left_oxter_x_line_edit->setText(QString::number(state.suckers_position.left_oxter.x));
-  ui->sucker_left_oxter_y_line_edit->setText(QString::number(state.suckers_position.left_oxter.y));
-  ui->sucker_left_shoulder_x_line_edit->setText(QString::number(state.suckers_position.left_shoulder.x));
-  ui->sucker_left_shoulder_y_line_edit->setText(QString::number(state.suckers_position.left_shoulder.y));
-  ui->sucker_left_shoulder_c_line_edit->setText(QString::number(state.suckers_position.left_shoulder.c));
-  ui->sucker_right_shoulder_x_line_edit->setText(QString::number(state.suckers_position.right_shoulder.x));
-  ui->sucker_right_shoulder_y_line_edit->setText(QString::number(state.suckers_position.right_shoulder.y));
-  ui->sucker_right_shoulder_c_line_edit->setText(QString::number(state.suckers_position.right_shoulder.c));
-  ui->sucker_right_oxter_x_line_edit->setText(QString::number(state.suckers_position.right_oxter.x));
-  ui->sucker_right_oxter_y_line_edit->setText(QString::number(state.suckers_position.right_oxter.y));
-  ui->sucker_right_bottom_x_line_edit->setText(QString::number(state.suckers_position.right_bottom.x));
-  ui->sucker_right_bottom_y_line_edit->setText(QString::number(state.suckers_position.right_bottom.y));
+  if (ui->switch_sucker_axis_ratio_button->isChecked()) {
+    ui->sucker_left_bottom_x_line_edit->setText(QString::number(state.suckers_position.left_bottom.x - left_bottom_init_x_));
+    ui->sucker_left_bottom_y_line_edit->setText(QString::number(state.suckers_position.left_bottom.y - left_bottom_init_y_));
+    ui->sucker_left_oxter_x_line_edit->setText(QString::number(state.suckers_position.left_oxter.x - left_oxter_init_x_));
+    ui->sucker_left_oxter_y_line_edit->setText(QString::number(state.suckers_position.left_oxter.y - left_oxter_init_y_));
+    ui->sucker_left_shoulder_x_line_edit->setText(QString::number(state.suckers_position.left_shoulder.x - left_shoulder_init_x_));
+    ui->sucker_left_shoulder_y_line_edit->setText(QString::number(state.suckers_position.left_shoulder.y - left_shoulder_init_y_));
+    ui->sucker_left_shoulder_c_line_edit->setText(QString::number(state.suckers_position.left_shoulder.c - left_shoulder_init_c_));
+    ui->sucker_right_shoulder_x_line_edit->setText(QString::number(state.suckers_position.right_shoulder.x - right_shoulder_init_x_));
+    ui->sucker_right_shoulder_y_line_edit->setText(QString::number(state.suckers_position.right_shoulder.y - right_shoulder_init_y_));
+    ui->sucker_right_shoulder_c_line_edit->setText(QString::number(state.suckers_position.right_shoulder.c - right_shoulder_init_c_));
+    ui->sucker_right_oxter_x_line_edit->setText(QString::number(state.suckers_position.right_oxter.x - right_oxter_init_x_));
+    ui->sucker_right_oxter_y_line_edit->setText(QString::number(state.suckers_position.right_oxter.y - right_oxter_init_y_));
+    ui->sucker_right_bottom_x_line_edit->setText(QString::number(state.suckers_position.right_bottom.x - right_bottom_init_x_));
+    ui->sucker_right_bottom_y_line_edit->setText(QString::number(state.suckers_position.right_bottom.y - right_bottom_init_y_));
+  } else {
+    ui->sucker_left_bottom_x_line_edit->setText(QString::number(state.suckers_position.left_bottom.x));
+    ui->sucker_left_bottom_y_line_edit->setText(QString::number(state.suckers_position.left_bottom.y));
+    ui->sucker_left_oxter_x_line_edit->setText(QString::number(state.suckers_position.left_oxter.x));
+    ui->sucker_left_oxter_y_line_edit->setText(QString::number(state.suckers_position.left_oxter.y));
+    ui->sucker_left_shoulder_x_line_edit->setText(QString::number(state.suckers_position.left_shoulder.x));
+    ui->sucker_left_shoulder_y_line_edit->setText(QString::number(state.suckers_position.left_shoulder.y));
+    ui->sucker_left_shoulder_c_line_edit->setText(QString::number(state.suckers_position.left_shoulder.c));
+    ui->sucker_right_shoulder_x_line_edit->setText(QString::number(state.suckers_position.right_shoulder.x));
+    ui->sucker_right_shoulder_y_line_edit->setText(QString::number(state.suckers_position.right_shoulder.y));
+    ui->sucker_right_shoulder_c_line_edit->setText(QString::number(state.suckers_position.right_shoulder.c));
+    ui->sucker_right_oxter_x_line_edit->setText(QString::number(state.suckers_position.right_oxter.x));
+    ui->sucker_right_oxter_y_line_edit->setText(QString::number(state.suckers_position.right_oxter.y));
+    ui->sucker_right_bottom_x_line_edit->setText(QString::number(state.suckers_position.right_bottom.x));
+    ui->sucker_right_bottom_y_line_edit->setText(QString::number(state.suckers_position.right_bottom.y));
+  }
 }
 
 void DeveloperWidget::setSewingMachineState(syt_msgs::msg::SewingMachineState state) {
