@@ -6,6 +6,7 @@
 #include "syt_msgs/msg/compose_machine_state.hpp"
 #include "syt_msgs/msg/fsm_flow_control_command.hpp"
 #include "syt_msgs/msg/fsm_run_mode.hpp"
+#include "syt_msgs/msg/fsm_state.hpp"
 #include "syt_msgs/msg/load_cloth_visual.hpp"
 #include "syt_msgs/msg/motion_planner_state.hpp"
 #include "syt_msgs/msg/sewing_machine_state.hpp"
@@ -143,8 +144,6 @@ private:
   QProcess *process_ = nullptr;
 
   //////////////// ros相关 ///////////////////
-  syt_msgs::msg::FSMFlowControlCommand fsm_flow_control_command_;
-
   rclcpp::WallRate rate_;
   std::shared_ptr<rclcpp::Node> node_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor_;
@@ -156,7 +155,7 @@ private:
   rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr load_cloth_visual_subscription_;
   rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr composer_visual_subscription_;
   rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr log_subscription_;
-  rclcpp::Subscription<syt_msgs::msg::MotionPlannerState>::SharedPtr run_state_subscription_;
+  rclcpp::Subscription<syt_msgs::msg::FSMState>::SharedPtr run_state_subscription_;
 
   // publisher
   rclcpp::Publisher<syt_msgs::msg::FSMFlowControlCommand>::SharedPtr fsm_flow_control_cmd_publisher_;
@@ -170,7 +169,7 @@ private:
   void downloadCallback(const std_msgs::msg::Int32::SharedPtr msg);
   void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
   void logCallback(const rcl_interfaces::msg::Log::SharedPtr msg);
-  void runStateCallback(const syt_msgs::msg::MotionPlannerState::SharedPtr msg);
+  void runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg);
 
 signals:
   void signResetFinish(bool);

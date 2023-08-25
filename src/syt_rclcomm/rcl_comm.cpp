@@ -24,7 +24,7 @@ SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   log_subscription_ = node_->create_subscription<rcl_interfaces::msg::Log>("/rosout", 10, std::bind(&SytRclComm::logCallback, this, _1));
 
   // 运行状态回调函数
-  run_state_subscription_ = node_->create_subscription<syt_msgs::msg::MotionPlannerState>("/syt/motion_planner/run_state", 10, std::bind(&SytRclComm::runStateCallback, this, _1));
+  run_state_subscription_ = node_->create_subscription<syt_msgs::msg::FSMState>("/syt/motion_planner/run_state", 10, std::bind(&SytRclComm::runStateCallback, this, _1));
 
   // 开始停止复位
   fsm_flow_control_cmd_publisher_ = node_->create_publisher<syt_msgs::msg::FSMFlowControlCommand>("/syt/robot_control/flow_control_cmd", 10);
@@ -225,35 +225,27 @@ void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
 }
 
 // 监听全流程运行状态
-void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::SharedPtr msg) {
+void SytRclComm::runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg) {
   // rate_.sleep();
-  switch (msg->state) {
-  case syt_msgs::msg::MotionPlannerState::LOAD_CLOTH_INITIALIZE:
-    break;
-  case syt_msgs::msg::MotionPlannerState::INITIALIZE:
+  switch (msg->state_code) {
+  case syt_msgs::msg::FSMState::IDLE:
     if (start_flag_) {
-      if (last_state_ == syt_msgs::msg::MotionPlannerState::STEP_FOUR) {
+      if (last_state_ != syt_msgs::msg::FSMState::IDLE) {
+        emit finishOneRound();
         if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE) {
           emit machineIdle();
         }
-        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP) {
-          emit finishOneRound();
-        }
       }
-    } else if (!start_flag_) {
-      emit machineIdle();
     }
-  case syt_msgs::msg::MotionPlannerState::SAFE_POSITION:
-  case syt_msgs::msg::MotionPlannerState::STEP_ONE:
-  case syt_msgs::msg::MotionPlannerState::STEP_TWO:
-  case syt_msgs::msg::MotionPlannerState::STEP_THREE:
-  case syt_msgs::msg::MotionPlannerState::STEP_FOUR:
-  case syt_msgs::msg::MotionPlannerState::ERROR:
+    break;
+  case syt_msgs::msg::FSMState::PAUSE:
+  case syt_msgs::msg::FSMState::STOP:
+  case syt_msgs::msg::FSMState::RUN:
     break;
   default:
     break;
   }
-  last_state_ = msg->state;
+  last_state_ = msg->state_code;
 }
 
 template <class T>
@@ -299,7 +291,7 @@ void SytRclComm::resetCmd() {
   qDebug() << "整机复位：" << result;
   switch (result) {
   case CALL_SUCCESS:
-    emit signResetFinish(true);
+    emit signResetFinish(response.success);
     break;
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
@@ -319,7 +311,7 @@ void SytRclComm::startCmd() {
   qDebug() << "整机启动：" << result;
   switch (result) {
   case CALL_SUCCESS:
-    emit signStartFinish(true);
+    emit signStartFinish(response.success);
     break;
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
@@ -339,7 +331,7 @@ void SytRclComm::pauseCmd() {
   qDebug() << "整机暂停：" << result;
   switch (result) {
   case CALL_SUCCESS:
-    emit signPauseFinish(true);
+    emit signPauseFinish(response.success);
     break;
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
@@ -359,7 +351,7 @@ void SytRclComm::stopCmd() {
   qDebug() << "整机停止：" << result;
   switch (result) {
   case CALL_SUCCESS:
-    emit signStopFinish(true);
+    emit signStopFinish(response.success);
     break;
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
