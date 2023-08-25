@@ -655,14 +655,14 @@ void MainWindow::settingConnection() {
     this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn}, {ui->stop_btn});
     //++success_count_;
     //++round_count_; // TODO: 增加异常次数计数，统计成功率
-    //ui->processWidget->setRange(0, round_count_);
+    // ui->processWidget->setRange(0, round_count_);
     // ui->processWidget->setValue(success_count_);
   });
 
   connect(rclcomm_, &SytRclComm::finishOneRound, [=]() {
     //++success_count_;
     //++round_count_;
-    //ui->processWidget->setRange(0, round_count_);
+    // ui->processWidget->setRange(0, round_count_);
     // ui->processWidget->setValue(success_count_);
   });
 }
@@ -1036,11 +1036,11 @@ void MainWindow::startBtnClicked() {
 void MainWindow::startFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-    emit signUpdateLabelState("开始运行");
+    emit signUpdateLabelState("运行中");
     this->btnControl({ui->pause_btn, ui->stop_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn});
   } else {
-    emit signUpdateLabelState("开始失败");
-    showMessageBox(this, ERROR, "开始失败", 1, {"确认"});
+    emit signUpdateLabelState("运行失败");
+    showMessageBox(this, ERROR, "运行失败", 1, {"确认"});
   }
 }
 
@@ -1064,7 +1064,7 @@ void MainWindow::pauseFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
     emit signUpdateLabelState("暂停中");
-    this->btnControl({ui->start_btn}, {ui->pause_btn, ui->stop_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn});
+    this->btnControl({ui->start_btn, ui->reset_btn}, {ui->pause_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn});
   } else {
     emit signUpdateLabelState("暂停失败");
     showMessageBox(this, ERROR, "暂停失败", 1, {"确认"});
