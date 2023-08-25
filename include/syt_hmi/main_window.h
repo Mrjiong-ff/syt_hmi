@@ -119,15 +119,21 @@ private slots:
   void slotPrevPage();
   void slotNextPage();
   void resetBtnClicked();
+  void resetFinish(bool);
   void startBtnClicked();
+  void startFinish(bool);
+  void pauseBtnClicked();
+  void pauseFinish(bool);
   void stopBtnClicked();
+  void stopFinish(bool);
   void addClothBtnClicked();
+  void addClothFinish(bool result, int id);
   void changePlateBtnClicked();
+  //void changePlateFinish();
   void errorNodeMsgSlot(QString msg);
   void triggeredOTAUpdate();
   void otaResultShow(bool res, QString msg);
   void otaInstallSuccess(bool res, QString msg);
-  void slotAddClothResult(bool result, int id);
   void slotVisualLoadCloth(int machine_id, int cam_id, QImage image);
 
   ////////////////////////// 工具栏函数 //////////////////////////

@@ -256,33 +256,6 @@ void SytRclComm::runStateCallback(const syt_msgs::msg::MotionPlannerState::Share
   last_state_ = msg->state;
 }
 
-void SytRclComm::startCmd() {
-  start_flag_                       = true;
-  fsm_flow_control_command_.command = fsm_flow_control_command_.RUN;
-  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-}
-
-void SytRclComm::resetCmd() {
-  start_flag_                       = false;
-  fsm_flow_control_command_.command = fsm_flow_control_command_.RESET;
-  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-  // TODO resetWholeMachine();
-}
-
-void SytRclComm::stopCmd() {
-  start_flag_                       = false;
-  fsm_flow_control_command_.command = fsm_flow_control_command_.STOP;
-  fsm_flow_control_cmd_publisher_->publish(fsm_flow_control_command_);
-  // TODO stopWholeMachine();
-  // emit machineIdle(true);
-}
-
-// 转换运行模式
-void SytRclComm::changeMode(int mode) {
-  run_mode_.mode = mode;
-  fsm_run_mode_publisher_->publish(run_mode_);
-}
-
 template <class T>
 SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::string info, uint32_t timeout_ms, std::shared_ptr<typename T::Request> request, typename T::Response &response) {
   typename rclcpp::Client<T>::SharedPtr client = node_->create_client<T>(srv_name);
@@ -314,6 +287,96 @@ SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::strin
 
   response = *result.get();
   return CALL_SUCCESS;
+}
+
+void SytRclComm::resetCmd() {
+  start_flag_                  = false;
+  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::RESET;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机复位", 60000, request, response);
+  qDebug() << "整机复位：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signResetFinish(true);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signResetFinish(false);
+    break;
+  }
+}
+
+void SytRclComm::startCmd() {
+  start_flag_                  = true;
+  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::RUN;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机启动", 5000, request, response);
+  qDebug() << "整机启动：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signStartFinish(true);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signStartFinish(false);
+    break;
+  }
+}
+
+void SytRclComm::pauseCmd() {
+  start_flag_                  = false;
+  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::PAUSE;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机暂停", 5000, request, response);
+  qDebug() << "整机暂停：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signPauseFinish(true);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signPauseFinish(false);
+    break;
+  }
+}
+
+void SytRclComm::stopCmd() {
+  start_flag_                  = false;
+  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::STOP;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机停止", 60000, request, response);
+  qDebug() << "整机停止：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signStopFinish(true);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signStopFinish(false);
+    break;
+  }
+}
+
+// 转换运行模式
+void SytRclComm::changeMode(int mode) {
+  auto request           = std::make_shared<syt_msgs::srv::FSMChangeMode::Request>();
+  request->mode_cmd.mode = mode;
+
+  syt_msgs::srv::FSMChangeMode::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMChangeMode>("/syt/motion_planner/change_mode", "切换模式", 5000, request, response);
+  qDebug() << "切换模式：" << result;
 }
 
 void SytRclComm::resetWholeMachine() {

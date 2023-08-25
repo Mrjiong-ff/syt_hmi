@@ -14,6 +14,8 @@
 #include "syt_msgs/srv/compose_machine_move_sucker.hpp"
 #include "syt_msgs/srv/compose_machine_reset.hpp"
 #include "syt_msgs/srv/create_style.hpp"
+#include "syt_msgs/srv/fsm_change_mode.hpp"
+#include "syt_msgs/srv/fsm_control_flow.hpp"
 #include "syt_msgs/srv/get_break_point_y.hpp"
 #include "syt_msgs/srv/get_cloth_info.hpp"
 #include "syt_msgs/srv/get_cloth_style.hpp"
@@ -64,8 +66,9 @@ public:
                      CALL_DISCONNECT = 3 };
   Q_ENUM(CALL_RESULT);
 
-  void startCmd();           // 开始全流程指令
   void resetCmd();           // 复位指令
+  void startCmd();           // 开始全流程指令
+  void pauseCmd();           // 暂停指令
   void stopCmd();            // 急停指令
   void changeMode(int mode); // 转换运行模式
 
@@ -170,6 +173,11 @@ private:
   void runStateCallback(const syt_msgs::msg::MotionPlannerState::SharedPtr msg);
 
 signals:
+  void signResetFinish(bool);
+  void signStartFinish(bool);
+  void signPauseFinish(bool);
+  void signStopFinish(bool);
+
   void updateComposeMachineState(syt_msgs::msg::ComposeMachineState state);
   void updateSewingMachineState(syt_msgs::msg::SewingMachineState state);
   void errorNodeMsgSign(QString msg);

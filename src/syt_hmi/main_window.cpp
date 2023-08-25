@@ -258,7 +258,7 @@ void MainWindow::initWidget() {
   ui->running_state_label->setText(QString("请选择样式文件"));
 
   // 初始状态下按钮状态
-  this->btnControl({ui->reset_btn}, {ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn});
+  this->btnControl({ui->reset_btn}, {ui->start_btn, ui->pause_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn});
 
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this); // 旋转条初始化
   // 初始状态下主界面显示的任务进度条
@@ -420,6 +420,10 @@ void MainWindow::setMainControlButton() {
   ui->start_btn->setForeEnabled(false);
   ui->start_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
+  ui->pause_btn->setParentEnabled(true);
+  ui->pause_btn->setForeEnabled(false);
+  ui->pause_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
   ui->stop_btn->setParentEnabled(true);
   ui->stop_btn->setForeEnabled(false);
   ui->stop_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
@@ -437,7 +441,9 @@ void MainWindow::setMainControlButton() {
   ui->choose_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
   connect(ui->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
+  connect(rclcomm_, &SytRclComm::signResetFinish, this, &MainWindow::resetFinish);
   connect(ui->start_btn, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
+  connect(ui->pause_btn, &QPushButton::clicked, this, &MainWindow::pauseBtnClicked);
   connect(ui->stop_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
   connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
   connect(ui->change_board_btn, &QPushButton::clicked, this, &MainWindow::changePlateBtnClicked);
@@ -639,7 +645,7 @@ void MainWindow::settingConnection() {
   connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow);                 // rosout回调消息
 
   // 补料模式结束
-  connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::slotAddClothResult);
+  connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::addClothFinish);
 
   // 成功率统计
   connect(rclcomm_, &SytRclComm::machineIdle, [=]() {
@@ -661,7 +667,9 @@ void MainWindow::settingConnection() {
 void MainWindow::bindControlConnection() {
   // 切换模式
   connect(developer_widget_, &DeveloperWidget::signChooseMode, [=](int mode) {
-    rclcomm_->changeMode(mode);
+    QtConcurrent::run([=]() {
+      rclcomm_->changeMode(mode);
+    });
   });
 
   // 合片反馈
@@ -989,10 +997,20 @@ void MainWindow::resetBtnClicked() {
 
   // 复位指令
   emit signUpdateLabelState("复位中");
-  rclcomm_->resetCmd();
-  emit signUpdateLabelState("复位完成");
+  QtConcurrent::run([=]() {
+    rclcomm_->resetCmd();
+  });
+  waiting_spinner_widget_->start();
+}
 
-  this->btnControl({ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {ui->reset_btn});
+void MainWindow::resetFinish(bool result) {
+  waiting_spinner_widget_->stop();
+  if (result) {
+    emit signUpdateLabelState("复位完成");
+    this->btnControl({ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {ui->reset_btn, ui->pause_btn});
+  } else {
+    showMessageBox(this, ERROR, "复位失败", 1, {"确认"});
+  }
 }
 
 // 开始按钮槽函数
@@ -1004,10 +1022,45 @@ void MainWindow::startBtnClicked() {
   setMutuallyLight(GREEN);
 
   // 开始指令
-  rclcomm_->startCmd();
-  emit signUpdateLabelState("运行中");
+  emit signUpdateLabelState("开始运行");
+  QtConcurrent::run([=]() {
+    rclcomm_->startCmd();
+  });
+  waiting_spinner_widget_->start();
+}
 
-  this->btnControl({ui->stop_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn});
+void MainWindow::startFinish(bool result) {
+  if (result) {
+    emit signUpdateLabelState("运行中");
+    this->btnControl({ui->pause_btn, ui->stop_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn});
+  } else {
+    showMessageBox(this, ERROR, "开始失败", 1, {"确认"});
+  }
+}
+
+// 暂停按钮槽函数
+void MainWindow::pauseBtnClicked() {
+  bool res = isFastClick(ui->pause_btn, 1000);
+  if (!res) {
+    return;
+  }
+  setMutuallyLight(YELLOW);
+
+  // 开始指令
+  emit signUpdateLabelState("开始暂停");
+  QtConcurrent::run([=]() {
+    rclcomm_->pauseCmd();
+  });
+  waiting_spinner_widget_->start();
+}
+
+void MainWindow::pauseFinish(bool result) {
+  if (result) {
+    emit signUpdateLabelState("暂停中");
+    this->btnControl({ui->start_btn}, {ui->pause_btn, ui->stop_btn, ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn});
+  } else {
+    showMessageBox(this, ERROR, "暂停失败", 1, {"确认"});
+  }
 }
 
 // 停止按钮槽函数
@@ -1019,11 +1072,20 @@ void MainWindow::stopBtnClicked() {
   this->setMutuallyLight(YELLOW);
 
   // 停止指令
-  emit signUpdateLabelState("停止运行中");
-  rclcomm_->stopCmd();
-  emit signUpdateLabelState("停止");
+  emit signUpdateLabelState("开始停止");
+  QtConcurrent::run([=]() {
+    rclcomm_->stopCmd();
+  });
+  waiting_spinner_widget_->start();
+}
 
-  this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn}, {ui->start_btn, ui->stop_btn});
+void MainWindow::stopFinish(bool result) {
+  if (result) {
+    emit signUpdateLabelState("停止中");
+    this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn}, {ui->start_btn, ui->stop_btn, ui->pause_btn});
+  } else {
+    showMessageBox(this, ERROR, "停止失败", 1, {"确认"});
+  }
 }
 
 // 补料按钮槽函数
@@ -1048,7 +1110,27 @@ void MainWindow::addClothBtnClicked() {
     rclcomm_->loadMachineAddCloth(1);
   });
 
-  this->btnControl({ui->reset_btn, ui->change_board_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn});
+  this->btnControl({ui->reset_btn, ui->change_board_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn, ui->pause_btn});
+}
+
+void MainWindow::addClothFinish(bool result, int id) {
+  if (id == 0) {
+    add_cloth_result_B_ = result;
+  } else if (id == 1) {
+    add_cloth_result_A_ = result;
+  }
+
+  if (++add_cloth_count_ == 2) {
+    waiting_spinner_widget_->stop();
+    if (add_cloth_result_A_ && add_cloth_result_B_) {
+      emit signUpdateLabelState("补料模式设置完成");
+      showMessageBox(this, SUCCESS, "补料模式设置成功，请在手动补充裁片后再点击确认。", 1, {"确认"});
+    } else {
+      emit signUpdateLabelState("补料模式设置失败");
+      showMessageBox(this, ERROR, "补料模式设置失败", 1, {"确认"});
+    }
+    add_cloth_count_ = 0;
+  }
 }
 
 // 换板按钮槽函数
@@ -1058,7 +1140,7 @@ void MainWindow::changePlateBtnClicked() {
     return;
   }
 
-  this->btnControl({ui->reset_btn, ui->change_board_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn});
+  this->btnControl({ui->reset_btn, ui->change_board_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn, ui->pause_btn});
   this->setMutuallyLight(YELLOW);
   emit signUpdateLabelState("换压板模式");
 
@@ -1134,26 +1216,6 @@ void MainWindow::otaInstallSuccess(bool res, QString msg) {
   showMessageBox(this, SUCCESS, msg, 1, {"重启"});
   this->deleteAll();
   exit(0);
-}
-
-void MainWindow::slotAddClothResult(bool result, int id) {
-  if (id == 0) {
-    add_cloth_result_B_ = result;
-  } else if (id == 1) {
-    add_cloth_result_A_ = result;
-  }
-
-  if (++add_cloth_count_ == 2) {
-    waiting_spinner_widget_->stop();
-    if (add_cloth_result_A_ && add_cloth_result_B_) {
-      emit signUpdateLabelState("补料模式设置完成");
-      showMessageBox(this, SUCCESS, "补料模式设置成功，请在手动补充裁片后再点击确认。", 1, {"确认"});
-    } else {
-      emit signUpdateLabelState("补料模式设置失败");
-      showMessageBox(this, ERROR, "补料模式设置失败", 1, {"确认"});
-    }
-    add_cloth_count_ = 0;
-  }
 }
 
 void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
