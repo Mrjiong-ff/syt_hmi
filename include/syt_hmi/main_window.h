@@ -107,7 +107,6 @@ private:
   void setDeveloperWidget();
   void showLoadMachineImage();
 
-
 signals:
   void signHeadEyeWindowShow();
   void signClothStyleWindowShow();
@@ -129,7 +128,7 @@ private slots:
   void addClothBtnClicked();
   void addClothFinish(bool result, int id);
   void changePlateBtnClicked();
-  //void changePlateFinish();
+  // void changePlateFinish();
   void errorNodeMsgSlot(QString msg);
   void triggeredOTAUpdate();
   void otaResultShow(bool res, QString msg);
@@ -167,7 +166,7 @@ private slots:
 
   void slotMoveHand();
   void slotDetectClothByAutoCreateStyle(int cloth_type);
-  void slotCreateStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
+  void slotCreateStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
   void slotRenameClothStyle(QString old_name, QString new_name);
 
 private:

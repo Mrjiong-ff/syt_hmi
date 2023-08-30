@@ -3,8 +3,12 @@
 #include "syt_btn/interactivebuttonbase.h"
 #include "syt_hmi/input_extra_param_widget.h"
 #include "syt_hmi/input_length_param_widget.h"
+#include "syt_hmi/input_tolerance_param_widget.h"
+#include "syt_hmi/style_display_widget.h"
 
+#include <QCheckBox>
 #include <QComboBox>
+#include <QFileDialog>
 #include <QLabel>
 #include <QLayout>
 #include <QLineEdit>
@@ -19,8 +23,6 @@ class MoveHandPage : public QWizardPage {
 private:
   bool moved_hand_ = false;
 
-  InteractiveButtonBase *move_hand_btn_;
-
 public:
   MoveHandPage(QWidget *parent = nullptr);
   ~MoveHandPage(){};
@@ -34,15 +36,7 @@ public slots:
   void slotMoveHandResult(bool result);
 };
 
-// 2.提醒放置裁片
-class RemindClothPage : public QWizardPage {
-  Q_OBJECT
-public:
-  RemindClothPage(QWidget *parent = nullptr, int cloth_type = 0);
-  ~RemindClothPage(){};
-};
-
-// 3.调用检测服务获取裁片轮廓和关键点
+// 2.调用检测服务获取裁片轮廓和关键点
 class DetectClothPage : public QWizardPage {
   Q_OBJECT
 private:
@@ -62,7 +56,7 @@ public slots:
   void slotDetectClothResult(bool result, int cloth_type);
 };
 
-// 4.手动输入额外参数
+// 3.手动输入额外参数
 class InputExtraParamPage : public QWizardPage {
   Q_OBJECT
 private:
@@ -79,11 +73,12 @@ signals:
   void signSetExtraParam(syt_msgs::msg::ClothStyle cloth_style);
 };
 
-// 5.调用样式服务
+// 4.调用样式服务
 class CreateStylePage : public QWizardPage {
   Q_OBJECT
 private:
   int create_result_ = false;
+  QString prefix_    = "/home/syt/style";
 
 public:
   CreateStylePage(QWidget *parent = nullptr);
@@ -92,23 +87,16 @@ public:
   bool validatePage() override;
 
 signals:
-  void signCreateStyle();
+  void signCreateStyle(QString prefix_);
   void signSetRenameEdit();
 
 public slots:
   void slotCreateStyleResult(bool result);
 };
 
-// 6.修改样式名
+// 5.修改样式名
 class RenameClothStylePage : public QWizardPage {
   Q_OBJECT
-private:
-  QLabel *old_name_label_;
-  QLabel *new_name_label_;
-  QLineEdit *old_name_line_edit_;
-  QLineEdit *new_name_line_edit_;
-  InteractiveButtonBase *rename_btn_;
-
 public:
   RenameClothStylePage(QWidget *parent = nullptr);
   ~RenameClothStylePage(){};
@@ -123,7 +111,7 @@ public slots:
   void slotRenameClothStyleResult(bool result);
 };
 
-// 7.选择cad文件page
+// 6.选择cad文件page
 class ChooseCADPage : public QWizardPage {
   Q_OBJECT
 public:
@@ -131,24 +119,12 @@ public:
   ~ChooseCADPage(){};
 };
 
-// 8.输入长度参数
+// 7.输入长度参数
 class InputLengthParamPage : public QWizardPage {
   Q_OBJECT
 private:
-  // QLabel *cloth_length_label;
-  // QLabel *bottom_length_label;
-  // QLabel *oxter_length_label;
-  // QLabel *shoulder_length_label;
-  // QLabel *side_length_label;
-
-  // QLineEdit *cloth_length_line_edit;
-  // QLineEdit *bottom_length_line_edit;
-  // QLineEdit *oxter_length_line_edit;
-  // QLineEdit *shoulder_length_line_edit;
-  // QLineEdit *side_length_line_edit;
-
   int cloth_type_;
-  InputLengthParamWidget *input_length_param_widget;
+  InputLengthParamWidget *input_length_param_widget_;
 
 public:
   InputLengthParamPage(QWidget *parent = nullptr, int cloth_type = 0);
@@ -158,4 +134,59 @@ public:
 
 signals:
   void signSetLengthParam(syt_msgs::msg::ClothStyle cloth_style);
+};
+
+// 8.输入误差参数
+class InputToleranceParamPage : public QWizardPage {
+  Q_OBJECT
+private:
+  InputToleranceParamWidget *input_tolerance_param_widget_;
+
+public:
+  InputToleranceParamPage(QWidget *parent = nullptr);
+  ~InputToleranceParamPage(){};
+
+  bool validatePage() override;
+
+signals:
+  void signSetToleranceParam(syt_msgs::msg::ClothStyle cloth_style);
+};
+
+// 9.显示所有参数
+class StyleDisplayPage : public QWizardPage {
+  Q_OBJECT
+private:
+  int cloth_type_;
+  StyleDisplayWidget *style_display_widget_;
+
+public:
+  StyleDisplayPage(QWidget *parent = nullptr, int cloth_type = 0);
+  ~StyleDisplayPage(){};
+
+  bool validatePage() override;
+
+signals:
+  void signSetFullParam(syt_msgs::msg::ClothStyle cloth_style);
+
+public slots:
+  void slotSetFullParam(syt_msgs::msg::ClothStyle cloth_style);
+};
+
+// 10.选择样式文件
+class ChooseStylePage : public QWizardPage {
+  Q_OBJECT
+private:
+  bool get_style_ = false;
+
+public:
+  ChooseStylePage(QWidget *parent = nullptr);
+  ~ChooseStylePage(){};
+
+  bool validatePage() override;
+
+signals:
+  void signGetClothStyle(QString prefix, QString style_name);
+
+public slots:
+  void slotGetClothStyleResult(bool result);
 };

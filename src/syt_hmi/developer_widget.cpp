@@ -43,179 +43,13 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
 
   // 固件更新
   setUpdateBin();
+
+  // 是否带缝纫
+  setUseSewing();
 }
 
 DeveloperWidget::~DeveloperWidget() {
   delete ui;
-}
-
-void DeveloperWidget::setParam() {
-  std::string load_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/load_machine_config.yaml";
-  cv::FileStorage load_config_fs(load_config_path, cv::FileStorage::READ);
-  int max_load_distance = 0;
-  int min_load_distance = 0;
-  load_config_fs["max_load_distance"] >> max_load_distance;
-  load_config_fs["min_load_distance"] >> min_load_distance;
-  ui->load_distance_spinbox_A->setMaximum(max_load_distance);
-  ui->load_distance_spinbox_A->setMinimum(min_load_distance);
-  ui->load_distance_spinbox_B->setMaximum(max_load_distance);
-  ui->load_distance_spinbox_B->setMinimum(min_load_distance);
-
-  int max_cloth_width = 0;
-  int min_cloth_width = 0;
-  load_config_fs["max_cloth_width"] >> max_cloth_width;
-  load_config_fs["min_cloth_width"] >> min_cloth_width;
-  ui->cloth_width_spinbox_A->setMaximum(max_cloth_width);
-  ui->cloth_width_spinbox_A->setMinimum(min_cloth_width);
-  ui->cloth_width_spinbox_B->setMaximum(max_cloth_width);
-  ui->cloth_width_spinbox_B->setMinimum(min_cloth_width);
-  load_config_fs.release();
-
-  std::string compose_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/compose_machine_config.yaml";
-  cv::FileStorage compose_config_fs(compose_config_path, cv::FileStorage::READ);
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_bottom"]["x"] >> left_bottom_init_x_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_bottom"]["y"] >> left_bottom_init_y_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_oxter"]["x"] >> left_oxter_init_x_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_oxter"]["y"] >> left_oxter_init_y_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["x"] >> left_shoulder_init_x_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["y"] >> left_shoulder_init_y_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["c"] >> left_shoulder_init_c_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["x"] >> right_shoulder_init_x_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["y"] >> right_shoulder_init_y_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["c"] >> right_shoulder_init_c_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_oxter"]["x"] >> right_oxter_init_x_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_oxter"]["y"] >> right_oxter_init_y_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_bottom"]["x"] >> right_bottom_init_x_;
-  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_bottom"]["y"] >> right_bottom_init_y_;
-
-  float compose_max_hand_x = 0;
-  float compose_min_hand_x = -120;
-  float compose_max_hand_y = 1168;
-  float compose_min_hand_y = 0;
-  float compose_max_hand_z = 0;
-  float compose_min_hand_z = -162;
-  float compose_max_hand_c = 0.35;
-  float compose_min_hand_c = -0.94;
-
-  compose_config_fs["hand_limit_position"]["x_max"] >> compose_max_hand_x;
-  compose_config_fs["hand_limit_position"]["x_min"] >> compose_min_hand_x;
-  ui->compose_hand_x_spinbox->setMaximum(compose_max_hand_x);
-  ui->compose_hand_x_spinbox->setMinimum(compose_min_hand_x);
-
-  compose_config_fs["hand_limit_position"]["y_max"] >> compose_max_hand_y;
-  compose_config_fs["hand_limit_position"]["y_min"] >> compose_min_hand_y;
-  ui->compose_hand_y_spinbox->setMaximum(compose_max_hand_y);
-  ui->compose_hand_y_spinbox->setMinimum(compose_min_hand_y);
-
-  compose_config_fs["hand_limit_position"]["z_max"] >> compose_max_hand_z;
-  compose_config_fs["hand_limit_position"]["z_min"] >> compose_min_hand_z;
-  ui->compose_hand_z_spinbox->setMaximum(compose_max_hand_z);
-  ui->compose_hand_z_spinbox->setMinimum(compose_min_hand_z);
-
-  compose_config_fs["hand_limit_position"]["c_max"] >> compose_max_hand_c;
-  compose_config_fs["hand_limit_position"]["c_min"] >> compose_min_hand_c;
-  ui->compose_hand_c_spinbox->setMaximum(compose_max_hand_c);
-  ui->compose_hand_c_spinbox->setMinimum(compose_min_hand_c);
-
-  compose_config_fs.release();
-
-  std::string sewing_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/sewing_machine_config.yaml";
-  cv::FileStorage sewing_config_fs(sewing_config_path, cv::FileStorage::READ);
-  float sewing_max_hand_x = 0;
-  float sewing_min_hand_x = -120;
-  float sewing_max_hand_y = 1168;
-  float sewing_min_hand_y = 0;
-  float sewing_max_hand_c = 0.35;
-  float sewing_min_hand_c = -0.94;
-
-  sewing_config_fs["hand_limit_position"]["x_max"] >> sewing_max_hand_x;
-  sewing_config_fs["hand_limit_position"]["x_min"] >> sewing_min_hand_x;
-  ui->sewing_hand_x_spinbox->setMaximum(sewing_max_hand_x);
-  ui->sewing_hand_x_spinbox->setMinimum(sewing_min_hand_x);
-
-  sewing_config_fs["hand_limit_position"]["y_max"] >> sewing_max_hand_y;
-  sewing_config_fs["hand_limit_position"]["y_min"] >> sewing_min_hand_y;
-  ui->sewing_hand_y_spinbox->setMaximum(sewing_max_hand_y);
-  ui->sewing_hand_y_spinbox->setMinimum(sewing_min_hand_y);
-
-  sewing_config_fs["hand_limit_position"]["c_max"] >> sewing_max_hand_c;
-  sewing_config_fs["hand_limit_position"]["c_min"] >> sewing_min_hand_c;
-  ui->sewing_hand_c_spinbox->setMaximum(sewing_max_hand_c);
-  ui->sewing_hand_c_spinbox->setMinimum(sewing_min_hand_c);
-
-  sewing_config_fs.release();
-}
-
-void DeveloperWidget::setChooseMode() {
-  // 模式选择界面
-  // ui->choose_mode_combo_box->insertItem(-1, "缝纫模式");
-  ui->choose_mode_combo_box->insertItem(-1, "单次模式");
-  ui->choose_mode_combo_box->insertItem(-1, "循环模式");
-  ui->choose_mode_combo_box->insertItem(-1, "合片模式");
-
-  void (QComboBox::*index_change_signal)(int index) = &QComboBox::currentIndexChanged;
-  connect(ui->choose_mode_combo_box, index_change_signal, [=]() {
-    if ("单次模式" == ui->choose_mode_combo_box->currentText()) {
-      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP_ONCE);
-    }
-    if ("循环模式" == ui->choose_mode_combo_box->currentText()) {
-      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP);
-    }
-    if ("合片模式" == ui->choose_mode_combo_box->currentText()) {
-      emit signChooseMode(syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH);
-    }
-  });
-}
-
-void DeveloperWidget::setUpdateBin() {
-  // 选择端口
-  ui->choose_port_combo_box->insertItem(-1, "上料机");
-  ui->choose_port_combo_box->insertItem(-1, "合片机");
-  ui->choose_port_combo_box->insertItem(-1, "缝纫机");
-
-  // 保存bin文件路径
-  connect(ui->choose_bin_btn, &QPushButton::clicked, this, [=]() {
-    update_bin_path_ = QFileDialog::getOpenFileName(this, "请选择模板路径", QDir::homePath(), "*.bin");
-    if (!update_bin_path_.isEmpty()) {
-      ui->bin_file_line_edit->setText(update_bin_path_);
-    }
-  });
-
-  connect(ui->flash_btn, &QPushButton::clicked, [=]() {
-    if (QFile::exists(update_bin_path_)) {
-      QMap<QString, QString> port_map;
-      port_map.insert("上料机", "/dev/load_machine");
-      port_map.insert("合片机", "/dev/compose_machine");
-      port_map.insert("缝纫机", "/dev/sewing_machine");
-
-      if (ui->choose_port_combo_box->currentText() == "上料机") {
-        emit signUpdateLoadMachine();
-      }
-      if (ui->choose_port_combo_box->currentText() == "合片机") {
-        emit signUpdateComposeMachine();
-      }
-      if (ui->choose_port_combo_box->currentText() == "缝纫机") {
-        emit signUpdateSewingMachine();
-      }
-
-      QThread::msleep(200);
-      for (int i = 0; i < 3; ++i) {
-        killProcesses("thanos.launch.py");
-        killProcesses("ros-args");
-      }
-
-      QString command = QString("download %1 %2").arg(port_map.value(ui->choose_port_combo_box->currentText())).arg(update_bin_path_);
-      int result      = system(command.toStdString().c_str());
-
-      if (0 == result) {
-        showMessageBox(this, SUCCESS, ui->choose_port_combo_box->currentText() + "更新成功", 1, {"确认"});
-      } else {
-        showMessageBox(this, ERROR, ui->choose_port_combo_box->currentText() + "更新失败", 1, {"确认"});
-      }
-    } else {
-      showMessageBox(this, WARN, "所选文件不存在", 1, {"确认"});
-    }
-  });
 }
 
 void DeveloperWidget::mousePressEvent(QMouseEvent *event) {
@@ -604,4 +438,183 @@ void DeveloperWidget::setSewingMachineState(syt_msgs::msg::SewingMachineState st
   ui->sewing_hand_x_line_edit->setText(QString::number(state.hand_position.x));
   ui->sewing_hand_y_line_edit->setText(QString::number(state.hand_position.y));
   ui->sewing_hand_c_line_edit->setText(QString::number(state.hand_position.c));
+}
+
+void DeveloperWidget::setParam() {
+  std::string load_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/load_machine_config.yaml";
+  cv::FileStorage load_config_fs(load_config_path, cv::FileStorage::READ);
+  int max_load_distance = 0;
+  int min_load_distance = 0;
+  load_config_fs["max_load_distance"] >> max_load_distance;
+  load_config_fs["min_load_distance"] >> min_load_distance;
+  ui->load_distance_spinbox_A->setMaximum(max_load_distance);
+  ui->load_distance_spinbox_A->setMinimum(min_load_distance);
+  ui->load_distance_spinbox_B->setMaximum(max_load_distance);
+  ui->load_distance_spinbox_B->setMinimum(min_load_distance);
+
+  int max_cloth_width = 0;
+  int min_cloth_width = 0;
+  load_config_fs["max_cloth_width"] >> max_cloth_width;
+  load_config_fs["min_cloth_width"] >> min_cloth_width;
+  ui->cloth_width_spinbox_A->setMaximum(max_cloth_width);
+  ui->cloth_width_spinbox_A->setMinimum(min_cloth_width);
+  ui->cloth_width_spinbox_B->setMaximum(max_cloth_width);
+  ui->cloth_width_spinbox_B->setMinimum(min_cloth_width);
+  load_config_fs.release();
+
+  std::string compose_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/compose_machine_config.yaml";
+  cv::FileStorage compose_config_fs(compose_config_path, cv::FileStorage::READ);
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_bottom"]["x"] >> left_bottom_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_bottom"]["y"] >> left_bottom_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_oxter"]["x"] >> left_oxter_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_oxter"]["y"] >> left_oxter_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["x"] >> left_shoulder_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["y"] >> left_shoulder_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["left_shoulder"]["c"] >> left_shoulder_init_c_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["x"] >> right_shoulder_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["y"] >> right_shoulder_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_shoulder"]["c"] >> right_shoulder_init_c_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_oxter"]["x"] >> right_oxter_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_oxter"]["y"] >> right_oxter_init_y_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_bottom"]["x"] >> right_bottom_init_x_;
+  compose_config_fs["suckers_init_position_in_compose_hand_axis"]["right_bottom"]["y"] >> right_bottom_init_y_;
+
+  float compose_max_hand_x = 0;
+  float compose_min_hand_x = -120;
+  float compose_max_hand_y = 1168;
+  float compose_min_hand_y = 0;
+  float compose_max_hand_z = 0;
+  float compose_min_hand_z = -162;
+  float compose_max_hand_c = 0.35;
+  float compose_min_hand_c = -0.94;
+
+  compose_config_fs["hand_limit_position"]["x_max"] >> compose_max_hand_x;
+  compose_config_fs["hand_limit_position"]["x_min"] >> compose_min_hand_x;
+  ui->compose_hand_x_spinbox->setMaximum(compose_max_hand_x);
+  ui->compose_hand_x_spinbox->setMinimum(compose_min_hand_x);
+
+  compose_config_fs["hand_limit_position"]["y_max"] >> compose_max_hand_y;
+  compose_config_fs["hand_limit_position"]["y_min"] >> compose_min_hand_y;
+  ui->compose_hand_y_spinbox->setMaximum(compose_max_hand_y);
+  ui->compose_hand_y_spinbox->setMinimum(compose_min_hand_y);
+
+  compose_config_fs["hand_limit_position"]["z_max"] >> compose_max_hand_z;
+  compose_config_fs["hand_limit_position"]["z_min"] >> compose_min_hand_z;
+  ui->compose_hand_z_spinbox->setMaximum(compose_max_hand_z);
+  ui->compose_hand_z_spinbox->setMinimum(compose_min_hand_z);
+
+  compose_config_fs["hand_limit_position"]["c_max"] >> compose_max_hand_c;
+  compose_config_fs["hand_limit_position"]["c_min"] >> compose_min_hand_c;
+  ui->compose_hand_c_spinbox->setMaximum(compose_max_hand_c);
+  ui->compose_hand_c_spinbox->setMinimum(compose_min_hand_c);
+
+  compose_config_fs.release();
+
+  std::string sewing_config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_robot_control/sewing_machine_config.yaml";
+  cv::FileStorage sewing_config_fs(sewing_config_path, cv::FileStorage::READ);
+  float sewing_max_hand_x = 0;
+  float sewing_min_hand_x = -120;
+  float sewing_max_hand_y = 1168;
+  float sewing_min_hand_y = 0;
+  float sewing_max_hand_c = 0.35;
+  float sewing_min_hand_c = -0.94;
+
+  sewing_config_fs["hand_limit_position"]["x_max"] >> sewing_max_hand_x;
+  sewing_config_fs["hand_limit_position"]["x_min"] >> sewing_min_hand_x;
+  ui->sewing_hand_x_spinbox->setMaximum(sewing_max_hand_x);
+  ui->sewing_hand_x_spinbox->setMinimum(sewing_min_hand_x);
+
+  sewing_config_fs["hand_limit_position"]["y_max"] >> sewing_max_hand_y;
+  sewing_config_fs["hand_limit_position"]["y_min"] >> sewing_min_hand_y;
+  ui->sewing_hand_y_spinbox->setMaximum(sewing_max_hand_y);
+  ui->sewing_hand_y_spinbox->setMinimum(sewing_min_hand_y);
+
+  sewing_config_fs["hand_limit_position"]["c_max"] >> sewing_max_hand_c;
+  sewing_config_fs["hand_limit_position"]["c_min"] >> sewing_min_hand_c;
+  ui->sewing_hand_c_spinbox->setMaximum(sewing_max_hand_c);
+  ui->sewing_hand_c_spinbox->setMinimum(sewing_min_hand_c);
+
+  sewing_config_fs.release();
+}
+
+void DeveloperWidget::setChooseMode() {
+  // 模式选择界面
+  // ui->choose_mode_combo_box->insertItem(-1, "缝纫模式");
+  ui->choose_mode_combo_box->insertItem(-1, "单次模式");
+  ui->choose_mode_combo_box->insertItem(-1, "循环模式");
+  ui->choose_mode_combo_box->insertItem(-1, "合片模式");
+
+  void (QComboBox::*index_change_signal)(int index) = &QComboBox::currentIndexChanged;
+  connect(ui->choose_mode_combo_box, index_change_signal, [=]() {
+    if ("单次模式" == ui->choose_mode_combo_box->currentText()) {
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP_ONCE);
+    }
+    if ("循环模式" == ui->choose_mode_combo_box->currentText()) {
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP);
+    }
+    if ("合片模式" == ui->choose_mode_combo_box->currentText()) {
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH);
+    }
+  });
+}
+
+void DeveloperWidget::setUpdateBin() {
+  // 选择端口
+  ui->choose_port_combo_box->insertItem(-1, "上料机");
+  ui->choose_port_combo_box->insertItem(-1, "合片机");
+  ui->choose_port_combo_box->insertItem(-1, "缝纫机");
+
+  // 保存bin文件路径
+  connect(ui->choose_bin_btn, &QPushButton::clicked, this, [=]() {
+    update_bin_path_ = QFileDialog::getOpenFileName(this, "请选择模板路径", QDir::homePath(), "*.bin");
+    if (!update_bin_path_.isEmpty()) {
+      ui->bin_file_line_edit->setText(update_bin_path_);
+    }
+  });
+
+  connect(ui->flash_btn, &QPushButton::clicked, [=]() {
+    if (QFile::exists(update_bin_path_)) {
+      QMap<QString, QString> port_map;
+      port_map.insert("上料机", "/dev/load_machine");
+      port_map.insert("合片机", "/dev/compose_machine");
+      port_map.insert("缝纫机", "/dev/sewing_machine");
+
+      if (ui->choose_port_combo_box->currentText() == "上料机") {
+        emit signUpdateLoadMachine();
+      }
+      if (ui->choose_port_combo_box->currentText() == "合片机") {
+        emit signUpdateComposeMachine();
+      }
+      if (ui->choose_port_combo_box->currentText() == "缝纫机") {
+        emit signUpdateSewingMachine();
+      }
+
+      QThread::msleep(200);
+      for (int i = 0; i < 3; ++i) {
+        killProcesses("thanos.launch.py");
+        killProcesses("ros-args");
+      }
+
+      QString command = QString("download %1 %2").arg(port_map.value(ui->choose_port_combo_box->currentText())).arg(update_bin_path_);
+      int result      = system(command.toStdString().c_str());
+
+      if (0 == result) {
+        showMessageBox(this, SUCCESS, ui->choose_port_combo_box->currentText() + "更新成功", 1, {"确认"});
+      } else {
+        showMessageBox(this, ERROR, ui->choose_port_combo_box->currentText() + "更新失败", 1, {"确认"});
+      }
+    } else {
+      showMessageBox(this, WARN, "所选文件不存在", 1, {"确认"});
+    }
+  });
+}
+
+void DeveloperWidget::setUseSewing() {
+  connect(ui->use_sewing_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled) {
+      system("ros2 param set /syt_sewing_machine_node use_sewing True");
+    } else {
+      system("ros2 param set /syt_sewing_machine_node use_sewing False");
+    }
+  });
 }

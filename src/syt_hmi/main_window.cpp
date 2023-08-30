@@ -399,10 +399,10 @@ void MainWindow::setToolBar() {
     void (MainWindow::*manual_input_param_slot)(ClothStyleDialog *parent)         = &MainWindow::slotManualInputParam;
     connect(cloth_style_dialog, manual_input_param_signal, this, manual_input_param_slot, Qt::ConnectionType::QueuedConnection);
 
-    //// 从已有文件创建
-    // void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
-    // void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromSource;
-    // connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
+    // 从已有文件创建
+    void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
+    void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromSource;
+    connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
 
     cloth_style_dialog->show();
     cloth_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -652,7 +652,7 @@ void MainWindow::settingConnection() {
 
   // 成功率统计
   connect(rclcomm_, &SytRclComm::machineIdle, [=]() {
-    this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn}, {ui->stop_btn});
+    this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->change_board_btn, ui->start_btn}, {ui->stop_btn, ui->pause_btn});
     //++success_count_;
     //++round_count_; // TODO: 增加异常次数计数，统计成功率
     // ui->processWidget->setRange(0, round_count_);
@@ -1013,6 +1013,7 @@ void MainWindow::resetFinish(bool result) {
     this->btnControl({ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn}, {ui->reset_btn, ui->pause_btn});
   } else {
     emit signUpdateLabelState("复位失败");
+    this->btnControl({ui->reset_btn}, {ui->pause_btn, ui->start_btn, ui->stop_btn, ui->add_cloth_btn, ui->change_board_btn});
     showMessageBox(this, ERROR, "复位失败", 1, {"确认"});
   }
 }
@@ -1396,7 +1397,9 @@ void MainWindow::slotSetCurrentStyleFile(QString prefix, QString file_name) {
 }
 
 void MainWindow::slotGetClothStyle(QString prefix, QString file_name) {
-  waiting_spinner_widget_->start();
+  if (sender()->metaObject()->className() != QString("CreateFromSourceWizard")) {
+    waiting_spinner_widget_->start();
+  }
   future_ = QtConcurrent::run([=] {
     rclcomm_->getClothStyle(prefix, file_name);
   });
@@ -1461,6 +1464,7 @@ void MainWindow::slotCreateFromCAD(ClothStyleDialog *parent) {
 // 自动创建
 void MainWindow::slotAutoCreateStyle(ClothStyleDialog *parent) {
   AutoCreateStyleWizard *auto_create_style_wizard = new AutoCreateStyleWizard(parent);
+
   connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this, &MainWindow::slotMoveHand);
   connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult);
 
@@ -1494,6 +1498,17 @@ void MainWindow::slotManualInputParam(ClothStyleDialog *parent) {
 // 从已有文件创建
 void MainWindow::slotCreateFromSource(ClothStyleDialog *parent) {
   CreateFromSourceWizard *create_from_source_wizard = new CreateFromSourceWizard(parent);
+
+  connect(create_from_source_wizard, &CreateFromSourceWizard::signGetClothStyle, this, &MainWindow::slotGetClothStyle);
+  disconnect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish);
+  connect(rclcomm_, &SytRclComm::signGetClothStyleFinish, create_from_source_wizard, &CreateFromSourceWizard::slotGetClothStyleResult);
+
+  connect(create_from_source_wizard, &CreateFromSourceWizard::signCreateStyle, this, &MainWindow::slotCreateStyle);
+  connect(rclcomm_, &SytRclComm::signCreateStyleFinish, create_from_source_wizard, &CreateFromSourceWizard::slotCreateStyleResult);
+
+  connect(create_from_source_wizard, &CreateFromSourceWizard::signRenameClothStyle, this, &MainWindow::slotRenameClothStyle);
+  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish, create_from_source_wizard, &CreateFromSourceWizard::slotRenameClothStyleResult);
+
   create_from_source_wizard->show();
   create_from_source_wizard->setAttribute(Qt::WA_DeleteOnClose);
 }
@@ -1510,9 +1525,9 @@ void MainWindow::slotDetectClothByAutoCreateStyle(int cloth_type) {
   });
 }
 
-void MainWindow::slotCreateStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
+void MainWindow::slotCreateStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
   future_ = QtConcurrent::run([=] {
-    rclcomm_->createStyle(mode, cloth_style_front, cloth_style_back);
+    rclcomm_->createStyle(mode, prefix, cloth_style_front, cloth_style_back);
   });
 }
 

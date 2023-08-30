@@ -58,12 +58,13 @@ private:
 private:
   void setParam();
   void setChooseMode();
-  void setUpdateBin();
   void setButtonFrame();
   void switchPage();
   void bindLoadMachine();
   void bindComposeMachine();
   void bindSewingMachine();
+  void setUpdateBin();
+  void setUseSewing();
 
 signals:
   // 模式切换

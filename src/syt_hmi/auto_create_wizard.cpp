@@ -8,6 +8,7 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   setButtonText(WizardButton::CancelButton, "取消");
   setButtonText(WizardButton::FinishButton, "完成");
   setButtonText(WizardButton::CommitButton, "提交");
+  setFixedSize(700, 600);
   setModal(true);
 
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
@@ -15,39 +16,35 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   // ----- wizard流程 -----
   // 1.移动抓手
   MoveHandPage *move_hand_and_notify_page = new MoveHandPage(parent);
-  addPage(move_hand_and_notify_page);
+  setPage(MOVE_HAND_PAGE, move_hand_and_notify_page);
 
-  // 2.1提醒放置前片
-  RemindClothPage *remind_cloth_front_page = new RemindClothPage(parent, 0);
-  addPage(remind_cloth_front_page);
-
-  // 2.2前片轮廓关键点检测
+  // 2.1前片轮廓关键点检测
   DetectClothPage *detect_cloth_front_page = new DetectClothPage(parent, 0);
-  addPage(detect_cloth_front_page);
+  setPage(DETECT_FRONT_PAGE, detect_cloth_front_page);
 
-  // 2.3手动输入前片额外参数
+  // 2.2手动输入前片额外参数
   InputExtraParamPage *input_extra_param_front_page = new InputExtraParamPage(parent, 0);
-  addPage(input_extra_param_front_page);
+  setPage(EXTRA_FRONT_PAGE, input_extra_param_front_page);
 
-  // 3.1提醒放置后片
-  RemindClothPage *remind_cloth_back_page = new RemindClothPage(parent, 1);
-  addPage(remind_cloth_back_page);
-
-  // 3.2前片轮廓关键点检测
+  // 3.1前片轮廓关键点检测
   DetectClothPage *detect_cloth_back_page = new DetectClothPage(parent, 1);
-  addPage(detect_cloth_back_page);
+  setPage(DETECT_BACK_PAGE, detect_cloth_back_page);
 
-  // 3.3手动输入后片额外参数
+  // 3.2手动输入后片额外参数
   InputExtraParamPage *input_extra_param_back_page = new InputExtraParamPage(parent, 1);
-  addPage(input_extra_param_back_page);
+  setPage(EXTRA_BACK_PAGE, input_extra_param_back_page);
 
-  // 4.调用样式服务
+  // 4.输入误差参数
+  InputToleranceParamPage *input_tolerance_param_page = new InputToleranceParamPage(parent);
+  setPage(TOLERANCE_PAGE, input_tolerance_param_page);
+
+  // 5.调用样式服务
   CreateStylePage *create_style_page = new CreateStylePage(parent);
-  addPage(create_style_page);
+  setPage(CREATE_STYLE_PAGE, create_style_page);
 
-  // 5.修改样式名
+  // 6.修改样式名
   RenameClothStylePage *rename_cloth_style_page = new RenameClothStylePage(parent);
-  addPage(rename_cloth_style_page);
+  setPage(RENAME_STYLE_PAGE, rename_cloth_style_page);
 
   //////////////////// 信号处理 ////////////////////
   // 1.移动合片抓手至安全位置
@@ -67,12 +64,15 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   connect(input_extra_param_front_page, &InputExtraParamPage::signSetExtraParam, this, &AutoCreateStyleWizard::slotSetExtraParam); // 前片
   connect(input_extra_param_back_page, &InputExtraParamPage::signSetExtraParam, this, &AutoCreateStyleWizard::slotSetExtraParam);  // 后片
 
-  // 5.调用创建样式服务
+  // 5.输入误差参数
+  connect(input_tolerance_param_page, &InputToleranceParamPage::signSetToleranceParam, this, &AutoCreateStyleWizard::slotSetToleranceParam);
+
+  // 6.调用创建样式服务
   qRegisterMetaType<syt_msgs::msg::ClothInfo>("syt_msgs::msg::ClothInfo");
   connect(create_style_page, &CreateStylePage::signCreateStyle, this, &AutoCreateStyleWizard::slotCreateStyle);
   connect(this, &AutoCreateStyleWizard::signCreateStyleResult, create_style_page, &CreateStylePage::slotCreateStyleResult);
 
-  // 6.重命名服务
+  // 7.重命名服务
   connect(create_style_page, &CreateStylePage::signSetRenameEdit, this, &AutoCreateStyleWizard::slotSetRenameEdit);
   connect(this, &AutoCreateStyleWizard::signSetRenameEdit, rename_cloth_style_page, &RenameClothStylePage::slotSetRenameEdit);
   connect(rename_cloth_style_page, &RenameClothStylePage::signRenameClothStyle, this, &AutoCreateStyleWizard::slotRenameClothStyle);
@@ -83,6 +83,40 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   connect(cancel_btn, &QPushButton::clicked, this, [=]() {
     if (!file_name_.isEmpty()) {
       QFile::remove(QString("/home/syt/style") + QDir::separator() + file_name_ + QString(".sty"));
+    }
+  });
+
+  // 设置每页按钮
+  connect(this, &QWizard::currentIdChanged, [=](int id) {
+    switch (id) {
+    case MOVE_HAND_PAGE:
+    case CREATE_STYLE_PAGE: {
+      QList<QWizard::WizardButton> button_layout;
+      button_layout << QWizard::Stretch << QWizard::NextButton << QWizard::CancelButton;
+      setButtonLayout(button_layout);
+      break;
+    }
+    case DETECT_FRONT_PAGE:
+    case EXTRA_FRONT_PAGE:
+    case DETECT_BACK_PAGE:
+    case EXTRA_BACK_PAGE: {
+      QList<QWizard::WizardButton> button_layout;
+      button_layout << QWizard::Stretch << QWizard::BackButton << QWizard::NextButton << QWizard::CancelButton;
+      setButtonLayout(button_layout);
+      break;
+    }
+    case TOLERANCE_PAGE: {
+      QList<QWizard::WizardButton> button_layout;
+      button_layout << QWizard::Stretch << QWizard::BackButton << QWizard::CommitButton << QWizard::CancelButton;
+      setButtonLayout(button_layout);
+      break;
+    }
+    case RENAME_STYLE_PAGE: {
+      QList<QWizard::WizardButton> button_layout;
+      button_layout << QWizard::Stretch << QWizard::FinishButton << QWizard::CancelButton;
+      setButtonLayout(button_layout);
+      break;
+    }
     }
   });
 }
@@ -122,20 +156,30 @@ void AutoCreateStyleWizard::slotSetExtraParam(syt_msgs::msg::ClothStyle cloth_st
   }
 }
 
-void AutoCreateStyleWizard::slotCreateStyle() {
+void AutoCreateStyleWizard::slotSetToleranceParam(syt_msgs::msg::ClothStyle cloth_style) {
+  cloth_style_front_.cloth_length_tolerance  = cloth_style.cloth_length_tolerance;
+  cloth_style_front_.bottom_length_tolerance = cloth_style.bottom_length_tolerance;
+  cloth_style_front_.oxter_length_tolerance  = cloth_style.oxter_length_tolerance;
+  cloth_style_front_.matching_level          = cloth_style.matching_level;
+  cloth_style_back_.cloth_length_tolerance   = cloth_style.cloth_length_tolerance;
+  cloth_style_back_.bottom_length_tolerance  = cloth_style.bottom_length_tolerance;
+  cloth_style_back_.oxter_length_tolerance   = cloth_style.oxter_length_tolerance;
+  cloth_style_back_.matching_level           = cloth_style.matching_level;
+}
+
+void AutoCreateStyleWizard::slotCreateStyle(QString prefix) {
   waiting_spinner_widget_->start();
   cloth_style_front_.cloth_contour = cloth_info_front_.cloth_contour;
   cloth_style_front_.keypoint_info = cloth_info_front_.keypoint_info;
   cloth_style_back_.cloth_contour  = cloth_info_back_.cloth_contour;
   cloth_style_back_.keypoint_info  = cloth_info_back_.keypoint_info;
-  emit signCreateStyle(0, cloth_style_front_, cloth_style_back_);
+  emit signCreateStyle(0, prefix, cloth_style_front_, cloth_style_back_); // 0 代表自动创建模式
 }
 
 void AutoCreateStyleWizard::slotCreateStyleResult(bool result, QString file_name) {
   waiting_spinner_widget_->stop();
   if (result) {
     file_name_ = file_name;
-    qDebug() << file_name;
   }
   emit signCreateStyleResult(result);
 }

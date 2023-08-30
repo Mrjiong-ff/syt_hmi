@@ -2,26 +2,26 @@
 
 #include "syt_msgs/msg/cloth_style.hpp"
 #include "utils/utils.h"
+
 #include <QColorDialog>
-#include <QMap>
 #include <QWidget>
 
 namespace Ui {
-class InputExtraParamWidget;
+class StyleDisplayWidget;
 }
 
-class InputExtraParamWidget : public QWidget {
+class StyleDisplayWidget : public QWidget {
   Q_OBJECT
 
 public:
-  explicit InputExtraParamWidget(QWidget *parent = nullptr);
-  ~InputExtraParamWidget();
+  explicit StyleDisplayWidget(QWidget *parent = nullptr);
+  ~StyleDisplayWidget();
 
-  void setClothType(int cloth_type);
+  void setClothStyle(syt_msgs::msg::ClothStyle cloth_style);
   syt_msgs::msg::ClothStyle getClothStyle();
 
 private:
-  Ui::InputExtraParamWidget *ui;
+  Ui::StyleDisplayWidget *ui;
 
 private slots:
   void updateColorButton();

@@ -3772,7 +3772,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="layoutWidget">
+        <widget class="QWidget" name="layoutWidget_update">
          <property name="geometry">
           <rect>
            <x>330</x>
@@ -3875,6 +3875,24 @@
            </widget>
           </item>
          </layout>
+        </widget>
+        <widget class="QCheckBox" name="use_sewing_check_box">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>180</y>
+           <width>141</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>使用缝纫机</string>
+         </property>
         </widget>
        </widget>
       </widget>

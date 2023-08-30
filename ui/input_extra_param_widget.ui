@@ -10,6 +10,11 @@
     <height>356</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>14</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -18,6 +23,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="cloth_thickness_label">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0.35~0.45mm（薄)&lt;/p&gt;&lt;p&gt;0.45~1.0mm（中）&lt;/p&gt;&lt;p&gt;大于1.0mm（厚）&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>布料厚度</string>
        </property>
@@ -31,6 +39,24 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0.35~0.45mm（薄)&lt;/p&gt;&lt;p&gt;0.45~1.0mm（中）&lt;/p&gt;&lt;p&gt;大于1.0mm（厚）&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>薄</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>中</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>厚</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -52,6 +78,51 @@
          <height>16777215</height>
         </size>
        </property>
+       <item>
+        <property name="text">
+         <string>2XS</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>XS</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>S</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>M</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>L</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>XL</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2XL</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>3XL</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4XL</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -73,6 +144,21 @@
          <height>16777215</height>
         </size>
        </property>
+       <item>
+        <property name="text">
+         <string>低弹性</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>中弹性</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>高弹性</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -94,6 +180,16 @@
          <height>16777215</height>
         </size>
        </property>
+       <item>
+        <property name="text">
+         <string>前片</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>后片</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -115,6 +211,21 @@
          <height>16777215</height>
         </size>
        </property>
+       <item>
+        <property name="text">
+         <string>低光泽</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>中光泽</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>高光泽</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -123,6 +234,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
       <widget class="QLabel" name="cloth_weight_label">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0~200克&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>裁片重量（克）</string>
        </property>
@@ -136,11 +250,14 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0~200克&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
        <property name="maximum">
-        <double>10000.000000000000000</double>
+        <double>200.000000000000000</double>
        </property>
        <property name="singleStep">
         <double>10.000000000000000</double>
@@ -179,6 +296,9 @@
          <height>35</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>红色</string>
+       </property>
        <property name="maximum">
         <number>255</number>
        </property>
@@ -192,6 +312,9 @@
          <height>35</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>绿色</string>
+       </property>
        <property name="maximum">
         <number>255</number>
        </property>
@@ -204,6 +327,9 @@
          <width>69</width>
          <height>35</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>蓝色</string>
        </property>
        <property name="maximum">
         <number>255</number>
