@@ -1,8 +1,29 @@
-//
-// Created by jerry on 23-4-28.
-//
-
 #include "utils/utils.h"
+
+QMap<QString, int> style_id_map = {
+    std::map<QString, int>::value_type("低弹性", 10),
+    std::map<QString, int>::value_type("中弹性", 11),
+    std::map<QString, int>::value_type("高弹性", 12),
+    std::map<QString, int>::value_type("低厚度", 20),
+    std::map<QString, int>::value_type("中厚度", 21),
+    std::map<QString, int>::value_type("高厚度", 22),
+    std::map<QString, int>::value_type("2XS", 30),
+    std::map<QString, int>::value_type("XS", 31),
+    std::map<QString, int>::value_type("S", 32),
+    std::map<QString, int>::value_type("M", 33),
+    std::map<QString, int>::value_type("L", 34),
+    std::map<QString, int>::value_type("XL", 35),
+    std::map<QString, int>::value_type("2XL", 36),
+    std::map<QString, int>::value_type("3XL", 37),
+    std::map<QString, int>::value_type("4XL", 38),
+    std::map<QString, int>::value_type("低光泽", 40),
+    std::map<QString, int>::value_type("中光泽", 41),
+    std::map<QString, int>::value_type("高光泽", 42),
+    std::map<QString, int>::value_type("A", 60),
+    std::map<QString, int>::value_type("B", 61),
+    std::map<QString, int>::value_type("C", 62),
+    std::map<QString, int>::value_type("D", 63),
+};
 
 QMap<int, QString> id_style_map = {
     std::map<int, QString>::value_type(10, "低弹性"),
@@ -23,6 +44,10 @@ QMap<int, QString> id_style_map = {
     std::map<int, QString>::value_type(40, "低光泽"),
     std::map<int, QString>::value_type(41, "中光泽"),
     std::map<int, QString>::value_type(42, "高光泽"),
+    std::map<int, QString>::value_type(60, "A"),
+    std::map<int, QString>::value_type(61, "B"),
+    std::map<int, QString>::value_type(62, "C"),
+    std::map<int, QString>::value_type(63, "D"),
 };
 
 int showMessageBox(QWidget *p, STATE state, QString text, int btn_num, QVector<QString> btn_text) {

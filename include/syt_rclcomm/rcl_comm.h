@@ -126,10 +126,10 @@ public:
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息
 
   // 样式相关
-  void createStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back); // 创建样式
-  void renameClothStyle(QString old_name, QString new_name);                                                           // 重命名样式
-  void setCurrentStyle(QString prefix, QString file_name);                                                             // 设置当前样式
-  void getClothStyle(QString prefix, QString file_name);                                                               // 获取当前样式
+  void createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back); // 创建样式
+  void renameClothStyle(QString old_name, QString new_name);                                                                           // 重命名样式
+  void setCurrentStyle(QString prefix, QString file_name);                                                                             // 设置当前样式
+  void getClothStyle(QString prefix, QString file_name);                                                                               // 获取当前样式
 
 protected:
   void run() override;
@@ -153,7 +153,6 @@ private:
   rclcpp::Subscription<syt_msgs::msg::SewingMachineState>::SharedPtr sewing_machine_state_subscription_;
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
   rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr load_cloth_visual_subscription_;
-  rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr composer_visual_subscription_;
   rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr log_subscription_;
   rclcpp::Subscription<syt_msgs::msg::FSMState>::SharedPtr run_state_subscription_;
 

@@ -18,6 +18,7 @@ enum STATE {
   ERROR
 };
 
+extern QMap<QString, int> style_id_map;
 extern QMap<int, QString> id_style_map;
 
 /**

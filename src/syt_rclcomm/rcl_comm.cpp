@@ -17,9 +17,6 @@ SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   // 上料机视觉显示回调
   load_cloth_visual_subscription_ = node_->create_subscription<syt_msgs::msg::LoadClothVisual>("/syt/cloth_edge_pydetect/cloth_edge_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, _1));
 
-  // TODO 合片机视觉显示回调
-  composer_visual_subscription_ = node_->create_subscription<syt_msgs::msg::LoadClothVisual>("/syt/comp/comp_visual_topic", 10, std::bind(&SytRclComm::loadClothVisualCallback, this, _1));
-
   // rosout消息回调函数
   log_subscription_ = node_->create_subscription<rcl_interfaces::msg::Log>("/rosout", 10, std::bind(&SytRclComm::logCallback, this, _1));
 
@@ -48,13 +45,9 @@ SytRclComm::~SytRclComm() {
     killProcesses("thanos.launch.py");
     killProcesses("ros-args");
   }
-
-  qDebug("shut down rclcomm.");
 }
 
 void SytRclComm::run() {
-  // executor_->spin();
-
   rclcpp::WallRate rate(50);
 
   while (rclcpp::ok()) {
@@ -106,7 +99,6 @@ void SytRclComm::otaUpdate() {
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
-    // emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
     break;
   }
 }
@@ -127,7 +119,6 @@ void SytRclComm::otaDownload() {
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
-    // emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
     break;
   }
 }
@@ -165,8 +156,7 @@ void SytRclComm::loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::S
 // OTA安装
 void SytRclComm::otaInstall() {
   rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = node_->create_client<std_srvs::srv::SetBool>("/syt/ota/install");
-  // TODO 杀死 除了 hmi 和 ota之外的全部进程
-  //    killProcesses()
+  // killProcesses() // TODO
 
   auto request  = std::make_shared<std_srvs::srv::SetBool::Request>();
   request->data = true;
@@ -372,7 +362,6 @@ void SytRclComm::changeMode(int mode) {
 }
 
 void SytRclComm::resetWholeMachine() {
-  // TODO: 整机流程
   auto request          = std::make_shared<syt_msgs::srv::WholeMachineCMD::Request>();
   request->command.data = request->command.RESET;
 
@@ -390,7 +379,6 @@ void SytRclComm::resetWholeMachine() {
 }
 
 void SytRclComm::stopWholeMachine() {
-  // TODO: 整机流程
   auto request          = std::make_shared<syt_msgs::srv::WholeMachineCMD::Request>();
   request->command.data = request->command.STOP;
 
@@ -884,9 +872,8 @@ void SytRclComm::composeMachineUnfastenSheet() {
 // 合片抓手移动
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   //// TODO: delete
-  // usleep(1000000);
-  // emit signComposeMachineMoveHandFinish(true);
-  // return;
+  //emit signComposeMachineMoveHandFinish(true);
+  //return;
 
   auto request      = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
   request->target.x = x;
@@ -977,9 +964,8 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   //// TODO: delete
-  // usleep(1000000);
-  // emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
-  // return;
+  //emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
+  //return;
 
   auto request           = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
   request->frame_id.data = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机
@@ -1002,10 +988,10 @@ void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
 
 /* ---------------------------样式相关------------------------------ */
 // 创建样式文件
-void SytRclComm::createStyle(int mode, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
+void SytRclComm::createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
   auto request               = std::make_shared<syt_msgs::srv::CreateStyle::Request>();
   request->mode.data         = mode;
-  request->prefix            = "";
+  request->prefix            = prefix.toStdString();
   request->file_name         = "";
   request->cloth_style_front = cloth_style_front;
   request->cloth_style_back  = cloth_style_back;
