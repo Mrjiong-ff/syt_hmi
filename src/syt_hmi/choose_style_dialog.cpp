@@ -22,7 +22,7 @@ ChooseStyleDialog::ChooseStyleDialog(QWidget *parent) : QDialog(parent), ui(new 
   ui->confirm_btn->setForeEnabled(false);
   ui->confirm_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  ui->icon_label->setPixmap(QPixmap(":m_icon/icon/opt.png").scaled(80, 80, Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation));
+  ui->icon_label->setPixmap(QPixmap(":m_icon/icon/style_layer.png").scaled(80, 80, Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation));
 
   style_directory_ = QString(getenv("HOME")) + QDir::separator() + "style";
   ui->style_path_line_edit->setText(style_directory_);
@@ -93,7 +93,7 @@ void ChooseStyleDialog::slotSetCurrentStyleFinish(bool result) {
 
 void ChooseStyleDialog::deleteStyleFile() {
   QString file_name = ui->style_file_list_view->model()->data(ui->style_file_list_view->currentIndex()).toString();
-  int ret = showMessageBox(this, WARN, "确认删除？", 2, {"确认", "取消"});
+  int ret           = showMessageBox(this, WARN, "确认删除？", 2, {"确认", "取消"});
 
   switch (ret) {
   case 0:

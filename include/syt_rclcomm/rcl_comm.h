@@ -1,13 +1,16 @@
 #pragma once
 #include "rcl_interfaces/msg/log.hpp"
+#include "std_msgs/msg/u_int64.hpp"
 #include "syt_msgs/msg/calib_state.hpp"
 #include "syt_msgs/msg/cloth_keypoints2f.hpp"
 #include "syt_msgs/msg/cloth_style.hpp"
 #include "syt_msgs/msg/compose_machine_state.hpp"
+#include "syt_msgs/msg/error_code.hpp"
 #include "syt_msgs/msg/fsm_flow_control_command.hpp"
 #include "syt_msgs/msg/fsm_run_mode.hpp"
 #include "syt_msgs/msg/fsm_state.hpp"
 #include "syt_msgs/msg/load_cloth_visual.hpp"
+#include "syt_msgs/msg/load_machine_state.hpp"
 #include "syt_msgs/msg/motion_planner_state.hpp"
 #include "syt_msgs/msg/sewing_machine_state.hpp"
 #include "syt_msgs/srv/compose_machine_function.hpp"
@@ -143,18 +146,24 @@ private:
   int total_size     = 0;
   QProcess *process_ = nullptr;
 
+  // 异常码提醒
+  int current_exception_level_ = 0;
+
   //////////////// ros相关 ///////////////////
   rclcpp::WallRate rate_;
   std::shared_ptr<rclcpp::Node> node_;
   std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor_;
 
   // subscription
+  rclcpp::Subscription<syt_msgs::msg::LoadMachineState>::SharedPtr load_machine_state_subscription_;
   rclcpp::Subscription<syt_msgs::msg::ComposeMachineState>::SharedPtr compose_machine_state_subscription_;
   rclcpp::Subscription<syt_msgs::msg::SewingMachineState>::SharedPtr sewing_machine_state_subscription_;
   rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr download_subscription_;
   rclcpp::Subscription<syt_msgs::msg::LoadClothVisual>::SharedPtr load_cloth_visual_subscription_;
   rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr log_subscription_;
   rclcpp::Subscription<syt_msgs::msg::FSMState>::SharedPtr run_state_subscription_;
+  rclcpp::Subscription<std_msgs::msg::UInt64>::SharedPtr run_count_subscription_;
+  rclcpp::Subscription<syt_msgs::msg::ErrorCode>::SharedPtr error_code_subscription_;
 
   // publisher
   rclcpp::Publisher<syt_msgs::msg::FSMFlowControlCommand>::SharedPtr fsm_flow_control_cmd_publisher_;
@@ -163,18 +172,24 @@ private:
 private:
   bool initAllNodes();
 
+  //void loadMachineStateCallback(const syt_msgs::msg::LoadMachineState::SharedPtr msg);
   void composeMachineStateCallback(const syt_msgs::msg::ComposeMachineState::SharedPtr msg);
   void sewingMachineStateCallback(const syt_msgs::msg::SewingMachineState::SharedPtr msg);
   void downloadCallback(const std_msgs::msg::Int32::SharedPtr msg);
   void loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg);
   void logCallback(const rcl_interfaces::msg::Log::SharedPtr msg);
   void runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg);
+  void runCountCallback(const std_msgs::msg::UInt64::SharedPtr msg);
+  void errorCodeCallback(const syt_msgs::msg::ErrorCode::SharedPtr msg);
 
 signals:
   void signResetFinish(bool);
   void signStartFinish(bool);
   void signPauseFinish(bool);
   void signStopFinish(bool);
+
+  void signRunCount(uint64_t); // 总运行次数
+  void signErrorLevel(int);    // 异常等级信号
 
   void updateComposeMachineState(syt_msgs::msg::ComposeMachineState state);
   void updateSewingMachineState(syt_msgs::msg::SewingMachineState state);

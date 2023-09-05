@@ -8,6 +8,7 @@ SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   run_mode_.mode = syt_msgs::msg::FSMRunMode::LOOP_ONCE;
 
   // 设备状态订阅
+  // load_machine_state_subscription_    = node_->create_subscription<syt_msgs::msg::LoadMachineState>("/syt/robot_control/load_machine/state", 10, std::bind(&SytRclComm::loadMachineStateCallback, this, _1));
   compose_machine_state_subscription_ = node_->create_subscription<syt_msgs::msg::ComposeMachineState>("/syt/robot_control/compose_machine/state", 10, std::bind(&SytRclComm::composeMachineStateCallback, this, _1));
   sewing_machine_state_subscription_  = node_->create_subscription<syt_msgs::msg::SewingMachineState>("/syt/robot_control/sewing_machine/state", 10, std::bind(&SytRclComm::sewingMachineStateCallback, this, _1));
 
@@ -22,6 +23,12 @@ SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
 
   // 运行状态回调函数
   run_state_subscription_ = node_->create_subscription<syt_msgs::msg::FSMState>("/syt/motion_planner/run_state", 10, std::bind(&SytRclComm::runStateCallback, this, _1));
+
+  // 计数回调
+  run_count_subscription_ = node_->create_subscription<std_msgs::msg::UInt64>("/syt/motion_planner/run_count", 10, std::bind(&SytRclComm::runCountCallback, this, _1));
+
+  // 错误码回调
+  error_code_subscription_ = node_->create_subscription<syt_msgs::msg::ErrorCode>("/syt/diagnostic_system/exception_info", 10, std::bind(&SytRclComm::errorCodeCallback, this, _1));
 
   // 开始停止复位
   fsm_flow_control_cmd_publisher_ = node_->create_publisher<syt_msgs::msg::FSMFlowControlCommand>("/syt/robot_control/flow_control_cmd", 10);
@@ -99,6 +106,7 @@ void SytRclComm::otaUpdate() {
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
+    emit waitUpdateResultSuccess(false, QString(""));
     break;
   }
 }
@@ -119,9 +127,14 @@ void SytRclComm::otaDownload() {
   case CALL_TIMEOUT:
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
+    emit downloadRes(false, QString(""));
     break;
   }
 }
+
+// void SytRclComm::loadMachineStateCallback(const syt_msgs::msg::LoadMachineState::SharedPtr msg) {
+//;
+//}
 
 void SytRclComm::composeMachineStateCallback(const syt_msgs::msg::ComposeMachineState::SharedPtr msg) {
   emit updateComposeMachineState(*msg);
@@ -216,13 +229,12 @@ void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
 
 // 监听全流程运行状态
 void SytRclComm::runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg) {
-  // rate_.sleep();
   switch (msg->state_code) {
   case syt_msgs::msg::FSMState::IDLE:
     if (start_flag_) {
       if (last_state_ != syt_msgs::msg::FSMState::IDLE) {
         emit finishOneRound();
-        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE) {
+        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE || run_mode_.mode == syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH) {
           emit machineIdle();
         }
       }
@@ -236,6 +248,20 @@ void SytRclComm::runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg) 
     break;
   }
   last_state_ = msg->state_code;
+}
+
+// 监听运行次数
+void SytRclComm::runCountCallback(const std_msgs::msg::UInt64::SharedPtr msg) {
+  uint64_t count = msg->data;
+  emit signRunCount(count);
+}
+
+// 监听错误码
+void SytRclComm::errorCodeCallback(const syt_msgs::msg::ErrorCode::SharedPtr msg) {
+  uint32_t error_code = msg->data;
+  int exception_level = (error_code & 0x00f00000) >> 20;
+  emit signErrorLevel(exception_level);
+  current_exception_level_ = exception_level;
 }
 
 template <class T>
@@ -872,8 +898,8 @@ void SytRclComm::composeMachineUnfastenSheet() {
 // 合片抓手移动
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   //// TODO: delete
-  //emit signComposeMachineMoveHandFinish(true);
-  //return;
+  // emit signComposeMachineMoveHandFinish(true);
+  // return;
 
   auto request      = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
   request->target.x = x;
@@ -964,8 +990,8 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   //// TODO: delete
-  //emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
-  //return;
+  // emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
+  // return;
 
   auto request           = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
   request->frame_id.data = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机
