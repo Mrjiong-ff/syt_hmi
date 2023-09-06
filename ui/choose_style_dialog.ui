@@ -66,6 +66,16 @@
        <property name="text">
         <string>确认</string>
        </property>
+       <property name="icon">
+        <iconset resource="../resource/hmi.qrc">
+         <normaloff>:/m_icon/icon/accept.svg</normaloff>:/m_icon/icon/accept.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item row="0" column="1">
@@ -91,6 +101,16 @@
        </property>
        <property name="text">
         <string>返回</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resource/hmi.qrc">
+         <normaloff>:/m_icon/icon/cancel.svg</normaloff>:/m_icon/icon/cancel.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -142,6 +162,8 @@
    <header>syt_btn/waterzoombutton.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resource/hmi.qrc"/>
+ </resources>
  <connections/>
 </ui>

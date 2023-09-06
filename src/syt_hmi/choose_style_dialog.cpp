@@ -85,6 +85,7 @@ void ChooseStyleDialog::slotSetStylePath() {
 void ChooseStyleDialog::slotSetCurrentStyleFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
+    emit signSetCurrentStyleName(ui->style_file_list_view->model()->data(ui->style_file_list_view->currentIndex()).toString());
     this->accept();
   } else {
     showMessageBox(this, WARN, "设置样式失败！", 1, {"确认"});

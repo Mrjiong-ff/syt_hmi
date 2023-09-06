@@ -160,6 +160,7 @@ private slots:
   void slotSetCurrentStyleFile(QString prefix, QString file_name);
   void slotGetClothStyle(QString prefix, QString file_name);
   void slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
+  void slotSetCurrentStyleName(QString file_name);
 
   ////////////////////////// 创建衣服样式槽函数 //////////////////////////
   void slotCreateFromCAD(ClothStyleDialog *parent);

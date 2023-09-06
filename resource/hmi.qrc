@@ -13,10 +13,15 @@
 
     <qresource prefix="m_icon">
         <file>icon/about.svg</file>
+        <file>icon/accept.svg</file>
         <file>icon/add_cloth.svg</file>
+        <file>icon/auto_create.svg</file>
+        <file>icon/cad_style.svg</file>
         <file>icon/calibration.svg</file>
+        <file>icon/cancel.svg</file>
         <file>icon/clear.svg</file>
         <file>icon/close.svg</file>
+        <file>icon/compose.svg</file>
         <file>icon/developer.svg</file>
         <file>icon/error.svg</file>
         <file>icon/filter.svg</file>
@@ -26,6 +31,7 @@
         <file>icon/lock.svg</file>
         <file>icon/locking.png</file>
         <file>icon/login.png</file>
+        <file>icon/manual_create.svg</file>
         <file>icon/minimize.svg</file>
         <file>icon/off_screen.svg</file>
         <file>icon/pause.svg</file>
@@ -35,6 +41,8 @@
         <file>icon/reset.svg</file>
         <file>icon/selection.svg</file>
         <file>icon/setting.svg</file>
+        <file>icon/sewing.svg</file>
+        <file>icon/source_create.svg</file>
         <file>icon/start.svg</file>
         <file>icon/stop.svg</file>
         <file>icon/style.svg</file>

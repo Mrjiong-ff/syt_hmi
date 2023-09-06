@@ -14,39 +14,7 @@
    <string>HeadEyeDialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>472</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="0" column="1">
-    <widget class="WinMinButton" name="minBtn">
-     <property name="minimumSize">
-      <size>
-       <width>40</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>40</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
     <widget class="WinCloseButton" name="closeBtn">
      <property name="minimumSize">
       <size>
@@ -65,7 +33,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
+   <item row="1" column="0" colspan="2">
     <layout class="QGridLayout" name="gridLayout">
      <property name="horizontalSpacing">
       <number>18</number>
@@ -91,6 +59,16 @@
        <property name="text">
         <string>启动合片台标定</string>
        </property>
+       <property name="icon">
+        <iconset resource="../resource/hmi.qrc">
+         <normaloff>:/m_icon/icon/compose.svg</normaloff>:/m_icon/icon/compose.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item row="0" column="1">
@@ -111,9 +89,32 @@
        <property name="text">
         <string>启动缝纫台标定</string>
        </property>
+       <property name="icon">
+        <iconset resource="../resource/hmi.qrc">
+         <normaloff>:/m_icon/icon/sewing.svg</normaloff>:/m_icon/icon/sewing.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="0" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>472</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -124,16 +125,13 @@
    <header>syt_btn/winclosebutton.h</header>
   </customwidget>
   <customwidget>
-   <class>WinMinButton</class>
-   <extends>QPushButton</extends>
-   <header>syt_btn/winminbutton.h</header>
-  </customwidget>
-  <customwidget>
    <class>InteractiveButtonBase</class>
    <extends>QPushButton</extends>
    <header>syt_btn/interactivebuttonbase.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resource/hmi.qrc"/>
+ </resources>
  <connections/>
 </ui>

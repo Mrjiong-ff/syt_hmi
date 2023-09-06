@@ -32,6 +32,7 @@ public:
 
 signals:
   void signSetCurrentStyle(QString prefix, QString file_name);
+  void signSetCurrentStyleName(QString file_name);
 
 public slots:
   void slotSetStylePath();

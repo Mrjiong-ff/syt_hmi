@@ -260,12 +260,12 @@ void MainWindow::initWidget() {
   ui->centralwidget->setMouseTracking(true);                   // 注意：mainwindow及其之类都要设置mouse track，不然不生效
   ui->sytMainTitleWidget->installEventFilter(this);            // 事件过滤
   ui->running_state_label->setText(QString("请选择样式文件")); // 初始标题
-  // setMutuallyLight(GREEN);                                     // 初始状态下，亮绿灯
-  setWindowFlags(Qt::FramelessWindowHint); // 隐藏默认标题栏
+  setWindowFlags(Qt::FramelessWindowHint);                     // 隐藏默认标题栏
   setWindowIcon(QIcon(":m_logo/logo/bg_logo.png"));
+  // setMutuallyLight(GREEN);                                // 初始状态下，亮绿灯
 
   // 初始状态下按钮状态
-  this->btnControl({ui->reset_btn}, {ui->start_btn, ui->pause_btn, ui->stop_btn, ui->add_cloth_btn});
+  this->btnControl({ui->reset_btn, ui->choose_style_btn}, {ui->start_btn, ui->pause_btn, ui->stop_btn, ui->add_cloth_btn});
 
   // 旋转条初始化
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
@@ -369,6 +369,8 @@ void MainWindow::setToolBar() {
   connect(ui->head_eye_calibration_btn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
   connect(ui->create_style_btn, &QPushButton::clicked, this, &MainWindow::slotStartClothStyleWindow);
   connect(ui->lock_screen_btn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
+  // TODO:delete
+  ui->help_btn->hide();
   // connect(ui->help_btn, &QPushButton::clicked, [=] {
   //// TODO: 帮助文档
   // showMessageBox(this, ERROR, "", 1, {"返回"});
@@ -522,6 +524,7 @@ void MainWindow::setBaseComponet() {
   menu->addAction(update_act);
   menu->addAction(about_act);
   ui->menu_btn->setMenu(menu);
+  ui->menu_btn->hide(); // TODO:delete
 
   // 标题栏右键菜单
   ui->sytMainTitleWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -635,20 +638,21 @@ void MainWindow::settingConnection() {
   connect(rclcomm_, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow);  // ota停止
   connect(rclcomm_, &SytRclComm::installRes, this, &MainWindow::otaInstallSuccess);           // ota安装
   connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow);                 // rosout回调消息
-  connect(rclcomm_, &SytRclComm::signErrorLevel, [=](int level) {
-    // switch (level) {
-    // case 0:
-    // case 1:
-    // setMutuallyLight(GREEN);
-    // break;
-    // case 2:
-    // setMutuallyLight(YELLOW);
-    // break;
-    // case 3:
-    // setMutuallyLight(RED);
-    // break;
-    //};
-  });
+  // connect(rclcomm_, &SytRclComm::signErrorLevel, [=](int level) {
+  //  switch (level) {
+  //  case 0:
+  //  case 1:
+  //  setMutuallyLight(GREEN);
+  //  break;
+  //  case 2:
+  //  setMutuallyLight(YELLOW);
+  //  break;
+  //  case 3:
+  //  setMutuallyLight(RED);
+  //  break;
+  // };
+  //});
+
   // 产量统计
   connect(rclcomm_, &SytRclComm::signRunCount, [=](uint64_t count) {
     ui->progress_bar_3->setProgressBar(count, 400);
@@ -1369,6 +1373,8 @@ void MainWindow::slotChooseStyleFile() {
   connect(this, SIGNAL(signGetClothStyle(QString, QString)), this, SLOT(slotGetClothStyle(QString, QString)));
   disconnect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish);
   connect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish);
+  disconnect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyleName, this, &MainWindow::slotSetCurrentStyleName);
+  connect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyleName, this, &MainWindow::slotSetCurrentStyleName);
 
   choose_style_dialog->show();
   choose_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -1377,8 +1383,7 @@ void MainWindow::slotChooseStyleFile() {
 void MainWindow::slotSetCurrentStyleFile(QString prefix, QString file_name) {
   style_file_prefix_ = prefix;
   style_file_name_   = file_name;
-  ui->choose_style_line_edit->setText(file_name);
-  future_ = QtConcurrent::run([=] {
+  future_            = QtConcurrent::run([=] {
     rclcomm_->setCurrentStyle(prefix, file_name);
   });
 }
@@ -1397,68 +1402,62 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     cloth_style_front_ = cloth_style_front;
     cloth_style_back_  = cloth_style_back;
 
-    auto rotatePoints = [=](qreal x, qreal y, QPointF center, qreal angle_radius) -> QPointF {
-      qreal x_offset  = x - center.x();
-      qreal y_offset  = y - center.y();
+    auto rotatePoints = [=](QPointF point, QPointF center, qreal angle_radius) -> QPointF {
+      qreal x_offset  = point.x() - center.x();
+      qreal y_offset  = point.y() - center.y();
       qreal x_rotated = center.x() + x_offset * qCos(angle_radius) - y_offset * qSin(angle_radius);
       qreal y_rotated = center.y() + x_offset * qSin(angle_radius) + y_offset * qCos(angle_radius);
       return QPointF(x_rotated, y_rotated);
     };
 
-    QVector<QPointF> front_points, back_points;
+    // 旋转端点
+    QPointF front_anchor = QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y);
+    QPointF back_anchor  = QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y);
+
+    // 旋转角度
+    qreal front_angle = -atan2(cloth_style_front.keypoint_info.right_bottom.y - cloth_style_front.keypoint_info.left_bottom.y, cloth_style_front.keypoint_info.right_bottom.x - cloth_style_front.keypoint_info.left_bottom.x) + PI;
+    qreal back_angle  = -atan2(cloth_style_back.keypoint_info.right_bottom.y - cloth_style_back.keypoint_info.left_bottom.y, cloth_style_back.keypoint_info.right_bottom.x - cloth_style_back.keypoint_info.left_bottom.x) + PI;
+
+    QVector<QPointF> front_points;
     for (int i = 0; i < cloth_style_front.cloth_contour.points.size(); ++i) {
-      front_points.push_back(QPointF(cloth_style_front.cloth_contour.points.at(i).x, cloth_style_front.cloth_contour.points.at(i).y));
+      front_points.push_back(rotatePoints(QPointF(cloth_style_front.cloth_contour.points.at(i).x, cloth_style_front.cloth_contour.points.at(i).y), front_anchor, front_angle));
     }
 
+    QVector<QPointF> back_points;
     for (int i = 0; i < cloth_style_back.cloth_contour.points.size(); ++i) {
-      back_points.push_back(QPointF(cloth_style_back.cloth_contour.points.at(i).x, cloth_style_back.cloth_contour.points.at(i).y));
+      back_points.push_back(rotatePoints(QPointF(cloth_style_back.cloth_contour.points.at(i).x, cloth_style_back.cloth_contour.points.at(i).y), back_anchor, back_angle));
     }
+
+    QMap<QString, QPointF> front_keypoints;
+    front_keypoints["left_bottom"]    = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y), front_anchor, front_angle);
+    front_keypoints["left_oxter"]     = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_oxter.x, cloth_style_front.keypoint_info.left_oxter.y), front_anchor, front_angle);
+    front_keypoints["left_shoulder"]  = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_shoulder.x, cloth_style_front.keypoint_info.left_shoulder.y), front_anchor, front_angle);
+    front_keypoints["left_collar"]    = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_collar.x, cloth_style_front.keypoint_info.left_collar.y), front_anchor, front_angle);
+    front_keypoints["right_collar"]   = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_collar.x, cloth_style_front.keypoint_info.right_collar.y), front_anchor, front_angle);
+    front_keypoints["right_shoulder"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_shoulder.x, cloth_style_front.keypoint_info.right_shoulder.y), front_anchor, front_angle);
+    front_keypoints["right_oxter"]    = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_oxter.x, cloth_style_front.keypoint_info.right_oxter.y), front_anchor, front_angle);
+    front_keypoints["right_bottom"]   = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_bottom.x, cloth_style_front.keypoint_info.right_bottom.y), front_anchor, front_angle);
+
+    QMap<QString, QPointF> back_keypoints;
+    back_keypoints["left_bottom"]    = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_bottom.x, cloth_style_back.keypoint_info.left_bottom.y), back_anchor, back_angle);
+    back_keypoints["left_oxter"]     = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_oxter.x, cloth_style_back.keypoint_info.left_oxter.y), back_anchor, back_angle);
+    back_keypoints["left_shoulder"]  = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_shoulder.x, cloth_style_back.keypoint_info.left_shoulder.y), back_anchor, back_angle);
+    back_keypoints["left_collar"]    = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_collar.x, cloth_style_back.keypoint_info.left_collar.y), back_anchor, back_angle);
+    back_keypoints["right_collar"]   = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_collar.x, cloth_style_back.keypoint_info.right_collar.y), back_anchor, back_angle);
+    back_keypoints["right_shoulder"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_shoulder.x, cloth_style_back.keypoint_info.right_shoulder.y), back_anchor, back_angle);
+    back_keypoints["right_oxter"]    = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_oxter.x, cloth_style_back.keypoint_info.right_oxter.y), back_anchor, back_angle);
+    back_keypoints["right_bottom"]   = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_bottom.x, cloth_style_back.keypoint_info.right_bottom.y), back_anchor, back_angle);
 
     // 预览图
-    QImage style_image(2 * (qMax(cloth_style_front.bottom_length, cloth_style_back.bottom_length) + 200), qMax(cloth_style_front.cloth_length, cloth_style_back.cloth_length) + 200, QImage::Format_RGB32);
+    QImage style_image(2 * (qMax(cloth_style_front.bottom_length, cloth_style_back.bottom_length) + 600), qMax(cloth_style_front.cloth_length, cloth_style_back.cloth_length) + 400, QImage::Format_RGB32);
     style_image.fill(Qt::white);
     int width_offset_front = style_image.width() / 4;
     int width_offset_back  = style_image.width() / 2 + width_offset_front;
-    int height_offset      = style_image.height() / 2;
-
-    // 计算点旋转角度
-    QLineF front_line(QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y),
-                      QPointF(cloth_style_front.keypoint_info.right_bottom.x, cloth_style_front.keypoint_info.right_bottom.y));
-    qreal front_angle = qDegreesToRadians(-front_line.angle());
-
-    QLineF back_line(QPointF(cloth_style_back.keypoint_info.left_bottom.x, cloth_style_back.keypoint_info.left_bottom.y),
-                     QPointF(cloth_style_back.keypoint_info.right_bottom.x, cloth_style_back.keypoint_info.right_bottom.y));
-    qreal back_angle = qDegreesToRadians(-back_line.angle());
-
-    // 计算点旋转中心
-    QPointF front_anchor((cloth_style_front.keypoint_info.left_oxter.x + cloth_style_front.keypoint_info.right_oxter.x) / 2 + width_offset_front,
-                         (cloth_style_front.keypoint_info.left_oxter.y + cloth_style_front.keypoint_info.right_oxter.y) / 2 + height_offset);
-    QPointF back_anchor((cloth_style_back.keypoint_info.left_oxter.x + cloth_style_back.keypoint_info.right_oxter.x) / 2 + width_offset_back,
-                        (cloth_style_back.keypoint_info.left_oxter.y + cloth_style_back.keypoint_info.right_oxter.y) / 2 + height_offset);
-    // QPointF front_anchor(cloth_style_front.keypoint_info.left_oxter.x + width_offset_front, cloth_style_front.keypoint_info.left_oxter.y + height_offset);
-    // QPointF back_anchor(cloth_style_back.keypoint_info.left_oxter.x + width_offset_back, cloth_style_back.keypoint_info.left_oxter.y + height_offset);
+    int height_offset      = qMax(cloth_style_front.cloth_length, cloth_style_back.cloth_length) + qMax(cloth_style_front.bottom_length, cloth_style_back.bottom_length) / 2 + 100;
 
     // 画笔对象
     QPainter painter(&style_image);
     painter.setRenderHint(QPainter::Antialiasing);
-
-    // 提取轮廓线
-    QVector<QPointF> front_contour, back_contour;
-    for (int i = 0; i < cloth_style_front.cloth_contour.points.size(); ++i) {
-      front_contour.push_back(rotatePoints(cloth_style_front.cloth_contour.points.at(i).x + width_offset_front, cloth_style_front.cloth_contour.points.at(i).y + height_offset, front_anchor, front_angle));
-    }
-
-    for (int i = 0; i < cloth_style_back.cloth_contour.points.size(); ++i) {
-      back_contour.push_back(rotatePoints(cloth_style_back.cloth_contour.points.at(i).x + width_offset_back, cloth_style_back.cloth_contour.points.at(i).y + height_offset, back_anchor, back_angle));
-    }
-
-    // 绘制轮廓线
-    QPen line_pen = painter.pen();
-    line_pen.setWidth(3);
-    line_pen.setColor(Qt::black);
-    painter.setPen(line_pen);
-    painter.drawPolyline(front_contour.data(), front_contour.size());
-    painter.drawPolyline(back_contour.data(), back_contour.size());
 
     // 裁片颜色以填充图像
     QColor front_color, back_color;
@@ -1467,6 +1466,21 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
 
     front_color = QColor((front_color_value & 0xff0000) >> 16, (front_color_value & 0xff00) >> 8, (front_color_value & 0xff));
     back_color  = QColor((back_color_value & 0xff0000) >> 16, (back_color_value & 0xff00) >> 8, (back_color_value & 0xff));
+
+    // 提取轮廓线
+    QVector<QPointF> front_contour, back_contour;
+    for (int i = 0; i < front_points.size(); ++i) {
+      front_contour.push_back(front_points.at(i) + QPointF(width_offset_front, height_offset));
+    }
+
+    for (int i = 0; i < back_points.size(); ++i) {
+      back_contour.push_back(back_points.at(i) + QPointF(width_offset_back, height_offset));
+    }
+
+    // 绘制轮廓线
+    painter.setPen(QPen(Qt::black, 3));
+    painter.drawPolyline(front_contour.data(), front_contour.size());
+    painter.drawPolyline(back_contour.data(), back_contour.size());
 
     // 设置绘制路径
     QPainterPath front_path, back_path;
@@ -1480,24 +1494,85 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     painter.drawPath(back_path);
 
     // 绘制关键点
-    auto draw_keypoints = [&](syt_msgs::msg::ClothStyle cloth_style, int widht_offset, int height_offset, QPointF center, qreal angle_radius) {
-      painter.drawEllipse(rotatePoints(cloth_style.keypoint_info.left_bottom.x + widht_offset, cloth_style.keypoint_info.left_bottom.y + height_offset, center, angle_radius), 5, 5);
-      painter.drawEllipse(rotatePoints(cloth_style.keypoint_info.left_oxter.x + widht_offset, cloth_style.keypoint_info.left_oxter.y + height_offset, center, angle_radius), 5, 5);
-      painter.drawEllipse(rotatePoints(cloth_style.keypoint_info.left_shoulder.x + widht_offset, cloth_style.keypoint_info.left_shoulder.y + height_offset, center, angle_radius), 5, 5);
-      painter.drawEllipse(rotatePoints(cloth_style.keypoint_info.left_collar.x + widht_offset, cloth_style.keypoint_info.left_collar.y + height_offset, center, angle_radius), 5, 5);
-      painter.drawEllipse(rotatePoints(cloth_style.keypoint_info.right_collar.x + widht_offset, cloth_style.keypoint_info.right_collar.y + height_offset, center, angle_radius), 5, 5);
-      painter.drawEllipse(rotatePoints(cloth_style.keypoint_info.right_shoulder.x + widht_offset, cloth_style.keypoint_info.right_shoulder.y + height_offset, center, angle_radius), 5, 5);
-      painter.drawEllipse(rotatePoints(cloth_style.keypoint_info.right_oxter.x + widht_offset, cloth_style.keypoint_info.right_oxter.y + height_offset, center, angle_radius), 5, 5);
-      painter.drawEllipse(rotatePoints(cloth_style.keypoint_info.right_bottom.x + widht_offset, cloth_style.keypoint_info.right_bottom.y + height_offset, center, angle_radius), 5, 5);
+    auto draw_keypoints = [&](QMap<QString, QPointF> keypoints, int w_offset, int h_offset, QPointF center, qreal angle_radius) {
+      qreal radius = 8;
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_bottom"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_oxter"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_shoulder"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_collar"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["right_collar"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["right_shoulder"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["right_oxter"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["right_bottom"], radius, radius);
     };
 
     // 黑色点画关键点
-    QPen point_pen = painter.pen();
-    point_pen.setWidth(10);
-    point_pen.setColor(Qt::black);
-    painter.setPen(point_pen);
-    draw_keypoints(cloth_style_front, width_offset_front, height_offset, front_anchor, front_angle);
-    draw_keypoints(cloth_style_back, width_offset_back, height_offset, back_anchor, back_angle);
+    painter.setPen(QPen(Qt::black, 3));
+    painter.setBrush(Qt::white);
+    draw_keypoints(front_keypoints, width_offset_front, height_offset, front_anchor, front_angle);
+    draw_keypoints(back_keypoints, width_offset_back, height_offset, back_anchor, back_angle);
+
+    // 绘制刻度
+    auto drawLength = [&](QPointF begin, QPointF end, float length, bool invert_text = false) {
+      QLineF line(begin, end);
+      QVector2D direction_vec = QVector2D(end.x() - begin.x(), end.y() - begin.y()).normalized();
+      QVector2D norm_vec(direction_vec.y(), -direction_vec.x());
+      int edge_length           = 40;
+      QPointF edge_begin_1      = QPointF(begin.x() + norm_vec.x() * 15, begin.y() + norm_vec.y() * 15);
+      QPointF edge_begin_2      = QPointF(edge_begin_1.x() + norm_vec.x() * edge_length, edge_begin_1.y() + norm_vec.y() * edge_length);
+      QPointF edge_end_1        = QPointF(end.x() + norm_vec.x() * 15, end.y() + norm_vec.y() * 15);
+      QPointF edge_end_2        = QPointF(edge_end_1.x() + norm_vec.x() * edge_length, edge_end_1.y() + norm_vec.y() * edge_length);
+      QPointF edge_begin_center = (edge_begin_1 + edge_begin_2) / 2;
+      QPointF edge_end_center   = (edge_end_1 + edge_end_2) / 2;
+      QPointF edge_center       = (edge_begin_center + edge_end_center) / 2;
+
+      // 保存当前画笔状态
+      painter.save();
+
+      // 背景色取反
+      painter.setCompositionMode(QPainter::RasterOp_SourceAndNotDestination);
+
+      // 绘制刻度线
+      painter.setPen(QPen(Qt::white, 3));
+      painter.drawLine(edge_begin_1, edge_begin_2);
+      painter.drawLine(edge_end_1, edge_end_2);
+      painter.drawLine(edge_begin_center, edge_end_center);
+
+      // 绘制文本
+      QFont font;
+      font.setPointSize(20);
+      font.setBold(true);
+      painter.setFont(font);
+
+      QString text        = QString("%1").arg(length);
+      qreal text_width    = painter.fontMetrics().width(text);
+      qreal text_height   = painter.fontMetrics().height();
+      QPointF text_center = QPointF(edge_center.x() + norm_vec.x() * 30, edge_center.y() + norm_vec.y() * 30);
+      qreal angle         = atan2(direction_vec.y(), direction_vec.x());
+      if (invert_text) {
+        angle += PI;
+      }
+
+      painter.translate(text_center);
+      painter.rotate(qRadiansToDegrees(angle));
+      painter.drawText(-text_width / 2, text_height / 2, text);
+      painter.resetMatrix();
+      painter.restore();
+    };
+
+    // 前片
+    drawLength(QPointF(width_offset_front, height_offset) + front_keypoints["left_bottom"], QPointF(width_offset_front, height_offset) + front_keypoints["right_bottom"], cloth_style_front.bottom_length, true);
+    drawLength(QPointF(width_offset_front, height_offset) + front_keypoints["right_bottom"], QPointF(width_offset_front, height_offset) + front_keypoints["right_oxter"], cloth_style_front.side_length);
+    drawLength(QPointF(width_offset_front, height_offset) + front_keypoints["right_shoulder"], QPointF(width_offset_front, height_offset) + front_keypoints["right_collar"], cloth_style_front.shoulder_length);
+    drawLength(QPointF(width_offset_front, height_offset) + front_keypoints["right_oxter"], QPointF(width_offset_front, height_offset) + front_keypoints["left_oxter"], cloth_style_front.oxter_length);
+    drawLength(QPointF(width_offset_front, height_offset) + QPointF(front_keypoints["left_bottom"].x(), front_keypoints["left_collar"].y()), QPointF(width_offset_front, height_offset) + front_keypoints["left_bottom"], cloth_style_front.cloth_length, true);
+
+    // 后片
+    drawLength(QPointF(width_offset_back, height_offset) + back_keypoints["left_bottom"], QPointF(width_offset_back, height_offset) + back_keypoints["right_bottom"], cloth_style_back.bottom_length, true);
+    drawLength(QPointF(width_offset_back, height_offset) + back_keypoints["right_bottom"], QPointF(width_offset_back, height_offset) + back_keypoints["right_oxter"], cloth_style_back.side_length);
+    drawLength(QPointF(width_offset_back, height_offset) + back_keypoints["right_shoulder"], QPointF(width_offset_back, height_offset) + back_keypoints["right_collar"], cloth_style_back.shoulder_length);
+    drawLength(QPointF(width_offset_back, height_offset) + back_keypoints["right_oxter"], QPointF(width_offset_back, height_offset) + back_keypoints["left_oxter"], cloth_style_back.oxter_length);
+    drawLength(QPointF(width_offset_back, height_offset) + QPointF(back_keypoints["left_bottom"].x(), back_keypoints["left_collar"].y()), QPointF(width_offset_back, height_offset) + back_keypoints["left_bottom"], cloth_style_back.cloth_length, true);
 
     style_scene_->clear();
     image_item_ = new ImageItem(style_image);
@@ -1553,6 +1628,10 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
   } else {
     showMessageBox(this, WARN, "获取样式信息失败", 1, {"确认"});
   }
+}
+
+void MainWindow::slotSetCurrentStyleName(QString file_name) {
+  ui->choose_style_line_edit->setText(file_name);
 }
 
 ////////////////////////// 创建衣服样式槽函数 //////////////////////////
