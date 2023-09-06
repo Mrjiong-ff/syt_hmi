@@ -899,6 +899,9 @@
               <height>300</height>
              </size>
             </property>
+            <property name="mouseTracking">
+             <bool>true</bool>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -1095,8 +1098,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1416</width>
-             <height>709</height>
+             <width>644</width>
+             <height>320</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -1469,8 +1472,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1416</width>
-             <height>709</height>
+             <width>684</width>
+             <height>168</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1499,8 +1502,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1416</width>
-             <height>709</height>
+             <width>138</width>
+             <height>220</height>
             </rect>
            </property>
            <property name="font">

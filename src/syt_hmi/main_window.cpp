@@ -86,6 +86,9 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
   switch (event->button()) {
   case Qt::LeftButton:
     is_mouse_left_press_down_ = true;
+    if (ui->style_graphics_view->underMouse()) {
+      is_mouse_left_press_down_ = false;
+    }
 
     if (dir_ != NONE) {
       this->mouseGrabber(); // 返回当前抓取鼠标输入的窗口
@@ -264,6 +267,9 @@ void MainWindow::initWidget() {
   setWindowIcon(QIcon(":m_logo/logo/bg_logo.png"));
   // setMutuallyLight(GREEN);                                // 初始状态下，亮绿灯
 
+  // 设置预览界面鼠标不穿透
+  ui->style_graphics_view->setAttribute(Qt::WA_AlwaysStackOnTop, true);
+
   // 初始状态下按钮状态
   this->btnControl({ui->reset_btn, ui->choose_style_btn}, {ui->start_btn, ui->pause_btn, ui->stop_btn, ui->add_cloth_btn});
 
@@ -284,10 +290,10 @@ void MainWindow::initWidget() {
 void MainWindow::setStatisticComponent() {
   ui->progress_bar_1->setLabel(QString("B区余量"));
   ui->progress_bar_1->setPercentage(true);
-  ui->progress_bar_1->setProgressBar(60, 100);
+  ui->progress_bar_1->setProgressBar(100, 100);
   ui->progress_bar_2->setLabel(QString("A区余量"));
   ui->progress_bar_2->setPercentage(true);
-  ui->progress_bar_2->setProgressBar(20, 100);
+  ui->progress_bar_2->setProgressBar(100, 100);
   ui->progress_bar_3->setLabel(QString("产量"));
   ui->progress_bar_3->setProgressBar(0, 400);
 }
@@ -378,14 +384,14 @@ void MainWindow::setToolBar() {
   //});
 
   // head eye dialog 信号槽
-  connect(this, &MainWindow::signHeadEyeWindowShow, [=] {
-    auto head_eye_dialog = new HeadEyeDialog(this);
-    connect(head_eye_dialog, &HeadEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart);
-    connect(head_eye_dialog, &HeadEyeDialog::signSewingStart, this, &MainWindow::slotSewingCalibStart);
-    connect(rclcomm_, &SytRclComm::compCalibRes, this, &MainWindow::slotCompCalibRes);
-    connect(rclcomm_, &SytRclComm::sewingCalibRes, this, &MainWindow::slotSewingCalibRes);
-    head_eye_dialog->show();
-    head_eye_dialog->setAttribute(Qt::WA_DeleteOnClose);
+  connect(this, &MainWindow::signHandEyeWindowShow, [=] {
+    auto hand_eye_dialog = new HandEyeDialog(this);
+    connect(hand_eye_dialog, &HandEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart, Qt::UniqueConnection);
+    connect(hand_eye_dialog, &HandEyeDialog::signSewingStart, this, &MainWindow::slotSewingCalibStart, Qt::UniqueConnection);
+    connect(rclcomm_, &SytRclComm::compCalibRes, hand_eye_dialog, &HandEyeDialog::slotCompCalibRes, Qt::UniqueConnection);
+    connect(rclcomm_, &SytRclComm::sewingCalibRes, hand_eye_dialog, &HandEyeDialog::slotSewingCalibRes, Qt::UniqueConnection);
+    hand_eye_dialog->show();
+    hand_eye_dialog->setAttribute(Qt::WA_DeleteOnClose);
   });
 
   // 创建样式信号槽
@@ -554,7 +560,10 @@ void MainWindow::setBaseComponet() {
   // action 相关
   connect(min_act, &QAction::triggered, this, &MainWindow::showMinimized);
   connect(max_act, &QAction::triggered, this, &MainWindow::slotMaxBtnClicked);
-  connect(full_act, &QAction::triggered, this, &MainWindow::showFullScreen);
+  connect(full_act, &QAction::triggered, this, [=]() {
+    showFullScreen();
+    ui->max_btn->setIcon(QIcon(":m_icon/icon/off_screen.svg"));
+  });
   connect(close_act, &QAction::triggered, this, &MainWindow::close);
   // TODO: 增加OTA
   // connect(update_act, &QAction::triggered, this, &MainWindow::triggeredOTAUpdate);
@@ -881,8 +890,9 @@ void MainWindow::bindControlConnection() {
 
   // 缝纫机-复位
   connect(developer_widget_, &DeveloperWidget::signSewingMachineReset, [=]() {
-    // QtConcurrent::run([=]() {
-    // });
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineReset();
+    });
   });
 
   // 缝纫机-移动抓手
@@ -943,6 +953,9 @@ void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPus
 
 void MainWindow::slotMaxBtnClicked() {
   if (this->isMaximized()) {
+    this->showNormal();
+    ui->max_btn->setIcon(QIcon(":m_icon/icon/full_screen.svg"));
+  } else if (isFullScreen()) {
     this->showNormal();
     ui->max_btn->setIcon(QIcon(":m_icon/icon/full_screen.svg"));
   } else {
@@ -1276,7 +1289,7 @@ void MainWindow::slotStartHeadEyeWindow() {
 
   auto res = showMessageBox(this, WARN, tip, 2, {"确认", "返回"});
   if (res == 0) {
-    emit signHeadEyeWindowShow();
+    emit signHandEyeWindowShow();
   }
 }
 
@@ -1290,37 +1303,15 @@ void MainWindow::slotDeveloperMode() {
 }
 
 ////////////////////////// 标定槽函数 //////////////////////////
-void MainWindow::slotCompCalibRes(bool result) {
-  waiting_spinner_widget_->stop();
-  if (result) {
-    showMessageBox(this, SUCCESS, "合片台标定成功", 1, {"退出"});
-    return;
-  } else {
-    showMessageBox(this, ERROR, "合片台标定失败,请联系相关人员", 1, {"退出"});
-    return;
-  }
-}
-
-void MainWindow::slotSewingCalibRes(bool result) {
-  waiting_spinner_widget_->stop();
-  if (result) {
-    showMessageBox(this, SUCCESS, "缝纫台标定成功", 1, {"退出"});
-    return;
-  } else {
-    showMessageBox(this, ERROR, "缝纫台标定失败,请联系相关人员", 1, {"退出"});
-    return;
-  }
-}
-
 void MainWindow::slotCompCalibStart() {
-  waiting_spinner_widget_->start();
+  // waiting_spinner_widget_->start();
   future_ = QtConcurrent::run([=] {
     rclcomm_->compCalib();
   });
 }
 
 void MainWindow::slotSewingCalibStart() {
-  waiting_spinner_widget_->start();
+  // waiting_spinner_widget_->start();
   future_ = QtConcurrent::run([=] {
     rclcomm_->sewingCalib();
   });
@@ -1582,6 +1573,21 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     qreal gv_width  = ui->style_graphics_view->width();
     qreal gv_height = ui->style_graphics_view->height();
     image_item_->setQGraphicsViewWH(gv_width, gv_height);
+
+    connect(style_scene_, &QGraphicsScene::changed, [=](const QList<QRectF> &region) {
+      if (image_item_->pos().x() < style_scene_->sceneRect().left()) {
+        image_item_->setPos(style_scene_->sceneRect().left(), image_item_->pos().y());
+      }
+      if (image_item_->pos().x() > style_scene_->sceneRect().right()) {
+        image_item_->setPos(style_scene_->sceneRect().right(), image_item_->pos().y());
+      }
+      if (image_item_->pos().y() < style_scene_->sceneRect().top()) {
+        image_item_->setPos(image_item_->pos().x(), style_scene_->sceneRect().top());
+      }
+      if (image_item_->pos().y() > style_scene_->sceneRect().bottom()) {
+        image_item_->setPos(image_item_->pos().x(), style_scene_->sceneRect().bottom());
+      }
+    });
 
     // 设置可视框
     style_scene_->setSceneRect(-gv_width / 2, -gv_height / 2, gv_width, gv_height);

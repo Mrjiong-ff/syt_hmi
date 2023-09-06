@@ -19,7 +19,7 @@
 #include "syt_hmi/create_from_source_wizard.h"
 #include "syt_hmi/dev_login_window.h"
 #include "syt_hmi/developer_widget.h"
-#include "syt_hmi/head_eye_dialog.h"
+#include "syt_hmi/hand_eye_dialog.h"
 #include "syt_hmi/image_item.h"
 #include "syt_hmi/lock_dialog.h"
 #include "syt_hmi/manual_input_param_wizard.h"
@@ -111,7 +111,7 @@ private:
   void showLoadMachineImage();
 
 signals:
-  void signHeadEyeWindowShow();
+  void signHandEyeWindowShow();
   void signClothStyleWindowShow();
   void signUpdateLabelState(QString);
   void signGetClothStyle(QString prefix, QString file_name);
@@ -147,8 +147,6 @@ private slots:
   void slotDeveloperMode();
 
   ////////////////////////// 标定槽函数 //////////////////////////
-  void slotCompCalibRes(bool f);
-  void slotSewingCalibRes(bool f);
   void slotCompCalibStart();
   void slotSewingCalibStart();
 
