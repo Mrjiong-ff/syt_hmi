@@ -1,14 +1,9 @@
-//
-// Created by jerry on 23-7-4.
-//
+#include "syt_hmi/hand_eye_dialog.h"
+#include "ui_hand_eye_dialog.h"
 
-// You may need to build the project (run Qt uic code generator) to get "ui_head_eye_dialog.h" resolved
-
-#include "syt_hmi/head_eye_dialog.h"
-#include "ui_head_eye_dialog.h"
-
-HeadEyeDialog::HeadEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::HeadEyeDialog) {
+HandEyeDialog::HandEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::HandEyeDialog) {
   ui->setupUi(this);
+  waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
   this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
   this->setModal(true); // 设置为模态 父对象控件不可选
 
@@ -20,17 +15,6 @@ HeadEyeDialog::HeadEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Head
   ui->sewingMachineBtn->setForeEnabled(false);
   ui->sewingMachineBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  //    ui->sewingMachineBtn->setIcon(QPixmap::fromImage(
-  //            QImage(":m_icon/icon/sewing.png").scaled(ui->sewingMachineBtn->width() / 2,
-  //                                                     ui->sewingMachineBtn->height() / 2,
-  //                                                     Qt::AspectRatioMode::KeepAspectRatio,
-  //                                                     Qt::TransformationMode::SmoothTransformation)));
-  //    ui->composerMachineBtn->setIcon(QPixmap::fromImage(
-  //            QImage(":m_icon/icon/comp.png").scaled(ui->composerMachineBtn->width() / 2,
-  //                                                   ui->composerMachineBtn->height() / 2,
-  //                                                   Qt::AspectRatioMode::KeepAspectRatio,
-  //                                                   Qt::TransformationMode::SmoothTransformation)));
-
   connect(ui->composerMachineBtn, &QPushButton::clicked, [=] {
     QString tip = "<html>"
                   "<head/><b>注意:</b>\n<body>"
@@ -40,9 +24,8 @@ HeadEyeDialog::HeadEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Head
     auto res = showMessageBox(this, WARN, tip, 2, {"确定", "返回"});
     switch (res) {
     case 0:
-      qDebug("合片台标定-确认");
+      waiting_spinner_widget_->start();
       emit signCompStart();
-      this->accept();
     case 1:
       return;
     default:
@@ -59,9 +42,8 @@ HeadEyeDialog::HeadEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Head
     auto res = showMessageBox(this, WARN, tip, 2, {"确定", "返回"});
     switch (res) {
     case 0:
-      qDebug("缝纫台标定-确认");
+      waiting_spinner_widget_->start();
       emit signSewingStart();
-      this->accept();
     case 1:
       return;
     default:
@@ -74,6 +56,28 @@ HeadEyeDialog::HeadEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Head
   });
 }
 
-HeadEyeDialog::~HeadEyeDialog() {
+HandEyeDialog::~HandEyeDialog() {
   delete ui;
+}
+
+void HandEyeDialog::slotCompCalibRes(bool result) {
+  waiting_spinner_widget_->stop();
+  if (result) {
+    showMessageBox(this, SUCCESS, "合片台标定成功", 1, {"确认"});
+    return;
+  } else {
+    showMessageBox(this, ERROR, "合片台标定失败,请联系相关人员", 1, {"确认"});
+    return;
+  }
+}
+
+void HandEyeDialog::slotSewingCalibRes(bool result) {
+  waiting_spinner_widget_->stop();
+  if (result) {
+    showMessageBox(this, SUCCESS, "缝纫台标定成功", 1, {"确认"});
+    return;
+  } else {
+    showMessageBox(this, ERROR, "缝纫台标定失败,请联系相关人员", 1, {"确认"});
+    return;
+  }
 }

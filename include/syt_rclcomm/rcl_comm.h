@@ -40,6 +40,7 @@
 #include "syt_msgs/srv/set_current_cloth_style.hpp"
 #include "syt_msgs/srv/sewing_machine_keypoints.hpp"
 #include "syt_msgs/srv/sewing_machine_move_hand.hpp"
+#include "syt_msgs/srv/sewing_machine_reset.hpp"
 #include "syt_msgs/srv/whole_machine_cmd.hpp"
 #include "utils/utils.h"
 #include <QDebug>
@@ -122,6 +123,7 @@ public:
   void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states); // 移动吸盘
 
   // 缝纫机
+  void sewingMachineReset();                                                  // 缝纫机复位
   void sewingMachineMoveHand(float x, float y, float c, bool z);              // 移动抓手
   void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints); // 发送关键点
 
@@ -172,7 +174,7 @@ private:
 private:
   bool initAllNodes();
 
-  //void loadMachineStateCallback(const syt_msgs::msg::LoadMachineState::SharedPtr msg);
+  // void loadMachineStateCallback(const syt_msgs::msg::LoadMachineState::SharedPtr msg);
   void composeMachineStateCallback(const syt_msgs::msg::ComposeMachineState::SharedPtr msg);
   void sewingMachineStateCallback(const syt_msgs::msg::SewingMachineState::SharedPtr msg);
   void downloadCallback(const std_msgs::msg::Int32::SharedPtr msg);

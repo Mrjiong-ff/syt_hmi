@@ -943,6 +943,24 @@ void SytRclComm::composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerSta
 }
 
 /* -----------------------------缝纫机---------------------------- */
+// 缝纫机复位
+void SytRclComm::sewingMachineReset() {
+  auto request    = std::make_shared<syt_msgs::srv::SewingMachineReset::Request>();
+  request->enable = true;
+
+  syt_msgs::srv::SewingMachineReset::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::SewingMachineReset>("/syt/robot_control/sewing_machine/primal/reset", "缝纫复位", 20000, request, response);
+  qDebug() << "缝纫复位：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
 // 移动抓手
 void SytRclComm::sewingMachineMoveHand(float x, float y, float c, bool z) {
   auto request      = std::make_shared<syt_msgs::srv::SewingMachineMoveHand::Request>();

@@ -1,7 +1,6 @@
-#ifndef SYT_HMI_HEAD_EYE_DIALOG_H
-#define SYT_HMI_HEAD_EYE_DIALOG_H
-
+#pragma once
 #include "utils/utils.h"
+#include "utils/waitingspinnerwidget.h"
 #include <QDialog>
 
 QT_BEGIN_NAMESPACE
@@ -25,6 +24,10 @@ signals:
 
 private:
   Ui::HandEyeDialog *ui;
-};
 
-#endif // SYT_HMI_HEAD_EYE_DIALOG_H
+  WaitingSpinnerWidget *waiting_spinner_widget_;
+
+public slots:
+  void slotCompCalibRes(bool result);
+  void slotSewingCalibRes(bool result);
+};

@@ -47,7 +47,7 @@ void ImageItem::setQGraphicsViewWH(int width, int height) {
   qreal scale_width_min  = min_width_ * 1.0 / pix_width;
   qreal scale_height_min = min_height_ * 1.0 / pix_height;
   scale_min_             = 0.3;
-  //scale_width_min > scale_height_min ? scale_height_min : scale_width_min;
+  // scale_width_min > scale_height_min ? scale_height_min : scale_width_min;
 
   setScale(scale_default_);
   scale_value_ = scale_default_;
@@ -77,6 +77,22 @@ void ImageItem::wheelEvent(QGraphicsSceneWheelEvent *event) {
       moveBy(event->pos().x() * original_scale * 0.1, event->pos().y() * original_scale * 0.1);
     }
   }
+}
+
+QVariant ImageItem::itemChange(GraphicsItemChange change, const QVariant &value) {
+  if (change == ItemPositionChange && scene()) {
+    // value is the new position.
+    QPointF newPos = value.toPointF();
+    QRectF rect    = sceneBoundingRect();
+    qDebug() << rect;
+    if (!rect.contains(newPos)) {
+      // Keep the item inside the scene rect.
+      newPos.setX(qMin(rect.right(), qMax(newPos.x(), rect.left())));
+      newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
+      return newPos;
+    }
+  }
+  return QGraphicsItem::itemChange(change, value);
 }
 
 // 常规点击事件

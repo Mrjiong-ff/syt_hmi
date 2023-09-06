@@ -45,7 +45,7 @@ bool MoveHandPage::validatePage() {
 void MoveHandPage::slotMoveHandResult(bool result) {
   moved_hand_ = result;
   if (result == false) {
-    showMessageBox(this, WARN, "移动合片抓手失败!", 1, {"确认"});
+    showMessageBox(this, ERROR, "移动合片抓手失败!", 1, {"确认"});
     return;
   }
   showMessageBox(this, SUCCESS, "移动合片抓手成功，请点击下一步。", 1, {"确认"});
@@ -96,7 +96,7 @@ void DetectClothPage::slotDetectClothResult(bool result, int cloth_type) {
   }
   detected_result_ = result;
   if (result == false) {
-    showMessageBox(this, WARN, QString("%1检测失败!").arg(cloth_type_ ? "后片" : "前片"), 1, {"确认"});
+    showMessageBox(this, ERROR, QString("%1检测失败!").arg(cloth_type_ ? "后片" : "前片"), 1, {"确认"});
     return;
   }
   showMessageBox(this, SUCCESS, QString("%1检测成功，请点击下一步。").arg(cloth_type_ ? "后片" : "前片"), 1, {"确认"});
@@ -188,7 +188,7 @@ bool CreateStylePage::validatePage() {
 void CreateStylePage::slotCreateStyleResult(bool result) {
   create_result_ = result;
   if (result == false) {
-    showMessageBox(this, WARN, "样式文件创建失败!", 1, {"确认"});
+    showMessageBox(this, ERROR, "样式文件创建失败!", 1, {"确认"});
     return;
   }
   showMessageBox(this, SUCCESS, "样式文件创建成功，请点击下一步。", 1, {"确认"});
@@ -259,7 +259,7 @@ void RenameClothStylePage::slotSetRenameEdit(QString file_name) {
 
 void RenameClothStylePage::slotRenameClothStyleResult(bool result) {
   if (result == false) {
-    showMessageBox(this, WARN, "重命名失败!", 1, {"确认"});
+    showMessageBox(this, ERROR, "重命名失败!", 1, {"确认"});
     return;
   }
   slotSetRenameEdit(field("new_name").toString());
@@ -422,7 +422,7 @@ bool ChooseStylePage::validatePage() {
 void ChooseStylePage::slotGetClothStyleResult(bool result) {
   get_style_ = result;
   if (result == false) {
-    showMessageBox(this, WARN, "获取样式信息失败!", 1, {"确认"});
+    showMessageBox(this, ERROR, "获取样式信息失败!", 1, {"确认"});
     return;
   }
   showMessageBox(this, SUCCESS, "获取样式信息成功，请点击下一步。", 1, {"确认"});

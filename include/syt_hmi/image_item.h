@@ -34,6 +34,7 @@ protected:
   void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
   void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
   void wheelEvent(QGraphicsSceneWheelEvent *event) override;
+  QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 private:
   int min_width_  = 1500;
