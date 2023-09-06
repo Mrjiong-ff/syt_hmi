@@ -25,7 +25,7 @@ HandEyeDialog::HandEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Hand
     switch (res) {
     case 0:
       waiting_spinner_widget_->start();
-      emit signCompStart();
+      //emit signCompStart();
     case 1:
       return;
     default:
@@ -43,7 +43,7 @@ HandEyeDialog::HandEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Hand
     switch (res) {
     case 0:
       waiting_spinner_widget_->start();
-      emit signSewingStart();
+      //emit signSewingStart();
     case 1:
       return;
     default:

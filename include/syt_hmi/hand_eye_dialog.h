@@ -19,7 +19,6 @@ public:
 
 signals:
   void signSewingStart();
-
   void signCompStart();
 
 private:
