@@ -19,15 +19,34 @@ DevLoginWindow::DevLoginWindow(QWidget *parent) : QDialog(parent), ui(new Ui::De
   ui->pushButton->setRadius(10, 5);
   ui->pushButton->setChokingProp(0.0018);
 
-  ui->pixLabel->setPixmap(QPixmap(":m_icon/icon/Login-Form.png"));
+  ui->pixLabel->setPixmap(QPixmap(":m_icon/icon/login.png"));
   ui->pixLabel->setAlignment(Qt::AlignCenter);
 
   connect(ui->pwd_le, &QLineEdit::returnPressed, ui->pushButton, &QPushButton::click, Qt::UniqueConnection);
   connect(m_closeBtn_, &QPushButton::clicked, [=] { close(); });
   // 登录按钮
   connect(ui->pushButton, &QPushButton::clicked, [=] {
+    QString token;
+    token.append('s');
+    token.append('e');
+    token.append('w');
+    token.append('i');
+    token.append('n');
+    token.append('g');
+    token.append('t');
+    token.append('e');
+    token.append('c');
+    token.append('h');
+    token.append('0');
+    token.append('3');
+    token.append('1');
+    token.append('0');
+    token.append('6');
+    token.append('6');
+    token.append('6');
+    token.append('6');
     // 当前默认密码
-    if (ui->pwd_le->text() == "a") {
+    if (ui->pwd_le->text() == token) {
       emit signDevMode(true);
       hide();
     } else {

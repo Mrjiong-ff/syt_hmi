@@ -98,7 +98,7 @@
       </font>
      </property>
      <property name="text">
-      <string>锁屏中...</string>
+      <string>锁定中...</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

@@ -57,13 +57,13 @@ int showMessageBox(QWidget *p, STATE state, QString text, int btn_num, QVector<Q
   QImage qimage;
   switch (state) {
   case SUCCESS:
-    qimage = QImage(":m_icon/icon/confirm.png");
+    qimage = QImage(":m_icon/icon/success.svg");
     break;
   case WARN:
-    qimage = QImage(":m_icon/icon/warn.png");
+    qimage = QImage(":m_icon/icon/warn.svg");
     break;
   case ERROR:
-    qimage = QImage(":m_icon/icon/dididi.png");
+    qimage = QImage(":m_icon/icon/error.svg");
     break;
   }
   qimage = qimage.scaled(50, 50, Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);

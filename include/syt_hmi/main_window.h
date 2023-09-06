@@ -20,6 +20,7 @@
 #include "syt_hmi/dev_login_window.h"
 #include "syt_hmi/developer_widget.h"
 #include "syt_hmi/head_eye_dialog.h"
+#include "syt_hmi/image_item.h"
 #include "syt_hmi/lock_dialog.h"
 #include "syt_hmi/manual_input_param_wizard.h"
 #include "syt_hmi/ota_update_dialog.h"
@@ -90,12 +91,14 @@ private:
   void initWidget();
   void settingConnection();
   void bindControlConnection();
-  void setMutuallyLight(LIGHT_COLOR);
   void deleteAll();
   void initOther();
+  //void setMutuallyLight(LIGHT_COLOR color);
   void btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables);
 
   // 设置各个组件的属性和信号槽
+  void setStatisticComponent();
+  void setPreviewComponent();
   void setLogComponent();
   void setTimeComponent();
   void setToolBar();
@@ -157,6 +160,7 @@ private slots:
   void slotSetCurrentStyleFile(QString prefix, QString file_name);
   void slotGetClothStyle(QString prefix, QString file_name);
   void slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
+  void slotSetCurrentStyleName(QString file_name);
 
   ////////////////////////// 创建衣服样式槽函数 //////////////////////////
   void slotCreateFromCAD(ClothStyleDialog *parent);
@@ -173,6 +177,9 @@ private:
   Ui::MainWindow *ui;
 
   SytRclComm *rclcomm_ = nullptr;
+
+  ImageItem *image_item_;
+  QGraphicsScene *style_scene_; // 预览场景
 
   QFuture<void> future_;
 

@@ -12,13 +12,6 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
 
   // 窗口操作
   connect(ui->close_btn, &QPushButton::clicked, this, &DeveloperWidget::close);
-  connect(ui->max_btn, &QPushButton::clicked, this, [=]() {
-    if (this->isMaximized()) {
-      this->showNormal();
-    } else {
-      this->showMaximized();
-    }
-  });
 
   // 切换页面
   connect(ui->switch_load_btn, &QPushButton::clicked, this, &DeveloperWidget::switchPage, Qt::UniqueConnection);
