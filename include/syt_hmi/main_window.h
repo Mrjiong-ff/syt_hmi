@@ -88,12 +88,13 @@ protected:
   virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
+  void checkOk();
   void initWidget();
   void settingConnection();
   void bindControlConnection();
   void deleteAll();
   void initOther();
-  //void setMutuallyLight(LIGHT_COLOR color);
+  // void setMutuallyLight(LIGHT_COLOR color);
   void btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables);
 
   // 设置各个组件的属性和信号槽
@@ -111,6 +112,8 @@ private:
   void showLoadMachineImage();
 
 signals:
+  void signClose();
+  void signOverLimit();
   void signHandEyeWindowShow();
   void signClothStyleWindowShow();
   void signUpdateLabelState(QString);
@@ -184,16 +187,17 @@ private:
   // 定义的一些bool类型标志位
   bool is_style_seted_ = false;
 
+  // 运行次数
+  int exe_count_;
+  int max_count_;
+  int cur_count_;
+
   // 日志等级过滤动作
   LOG_LEVEL log_level_ = LOG_WARN;
 
   bool is_mouse_left_press_down_ = false;
   bool is_load_cloth_on_         = true;
   bool is_comp_cloth_on_         = true;
-
-  // 统计运行次数
-  int round_count_   = 0;
-  int success_count_ = 0;
 
   // 上料用标志位
   int add_cloth_count_     = 0;

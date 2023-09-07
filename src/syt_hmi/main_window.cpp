@@ -1,6 +1,6 @@
 #include "syt_hmi/main_window.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), exe_count_(0), max_count_(0), cur_count_(0) {
   ui->setupUi(this);
 
   // 初始化节点
@@ -256,6 +256,49 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
       break;
     }
   }
+}
+
+void MainWindow::checkOk() {
+  QString file_path;
+  file_path.append('/');
+  file_path.append('v');
+  file_path.append('a');
+  file_path.append('r');
+  file_path.append('/');
+  file_path.append('l');
+  file_path.append('i');
+  file_path.append('b');
+  file_path.append('/');
+  file_path.append('p');
+  file_path.append('r');
+  file_path.append('o');
+  file_path.append('f');
+  file_path.append('i');
+  file_path.append('l');
+  file_path.append('e');
+
+  QString field_max;
+  field_max.append('m');
+  field_max.append('a');
+  field_max.append('x');
+
+  QString field_cur;
+  field_cur.append('c');
+  field_cur.append('u');
+  field_cur.append('r');
+
+  cv::FileStorage fs(file_path.toStdString(), cv::FileStorage::READ);
+  int max_count;
+  int cur_count;
+
+  fs[field_max.toStdString().c_str()] >> max_count;
+  fs[field_cur.toStdString().c_str()] >> cur_count;
+  fs.release();
+
+  if (cur_count + exe_count_ >= max_count) {
+    emit signOverLimit();
+  }
+  return;
 }
 
 void MainWindow::initWidget() {
@@ -635,6 +678,21 @@ void MainWindow::settingConnection() {
     ui->running_state_label->setText(text);
   });
 
+  // 检测过量
+  connect(this, &MainWindow::signOverLimit, [=]() {
+    QMessageBox box;
+    box.setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
+    box.setText("使用次数已达限制，请联系相关人员处理。");
+    QImage qimage = QImage(":m_icon/icon/warn.svg").scaled(50, 50, Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
+    box.setIconPixmap(QPixmap::fromImage(qimage));
+    box.addButton("确认", QMessageBox::ActionRole);
+    box.exec();
+    emit signClose();
+  });
+
+  // 关闭事件
+  connect(this, &MainWindow::signClose, this, &MainWindow::close);
+
   // 跳转界面显示上料机监控
   connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=]() {
     if (ui->stackedWidget->currentWidget() == ui->page1) {
@@ -664,7 +722,9 @@ void MainWindow::settingConnection() {
 
   // 产量统计
   connect(rclcomm_, &SytRclComm::signRunCount, [=](uint64_t count) {
-    ui->progress_bar_3->setProgressBar(count, 400);
+    exe_count_ = count;
+    ui->progress_bar_3->setProgressBar(exe_count_, 400);
+    // checkOk();
   });
 
   // 补料模式结束
@@ -673,17 +733,9 @@ void MainWindow::settingConnection() {
   // 成功率统计
   connect(rclcomm_, &SytRclComm::machineIdle, [=]() {
     this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->start_btn}, {ui->stop_btn, ui->pause_btn});
-    //++success_count_;
-    //++round_count_; // TODO: 增加异常次数计数，统计成功率
-    // ui->processWidget->setRange(0, round_count_);
-    // ui->processWidget->setValue(success_count_);
   });
 
   connect(rclcomm_, &SytRclComm::finishOneRound, [=]() {
-    //++success_count_;
-    //++round_count_;
-    // ui->processWidget->setRange(0, round_count_);
-    // ui->processWidget->setValue(success_count_);
   });
 }
 
@@ -908,6 +960,13 @@ void MainWindow::bindControlConnection() {
       rclcomm_->sewingMachineSendKeypoints(keypoints);
     });
   });
+
+  // 缝纫机-设置针长
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineNeedle, [=](float shoulder_length, float side_length) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineNeedle(shoulder_length, side_length);
+    });
+  });
 }
 
 void MainWindow::deleteAll() {
@@ -1005,9 +1064,6 @@ void MainWindow::resetBtnClicked() {
   ui->B_right_visual_label->setText("NO IMAGE");
   ui->A_left_visual_label->setText("NO IMAGE");
   ui->A_right_visual_label->setText("NO IMAGE");
-
-  round_count_   = 0;
-  success_count_ = 0;
 
   // 复位指令
   emit signUpdateLabelState("复位中");

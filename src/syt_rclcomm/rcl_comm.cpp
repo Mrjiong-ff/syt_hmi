@@ -1004,6 +1004,25 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
   }
 }
 
+// 发送针长
+void SytRclComm::sewingMachineNeedle(float shoulder_length, float side_length) {
+  auto request             = std::make_shared<syt_msgs::srv::SewingMachineNeedle::Request>();
+  request->shoulder_length = shoulder_length;
+  request->side_length     = side_length;
+
+  syt_msgs::srv::SewingMachineNeedle::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::SewingMachineNeedle>("/syt/robot_control/sewing_machine/primal/needle", "设置针长", 5000, request, response);
+  qDebug() << "发送设置针长：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
 /* ---------------------------视觉检测------------------------------ */
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
