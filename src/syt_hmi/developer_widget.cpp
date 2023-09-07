@@ -133,6 +133,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->set_current_sewing_hand_btn);
   setFrame(ui->sewing_move_hand_btn);
   setFrame(ui->send_keypoints_btn);
+  setFrame(ui->needle_length_btn);
 
   // 其他界面
   setFrame(ui->choose_bin_btn);
@@ -386,6 +387,10 @@ void DeveloperWidget::bindSewingMachine() {
     keypoints.right_bottom.y   = ui->sewing_right_bottom_y_line_edit->text().toFloat();
     emit signSewingMachineSendKeypoints(keypoints);
   });
+
+  connect(ui->needle_length_btn, &QPushButton::clicked, [=]() {
+    emit signSewingMachineNeedle(ui->shoulder_length_spin_box->value(), ui->side_length_spin_box->value());
+  });
 }
 
 void DeveloperWidget::setComposeMachineState(syt_msgs::msg::ComposeMachineState state) {
@@ -532,11 +537,6 @@ void DeveloperWidget::setParam() {
 
 void DeveloperWidget::setChooseMode() {
   // 模式选择界面
-  // ui->choose_mode_combo_box->insertItem(-1, "缝纫模式");
-  ui->choose_mode_combo_box->insertItem(-1, "单次模式");
-  ui->choose_mode_combo_box->insertItem(-1, "循环模式");
-  ui->choose_mode_combo_box->insertItem(-1, "合片模式");
-
   void (QComboBox::*index_change_signal)(int index) = &QComboBox::currentIndexChanged;
   connect(ui->choose_mode_combo_box, index_change_signal, [=]() {
     if ("单次模式" == ui->choose_mode_combo_box->currentText()) {
@@ -548,15 +548,13 @@ void DeveloperWidget::setChooseMode() {
     if ("合片模式" == ui->choose_mode_combo_box->currentText()) {
       emit signChooseMode(syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH);
     }
+    if ("缝纫模式" == ui->choose_mode_combo_box->currentText()) {
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::SEW_CLOTH);
+    }
   });
 }
 
 void DeveloperWidget::setUpdateBin() {
-  // 选择端口
-  ui->choose_port_combo_box->insertItem(-1, "上料机");
-  ui->choose_port_combo_box->insertItem(-1, "合片机");
-  ui->choose_port_combo_box->insertItem(-1, "缝纫机");
-
   // 保存bin文件路径
   connect(ui->choose_bin_btn, &QPushButton::clicked, this, [=]() {
     update_bin_path_ = QFileDialog::getOpenFileName(this, "请选择模板路径", QDir::homePath(), "*.bin");

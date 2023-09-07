@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
+  <layout class="QVBoxLayout" name="verticalLayout_7">
    <item>
     <widget class="QWidget" name="title_widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_16">
@@ -613,7 +613,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>抓手偏移量</string>
+                <string>抓手偏移</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -1208,7 +1208,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>抓手偏移量</string>
+                <string>抓手偏移</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -2588,7 +2588,7 @@
         </layout>
        </widget>
        <widget class="QWidget" name="page_sewing">
-        <layout class="QVBoxLayout" name="verticalLayout_7">
+        <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_20">
            <item>
@@ -2994,8 +2994,8 @@
           </widget>
          </item>
          <item>
-          <layout class="QGridLayout" name="gridLayout_19">
-           <item row="0" column="0" rowspan="5">
+          <layout class="QHBoxLayout" name="horizontalLayout_28">
+           <item>
             <layout class="QGridLayout" name="gridLayout_18">
              <property name="horizontalSpacing">
               <number>20</number>
@@ -3536,155 +3536,208 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="2">
-            <spacer name="verticalSpacer_35">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="1">
-            <spacer name="horizontalSpacer_18">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="2">
-            <spacer name="verticalSpacer_34">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>18</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="3">
-            <spacer name="horizontalSpacer_23">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="4" column="2">
-            <spacer name="verticalSpacer_36">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_22">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
-              <widget class="QLabel" name="label_75">
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>裁片尺码</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_22">
+               <item>
+                <widget class="QLabel" name="label_75">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>裁片尺码</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="sewing_cloth_size_combobox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_18">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="WaterZoomButton" name="send_keypoints_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>发送关键点</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <widget class="QComboBox" name="sewing_cloth_size_combobox">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>60</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_26">
+               <item>
+                <widget class="QDoubleSpinBox" name="shoulder_length_spin_box">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_27">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="side_length_spin_box">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_23">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>17</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="WaterZoomButton" name="needle_length_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>120</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>设置针长</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_27">
+               <item>
+                <widget class="WaterZoomButton" name="sewing_reset_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>120</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>复位</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_28">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="WaterZoomButton" name="sewing_stop_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>120</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>停止</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
-           </item>
-           <item row="3" column="1">
-            <widget class="WaterZoomButton" name="send_keypoints_btn">
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>60</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>发送关键点</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="WaterZoomButton" name="sewing_reset_btn">
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>60</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>复位</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="WaterZoomButton" name="sewing_stop_btn">
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>60</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>停止</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </item>
@@ -3755,6 +3808,26 @@
               <pointsize>20</pointsize>
              </font>
             </property>
+            <item>
+             <property name="text">
+              <string>单次模式</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>循环模式</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>合片模式</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>缝纫模式</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -3815,6 +3888,11 @@
               <height>40</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>选择文件</string>
             </property>
@@ -3833,6 +3911,21 @@
               <pointsize>20</pointsize>
              </font>
             </property>
+            <item>
+             <property name="text">
+              <string>上料机</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>合片机</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>缝纫机</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="3">
@@ -3855,6 +3948,11 @@
               <width>0</width>
               <height>40</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
             </property>
             <property name="text">
              <string>写入</string>

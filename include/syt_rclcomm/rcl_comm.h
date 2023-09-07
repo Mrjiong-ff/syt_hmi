@@ -40,6 +40,7 @@
 #include "syt_msgs/srv/set_current_cloth_style.hpp"
 #include "syt_msgs/srv/sewing_machine_keypoints.hpp"
 #include "syt_msgs/srv/sewing_machine_move_hand.hpp"
+#include "syt_msgs/srv/sewing_machine_needle.hpp"
 #include "syt_msgs/srv/sewing_machine_reset.hpp"
 #include "syt_msgs/srv/whole_machine_cmd.hpp"
 #include "utils/utils.h"
@@ -126,6 +127,7 @@ public:
   void sewingMachineReset();                                                  // 缝纫机复位
   void sewingMachineMoveHand(float x, float y, float c, bool z);              // 移动抓手
   void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints); // 发送关键点
+  void sewingMachineNeedle(float shoulder_length, float side_length);         // 发送针长
 
   // 视觉检测
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息

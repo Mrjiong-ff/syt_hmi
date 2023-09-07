@@ -107,6 +107,7 @@ signals:
   void signSewingMachineStop();
   void signSewingMachineMoveHand(float x, float y, float c, bool z);
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
+  void signSewingMachineNeedle(float shoulder_length, float side_length);
 
 public slots:
   void setComposeMachineState(syt_msgs::msg::ComposeMachineState state);
