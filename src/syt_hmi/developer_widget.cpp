@@ -39,6 +39,9 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
 
   // 是否带缝纫
   setUseSewing();
+
+  // 是否老化测试
+  setPressureTest();
 }
 
 DeveloperWidget::~DeveloperWidget() {
@@ -606,6 +609,16 @@ void DeveloperWidget::setUseSewing() {
       system("ros2 param set /syt_sewing_machine_node use_sewing True");
     } else {
       system("ros2 param set /syt_sewing_machine_node use_sewing False");
+    }
+  });
+}
+
+void DeveloperWidget::setPressureTest() {
+  connect(ui->pressure_test_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled) {
+      system("ros2 param set /syt_compose_machine_node pressure_test True");
+    } else {
+      system("ros2 param set /syt_compose_machine_node pressure_test False");
     }
   });
 }
