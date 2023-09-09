@@ -42,8 +42,17 @@
             <bold>true</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel{
+   border: 2px solid;
+  border-radius: 5px;
+}</string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
           <property name="text">
-           <string/>
+           <string>上料机</string>
           </property>
          </widget>
         </item>
@@ -3603,6 +3612,18 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_26">
                <item>
+                <widget class="QLabel" name="label_74">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>肩膀</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QDoubleSpinBox" name="shoulder_length_spin_box">
                  <property name="minimumSize">
                   <size>
@@ -3632,6 +3653,18 @@
                   </size>
                  </property>
                 </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_76">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>侧缝</string>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="side_length_spin_box">
