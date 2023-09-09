@@ -65,6 +65,7 @@ private:
   void bindSewingMachine();
   void setUpdateBin();
   void setUseSewing();
+  void setPressureTest();
 
 signals:
   // 模式切换

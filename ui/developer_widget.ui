@@ -4015,6 +4015,27 @@
           <bool>true</bool>
          </property>
         </widget>
+        <widget class="QCheckBox" name="pressure_test_check_box">
+         <property name="geometry">
+          <rect>
+           <x>210</x>
+           <y>180</y>
+           <width>141</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>老化测试</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>
