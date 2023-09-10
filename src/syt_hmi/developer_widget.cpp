@@ -31,17 +31,8 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
   // 缝纫机功能
   bindSewingMachine();
 
-  // 模式切换
-  setChooseMode();
-
-  // 固件更新
-  setUpdateBin();
-
-  // 是否带缝纫
-  setUseSewing();
-
-  // 是否老化测试
-  setPressureTest();
+  // 其他功能
+  bindOther();
 }
 
 DeveloperWidget::~DeveloperWidget() {
@@ -256,7 +247,7 @@ void DeveloperWidget::bindLoadMachine() {
   });
 
   connect(ui->visual_align_btn_A, &QPushButton::clicked, [=]() {
-    emit signLoadMachineVisualAlign(0);
+    emit signLoadMachineVisualAlign(1);
   });
 }
 
@@ -394,6 +385,23 @@ void DeveloperWidget::bindSewingMachine() {
   connect(ui->needle_length_btn, &QPushButton::clicked, [=]() {
     emit signSewingMachineNeedle(ui->shoulder_length_spin_box->value(), ui->side_length_spin_box->value());
   });
+}
+
+void DeveloperWidget::bindOther() {
+  // 模式切换
+  setChooseMode();
+
+  // 固件更新
+  setUpdateBin();
+
+  // 是否带缝纫
+  setUseSewing();
+
+  // 是否老化测试
+  setPressureTest();
+
+  // 检查标定效果
+  setCheckCalibration();
 }
 
 void DeveloperWidget::setComposeMachineState(syt_msgs::msg::ComposeMachineState state) {
@@ -621,4 +629,20 @@ void DeveloperWidget::setPressureTest() {
       system("ros2 param set /syt_compose_machine_node pressure_test False");
     }
   });
+}
+
+void DeveloperWidget::setCheckCalibration() {
+  connect(ui->check_calibration_btn, &QPushButton::clicked, [=]() {
+    emit signCheckCalib();
+  });
+}
+
+void DeveloperWidget::setCheckCalibrationResult(bool result, float bottom_length, float side_length) {
+  if (result) {
+    ui->calib_bottom_length_line_edit->setText(QString::number(bottom_length));
+    ui->calib_side_length_line_edit->setText(QString::number(side_length));
+  } else {
+    ui->calib_bottom_length_line_edit->setText(QString::number(0));
+    ui->calib_side_length_line_edit->setText(QString::number(0));
+  }
 }

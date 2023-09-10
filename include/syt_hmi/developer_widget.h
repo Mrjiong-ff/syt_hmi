@@ -57,25 +57,19 @@ private:
 
 private:
   void setParam();
-  void setChooseMode();
   void setButtonFrame();
   void switchPage();
   void bindLoadMachine();
   void bindComposeMachine();
   void bindSewingMachine();
+  void bindOther();
+  void setChooseMode();
   void setUpdateBin();
   void setUseSewing();
   void setPressureTest();
+  void setCheckCalibration();
 
 signals:
-  // 模式切换
-  void signChooseMode(int mode);
-
-  // 更新固件
-  void signUpdateLoadMachine();
-  void signUpdateComposeMachine();
-  void signUpdateSewingMachine();
-
   // 上料机
   void signLoadMachineReset(int id);
   void signLoadMachineAddCloth(int id);
@@ -110,7 +104,18 @@ signals:
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
   void signSewingMachineNeedle(float shoulder_length, float side_length);
 
+  // 模式切换
+  void signChooseMode(int mode);
+
+  // 更新固件
+  void signUpdateLoadMachine();
+  void signUpdateComposeMachine();
+  void signUpdateSewingMachine();
+
+  // 检测关键点
+  void signCheckCalib();
 public slots:
   void setComposeMachineState(syt_msgs::msg::ComposeMachineState state);
   void setSewingMachineState(syt_msgs::msg::SewingMachineState state);
+  void setCheckCalibrationResult(bool result, float bottom_length, float side_length);
 };
