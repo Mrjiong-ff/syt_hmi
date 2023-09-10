@@ -753,6 +753,20 @@ void SytRclComm::composeMachineReset() {
 
 // 停止
 void SytRclComm::composeMachineStop() {
+  auto request             = std::make_shared<syt_msgs::srv::ComposeMachineFlow::Request>();
+  request->flow_state.data = syt_msgs::msg::ComposeMachineFlowState::STOP;
+
+  syt_msgs::srv::ComposeMachineFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFlow>("/syt/robot_control/compose_machine/primal/flow", "合片停止", 5000, request, response);
+  qDebug() << "合片停止：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
 }
 
 // 除褶
@@ -1045,6 +1059,49 @@ void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
     emit signGetClothInfoFinish(false, cloth_type, syt_msgs::msg::ClothInfo());
+    break;
+  }
+}
+
+// 获取关键点
+void SytRclComm::checkCalibration() {
+  // ros2 service call /syt/clothes_detector/get_camera_cloth_keypoint   syt_msgs/srv/GetClothKeypointInfo "{cloth_num: 0}"
+  auto request           = std::make_shared<syt_msgs::srv::GetClothKeypointInfo::Request>();
+  request->frame_id.data = 0; // 0 为相机系 1 为合片机 2 为缝纫机
+  request->cloth_num     = 0;
+
+  syt_msgs::srv::GetClothKeypointInfo::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::GetClothKeypointInfo>("/syt/clothes_detector/get_camera_cloth_keypoint", "检测标定结果", 8000, request, response);
+  qDebug() << "检测标定结果：" << result;
+
+  // result           = CALL_SUCCESS;
+  // response.success = true;
+
+  switch (result) {
+  case CALL_SUCCESS:
+    if (response.success) {
+      // response.info.left_bottom.x  = 0;
+      // response.info.left_bottom.y  = 0;
+      // response.info.right_bottom.x = 3;
+      // response.info.right_bottom.y = -4;
+      // response.info.right_oxter.x  = 3;
+      // response.info.right_oxter.y  = 4;
+
+      auto getDistance = [=](syt_msgs::msg::Vector3 p1, syt_msgs::msg::Vector3 p2) -> float {
+        return qSqrt(qPow(p1.x - p2.x, 2) + qPow(p1.y - p2.y, 2));
+      };
+      float bottom_length = getDistance(response.info.left_bottom, response.info.right_bottom);
+      float side_length   = getDistance(response.info.right_bottom, response.info.right_oxter);
+
+      emit signCheckCalibrationFinish(true, bottom_length, side_length);
+    } else {
+      emit signCheckCalibrationFinish(false, 0, 0);
+    }
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signCheckCalibrationFinish(false, 0, 0);
     break;
   }
 }

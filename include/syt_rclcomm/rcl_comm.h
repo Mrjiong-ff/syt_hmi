@@ -13,6 +13,7 @@
 #include "syt_msgs/msg/load_machine_state.hpp"
 #include "syt_msgs/msg/motion_planner_state.hpp"
 #include "syt_msgs/msg/sewing_machine_state.hpp"
+#include "syt_msgs/srv/compose_machine_flow.hpp"
 #include "syt_msgs/srv/compose_machine_function.hpp"
 #include "syt_msgs/srv/compose_machine_move_hand.hpp"
 #include "syt_msgs/srv/compose_machine_move_sucker.hpp"
@@ -22,6 +23,7 @@
 #include "syt_msgs/srv/fsm_control_flow.hpp"
 #include "syt_msgs/srv/get_break_point_y.hpp"
 #include "syt_msgs/srv/get_cloth_info.hpp"
+#include "syt_msgs/srv/get_cloth_keypoint_info.hpp"
 #include "syt_msgs/srv/get_cloth_style.hpp"
 #include "syt_msgs/srv/load_machine_add_cloth.hpp"
 #include "syt_msgs/srv/load_machine_clear_table.hpp"
@@ -49,6 +51,7 @@
 #include <QProcess>
 #include <QThread>
 #include <QWidget>
+#include <QtMath>
 #include <chrono>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
@@ -131,6 +134,7 @@ public:
 
   // 视觉检测
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息
+  void checkCalibration();                             // 检测标定结果
 
   // 样式相关
   void createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back); // 创建样式
@@ -242,6 +246,7 @@ signals:
 
   // 视觉检测相关信号
   void signGetClothInfoFinish(bool result, int cloth_type, syt_msgs::msg::ClothInfo cloth_info);
+  void signCheckCalibrationFinish(bool result, float bottom_length, float side_length);
 
   // 样式相关信号
   void signCreateStyleFinish(bool result, QString file_name);

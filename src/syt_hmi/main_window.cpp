@@ -648,6 +648,7 @@ void MainWindow::showLoadMachineImage() {
     pix_A_left_ = pix_A_left_.scaled(ui->A_left_visual_label->width(), ui->A_left_visual_label->height(), Qt::KeepAspectRatio);
     ui->A_left_visual_label->setPixmap(pix_A_left_);
     ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    ui->A_left_visual_label->update();
   }
 
   if (!pix_A_right_.isNull()) {
@@ -655,6 +656,7 @@ void MainWindow::showLoadMachineImage() {
     pix_A_right_ = pix_A_right_.scaled(ui->A_right_visual_label->width(), ui->A_right_visual_label->height(), Qt::KeepAspectRatio);
     ui->A_right_visual_label->setPixmap(pix_A_right_);
     ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    ui->A_right_visual_label->update();
   }
 
   if (!pix_B_left_.isNull()) {
@@ -662,6 +664,7 @@ void MainWindow::showLoadMachineImage() {
     pix_B_left_ = pix_B_left_.scaled(ui->B_left_visual_label->width(), ui->B_left_visual_label->height(), Qt::KeepAspectRatio);
     ui->B_left_visual_label->setPixmap(pix_B_left_);
     ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    ui->B_left_visual_label->update();
   }
 
   if (!pix_B_right_.isNull()) {
@@ -669,6 +672,7 @@ void MainWindow::showLoadMachineImage() {
     pix_B_right_ = pix_B_right_.scaled(ui->B_right_visual_label->width(), ui->B_right_visual_label->height(), Qt::KeepAspectRatio);
     ui->B_right_visual_label->setPixmap(pix_B_right_);
     ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    ui->B_right_visual_label->update();
   }
 }
 
@@ -872,9 +876,9 @@ void MainWindow::bindControlConnection() {
 
   // 合片机-停止
   connect(developer_widget_, &DeveloperWidget::signComposeMachineStop, [=]() {
-    // QtConcurrent::run([=]() {
-    // rclcomm_->composeMachineReset();
-    //});
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineStop();
+    });
   });
 
   // 合片机-除褶
@@ -967,6 +971,15 @@ void MainWindow::bindControlConnection() {
       rclcomm_->sewingMachineNeedle(shoulder_length, side_length);
     });
   });
+
+  // 检测标定效果
+  connect(developer_widget_, &DeveloperWidget::signCheckCalib, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->checkCalibration();
+    });
+  });
+
+  connect(rclcomm_, &SytRclComm::signCheckCalibrationFinish, developer_widget_, &DeveloperWidget::setCheckCalibrationResult);
 }
 
 void MainWindow::deleteAll() {
@@ -1360,14 +1373,12 @@ void MainWindow::slotDeveloperMode() {
 
 ////////////////////////// 标定槽函数 //////////////////////////
 void MainWindow::slotCompCalibStart() {
-  // waiting_spinner_widget_->start();
   future_ = QtConcurrent::run([=] {
     rclcomm_->compCalib();
   });
 }
 
 void MainWindow::slotSewingCalibStart() {
-  // waiting_spinner_widget_->start();
   future_ = QtConcurrent::run([=] {
     rclcomm_->sewingCalib();
   });
@@ -1498,10 +1509,10 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     // 预览图
     QImage style_image(2 * (qMax(cloth_style_front.bottom_length, cloth_style_back.bottom_length) + 600), qMax(cloth_style_front.cloth_length, cloth_style_back.cloth_length) + 400, QImage::Format_RGB32);
     style_image.fill(Qt::white);
-    qreal width_offset_front = qreal(style_image.width()) / 4 - (front_keypoints["left_bottom"].x() + front_keypoints["right_bottom"].x()) / 2;
+    qreal width_offset_front  = qreal(style_image.width()) / 4 - (front_keypoints["left_bottom"].x() + front_keypoints["right_bottom"].x()) / 2;
     qreal height_offset_front = -front_keypoints["left_bottom"].y() + style_image.height() - 200;
     qreal width_offset_back   = qreal(style_image.width()) / 2 + qreal(style_image.width()) / 4 - (back_keypoints["left_bottom"].x() + back_keypoints["right_bottom"].x()) / 2;
-    qreal height_offset_back = -back_keypoints["left_bottom"].y() + style_image.height() - 200;
+    qreal height_offset_back  = -back_keypoints["left_bottom"].y() + style_image.height() - 200;
 
     // 画笔对象
     QPainter painter(&style_image);
