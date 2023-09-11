@@ -400,6 +400,9 @@ void DeveloperWidget::bindOther() {
   // 是否老化测试
   setPressureTest();
 
+  // 曲线缝纫
+  setCurveSewing();
+
   // 检查标定效果
   setCheckCalibration();
 }
@@ -627,6 +630,16 @@ void DeveloperWidget::setPressureTest() {
       system("ros2 param set /syt_compose_machine_node pressure_test True");
     } else {
       system("ros2 param set /syt_compose_machine_node pressure_test False");
+    }
+  });
+}
+
+void DeveloperWidget::setCurveSewing() {
+  connect(ui->curve_sewing_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled) {
+      system("ros2 param set /syt_sewing_machine_node curve_sewing True");
+    } else {
+      system("ros2 param set /syt_sewing_machine_node curve_sewing False");
     }
   });
 }
