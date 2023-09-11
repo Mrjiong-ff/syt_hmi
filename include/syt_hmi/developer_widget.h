@@ -67,6 +67,7 @@ private:
   void setUpdateBin();
   void setUseSewing();
   void setPressureTest();
+  void setCurveSewing();
   void setCheckCalibration();
 
 signals:
