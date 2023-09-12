@@ -1042,11 +1042,17 @@ void MainWindow::initOther() {
 void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> disables) {
   for (auto i : enables) {
     i->setEnabled(true);
-    i->setStyleSheet("color: black;");
+    QPalette palette = i->palette();
+    palette.setColor(QPalette::ButtonText, Qt::black);
+    i->setPalette(palette);
+    // i->setStyleSheet("color: black;");
   }
   for (auto i : disables) {
     i->setEnabled(false);
-    i->setStyleSheet("color: gray;");
+    QPalette palette = i->palette();
+    palette.setColor(QPalette::ButtonText, Qt::gray);
+    i->setPalette(palette);
+    //i->setStyleSheet("color: gray;");
   }
 }
 
