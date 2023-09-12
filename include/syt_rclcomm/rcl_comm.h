@@ -151,7 +151,7 @@ protected:
 
 private:
   bool start_flag_ = false;
-  int last_state_ = 0;
+  int last_state_;
   syt_msgs::msg::FSMRunMode run_mode_;
 
   // total

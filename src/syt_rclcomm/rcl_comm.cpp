@@ -1,6 +1,6 @@
 #include "syt_rclcomm/rcl_comm.h"
 
-SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
+SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100), last_state_(-1) {
   executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   node_ = rclcpp::Node::make_shared("syt_hmi_node");
   executor_->add_node(node_);
@@ -229,23 +229,26 @@ void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
 
 // 监听全流程运行状态
 void SytRclComm::runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg) {
-  switch (msg->state_code) {
-  case syt_msgs::msg::FSMState::IDLE:
-    emit machineIdle();
-    break;
-  case syt_msgs::msg::FSMState::PAUSE:
-    emit machinePause();
-    break;
-  case syt_msgs::msg::FSMState::STOP:
-    start_flag_ = false;
-    emit machineStop();
-    break;
-  case syt_msgs::msg::FSMState::RUN:
-    emit machineRun();
-    break;
-  default:
-    break;
+  if (last_state_ != msg->state_code) {
+    switch (msg->state_code) {
+    case syt_msgs::msg::FSMState::IDLE:
+      emit machineIdle();
+      break;
+    case syt_msgs::msg::FSMState::PAUSE:
+      emit machinePause();
+      break;
+    case syt_msgs::msg::FSMState::STOP:
+      start_flag_ = false;
+      emit machineStop();
+      break;
+    case syt_msgs::msg::FSMState::RUN:
+      emit machineRun();
+      break;
+    default:
+      break;
+    }
   }
+  last_state_ = msg->state_code;
 }
 
 // 监听运行次数
