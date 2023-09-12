@@ -362,11 +362,11 @@ void SytRclComm::pauseCmd() {
 void SytRclComm::stopCmd() {
   start_flag_ = false;
   auto request = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
-  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::STOP;
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::END;
 
   syt_msgs::srv::FSMControlFlow::Response response;
-  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机停止", 60000, request, response);
-  qDebug() << "整机停止：" << result;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机结束", 60000, request, response);
+  qDebug() << "整机结束：" << result;
   switch (result) {
   case CALL_SUCCESS:
     emit signStopFinish(response.success);
