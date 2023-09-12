@@ -106,6 +106,8 @@
           <property name="font">
            <font>
             <pointsize>20</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="text">
@@ -124,6 +126,8 @@
           <property name="font">
            <font>
             <pointsize>20</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="text">
@@ -142,6 +146,8 @@
           <property name="font">
            <font>
             <pointsize>20</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="text">
@@ -160,6 +166,8 @@
           <property name="font">
            <font>
             <pointsize>20</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="text">
@@ -179,6 +187,26 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="WaterZoomButton" name="emergency_stop_btn">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>急停</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -1991,8 +2019,39 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout_8">
-             <item row="0" column="3">
-              <spacer name="verticalSpacer_19">
+             <item row="3" column="1">
+              <spacer name="horizontalSpacer_10">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="4">
+              <widget class="QPushButton" name="fitting_plane_btn">
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>平面拟合</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <spacer name="verticalSpacer_18">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
@@ -2004,20 +2063,7 @@
                </property>
               </spacer>
              </item>
-             <item row="4" column="3">
-              <spacer name="verticalSpacer_20">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="2" column="4">
+             <item row="3" column="4">
               <spacer name="horizontalSpacer_11">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -2030,7 +2076,14 @@
                </property>
               </spacer>
              </item>
-             <item row="1" column="4">
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="switch_sucker_axis_ratio_button">
+               <property name="text">
+                <string>切换吸盘系</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="4">
               <widget class="WaterZoomButton" name="compose_reset_btn">
                <property name="minimumSize">
                 <size>
@@ -2048,7 +2101,56 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="4" column="1">
+              <widget class="WaterZoomButton" name="sucker_shrink_btn">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>吸盘内缩</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="3">
+              <spacer name="verticalSpacer_20">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="4" column="4">
+              <widget class="WaterZoomButton" name="compose_stop_btn">
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>停止</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
               <widget class="WaterZoomButton" name="sucker_dilate_btn">
                <property name="minimumSize">
                 <size>
@@ -2066,33 +2168,7 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
-              <spacer name="horizontalSpacer_10">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="2" column="3">
-              <spacer name="verticalSpacer_18">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="0" rowspan="5">
+             <item row="0" column="0" rowspan="6">
               <layout class="QGridLayout" name="gridLayout_7">
                <property name="horizontalSpacing">
                 <number>20</number>
@@ -2534,48 +2610,18 @@
                </item>
               </layout>
              </item>
-             <item row="3" column="1">
-              <widget class="WaterZoomButton" name="sucker_shrink_btn">
-               <property name="minimumSize">
+             <item row="1" column="3">
+              <spacer name="verticalSpacer_34">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
                 <size>
-                 <width>100</width>
-                 <height>60</height>
+                 <width>20</width>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>吸盘内缩</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="4">
-              <widget class="WaterZoomButton" name="compose_stop_btn">
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>60</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>停止</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QRadioButton" name="switch_sucker_axis_ratio_button">
-               <property name="text">
-                <string>切换吸盘系</string>
-               </property>
-              </widget>
+              </spacer>
              </item>
             </layout>
            </item>
@@ -4219,14 +4265,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>WaterZoomButton</class>
-   <extends>QPushButton</extends>
-   <header>syt_btn/waterzoombutton.h</header>
-  </customwidget>
-  <customwidget>
    <class>WinCloseButton</class>
    <extends>QPushButton</extends>
    <header>syt_btn/winclosebutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WaterZoomButton</class>
+   <extends>QPushButton</extends>
+   <header>syt_btn/waterzoombutton.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

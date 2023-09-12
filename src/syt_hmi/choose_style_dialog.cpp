@@ -88,7 +88,7 @@ void ChooseStyleDialog::slotSetCurrentStyleFinish(bool result) {
     emit signSetCurrentStyleName(ui->style_file_list_view->model()->data(ui->style_file_list_view->currentIndex()).toString());
     this->accept();
   } else {
-    showMessageBox(this, WARN, "设置样式失败！", 1, {"确认"});
+    showMessageBox(this, ERROR, "设置样式失败！", 1, {"确认"});
   }
 }
 

@@ -40,20 +40,20 @@ private:
   // 更新固件
   QString update_bin_path_;
 
-  float left_bottom_init_x_    = 0;
-  float left_bottom_init_y_    = 0;
-  float left_oxter_init_x_     = 0;
-  float left_oxter_init_y_     = 0;
-  float left_shoulder_init_x_  = 0;
-  float left_shoulder_init_y_  = 0;
-  float left_shoulder_init_c_  = 0;
+  float left_bottom_init_x_ = 0;
+  float left_bottom_init_y_ = 0;
+  float left_oxter_init_x_ = 0;
+  float left_oxter_init_y_ = 0;
+  float left_shoulder_init_x_ = 0;
+  float left_shoulder_init_y_ = 0;
+  float left_shoulder_init_c_ = 0;
   float right_shoulder_init_x_ = 0;
   float right_shoulder_init_y_ = 0;
   float right_shoulder_init_c_ = 0;
-  float right_oxter_init_x_    = 0;
-  float right_oxter_init_y_    = 0;
-  float right_bottom_init_x_   = 0;
-  float right_bottom_init_y_   = 0;
+  float right_oxter_init_x_ = 0;
+  float right_oxter_init_y_ = 0;
+  float right_bottom_init_x_ = 0;
+  float right_bottom_init_y_ = 0;
 
 private:
   void setParam();
@@ -97,6 +97,7 @@ signals:
   void signComposeMachineUnfastenSheet();
   void signComposeMachineMoveHand(float x, float y, float z, float c);
   void signComposeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states);
+  void signComposeMachineFittingPlane();
 
   // 缝纫机
   void signSewingMachineReset();
@@ -105,16 +106,15 @@ signals:
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
   void signSewingMachineNeedle(float shoulder_length, float side_length);
 
-  // 模式切换
-  void signChooseMode(int mode);
-
-  // 更新固件
-  void signUpdateLoadMachine();
+  // 其他
+  void signChooseMode(int mode); // 模式切换
+  void signUpdateLoadMachine();  // 更新固件
   void signUpdateComposeMachine();
   void signUpdateSewingMachine();
+  void signCheckCalib();   // 检测标定结果
+  void signEmegencyStop(); // 急停
 
-  // 检测关键点
-  void signCheckCalib();
+  // 急停
 public slots:
   void setComposeMachineState(syt_msgs::msg::ComposeMachineState state);
   void setSewingMachineState(syt_msgs::msg::SewingMachineState state);

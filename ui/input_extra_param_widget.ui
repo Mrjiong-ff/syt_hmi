@@ -44,17 +44,17 @@
        </property>
        <item>
         <property name="text">
-         <string>薄</string>
+         <string>低厚度</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>中</string>
+         <string>中厚度</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>厚</string>
+         <string>高厚度</string>
         </property>
        </item>
       </widget>

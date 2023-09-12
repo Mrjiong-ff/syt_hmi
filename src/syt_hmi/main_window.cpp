@@ -37,7 +37,7 @@ void MainWindow::region(const QPoint &currentGlobalPoint) {
   // 获取窗体在屏幕上的位置区域，topLeft为坐上角点，rightButton为右下角点
   QRect rect = this->rect();
 
-  QPoint topLeft     = this->mapToGlobal(rect.topLeft()); // 将左上角的(0,0)转化为全局坐标
+  QPoint topLeft = this->mapToGlobal(rect.topLeft()); // 将左上角的(0,0)转化为全局坐标
   QPoint rightButton = this->mapToGlobal(rect.bottomRight());
 
   int x = currentGlobalPoint.x(); // 当前鼠标的坐标
@@ -106,8 +106,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
   QPoint globalPoint = event->globalPos(); // 鼠标全局坐标
-  QRect rect         = this->rect();       // rect == QRect(0,0 1280x720)
-  QPoint topLeft     = mapToGlobal(rect.topLeft());
+  QRect rect = this->rect();               // rect == QRect(0,0 1280x720)
+  QPoint topLeft = mapToGlobal(rect.topLeft());
   QPoint bottomRight = mapToGlobal(rect.bottomRight());
 
   if (this->windowState() != Qt::WindowMaximized) {
@@ -233,7 +233,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
   }
 
   if (style_scene_->items().size()) {
-    qreal gv_width  = ui->style_graphics_view->width();
+    qreal gv_width = ui->style_graphics_view->width();
     qreal gv_height = ui->style_graphics_view->height();
 
     image_item_->setQGraphicsViewWH(gv_width, gv_height);
@@ -314,19 +314,19 @@ void MainWindow::initWidget() {
   ui->style_graphics_view->setAttribute(Qt::WA_AlwaysStackOnTop, true);
 
   // 初始状态下按钮状态
-  this->btnControl({ui->reset_btn, ui->choose_style_btn}, {ui->start_btn, ui->pause_btn, ui->stop_btn, ui->add_cloth_btn});
+  this->btnControl({ui->reset_btn, ui->choose_style_btn}, {ui->start_btn, ui->pause_btn, ui->end_btn, ui->add_cloth_btn});
 
   // 旋转条初始化
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
 
   // title logo
   auto tit_logo = QPixmap(":m_logo/logo/logo2.png");
-  tit_logo      = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(), Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
+  tit_logo = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(), Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
   ui->sytLogoLabel->setPixmap(tit_logo);
 
   // 移动到中心
   QScreen *desktop = QApplication::screenAt(QCursor::pos());
-  QRect rect       = desktop->availableGeometry();
+  QRect rect = desktop->availableGeometry();
   move(rect.left() + (rect.width() - width()) / 2, (rect.height() - height()) / 2);
 }
 
@@ -334,9 +334,11 @@ void MainWindow::setStatisticComponent() {
   ui->progress_bar_1->setLabel(QString("B区余量"));
   ui->progress_bar_1->setPercentage(true);
   ui->progress_bar_1->setProgressBar(100, 100);
+  ui->progress_bar_1->hide();
   ui->progress_bar_2->setLabel(QString("A区余量"));
   ui->progress_bar_2->setPercentage(true);
   ui->progress_bar_2->setProgressBar(100, 100);
+  ui->progress_bar_2->hide();
   ui->progress_bar_3->setLabel(QString("产量"));
   ui->progress_bar_3->setProgressBar(0, 400);
 }
@@ -354,8 +356,8 @@ void MainWindow::setPreviewComponent() {
 void MainWindow::setLogComponent() {
   // 日志过滤筛选
   QAction *set_log_level_debug_act = new QAction("DEBUG", this);
-  QAction *set_log_level_info_act  = new QAction("INFO", this);
-  QAction *set_log_level_warn_act  = new QAction("WARN", this);
+  QAction *set_log_level_info_act = new QAction("INFO", this);
+  QAction *set_log_level_warn_act = new QAction("WARN", this);
   QAction *set_log_level_error_act = new QAction("ERROR", this);
   QAction *set_log_level_fatal_act = new QAction("FATAL", this);
   ui->log_filter_tool_btn->addAction(set_log_level_debug_act);
@@ -448,17 +450,17 @@ void MainWindow::setToolBar() {
 
     // 自动创建
     void (ClothStyleDialog::*auto_create_style_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signAutoCreateStyle;
-    void (MainWindow::*auto_create_style_slot)(ClothStyleDialog *parent)         = &MainWindow::slotAutoCreateStyle;
+    void (MainWindow::*auto_create_style_slot)(ClothStyleDialog *parent) = &MainWindow::slotAutoCreateStyle;
     connect(cloth_style_dialog, auto_create_style_signal, this, auto_create_style_slot, Qt::ConnectionType::QueuedConnection);
 
     // 手动创建
     void (ClothStyleDialog::*manual_input_param_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signManualInputParam;
-    void (MainWindow::*manual_input_param_slot)(ClothStyleDialog *parent)         = &MainWindow::slotManualInputParam;
+    void (MainWindow::*manual_input_param_slot)(ClothStyleDialog *parent) = &MainWindow::slotManualInputParam;
     connect(cloth_style_dialog, manual_input_param_signal, this, manual_input_param_slot, Qt::ConnectionType::QueuedConnection);
 
     // 从已有文件创建
     void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
-    void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent)         = &MainWindow::slotCreateFromSource;
+    void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent) = &MainWindow::slotCreateFromSource;
     connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
 
     cloth_style_dialog->show();
@@ -481,9 +483,9 @@ void MainWindow::setMainControlButton() {
   ui->pause_btn->setForeEnabled(false);
   ui->pause_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  ui->stop_btn->setParentEnabled(true);
-  ui->stop_btn->setForeEnabled(false);
-  ui->stop_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->end_btn->setParentEnabled(true);
+  ui->end_btn->setForeEnabled(false);
+  ui->end_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
   ui->add_cloth_btn->setParentEnabled(true);
   ui->add_cloth_btn->setForeEnabled(false);
@@ -499,7 +501,7 @@ void MainWindow::setMainControlButton() {
   connect(rclcomm_, &SytRclComm::signStartFinish, this, &MainWindow::startFinish);
   connect(ui->pause_btn, &QPushButton::clicked, this, &MainWindow::pauseBtnClicked);
   connect(rclcomm_, &SytRclComm::signPauseFinish, this, &MainWindow::pauseFinish);
-  connect(ui->stop_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
+  connect(ui->end_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
   connect(rclcomm_, &SytRclComm::signStopFinish, this, &MainWindow::stopFinish);
   connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
 }
@@ -563,7 +565,7 @@ void MainWindow::setBaseComponet() {
   QMenu *menu = new QMenu(this);
 
   QAction *update_act = new QAction(this);
-  QAction *about_act  = new QAction(this);
+  QAction *about_act = new QAction(this);
 
   update_act->setText("检查更新");
   update_act->setIcon(QIcon(":m_icon/icon/update.svg"));
@@ -579,9 +581,9 @@ void MainWindow::setBaseComponet() {
   ui->sytMainTitleWidget->setContextMenuPolicy(Qt::CustomContextMenu);
   title_menu_ = new QMenu(this);
 
-  QAction *min_act   = new QAction(this);
-  QAction *max_act   = new QAction(this);
-  QAction *full_act  = new QAction(this);
+  QAction *min_act = new QAction(this);
+  QAction *max_act = new QAction(this);
+  QAction *full_act = new QAction(this);
   QAction *close_act = new QAction(this);
 
   min_act->setText("最小化");
@@ -734,12 +736,24 @@ void MainWindow::settingConnection() {
   // 补料模式结束
   connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::addClothFinish);
 
-  // 成功率统计
+  // 机器空闲
   connect(rclcomm_, &SytRclComm::machineIdle, [=]() {
-    this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->start_btn}, {ui->stop_btn, ui->pause_btn});
+    this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn});
   });
 
-  connect(rclcomm_, &SytRclComm::finishOneRound, [=]() {
+  // 机器运行
+  connect(rclcomm_, &SytRclComm::machineRun, [=]() {
+    this->btnControl({ui->pause_btn, ui->end_btn}, {ui->start_btn, ui->add_cloth_btn, ui->reset_btn});
+  });
+
+  // 机器暂停
+  connect(rclcomm_, &SytRclComm::machinePause, [=]() {
+    this->btnControl({ui->reset_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn});
+  });
+
+  // 机器停止
+  connect(rclcomm_, &SytRclComm::machineStop, [=]() {
+    this->btnControl({ui->reset_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn, ui->start_btn});
   });
 }
 
@@ -944,6 +958,13 @@ void MainWindow::bindControlConnection() {
     });
   });
 
+  // 合片机-平面拟合
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineFittingPlane, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineFittingPlane();
+    });
+  });
+
   // 缝纫机-复位
   connect(developer_widget_, &DeveloperWidget::signSewingMachineReset, [=]() {
     QtConcurrent::run([=]() {
@@ -978,8 +999,14 @@ void MainWindow::bindControlConnection() {
       rclcomm_->checkCalibration();
     });
   });
-
   connect(rclcomm_, &SytRclComm::signCheckCalibrationFinish, developer_widget_, &DeveloperWidget::setCheckCalibrationResult);
+
+  // 急停
+  connect(developer_widget_, &DeveloperWidget::signEmegencyStop, rclcomm_, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->emergencyStop();
+    });
+  });
 }
 
 void MainWindow::deleteAll() {
@@ -1090,11 +1117,11 @@ void MainWindow::resetFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
     emit signUpdateLabelState("复位完成");
-    this->btnControl({ui->start_btn, ui->stop_btn, ui->add_cloth_btn}, {ui->reset_btn, ui->pause_btn});
-    // setMutuallyLight(GREEN);
+    // this->btnControl({ui->start_btn, ui->end_btn, ui->add_cloth_btn}, {ui->reset_btn, ui->pause_btn});
+    //  setMutuallyLight(GREEN);
   } else {
     emit signUpdateLabelState("复位失败");
-    this->btnControl({ui->reset_btn}, {ui->pause_btn, ui->start_btn, ui->stop_btn, ui->add_cloth_btn});
+    // this->btnControl({ui->reset_btn}, {ui->pause_btn, ui->start_btn, ui->end_btn, ui->add_cloth_btn});
     showMessageBox(this, ERROR, "复位失败", 1, {"确认"});
   }
 }
@@ -1118,7 +1145,7 @@ void MainWindow::startFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
     emit signUpdateLabelState("运行中");
-    this->btnControl({ui->pause_btn, ui->stop_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn});
+    // this->btnControl({ui->pause_btn, ui->end_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn});
   } else {
     emit signUpdateLabelState("运行失败");
     showMessageBox(this, ERROR, "运行失败", 1, {"确认"});
@@ -1144,7 +1171,7 @@ void MainWindow::pauseFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
     emit signUpdateLabelState("暂停中");
-    this->btnControl({ui->start_btn, ui->reset_btn}, {ui->pause_btn, ui->stop_btn, ui->add_cloth_btn});
+    // this->btnControl({ui->start_btn, ui->reset_btn}, {ui->pause_btn, ui->end_btn, ui->add_cloth_btn});
   } else {
     emit signUpdateLabelState("暂停失败");
     showMessageBox(this, ERROR, "暂停失败", 1, {"确认"});
@@ -1153,7 +1180,7 @@ void MainWindow::pauseFinish(bool result) {
 
 // 停止按钮槽函数
 void MainWindow::stopBtnClicked() {
-  bool res = isFastClick(ui->stop_btn, 1000);
+  bool res = isFastClick(ui->end_btn, 1000);
   if (!res) {
     return;
   }
@@ -1170,7 +1197,7 @@ void MainWindow::stopFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
     emit signUpdateLabelState("停止中");
-    this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn, ui->pause_btn});
+    // this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->end_btn, ui->pause_btn});
   } else {
     emit signUpdateLabelState("停止失败");
     showMessageBox(this, ERROR, "停止失败", 1, {"确认"});
@@ -1179,7 +1206,7 @@ void MainWindow::stopFinish(bool result) {
 
 // 补料按钮槽函数
 void MainWindow::addClothBtnClicked() {
-  bool res = isFastClick(ui->stop_btn, 1000);
+  bool res = isFastClick(ui->end_btn, 1000);
   if (!res) {
     return;
   }
@@ -1198,7 +1225,7 @@ void MainWindow::addClothBtnClicked() {
     rclcomm_->loadMachineAddCloth(1);
   });
 
-  this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn, ui->pause_btn});
+  // this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->end_btn, ui->pause_btn});
 }
 
 void MainWindow::addClothFinish(bool result, int id) {
@@ -1223,12 +1250,12 @@ void MainWindow::addClothFinish(bool result, int id) {
 
 // 换板按钮槽函数
 void MainWindow::changePlateBtnClicked() {
-  bool res = isFastClick(ui->stop_btn, 1000);
+  bool res = isFastClick(ui->end_btn, 1000);
   if (!res) {
     return;
   }
 
-  this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->stop_btn, ui->pause_btn});
+  // this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->end_btn, ui->pause_btn});
   emit signUpdateLabelState("换压板模式");
 
   // TODO
@@ -1440,8 +1467,8 @@ void MainWindow::slotChooseStyleFile() {
 
 void MainWindow::slotSetCurrentStyleFile(QString prefix, QString file_name) {
   style_file_prefix_ = prefix;
-  style_file_name_   = file_name;
-  future_            = QtConcurrent::run([=] {
+  style_file_name_ = file_name;
+  future_ = QtConcurrent::run([=] {
     rclcomm_->setCurrentStyle(prefix, file_name);
   });
 }
@@ -1458,11 +1485,11 @@ void MainWindow::slotGetClothStyle(QString prefix, QString file_name) {
 void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
   if (result) {
     cloth_style_front_ = cloth_style_front;
-    cloth_style_back_  = cloth_style_back;
+    cloth_style_back_ = cloth_style_back;
 
     auto rotatePoints = [=](QPointF point, QPointF center, qreal angle_radius) -> QPointF {
-      qreal x_offset  = point.x() - center.x();
-      qreal y_offset  = point.y() - center.y();
+      qreal x_offset = point.x() - center.x();
+      qreal y_offset = point.y() - center.y();
       qreal x_rotated = center.x() + x_offset * qCos(angle_radius) - y_offset * qSin(angle_radius);
       qreal y_rotated = center.y() + x_offset * qSin(angle_radius) + y_offset * qCos(angle_radius);
       return QPointF(x_rotated, y_rotated);
@@ -1470,11 +1497,11 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
 
     // 旋转端点
     QPointF front_anchor = QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y);
-    QPointF back_anchor  = QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y);
+    QPointF back_anchor = QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y);
 
     // 旋转角度
     qreal front_angle = -atan2(cloth_style_front.keypoint_info.right_bottom.y - cloth_style_front.keypoint_info.left_bottom.y, cloth_style_front.keypoint_info.right_bottom.x - cloth_style_front.keypoint_info.left_bottom.x) + PI;
-    qreal back_angle  = -atan2(cloth_style_back.keypoint_info.right_bottom.y - cloth_style_back.keypoint_info.left_bottom.y, cloth_style_back.keypoint_info.right_bottom.x - cloth_style_back.keypoint_info.left_bottom.x) + PI;
+    qreal back_angle = -atan2(cloth_style_back.keypoint_info.right_bottom.y - cloth_style_back.keypoint_info.left_bottom.y, cloth_style_back.keypoint_info.right_bottom.x - cloth_style_back.keypoint_info.left_bottom.x) + PI;
 
     QVector<QPointF> front_points;
     for (int i = 0; i < cloth_style_front.cloth_contour.points.size(); ++i) {
@@ -1487,32 +1514,32 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     }
 
     QMap<QString, QPointF> front_keypoints;
-    front_keypoints["left_bottom"]    = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y), front_anchor, front_angle);
-    front_keypoints["left_oxter"]     = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_oxter.x, cloth_style_front.keypoint_info.left_oxter.y), front_anchor, front_angle);
-    front_keypoints["left_shoulder"]  = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_shoulder.x, cloth_style_front.keypoint_info.left_shoulder.y), front_anchor, front_angle);
-    front_keypoints["left_collar"]    = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_collar.x, cloth_style_front.keypoint_info.left_collar.y), front_anchor, front_angle);
-    front_keypoints["right_collar"]   = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_collar.x, cloth_style_front.keypoint_info.right_collar.y), front_anchor, front_angle);
+    front_keypoints["left_bottom"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y), front_anchor, front_angle);
+    front_keypoints["left_oxter"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_oxter.x, cloth_style_front.keypoint_info.left_oxter.y), front_anchor, front_angle);
+    front_keypoints["left_shoulder"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_shoulder.x, cloth_style_front.keypoint_info.left_shoulder.y), front_anchor, front_angle);
+    front_keypoints["left_collar"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_collar.x, cloth_style_front.keypoint_info.left_collar.y), front_anchor, front_angle);
+    front_keypoints["right_collar"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_collar.x, cloth_style_front.keypoint_info.right_collar.y), front_anchor, front_angle);
     front_keypoints["right_shoulder"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_shoulder.x, cloth_style_front.keypoint_info.right_shoulder.y), front_anchor, front_angle);
-    front_keypoints["right_oxter"]    = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_oxter.x, cloth_style_front.keypoint_info.right_oxter.y), front_anchor, front_angle);
-    front_keypoints["right_bottom"]   = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_bottom.x, cloth_style_front.keypoint_info.right_bottom.y), front_anchor, front_angle);
+    front_keypoints["right_oxter"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_oxter.x, cloth_style_front.keypoint_info.right_oxter.y), front_anchor, front_angle);
+    front_keypoints["right_bottom"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_bottom.x, cloth_style_front.keypoint_info.right_bottom.y), front_anchor, front_angle);
 
     QMap<QString, QPointF> back_keypoints;
-    back_keypoints["left_bottom"]    = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_bottom.x, cloth_style_back.keypoint_info.left_bottom.y), back_anchor, back_angle);
-    back_keypoints["left_oxter"]     = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_oxter.x, cloth_style_back.keypoint_info.left_oxter.y), back_anchor, back_angle);
-    back_keypoints["left_shoulder"]  = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_shoulder.x, cloth_style_back.keypoint_info.left_shoulder.y), back_anchor, back_angle);
-    back_keypoints["left_collar"]    = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_collar.x, cloth_style_back.keypoint_info.left_collar.y), back_anchor, back_angle);
-    back_keypoints["right_collar"]   = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_collar.x, cloth_style_back.keypoint_info.right_collar.y), back_anchor, back_angle);
+    back_keypoints["left_bottom"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_bottom.x, cloth_style_back.keypoint_info.left_bottom.y), back_anchor, back_angle);
+    back_keypoints["left_oxter"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_oxter.x, cloth_style_back.keypoint_info.left_oxter.y), back_anchor, back_angle);
+    back_keypoints["left_shoulder"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_shoulder.x, cloth_style_back.keypoint_info.left_shoulder.y), back_anchor, back_angle);
+    back_keypoints["left_collar"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_collar.x, cloth_style_back.keypoint_info.left_collar.y), back_anchor, back_angle);
+    back_keypoints["right_collar"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_collar.x, cloth_style_back.keypoint_info.right_collar.y), back_anchor, back_angle);
     back_keypoints["right_shoulder"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_shoulder.x, cloth_style_back.keypoint_info.right_shoulder.y), back_anchor, back_angle);
-    back_keypoints["right_oxter"]    = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_oxter.x, cloth_style_back.keypoint_info.right_oxter.y), back_anchor, back_angle);
-    back_keypoints["right_bottom"]   = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_bottom.x, cloth_style_back.keypoint_info.right_bottom.y), back_anchor, back_angle);
+    back_keypoints["right_oxter"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_oxter.x, cloth_style_back.keypoint_info.right_oxter.y), back_anchor, back_angle);
+    back_keypoints["right_bottom"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_bottom.x, cloth_style_back.keypoint_info.right_bottom.y), back_anchor, back_angle);
 
     // 预览图
     QImage style_image(2 * (qMax(cloth_style_front.bottom_length, cloth_style_back.bottom_length) + 600), qMax(cloth_style_front.cloth_length, cloth_style_back.cloth_length) + 400, QImage::Format_RGB32);
     style_image.fill(Qt::white);
-    qreal width_offset_front  = qreal(style_image.width()) / 4 - (front_keypoints["left_bottom"].x() + front_keypoints["right_bottom"].x()) / 2;
-    qreal height_offset_front = -front_keypoints["left_bottom"].y() + style_image.height() - 200;
-    qreal width_offset_back   = qreal(style_image.width()) / 2 + qreal(style_image.width()) / 4 - (back_keypoints["left_bottom"].x() + back_keypoints["right_bottom"].x()) / 2;
-    qreal height_offset_back  = -back_keypoints["left_bottom"].y() + style_image.height() - 200;
+    qreal width_offset_front = qreal(style_image.width()) / 4 - (front_keypoints["left_bottom"].x() + front_keypoints["right_bottom"].x()) / 2;
+    qreal height_offset_front = -front_keypoints["left_bottom"].y() + style_image.height() - 100;
+    qreal width_offset_back = qreal(style_image.width()) / 2 + qreal(style_image.width()) / 4 - (back_keypoints["left_bottom"].x() + back_keypoints["right_bottom"].x()) / 2;
+    qreal height_offset_back = -back_keypoints["left_bottom"].y() + style_image.height() - 100;
 
     // 画笔对象
     QPainter painter(&style_image);
@@ -1521,10 +1548,10 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     // 裁片颜色以填充图像
     QColor front_color, back_color;
     int front_color_value = cloth_style_front.cloth_color;
-    int back_color_value  = cloth_style_back.cloth_color;
+    int back_color_value = cloth_style_back.cloth_color;
 
     front_color = QColor((front_color_value & 0xff0000) >> 16, (front_color_value & 0xff00) >> 8, (front_color_value & 0xff));
-    back_color  = QColor((back_color_value & 0xff0000) >> 16, (back_color_value & 0xff00) >> 8, (back_color_value & 0xff));
+    back_color = QColor((back_color_value & 0xff0000) >> 16, (back_color_value & 0xff00) >> 8, (back_color_value & 0xff));
 
     // 提取轮廓线
     QVector<QPointF> front_contour, back_contour;
@@ -1552,6 +1579,14 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     painter.setBrush(back_color);
     painter.drawPath(back_path);
 
+    // 绘制放置区域
+    QFont location_font;
+    location_font.setPointSize(50);
+    location_font.setBold(true);
+    painter.setFont(location_font);
+    painter.drawText(style_image.width() / 4 - 250, 100, 500, 70, Qt::AlignCenter, QString("放置%1区").arg(cloth_style_front.cloth_location - 50 ? "B" : "A"));
+    painter.drawText(style_image.width() / 4 + style_image.width() / 2 - 250, 100, 500, 70, Qt::AlignCenter, QString("放置%1区").arg(cloth_style_back.cloth_location - 50 ? "B" : "A"));
+
     // 绘制关键点
     auto draw_keypoints = [&](QMap<QString, QPointF> keypoints, int w_offset, int h_offset, QPointF center, qreal angle_radius) {
       qreal radius = 8;
@@ -1576,14 +1611,14 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
       QLineF line(begin, end);
       QVector2D direction_vec = QVector2D(end.x() - begin.x(), end.y() - begin.y()).normalized();
       QVector2D norm_vec(direction_vec.y(), -direction_vec.x());
-      int edge_length           = 40;
-      QPointF edge_begin_1      = QPointF(begin.x() + norm_vec.x() * 15, begin.y() + norm_vec.y() * 15);
-      QPointF edge_begin_2      = QPointF(edge_begin_1.x() + norm_vec.x() * edge_length, edge_begin_1.y() + norm_vec.y() * edge_length);
-      QPointF edge_end_1        = QPointF(end.x() + norm_vec.x() * 15, end.y() + norm_vec.y() * 15);
-      QPointF edge_end_2        = QPointF(edge_end_1.x() + norm_vec.x() * edge_length, edge_end_1.y() + norm_vec.y() * edge_length);
+      int edge_length = 40;
+      QPointF edge_begin_1 = QPointF(begin.x() + norm_vec.x() * 15, begin.y() + norm_vec.y() * 15);
+      QPointF edge_begin_2 = QPointF(edge_begin_1.x() + norm_vec.x() * edge_length, edge_begin_1.y() + norm_vec.y() * edge_length);
+      QPointF edge_end_1 = QPointF(end.x() + norm_vec.x() * 15, end.y() + norm_vec.y() * 15);
+      QPointF edge_end_2 = QPointF(edge_end_1.x() + norm_vec.x() * edge_length, edge_end_1.y() + norm_vec.y() * edge_length);
       QPointF edge_begin_center = (edge_begin_1 + edge_begin_2) / 2;
-      QPointF edge_end_center   = (edge_end_1 + edge_end_2) / 2;
-      QPointF edge_center       = (edge_begin_center + edge_end_center) / 2;
+      QPointF edge_end_center = (edge_end_1 + edge_end_2) / 2;
+      QPointF edge_center = (edge_begin_center + edge_end_center) / 2;
 
       // 保存当前画笔状态
       painter.save();
@@ -1603,11 +1638,11 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
       font.setBold(true);
       painter.setFont(font);
 
-      QString text        = QString("%1").arg(length);
-      qreal text_width    = painter.fontMetrics().width(text);
-      qreal text_height   = painter.fontMetrics().height();
+      QString text = QString("%1").arg(length);
+      qreal text_width = painter.fontMetrics().width(text);
+      qreal text_height = painter.fontMetrics().height();
       QPointF text_center = QPointF(edge_center.x() + norm_vec.x() * 30, edge_center.y() + norm_vec.y() * 30);
-      qreal angle         = atan2(direction_vec.y(), direction_vec.x());
+      qreal angle = atan2(direction_vec.y(), direction_vec.x());
       if (invert_text) {
         angle += PI;
       }
@@ -1638,7 +1673,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     style_scene_->addItem(image_item_);
 
     // 设置操作时用的缩放系数
-    qreal gv_width  = ui->style_graphics_view->width();
+    qreal gv_width = ui->style_graphics_view->width();
     qreal gv_height = ui->style_graphics_view->height();
     image_item_->setQGraphicsViewWH(gv_width, gv_height);
 
@@ -1665,7 +1700,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
 
     // 设置信息到treewidget中
     QTreeWidgetItem *front_item = new QTreeWidgetItem(QStringList() << "前片");
-    QTreeWidgetItem *back_item  = new QTreeWidgetItem(QStringList() << "后片");
+    QTreeWidgetItem *back_item = new QTreeWidgetItem(QStringList() << "后片");
 
     ui->cloth_style_tree_widget->addTopLevelItem(front_item);
     ui->cloth_style_tree_widget->addTopLevelItem(back_item);
@@ -1697,8 +1732,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     is_style_seted_ = true;
     emit signUpdateLabelState("已设置样式，允许运行");
 
-    QString text = QString("请将前片放置于上料台%1，后片放置于上料台%2").arg(cloth_style_front.cloth_location == syt_msgs::msg::ClothStyle::TABLE_A ? "A" : "B").arg(cloth_style_back.cloth_location == syt_msgs::msg::ClothStyle::TABLE_A ? "A" : "B");
-    showMessageBox(this, SUCCESS, text, 1, {"确认"});
+    showMessageBox(this, SUCCESS, "样式设置成功", 1, {"确认"});
   } else {
     showMessageBox(this, WARN, "获取样式信息失败", 1, {"确认"});
   }

@@ -166,10 +166,10 @@ public:
   bool validatePage() override;
 
 signals:
-  void signSetFullParam(syt_msgs::msg::ClothStyle cloth_style);
+  void signSetWizardFullParam(syt_msgs::msg::ClothStyle cloth_style);
 
 public slots:
-  void slotSetFullParam(syt_msgs::msg::ClothStyle cloth_style);
+  void slotSetPageFullParam(syt_msgs::msg::ClothStyle cloth_style);
 };
 
 // 10.选择样式文件

@@ -2,7 +2,7 @@
 
 SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
-  node_     = rclcpp::Node::make_shared("syt_hmi_node");
+  node_ = rclcpp::Node::make_shared("syt_hmi_node");
   executor_->add_node(node_);
 
   run_mode_.mode = syt_msgs::msg::FSMRunMode::LOOP_ONCE;
@@ -10,7 +10,7 @@ SytRclComm::SytRclComm(QObject *parent) : QThread(parent), rate_(100) {
   // 设备状态订阅
   // load_machine_state_subscription_    = node_->create_subscription<syt_msgs::msg::LoadMachineState>("/syt/robot_control/load_machine/state", 10, std::bind(&SytRclComm::loadMachineStateCallback, this, _1));
   compose_machine_state_subscription_ = node_->create_subscription<syt_msgs::msg::ComposeMachineState>("/syt/robot_control/compose_machine/state", 10, std::bind(&SytRclComm::composeMachineStateCallback, this, _1));
-  sewing_machine_state_subscription_  = node_->create_subscription<syt_msgs::msg::SewingMachineState>("/syt/robot_control/sewing_machine/state", 10, std::bind(&SytRclComm::sewingMachineStateCallback, this, _1));
+  sewing_machine_state_subscription_ = node_->create_subscription<syt_msgs::msg::SewingMachineState>("/syt/robot_control/sewing_machine/state", 10, std::bind(&SytRclComm::sewingMachineStateCallback, this, _1));
 
   // 固件下载会回调
   download_subscription_ = node_->create_subscription<std_msgs::msg::Int32>("/syt/ota/ftp_topic", 10, std::bind(&SytRclComm::downloadCallback, this, _1));
@@ -90,7 +90,7 @@ bool SytRclComm::initAllNodes() {
 }
 
 void SytRclComm::otaUpdate() {
-  auto request  = std::make_shared<std_srvs::srv::SetBool::Request>();
+  auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
   request->data = true;
 
   std_srvs::srv::SetBool::Response response;
@@ -114,7 +114,7 @@ void SytRclComm::otaUpdate() {
 void SytRclComm::otaDownload() {
   emit processZero();
 
-  auto request  = std::make_shared<std_srvs::srv::SetBool::Request>();
+  auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
   request->data = true;
 
   std_srvs::srv::SetBool::Response response;
@@ -151,13 +151,13 @@ void SytRclComm::downloadCallback(const std_msgs::msg::Int32::SharedPtr msg) {
 
 void SytRclComm::loadClothVisualCallback(const syt_msgs::msg::LoadClothVisual::SharedPtr msg) {
   auto machine_id = msg.get()->machine_id;
-  auto cam_id     = msg.get()->cam_id;
+  auto cam_id = msg.get()->cam_id;
 
   int machine_id_ = static_cast<int>(machine_id);
-  int cam_id_     = static_cast<int>(cam_id);
+  int cam_id_ = static_cast<int>(cam_id);
 
-  auto img_h    = msg.get()->image.height;
-  auto img_w    = msg.get()->image.width;
+  auto img_h = msg.get()->image.height;
+  auto img_w = msg.get()->image.width;
   auto img_data = msg.get()->image.data;
 
   cv::Mat image(img_h, img_w, CV_8UC3, const_cast<uint8_t *>(img_data.data()), msg.get()->image.step);
@@ -171,17 +171,17 @@ void SytRclComm::otaInstall() {
   rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client = node_->create_client<std_srvs::srv::SetBool>("/syt/ota/install");
   // killProcesses() // TODO
 
-  auto request  = std::make_shared<std_srvs::srv::SetBool::Request>();
+  auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
   request->data = true;
-  auto result   = client->async_send_request(request);
-  auto success  = result.get()->success;
-  auto msg      = result.get()->message;
+  auto result = client->async_send_request(request);
+  auto success = result.get()->success;
+  auto msg = result.get()->message;
   emit installRes(success, QString(msg.data()));
 }
 
 // 合片机标定
 void SytRclComm::compCalib() {
-  auto request        = std::make_shared<syt_msgs::srv::RunCalibration::Request>();
+  auto request = std::make_shared<syt_msgs::srv::RunCalibration::Request>();
   request->mode.state = request->mode.EXTER_COMPOSE;
 
   syt_msgs::srv::RunCalibration::Response response;
@@ -201,7 +201,7 @@ void SytRclComm::compCalib() {
 
 // 缝纫机标定
 void SytRclComm::sewingCalib() {
-  auto request        = std::make_shared<syt_msgs::srv::RunCalibration::Request>();
+  auto request = std::make_shared<syt_msgs::srv::RunCalibration::Request>();
   request->mode.state = request->mode.EXTER_SEWING;
 
   syt_msgs::srv::RunCalibration::Response response;
@@ -220,9 +220,9 @@ void SytRclComm::sewingCalib() {
 }
 
 void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
-  auto cur_time  = getCurrentTime();
-  auto msg_data  = msg->msg.data();
-  auto func      = msg->function.data();
+  auto cur_time = getCurrentTime();
+  auto msg_data = msg->msg.data();
+  auto func = msg->function.data();
   auto node_name = msg->name.data();
   emit signLogPub(QString(cur_time.c_str()), msg->level, QString(node_name), QString(func), QString(msg_data));
 }
@@ -231,23 +231,21 @@ void SytRclComm::logCallback(const rcl_interfaces::msg::Log::SharedPtr msg) {
 void SytRclComm::runStateCallback(const syt_msgs::msg::FSMState::SharedPtr msg) {
   switch (msg->state_code) {
   case syt_msgs::msg::FSMState::IDLE:
-    if (start_flag_) {
-      if (last_state_ != syt_msgs::msg::FSMState::IDLE) {
-        emit finishOneRound();
-        if (run_mode_.mode == syt_msgs::msg::FSMRunMode::LOOP_ONCE || run_mode_.mode == syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH) {
-          emit machineIdle();
-        }
-      }
-    }
+    emit machineIdle();
     break;
   case syt_msgs::msg::FSMState::PAUSE:
+    emit machinePause();
+    break;
   case syt_msgs::msg::FSMState::STOP:
+    start_flag_ = false;
+    emit machineStop();
+    break;
   case syt_msgs::msg::FSMState::RUN:
+    emit machineRun();
     break;
   default:
     break;
   }
-  last_state_ = msg->state_code;
 }
 
 // 监听运行次数
@@ -283,9 +281,13 @@ SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::strin
 
   auto result = client->async_send_request(request);
 
+  if (timeout_ms == 0) {
+    timeout_ms = UINT32_MAX;
+  }
+
   auto begin_time = std::chrono::high_resolution_clock::now();
   while (result.wait_for(50ms) != std::future_status::ready) {
-    auto current_time  = std::chrono::high_resolution_clock::now();
+    auto current_time = std::chrono::high_resolution_clock::now();
     uint32_t cost_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - begin_time).count();
     if (cost_time > timeout_ms) {
       RCLCPP_INFO(node_->get_logger(), info + "服务调用超时");
@@ -298,8 +300,8 @@ SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::strin
 }
 
 void SytRclComm::resetCmd() {
-  start_flag_                  = false;
-  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  start_flag_ = false;
+  auto request = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
   request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::RESET;
 
   syt_msgs::srv::FSMControlFlow::Response response;
@@ -318,8 +320,8 @@ void SytRclComm::resetCmd() {
 }
 
 void SytRclComm::startCmd() {
-  start_flag_                  = true;
-  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  start_flag_ = true;
+  auto request = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
   request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::RUN;
 
   syt_msgs::srv::FSMControlFlow::Response response;
@@ -338,8 +340,8 @@ void SytRclComm::startCmd() {
 }
 
 void SytRclComm::pauseCmd() {
-  start_flag_                  = false;
-  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  start_flag_ = false;
+  auto request = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
   request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::PAUSE;
 
   syt_msgs::srv::FSMControlFlow::Response response;
@@ -358,8 +360,8 @@ void SytRclComm::pauseCmd() {
 }
 
 void SytRclComm::stopCmd() {
-  start_flag_                  = false;
-  auto request                 = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  start_flag_ = false;
+  auto request = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
   request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::STOP;
 
   syt_msgs::srv::FSMControlFlow::Response response;
@@ -379,7 +381,7 @@ void SytRclComm::stopCmd() {
 
 // 转换运行模式
 void SytRclComm::changeMode(int mode) {
-  auto request           = std::make_shared<syt_msgs::srv::FSMChangeMode::Request>();
+  auto request = std::make_shared<syt_msgs::srv::FSMChangeMode::Request>();
   request->mode_cmd.mode = mode;
 
   syt_msgs::srv::FSMChangeMode::Response response;
@@ -388,7 +390,7 @@ void SytRclComm::changeMode(int mode) {
 }
 
 void SytRclComm::resetWholeMachine() {
-  auto request          = std::make_shared<syt_msgs::srv::WholeMachineCMD::Request>();
+  auto request = std::make_shared<syt_msgs::srv::WholeMachineCMD::Request>();
   request->command.data = request->command.RESET;
 
   syt_msgs::srv::WholeMachineCMD::Response response;
@@ -405,7 +407,7 @@ void SytRclComm::resetWholeMachine() {
 }
 
 void SytRclComm::stopWholeMachine() {
-  auto request          = std::make_shared<syt_msgs::srv::WholeMachineCMD::Request>();
+  auto request = std::make_shared<syt_msgs::srv::WholeMachineCMD::Request>();
   request->command.data = request->command.STOP;
 
   syt_msgs::srv::WholeMachineCMD::Response response;
@@ -424,7 +426,7 @@ void SytRclComm::stopWholeMachine() {
 /* -----------------------------固件更新---------------------------- */
 // 上料机
 void SytRclComm::updateLoadMachine() {
-  auto request    = std::make_shared<syt_msgs::srv::MCURestart::Request>();
+  auto request = std::make_shared<syt_msgs::srv::MCURestart::Request>();
   request->enable = true;
 
   syt_msgs::srv::MCURestart::Response response;
@@ -444,7 +446,7 @@ void SytRclComm::updateLoadMachine() {
 
 // 合片机
 void SytRclComm::updateComposeMachine() {
-  auto request    = std::make_shared<syt_msgs::srv::MCURestart::Request>();
+  auto request = std::make_shared<syt_msgs::srv::MCURestart::Request>();
   request->enable = true;
 
   syt_msgs::srv::MCURestart::Response response;
@@ -464,7 +466,7 @@ void SytRclComm::updateComposeMachine() {
 
 // 缝纫机
 void SytRclComm::updateSewingMachine() {
-  auto request    = std::make_shared<syt_msgs::srv::MCURestart::Request>();
+  auto request = std::make_shared<syt_msgs::srv::MCURestart::Request>();
   request->enable = true;
 
   syt_msgs::srv::MCURestart::Response response;
@@ -485,9 +487,9 @@ void SytRclComm::updateSewingMachine() {
 /* -----------------------------上料机---------------------------- */
 // 上料机复位
 void SytRclComm::loadMachineReset(int id) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachineReset::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineReset::Request>();
   request->id.data = id;
-  request->enable  = true;
+  request->enable = true;
 
   syt_msgs::srv::LoadMachineReset::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineReset>("/syt/robot_control/load_machine/primal/reset", "上料复位", 20000, request, response);
@@ -506,9 +508,9 @@ void SytRclComm::loadMachineReset(int id) {
 
 // 补料模式
 void SytRclComm::loadMachineAddCloth(int id) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachineAddCloth::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineAddCloth::Request>();
   request->id.data = id;
-  request->enable  = true;
+  request->enable = true;
 
   syt_msgs::srv::LoadMachineAddCloth::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineAddCloth>("/syt/robot_control/load_machine/primal/add_cloth", "补料模式", 15000, request, response);
@@ -526,9 +528,9 @@ void SytRclComm::loadMachineAddCloth(int id) {
 }
 // 清理台面
 void SytRclComm::loadMachineClearTable(int id) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachineClearTable::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineClearTable::Request>();
   request->id.data = id;
-  request->enable  = true;
+  request->enable = true;
 
   syt_msgs::srv::LoadMachineClearTable::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineClearTable>("/syt/robot_control/load_machine/primal/clear_table", "清理台面", 15000, request, response);
@@ -547,10 +549,10 @@ void SytRclComm::loadMachineClearTable(int id) {
 
 // 裁片尺寸
 void SytRclComm::loadMachineClothSize(int id, uint32_t width, uint32_t length) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachineClothSize::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineClothSize::Request>();
   request->id.data = id;
-  request->width   = width;
-  request->length  = length;
+  request->width = width;
+  request->length = length;
 
   syt_msgs::srv::LoadMachineClothSize::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineClothSize>("/syt/robot_control/load_machine/primal/cloth_size", "裁片尺寸", 5000, request, response);
@@ -569,8 +571,8 @@ void SytRclComm::loadMachineClothSize(int id, uint32_t width, uint32_t length) {
 
 // 上料行程
 void SytRclComm::loadMachineLoadDistance(int id, uint32_t distance) {
-  auto request      = std::make_shared<syt_msgs::srv::LoadMachineLoadDistance::Request>();
-  request->id.data  = id;
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineLoadDistance::Request>();
+  request->id.data = id;
   request->distance = distance;
 
   syt_msgs::srv::LoadMachineLoadDistance::Response response;
@@ -590,9 +592,9 @@ void SytRclComm::loadMachineLoadDistance(int id, uint32_t distance) {
 
 // 夹爪偏移
 void SytRclComm::loadMachineOffset(int id, int offset) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachineOffset::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineOffset::Request>();
   request->id.data = id;
-  request->offset  = offset;
+  request->offset = offset;
 
   syt_msgs::srv::LoadMachineOffset::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineOffset>("/syt/robot_control/load_machine/primal/offset", "上料夹爪偏移", 5000, request, response);
@@ -611,9 +613,9 @@ void SytRclComm::loadMachineOffset(int id, int offset) {
 
 // 上料间隔
 void SytRclComm::loadMachineTrayGap(int id, uint32_t height) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachineTrayGap::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineTrayGap::Request>();
   request->id.data = id;
-  request->height  = height;
+  request->height = height;
 
   syt_msgs::srv::LoadMachineTrayGap::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineTrayGap>("/syt/robot_control/load_machine/primal/tray_gap", "上料间隔", 10000, request, response);
@@ -632,8 +634,8 @@ void SytRclComm::loadMachineTrayGap(int id, uint32_t height) {
 
 // 抓住裁片
 void SytRclComm::loadMachineHoldCloth(int id) {
-  auto request        = std::make_shared<syt_msgs::srv::LoadMachineGrabCloth::Request>();
-  request->id.data    = id;
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineGrabCloth::Request>();
+  request->id.data = id;
   request->grab_cloth = 0;
 
   syt_msgs::srv::LoadMachineGrabCloth::Response response;
@@ -653,12 +655,12 @@ void SytRclComm::loadMachineHoldCloth(int id) {
 
 // 粗对位
 void SytRclComm::loadMachineRoughAlign(int id) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachineRoughAlign::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineRoughAlign::Request>();
   request->id.data = id;
-  request->enable  = true;
+  request->enable = true;
 
   syt_msgs::srv::LoadMachineRoughAlign::Response response;
-  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineRoughAlign>("/syt/robot_control/load_machine/primal/rough_align", "粗对位", 5000, request, response);
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineRoughAlign>("/syt/robot_control/load_machine/primal/rough_align", "粗对位", 10000, request, response);
   qDebug() << "粗对位：" << result;
   switch (result) {
   case CALL_SUCCESS:
@@ -672,8 +674,8 @@ void SytRclComm::loadMachineRoughAlign(int id) {
 
 // 上裁片
 void SytRclComm::loadMachineGrabCloth(int id) {
-  auto request        = std::make_shared<syt_msgs::srv::LoadMachineGrabCloth::Request>();
-  request->id.data    = id;
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineGrabCloth::Request>();
+  request->id.data = id;
   request->grab_cloth = 1;
 
   syt_msgs::srv::LoadMachineGrabCloth::Response response;
@@ -693,9 +695,9 @@ void SytRclComm::loadMachineGrabCloth(int id) {
 
 // 预备设置
 void SytRclComm::loadMachinePreSetup(int id) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachinePreSetup::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachinePreSetup::Request>();
   request->id.data = id;
-  request->enable  = true;
+  request->enable = true;
 
   syt_msgs::srv::LoadMachinePreSetup::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachinePreSetup>("/syt/robot_control/load_machine/pre_setup", "预备设置", 50000, request, response);
@@ -714,7 +716,7 @@ void SytRclComm::loadMachinePreSetup(int id) {
 
 // 视觉对位
 void SytRclComm::loadMachineVisualAlign(int id) {
-  auto request     = std::make_shared<syt_msgs::srv::LoadMachineLoadCloth::Request>();
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineLoadCloth::Request>();
   request->id.data = id;
 
   syt_msgs::srv::LoadMachineLoadCloth::Response response;
@@ -735,7 +737,7 @@ void SytRclComm::loadMachineVisualAlign(int id) {
 /* ---------------------------合片机------------------------------ */
 // 合片机复位
 void SytRclComm::composeMachineReset() {
-  auto request    = std::make_shared<syt_msgs::srv::ComposeMachineReset::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineReset::Request>();
   request->enable = true;
 
   syt_msgs::srv::ComposeMachineReset::Response response;
@@ -753,7 +755,7 @@ void SytRclComm::composeMachineReset() {
 
 // 停止
 void SytRclComm::composeMachineStop() {
-  auto request             = std::make_shared<syt_msgs::srv::ComposeMachineFlow::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineFlow::Request>();
   request->flow_state.data = syt_msgs::msg::ComposeMachineFlowState::STOP;
 
   syt_msgs::srv::ComposeMachineFlow::Response response;
@@ -771,7 +773,7 @@ void SytRclComm::composeMachineStop() {
 
 // 除褶
 void SytRclComm::composeMachineWipeFold() {
-  auto request                = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
   request->commands.wipe_fold = true;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
@@ -791,7 +793,7 @@ void SytRclComm::composeMachineWipeFold() {
 
 // 出针
 void SytRclComm::composeMachineExtendNeedle() {
-  auto request                           = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
   request->commands.extend_sucker_needle = true;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
@@ -811,7 +813,7 @@ void SytRclComm::composeMachineExtendNeedle() {
 
 // 收针
 void SytRclComm::composeMachineWithdrawNeedle() {
-  auto request                           = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
   request->commands.extend_sucker_needle = false;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
@@ -831,9 +833,9 @@ void SytRclComm::composeMachineWithdrawNeedle() {
 
 // 吹气
 void SytRclComm::composeMachineBlowWind() {
-  auto request                            = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
-  request->commands.pop_cylinder_bottom   = true;
-  request->commands.pop_cylinder_chest    = true;
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  request->commands.pop_cylinder_bottom = true;
+  request->commands.pop_cylinder_chest = true;
   request->commands.pop_cylinder_shoulder = true;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
@@ -853,9 +855,9 @@ void SytRclComm::composeMachineBlowWind() {
 
 // 停气
 void SytRclComm::composeMachineStopBlow() {
-  auto request                            = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
-  request->commands.pop_cylinder_bottom   = false;
-  request->commands.pop_cylinder_chest    = false;
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  request->commands.pop_cylinder_bottom = false;
+  request->commands.pop_cylinder_chest = false;
   request->commands.pop_cylinder_shoulder = false;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
@@ -875,7 +877,7 @@ void SytRclComm::composeMachineStopBlow() {
 
 // 开吸风台
 void SytRclComm::composeMachineFastenSheet() {
-  auto request                   = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
   request->commands.fasten_sheet = true;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
@@ -893,7 +895,7 @@ void SytRclComm::composeMachineFastenSheet() {
 
 // 关吸风台
 void SytRclComm::composeMachineUnfastenSheet() {
-  auto request                   = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
   request->commands.fasten_sheet = false;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
@@ -915,7 +917,7 @@ void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   // emit signComposeMachineMoveHandFinish(true);
   // return;
 
-  auto request      = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
   request->target.x = x;
   request->target.y = y;
   request->target.z = z;
@@ -938,7 +940,7 @@ void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
 
 // 移动吸盘
 void SytRclComm::composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states) {
-  auto request    = std::make_shared<syt_msgs::srv::ComposeMachineMoveSucker::Request>();
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineMoveSucker::Request>();
   request->target = sucker_states;
 
   syt_msgs::srv::ComposeMachineMoveSucker::Response response;
@@ -956,10 +958,28 @@ void SytRclComm::composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerSta
   }
 }
 
+// 平面拟合
+void SytRclComm::composeMachineFittingPlane() {
+  auto request = std::make_shared<syt_msgs::srv::RunCalibration::Request>();
+  request->mode.state = request->mode.FITTING_PLANE;
+
+  syt_msgs::srv::RunCalibration::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::RunCalibration>("/syt/calibration_system/calibration_service", "合片台平面拟合", 0, request, response);
+  qDebug() << "合片台拟合平面：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
 /* -----------------------------缝纫机---------------------------- */
 // 缝纫机复位
 void SytRclComm::sewingMachineReset() {
-  auto request    = std::make_shared<syt_msgs::srv::SewingMachineReset::Request>();
+  auto request = std::make_shared<syt_msgs::srv::SewingMachineReset::Request>();
   request->enable = true;
 
   syt_msgs::srv::SewingMachineReset::Response response;
@@ -977,7 +997,7 @@ void SytRclComm::sewingMachineReset() {
 
 // 移动抓手
 void SytRclComm::sewingMachineMoveHand(float x, float y, float c, bool z) {
-  auto request      = std::make_shared<syt_msgs::srv::SewingMachineMoveHand::Request>();
+  auto request = std::make_shared<syt_msgs::srv::SewingMachineMoveHand::Request>();
   request->target.x = x;
   request->target.y = y;
   request->target.c = c;
@@ -1000,7 +1020,7 @@ void SytRclComm::sewingMachineMoveHand(float x, float y, float c, bool z) {
 
 // 发送关键点
 void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints) {
-  auto request       = std::make_shared<syt_msgs::srv::SewingMachineKeypoints::Request>();
+  auto request = std::make_shared<syt_msgs::srv::SewingMachineKeypoints::Request>();
   request->keypoints = keypoints;
 
   syt_msgs::srv::SewingMachineKeypoints::Response response;
@@ -1020,9 +1040,9 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
 
 // 发送针长
 void SytRclComm::sewingMachineNeedle(float shoulder_length, float side_length) {
-  auto request             = std::make_shared<syt_msgs::srv::SewingMachineNeedle::Request>();
+  auto request = std::make_shared<syt_msgs::srv::SewingMachineNeedle::Request>();
   request->shoulder_length = shoulder_length;
-  request->side_length     = side_length;
+  request->side_length = side_length;
 
   syt_msgs::srv::SewingMachineNeedle::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::SewingMachineNeedle>("/syt/robot_control/sewing_machine/primal/needle", "设置针长", 5000, request, response);
@@ -1044,9 +1064,9 @@ void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   // emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
   // return;
 
-  auto request           = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
+  auto request = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
   request->frame_id.data = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机
-  request->compare_flag  = 0;
+  request->compare_flag = 0;
 
   syt_msgs::srv::GetClothInfo::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::GetClothInfo>("/syt/clothes_detector/get_cloth_info", "检测裁片", 8000, request, response);
@@ -1066,9 +1086,9 @@ void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
 // 获取关键点
 void SytRclComm::checkCalibration() {
   // ros2 service call /syt/clothes_detector/get_camera_cloth_keypoint   syt_msgs/srv/GetClothKeypointInfo "{cloth_num: 0}"
-  auto request           = std::make_shared<syt_msgs::srv::GetClothKeypointInfo::Request>();
+  auto request = std::make_shared<syt_msgs::srv::GetClothKeypointInfo::Request>();
   request->frame_id.data = 0; // 0 为相机系 1 为合片机 2 为缝纫机
-  request->cloth_num     = 0;
+  request->cloth_num = 0;
 
   syt_msgs::srv::GetClothKeypointInfo::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::GetClothKeypointInfo>("/syt/clothes_detector/get_camera_cloth_keypoint", "检测标定结果", 8000, request, response);
@@ -1091,7 +1111,7 @@ void SytRclComm::checkCalibration() {
         return qSqrt(qPow(p1.x - p2.x, 2) + qPow(p1.y - p2.y, 2));
       };
       float bottom_length = getDistance(response.info.left_bottom, response.info.right_bottom);
-      float side_length   = getDistance(response.info.right_bottom, response.info.right_oxter);
+      float side_length = getDistance(response.info.right_bottom, response.info.right_oxter);
 
       emit signCheckCalibrationFinish(true, bottom_length, side_length);
     } else {
@@ -1109,12 +1129,12 @@ void SytRclComm::checkCalibration() {
 /* ---------------------------样式相关------------------------------ */
 // 创建样式文件
 void SytRclComm::createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
-  auto request               = std::make_shared<syt_msgs::srv::CreateStyle::Request>();
-  request->mode.data         = mode;
-  request->prefix            = prefix.toStdString();
-  request->file_name         = "";
+  auto request = std::make_shared<syt_msgs::srv::CreateStyle::Request>();
+  request->mode.data = mode;
+  request->prefix = prefix.toStdString();
+  request->file_name = "";
   request->cloth_style_front = cloth_style_front;
-  request->cloth_style_back  = cloth_style_back;
+  request->cloth_style_back = cloth_style_back;
 
   syt_msgs::srv::CreateStyle::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::CreateStyle>("/syt/style_base/create_style", "创建样式", 5000, request, response);
@@ -1133,7 +1153,7 @@ void SytRclComm::createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle
 
 // 重命名样式文件
 void SytRclComm::renameClothStyle(QString old_name, QString new_name) {
-  auto request           = std::make_shared<syt_msgs::srv::RenameClothStyle::Request>();
+  auto request = std::make_shared<syt_msgs::srv::RenameClothStyle::Request>();
   request->file_name_old = old_name.toStdString();
   request->file_name_new = new_name.toStdString();
 
@@ -1153,8 +1173,8 @@ void SytRclComm::renameClothStyle(QString old_name, QString new_name) {
 }
 
 void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
-  auto request       = std::make_shared<syt_msgs::srv::SetCurrentClothStyle::Request>();
-  request->prefix    = prefix.toStdString();
+  auto request = std::make_shared<syt_msgs::srv::SetCurrentClothStyle::Request>();
+  request->prefix = prefix.toStdString();
   request->file_name = file_name.toStdString();
 
   syt_msgs::srv::SetCurrentClothStyle::Response response;
@@ -1173,8 +1193,8 @@ void SytRclComm::setCurrentStyle(QString prefix, QString file_name) {
 }
 
 void SytRclComm::getClothStyle(QString prefix, QString file_name) {
-  auto request       = std::make_shared<syt_msgs::srv::GetClothStyle::Request>();
-  request->prefix    = prefix.toStdString();
+  auto request = std::make_shared<syt_msgs::srv::GetClothStyle::Request>();
+  request->prefix = prefix.toStdString();
   request->file_name = file_name.toStdString();
 
   syt_msgs::srv::GetClothStyle::Response response;
@@ -1188,6 +1208,24 @@ void SytRclComm::getClothStyle(QString prefix, QString file_name) {
   case CALL_INTERRUPT:
   case CALL_DISCONNECT:
     emit signGetClothStyleFinish(false, syt_msgs::msg::ClothStyle(), syt_msgs::msg::ClothStyle());
+    break;
+  }
+}
+
+void SytRclComm::emergencyStop() {
+  start_flag_ = true;
+  auto request = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::STOP;
+
+  syt_msgs::srv::FSMControlFlow::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机急停", 5000, request, response);
+  qDebug() << "整机急停：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
     break;
   }
 }

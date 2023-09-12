@@ -82,7 +82,7 @@ AutoCreateStyleWizard::AutoCreateStyleWizard(QWidget *parent) : QWizard(parent) 
   QAbstractButton *cancel_btn = this->button(QWizard::CancelButton);
   connect(cancel_btn, &QPushButton::clicked, this, [=]() {
     if (!file_name_.isEmpty()) {
-      QFile::remove(QString("/home/syt/style") + QDir::separator() + file_name_ + QString(".sty"));
+      QFile::remove(QDir::homePath() + QDir::separator() + QString("style") + QDir::separator() + file_name_ + QString(".sty"));
     }
   });
 

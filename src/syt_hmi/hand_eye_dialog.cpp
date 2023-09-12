@@ -7,18 +7,18 @@ HandEyeDialog::HandEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Hand
   this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
   this->setModal(true); // 设置为模态 父对象控件不可选
 
-  ui->composerMachineBtn->setParentEnabled(true);
-  ui->composerMachineBtn->setForeEnabled(false);
-  ui->composerMachineBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->calib_compose_btn->setParentEnabled(true);
+  ui->calib_compose_btn->setForeEnabled(false);
+  ui->calib_compose_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  ui->sewingMachineBtn->setParentEnabled(true);
-  ui->sewingMachineBtn->setForeEnabled(false);
-  ui->sewingMachineBtn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->calib_sewing_btn->setParentEnabled(true);
+  ui->calib_sewing_btn->setForeEnabled(false);
+  ui->calib_sewing_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  connect(ui->composerMachineBtn, &QPushButton::clicked, [=] {
+  connect(ui->calib_compose_btn, &QPushButton::clicked, [=] {
     QString tip = "<html>"
                   "<head/><b>注意:</b>\n<body>"
-                  "<p>即将启动<font color=\"red\"><b>合片台</b></font>标定.</p>"
+                  "<p>即将启动<font color=\"red\"><b>合片台</b></font>标定。</p>"
                   "</body></html>";
 
     auto res = showMessageBox(this, WARN, tip, 2, {"确定", "返回"});
@@ -33,10 +33,10 @@ HandEyeDialog::HandEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Hand
     }
   });
 
-  connect(ui->sewingMachineBtn, &QPushButton::clicked, [=] {
+  connect(ui->calib_sewing_btn, &QPushButton::clicked, [=] {
     QString tip = "<html>"
                   "<head/><b>注意:</b>\n<body>"
-                  "<p>即将启动<font color=\"red\"><b>缝纫台</b></font>的标定.</p>"
+                  "<p>即将启动<font color=\"red\"><b>缝纫台</b></font>的标定。</p>"
                   "</body></html>";
 
     auto res = showMessageBox(this, WARN, tip, 2, {"确定", "返回"});
