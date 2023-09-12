@@ -69,7 +69,7 @@ ManualInputParamWizard::ManualInputParamWizard(QWidget *parent) : QWizard(parent
   QAbstractButton *cancel_btn = this->button(QWizard::CancelButton);
   connect(cancel_btn, &QPushButton::clicked, this, [=]() {
     if (!file_name_.isEmpty()) {
-      QFile::remove(QString("/home/syt/style") + QDir::separator() + file_name_ + QString(".sty"));
+      QFile::remove(QDir::homePath() + QDir::separator() + QString("style") + QDir::separator() + file_name_ + QString(".sty"));
     }
   });
 
@@ -109,11 +109,11 @@ ManualInputParamWizard::ManualInputParamWizard(QWidget *parent) : QWizard(parent
 
 void ManualInputParamWizard::slotSetLengthParam(syt_msgs::msg::ClothStyle cloth_style) {
   auto setValue = [=](syt_msgs::msg::ClothStyle &chosen_cloth_style) {
-    chosen_cloth_style.cloth_length    = cloth_style.cloth_length;
-    chosen_cloth_style.bottom_length   = cloth_style.bottom_length;
-    chosen_cloth_style.oxter_length    = cloth_style.oxter_length;
+    chosen_cloth_style.cloth_length = cloth_style.cloth_length;
+    chosen_cloth_style.bottom_length = cloth_style.bottom_length;
+    chosen_cloth_style.oxter_length = cloth_style.oxter_length;
     chosen_cloth_style.shoulder_length = cloth_style.shoulder_length;
-    chosen_cloth_style.side_length     = cloth_style.side_length;
+    chosen_cloth_style.side_length = cloth_style.side_length;
   };
 
   if (cloth_style.cloth_type == 0) {
@@ -125,14 +125,14 @@ void ManualInputParamWizard::slotSetLengthParam(syt_msgs::msg::ClothStyle cloth_
 
 void ManualInputParamWizard::slotSetExtraParam(syt_msgs::msg::ClothStyle cloth_style) {
   auto setValue = [=](syt_msgs::msg::ClothStyle &chosen_cloth_style) {
-    chosen_cloth_style.cloth_type       = cloth_style.cloth_type;
+    chosen_cloth_style.cloth_type = cloth_style.cloth_type;
     chosen_cloth_style.elasticity_level = cloth_style.elasticity_level;
-    chosen_cloth_style.thickness_level  = cloth_style.thickness_level;
-    chosen_cloth_style.cloth_color      = cloth_style.cloth_color;
-    chosen_cloth_style.have_printings   = cloth_style.have_printings;
-    chosen_cloth_style.cloth_size       = cloth_style.cloth_size;
+    chosen_cloth_style.thickness_level = cloth_style.thickness_level;
+    chosen_cloth_style.cloth_color = cloth_style.cloth_color;
+    chosen_cloth_style.have_printings = cloth_style.have_printings;
+    chosen_cloth_style.cloth_size = cloth_style.cloth_size;
     chosen_cloth_style.glossiness_level = cloth_style.glossiness_level;
-    chosen_cloth_style.cloth_weight     = cloth_style.cloth_weight;
+    chosen_cloth_style.cloth_weight = cloth_style.cloth_weight;
   };
 
   if (cloth_style.cloth_type == 0) {
@@ -143,14 +143,14 @@ void ManualInputParamWizard::slotSetExtraParam(syt_msgs::msg::ClothStyle cloth_s
 }
 
 void ManualInputParamWizard::slotSetToleranceParam(syt_msgs::msg::ClothStyle cloth_style) {
-  cloth_style_front_.cloth_length_tolerance  = cloth_style.cloth_length_tolerance;
+  cloth_style_front_.cloth_length_tolerance = cloth_style.cloth_length_tolerance;
   cloth_style_front_.bottom_length_tolerance = cloth_style.bottom_length_tolerance;
-  cloth_style_front_.oxter_length_tolerance  = cloth_style.oxter_length_tolerance;
-  cloth_style_front_.matching_level          = cloth_style.matching_level;
-  cloth_style_back_.cloth_length_tolerance   = cloth_style.cloth_length_tolerance;
-  cloth_style_back_.bottom_length_tolerance  = cloth_style.bottom_length_tolerance;
-  cloth_style_back_.oxter_length_tolerance   = cloth_style.oxter_length_tolerance;
-  cloth_style_back_.matching_level           = cloth_style.matching_level;
+  cloth_style_front_.oxter_length_tolerance = cloth_style.oxter_length_tolerance;
+  cloth_style_front_.matching_level = cloth_style.matching_level;
+  cloth_style_back_.cloth_length_tolerance = cloth_style.cloth_length_tolerance;
+  cloth_style_back_.bottom_length_tolerance = cloth_style.bottom_length_tolerance;
+  cloth_style_back_.oxter_length_tolerance = cloth_style.oxter_length_tolerance;
+  cloth_style_back_.matching_level = cloth_style.matching_level;
 }
 
 void ManualInputParamWizard::slotCreateStyle(QString prefix) {

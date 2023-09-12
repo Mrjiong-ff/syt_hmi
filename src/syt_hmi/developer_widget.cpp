@@ -43,7 +43,7 @@ void DeveloperWidget::mousePressEvent(QMouseEvent *event) {
   switch (event->button()) {
   case Qt::LeftButton:
     is_mouse_left_press_down_ = true;
-    mouse_pos_                = event->globalPos() - this->frameGeometry().topLeft();
+    mouse_pos_ = event->globalPos() - this->frameGeometry().topLeft();
     break;
   default:
     break;
@@ -132,6 +132,7 @@ void DeveloperWidget::setButtonFrame() {
   // 其他界面
   setFrame(ui->choose_bin_btn);
   setFrame(ui->flash_btn);
+  setFrame(ui->emergency_stop_btn);
 }
 
 void DeveloperWidget::switchPage() {
@@ -303,40 +304,44 @@ void DeveloperWidget::bindComposeMachine() {
   qRegisterMetaType<syt_msgs::msg::ComposeMachineSuckerStates>("syt_msgs::msg::ComposeMachineSuckerStates");
   connect(ui->sucker_dilate_btn, &QPushButton::clicked, [=]() {
     syt_msgs::msg::ComposeMachineSuckerStates sucker_states;
-    sucker_states.left_bottom.x    = ui->sucker_left_bottom_x_line_edit->text().toFloat() + 5 - left_bottom_init_x_;
-    sucker_states.left_bottom.y    = ui->sucker_left_bottom_y_line_edit->text().toFloat() + 5 - left_bottom_init_y_;
-    sucker_states.left_oxter.x     = ui->sucker_left_oxter_x_line_edit->text().toFloat() + 5 - left_oxter_init_x_;
-    sucker_states.left_oxter.y     = ui->sucker_left_oxter_y_line_edit->text().toFloat() + 5 - left_oxter_init_y_;
-    sucker_states.left_shoulder.x  = ui->sucker_left_shoulder_x_line_edit->text().toFloat() + 5 - left_shoulder_init_x_;
-    sucker_states.left_shoulder.y  = ui->sucker_left_shoulder_y_line_edit->text().toFloat() + 5 - left_shoulder_init_y_;
-    sucker_states.left_shoulder.c  = ui->sucker_left_shoulder_c_line_edit->text().toFloat() + 5 - left_shoulder_init_c_;
+    sucker_states.left_bottom.x = ui->sucker_left_bottom_x_line_edit->text().toFloat() + 5 - left_bottom_init_x_;
+    sucker_states.left_bottom.y = ui->sucker_left_bottom_y_line_edit->text().toFloat() + 5 - left_bottom_init_y_;
+    sucker_states.left_oxter.x = ui->sucker_left_oxter_x_line_edit->text().toFloat() + 5 - left_oxter_init_x_;
+    sucker_states.left_oxter.y = ui->sucker_left_oxter_y_line_edit->text().toFloat() + 5 - left_oxter_init_y_;
+    sucker_states.left_shoulder.x = ui->sucker_left_shoulder_x_line_edit->text().toFloat() + 5 - left_shoulder_init_x_;
+    sucker_states.left_shoulder.y = ui->sucker_left_shoulder_y_line_edit->text().toFloat() + 5 - left_shoulder_init_y_;
+    sucker_states.left_shoulder.c = ui->sucker_left_shoulder_c_line_edit->text().toFloat() + 5 - left_shoulder_init_c_;
     sucker_states.right_shoulder.x = ui->sucker_right_shoulder_x_line_edit->text().toFloat() + 5 - right_shoulder_init_x_;
     sucker_states.right_shoulder.y = ui->sucker_right_shoulder_y_line_edit->text().toFloat() + 5 - right_shoulder_init_y_;
     sucker_states.right_shoulder.c = ui->sucker_right_shoulder_c_line_edit->text().toFloat() + 5 - right_shoulder_init_c_;
-    sucker_states.right_oxter.x    = ui->sucker_right_oxter_x_line_edit->text().toFloat() + 5 - right_oxter_init_x_;
-    sucker_states.right_oxter.y    = ui->sucker_right_oxter_y_line_edit->text().toFloat() + 5 - right_oxter_init_y_;
-    sucker_states.right_bottom.x   = ui->sucker_right_bottom_x_line_edit->text().toFloat() + 5 - right_bottom_init_x_;
-    sucker_states.right_bottom.y   = ui->sucker_right_bottom_y_line_edit->text().toFloat() + 5 - right_bottom_init_y_;
+    sucker_states.right_oxter.x = ui->sucker_right_oxter_x_line_edit->text().toFloat() + 5 - right_oxter_init_x_;
+    sucker_states.right_oxter.y = ui->sucker_right_oxter_y_line_edit->text().toFloat() + 5 - right_oxter_init_y_;
+    sucker_states.right_bottom.x = ui->sucker_right_bottom_x_line_edit->text().toFloat() + 5 - right_bottom_init_x_;
+    sucker_states.right_bottom.y = ui->sucker_right_bottom_y_line_edit->text().toFloat() + 5 - right_bottom_init_y_;
     emit signComposeMachineMoveSucker(sucker_states);
   });
 
   connect(ui->sucker_shrink_btn, &QPushButton::clicked, [=]() {
     syt_msgs::msg::ComposeMachineSuckerStates sucker_states;
-    sucker_states.left_bottom.x    = ui->sucker_left_bottom_x_line_edit->text().toFloat() - 5 - left_bottom_init_x_;
-    sucker_states.left_bottom.y    = ui->sucker_left_bottom_y_line_edit->text().toFloat() - 5 - left_bottom_init_y_;
-    sucker_states.left_oxter.x     = ui->sucker_left_oxter_x_line_edit->text().toFloat() - 5 - left_oxter_init_x_;
-    sucker_states.left_oxter.y     = ui->sucker_left_oxter_y_line_edit->text().toFloat() - 5 - left_oxter_init_y_;
-    sucker_states.left_shoulder.x  = ui->sucker_left_shoulder_x_line_edit->text().toFloat() - 5 - left_shoulder_init_x_;
-    sucker_states.left_shoulder.y  = ui->sucker_left_shoulder_y_line_edit->text().toFloat() - 5 - left_shoulder_init_y_;
-    sucker_states.left_shoulder.c  = ui->sucker_left_shoulder_c_line_edit->text().toFloat() - 5 - left_shoulder_init_c_;
+    sucker_states.left_bottom.x = ui->sucker_left_bottom_x_line_edit->text().toFloat() - 5 - left_bottom_init_x_;
+    sucker_states.left_bottom.y = ui->sucker_left_bottom_y_line_edit->text().toFloat() - 5 - left_bottom_init_y_;
+    sucker_states.left_oxter.x = ui->sucker_left_oxter_x_line_edit->text().toFloat() - 5 - left_oxter_init_x_;
+    sucker_states.left_oxter.y = ui->sucker_left_oxter_y_line_edit->text().toFloat() - 5 - left_oxter_init_y_;
+    sucker_states.left_shoulder.x = ui->sucker_left_shoulder_x_line_edit->text().toFloat() - 5 - left_shoulder_init_x_;
+    sucker_states.left_shoulder.y = ui->sucker_left_shoulder_y_line_edit->text().toFloat() - 5 - left_shoulder_init_y_;
+    sucker_states.left_shoulder.c = ui->sucker_left_shoulder_c_line_edit->text().toFloat() - 5 - left_shoulder_init_c_;
     sucker_states.right_shoulder.x = ui->sucker_right_shoulder_x_line_edit->text().toFloat() - 5 - right_shoulder_init_x_;
     sucker_states.right_shoulder.y = ui->sucker_right_shoulder_y_line_edit->text().toFloat() - 5 - right_shoulder_init_y_;
     sucker_states.right_shoulder.c = ui->sucker_right_shoulder_c_line_edit->text().toFloat() - 5 - right_shoulder_init_c_;
-    sucker_states.right_oxter.x    = ui->sucker_right_oxter_x_line_edit->text().toFloat() - 5 - right_oxter_init_x_;
-    sucker_states.right_oxter.y    = ui->sucker_right_oxter_y_line_edit->text().toFloat() - 5 - right_oxter_init_y_;
-    sucker_states.right_bottom.x   = ui->sucker_right_bottom_x_line_edit->text().toFloat() - 5 - right_bottom_init_x_;
-    sucker_states.right_bottom.y   = ui->sucker_right_bottom_y_line_edit->text().toFloat() - 5 - right_bottom_init_y_;
+    sucker_states.right_oxter.x = ui->sucker_right_oxter_x_line_edit->text().toFloat() - 5 - right_oxter_init_x_;
+    sucker_states.right_oxter.y = ui->sucker_right_oxter_y_line_edit->text().toFloat() - 5 - right_oxter_init_y_;
+    sucker_states.right_bottom.x = ui->sucker_right_bottom_x_line_edit->text().toFloat() - 5 - right_bottom_init_x_;
+    sucker_states.right_bottom.y = ui->sucker_right_bottom_y_line_edit->text().toFloat() - 5 - right_bottom_init_y_;
     emit signComposeMachineMoveSucker(sucker_states);
+  });
+
+  connect(ui->sucker_shrink_btn, &QPushButton::clicked, [=]() {
+    emit signComposeMachineFittingPlane();
   });
 }
 
@@ -363,22 +368,22 @@ void DeveloperWidget::bindSewingMachine() {
   qRegisterMetaType<syt_msgs::msg::ClothKeypoints2f>("syt_msgs::msg::ClothKeypoints2f");
   connect(ui->send_keypoints_btn, &QPushButton::clicked, [=]() {
     syt_msgs::msg::ClothKeypoints2f keypoints;
-    keypoints.left_bottom.x    = ui->sewing_left_bottom_x_line_edit->text().toFloat();
-    keypoints.left_bottom.y    = ui->sewing_left_bottom_y_line_edit->text().toFloat();
-    keypoints.left_oxter.x     = ui->sewing_left_oxter_x_line_edit->text().toFloat();
-    keypoints.left_oxter.y     = ui->sewing_left_oxter_y_line_edit->text().toFloat();
-    keypoints.left_shoulder.x  = ui->sewing_left_shoulder_x_line_edit->text().toFloat();
-    keypoints.left_shoulder.y  = ui->sewing_left_shoulder_y_line_edit->text().toFloat();
-    keypoints.left_collar.x    = ui->sewing_left_collar_x_line_edit->text().toFloat();
-    keypoints.left_collar.y    = ui->sewing_left_collar_y_line_edit->text().toFloat();
-    keypoints.right_collar.x   = ui->sewing_right_collar_x_line_edit->text().toFloat();
-    keypoints.right_collar.y   = ui->sewing_right_collar_y_line_edit->text().toFloat();
+    keypoints.left_bottom.x = ui->sewing_left_bottom_x_line_edit->text().toFloat();
+    keypoints.left_bottom.y = ui->sewing_left_bottom_y_line_edit->text().toFloat();
+    keypoints.left_oxter.x = ui->sewing_left_oxter_x_line_edit->text().toFloat();
+    keypoints.left_oxter.y = ui->sewing_left_oxter_y_line_edit->text().toFloat();
+    keypoints.left_shoulder.x = ui->sewing_left_shoulder_x_line_edit->text().toFloat();
+    keypoints.left_shoulder.y = ui->sewing_left_shoulder_y_line_edit->text().toFloat();
+    keypoints.left_collar.x = ui->sewing_left_collar_x_line_edit->text().toFloat();
+    keypoints.left_collar.y = ui->sewing_left_collar_y_line_edit->text().toFloat();
+    keypoints.right_collar.x = ui->sewing_right_collar_x_line_edit->text().toFloat();
+    keypoints.right_collar.y = ui->sewing_right_collar_y_line_edit->text().toFloat();
     keypoints.right_shoulder.x = ui->sewing_right_shoulder_x_line_edit->text().toFloat();
     keypoints.right_shoulder.y = ui->sewing_right_shoulder_y_line_edit->text().toFloat();
-    keypoints.right_oxter.x    = ui->sewing_right_oxter_x_line_edit->text().toFloat();
-    keypoints.right_oxter.y    = ui->sewing_right_oxter_y_line_edit->text().toFloat();
-    keypoints.right_bottom.x   = ui->sewing_right_bottom_x_line_edit->text().toFloat();
-    keypoints.right_bottom.y   = ui->sewing_right_bottom_y_line_edit->text().toFloat();
+    keypoints.right_oxter.x = ui->sewing_right_oxter_x_line_edit->text().toFloat();
+    keypoints.right_oxter.y = ui->sewing_right_oxter_y_line_edit->text().toFloat();
+    keypoints.right_bottom.x = ui->sewing_right_bottom_x_line_edit->text().toFloat();
+    keypoints.right_bottom.y = ui->sewing_right_bottom_y_line_edit->text().toFloat();
     emit signSewingMachineSendKeypoints(keypoints);
   });
 
@@ -405,6 +410,10 @@ void DeveloperWidget::bindOther() {
 
   // 检查标定效果
   setCheckCalibration();
+
+  connect(ui->emergency_stop_btn, &QPushButton::clicked, [=]() {
+    emit signEmegencyStop();
+  });
 }
 
 void DeveloperWidget::setComposeMachineState(syt_msgs::msg::ComposeMachineState state) {
@@ -601,7 +610,7 @@ void DeveloperWidget::setUpdateBin() {
       }
 
       QString command = QString("download %1 %2").arg(port_map.value(ui->choose_port_combo_box->currentText())).arg(update_bin_path_);
-      int result      = system(command.toStdString().c_str());
+      int result = system(command.toStdString().c_str());
 
       if (0 == result) {
         showMessageBox(this, SUCCESS, ui->choose_port_combo_box->currentText() + "更新成功", 1, {"确认"});

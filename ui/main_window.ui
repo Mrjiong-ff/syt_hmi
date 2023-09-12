@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1454</width>
-    <height>1010</height>
+    <width>1507</width>
+    <height>1014</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -91,7 +91,7 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Preferred</enum>
+          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -102,53 +102,12 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="running_state_label">
-         <property name="minimumSize">
-          <size>
-           <width>400</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>78</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>30</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="lineWidth">
-          <number>1</number>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Preferred</enum>
+          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -452,7 +411,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_7" stretch="1,1">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,3">
+           <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,4">
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <property name="leftMargin">
@@ -473,6 +432,50 @@
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item>
+               <widget class="QLabel" name="running_state_label">
+                <property name="minimumSize">
+                 <size>
+                  <width>400</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>78</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>30</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QLabel{
+   border: 2px solid;
+  border-radius: 5px;
+}</string>
+                </property>
+                <property name="lineWidth">
+                 <number>1</number>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="ProgressBar" name="progress_bar_1" native="true">
@@ -556,6 +559,206 @@
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout_7">
+              <item row="0" column="1">
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Maximum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>18</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="1" column="0">
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Maximum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>60</width>
+                  <height>54</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="4" column="1">
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Preferred</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>13</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="8" column="1">
+               <widget class="WaterZoomButton" name="end_btn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>180</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>25</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <strikeout>false</strikeout>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>结束</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resource/hmi.qrc">
+                  <normaloff>:/m_icon/icon/end.svg</normaloff>:/m_icon/icon/end.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>35</width>
+                  <height>35</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="WaterZoomButton" name="reset_btn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>180</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>25</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <strikeout>false</strikeout>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>复位</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resource/hmi.qrc">
+                  <normaloff>:/m_icon/icon/reset.svg</normaloff>:/m_icon/icon/reset.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>35</width>
+                  <height>35</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Preferred</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>18</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="10" column="1">
+               <widget class="WaterZoomButton" name="add_cloth_btn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>180</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>25</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <strikeout>false</strikeout>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>补料</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resource/hmi.qrc">
+                  <normaloff>:/m_icon/icon/add_cloth.svg</normaloff>:/m_icon/icon/add_cloth.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>35</width>
+                  <height>35</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="1">
+               <spacer name="verticalSpacer_9">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Maximum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>18</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item row="6" column="1">
                <widget class="WaterZoomButton" name="pause_btn">
                 <property name="sizePolicy">
@@ -567,7 +770,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>180</width>
-                  <height>0</height>
+                  <height>40</height>
                  </size>
                 </property>
                 <property name="font">
@@ -592,8 +795,8 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="1">
-               <widget class="WaterZoomButton" name="stop_btn">
+              <item row="3" column="1">
+               <widget class="WaterZoomButton" name="start_btn">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -603,7 +806,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>180</width>
-                  <height>0</height>
+                  <height>40</height>
                  </size>
                 </property>
                 <property name="font">
@@ -615,12 +818,15 @@
                   <strikeout>false</strikeout>
                  </font>
                 </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
                 <property name="text">
-                 <string>停止</string>
+                 <string>开始</string>
                 </property>
                 <property name="icon">
                  <iconset resource="../resource/hmi.qrc">
-                  <normaloff>:/m_icon/icon/stop.svg</normaloff>:/m_icon/icon/stop.svg</iconset>
+                  <normaloff>:/m_icon/icon/start.svg</normaloff>:/m_icon/icon/start.svg</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -662,104 +868,6 @@
                 </property>
                </spacer>
               </item>
-              <item row="11" column="1">
-               <spacer name="verticalSpacer_9">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Maximum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>18</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="1" column="1">
-               <widget class="WaterZoomButton" name="reset_btn">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>180</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>25</pointsize>
-                  <weight>75</weight>
-                  <italic>false</italic>
-                  <bold>true</bold>
-                  <strikeout>false</strikeout>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>复位</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../resource/hmi.qrc">
-                  <normaloff>:/m_icon/icon/reset.svg</normaloff>:/m_icon/icon/reset.svg</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>35</width>
-                  <height>35</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="WaterZoomButton" name="start_btn">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>180</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>25</pointsize>
-                  <weight>75</weight>
-                  <italic>false</italic>
-                  <bold>true</bold>
-                  <strikeout>false</strikeout>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>开始</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../resource/hmi.qrc">
-                  <normaloff>:/m_icon/icon/start.svg</normaloff>:/m_icon/icon/start.svg</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>35</width>
-                  <height>35</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
               <item row="9" column="1">
                <spacer name="verticalSpacer_2">
                 <property name="orientation">
@@ -772,111 +880,6 @@
                  <size>
                   <width>20</width>
                   <height>18</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="1" column="0">
-               <spacer name="horizontalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Maximum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>60</width>
-                  <height>54</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="10" column="1">
-               <widget class="WaterZoomButton" name="add_cloth_btn">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>180</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>25</pointsize>
-                  <weight>75</weight>
-                  <italic>false</italic>
-                  <bold>true</bold>
-                  <strikeout>false</strikeout>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>补料</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../resource/hmi.qrc">
-                  <normaloff>:/m_icon/icon/add_cloth.svg</normaloff>:/m_icon/icon/add_cloth.svg</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>35</width>
-                  <height>35</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <spacer name="verticalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Maximum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>18</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="2" column="1">
-               <spacer name="verticalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>18</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="4" column="1">
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>13</height>
                  </size>
                 </property>
                </spacer>
@@ -1754,6 +1757,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>WinCloseButton</class>
+   <extends>QPushButton</extends>
+   <header>syt_btn/winclosebutton.h</header>
+  </customwidget>
+  <customwidget>
    <class>WaterZoomButton</class>
    <extends>QPushButton</extends>
    <header>syt_btn/waterzoombutton.h</header>
@@ -1762,11 +1770,6 @@
    <class>WinMaxButton</class>
    <extends>QPushButton</extends>
    <header>syt_btn/winmaxbutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WinCloseButton</class>
-   <extends>QPushButton</extends>
-   <header>syt_btn/winclosebutton.h</header>
   </customwidget>
   <customwidget>
    <class>WinMinButton</class>

@@ -18,8 +18,9 @@ public:
   ~HandEyeDialog() override;
 
 signals:
-  void signSewingStart();
   void signCompStart();
+  void signSewingStart();
+  void signFittingStart();
 
 private:
   Ui::HandEyeDialog *ui;

@@ -32,7 +32,7 @@ public:
 signals:
   void signGetClothStyle(QString prefix, QString style_name);
   void signGetClothStyleResult(bool result);
-  void signSetFullParam(syt_msgs::msg::ClothStyle cloth_style);
+  void signSetPageFullParam(syt_msgs::msg::ClothStyle cloth_style);
   void signCreateStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back);
   void signCreateStyleResult(bool result);
   void signSetRenameEdit(QString file_name);
@@ -42,7 +42,7 @@ signals:
 public slots:
   void slotGetClothStyle(QString prefix, QString style_name);
   void slotGetClothStyleResult(bool result, syt_msgs::msg::ClothStyle style_front, syt_msgs::msg::ClothStyle style_back);
-  void slotSetFullParam(syt_msgs::msg::ClothStyle cloth_style);
+  void slotSetWizardFullParam(syt_msgs::msg::ClothStyle cloth_style);
   void slotCreateStyle(QString prefix);
   void slotCreateStyleResult(bool result, QString file_name);
   void slotSetRenameEdit();

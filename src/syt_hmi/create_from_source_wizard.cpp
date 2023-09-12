@@ -41,10 +41,10 @@ CreateFromSourceWizard::CreateFromSourceWizard(QWidget *parent) : QWizard(parent
   connect(this, &CreateFromSourceWizard::signGetClothStyleResult, choose_style_page, &ChooseStylePage::slotGetClothStyleResult);
 
   // 2.返回修改后的参数
-  connect(this, &CreateFromSourceWizard::signSetFullParam, style_display_front_page, &StyleDisplayPage::slotSetFullParam); // 前片
-  connect(this, &CreateFromSourceWizard::signSetFullParam, style_display_back_page, &StyleDisplayPage::slotSetFullParam);  // 后片
-  connect(style_display_front_page, &StyleDisplayPage::signSetFullParam, this, &CreateFromSourceWizard::slotSetFullParam); // 前片
-  connect(style_display_back_page, &StyleDisplayPage::signSetFullParam, this, &CreateFromSourceWizard::slotSetFullParam);  // 后片
+  connect(this, &CreateFromSourceWizard::signSetPageFullParam, style_display_front_page, &StyleDisplayPage::slotSetPageFullParam);     // 前片
+  connect(this, &CreateFromSourceWizard::signSetPageFullParam, style_display_back_page, &StyleDisplayPage::slotSetPageFullParam);      // 后片
+  connect(style_display_front_page, &StyleDisplayPage::signSetWizardFullParam, this, &CreateFromSourceWizard::slotSetWizardFullParam); // 前片
+  connect(style_display_back_page, &StyleDisplayPage::signSetWizardFullParam, this, &CreateFromSourceWizard::slotSetWizardFullParam);  // 后片
 
   // 3.调用创建样式服务
   connect(create_style_page, &CreateStylePage::signCreateStyle, this, &CreateFromSourceWizard::slotCreateStyle);
@@ -60,7 +60,7 @@ CreateFromSourceWizard::CreateFromSourceWizard(QWidget *parent) : QWizard(parent
   QAbstractButton *cancel_btn = this->button(QWizard::CancelButton);
   connect(cancel_btn, &QPushButton::clicked, this, [=]() {
     if (!file_name_.isEmpty()) {
-      QFile::remove(QString("/home/syt/style") + QDir::separator() + file_name_ + QString(".sty"));
+      QFile::remove(QDir::homePath() + QDir::separator() + QString("style") + QDir::separator() + file_name_ + QString(".sty"));
     }
   });
 
@@ -105,30 +105,34 @@ void CreateFromSourceWizard::slotGetClothStyleResult(bool result, syt_msgs::msg:
   waiting_spinner_widget_->stop();
   emit signGetClothStyleResult(result);
   if (result) {
-    emit signSetFullParam(style_front);
-    emit signSetFullParam(style_back);
+    cloth_style_front_.cloth_contour = style_front.cloth_contour;
+    cloth_style_front_.keypoint_info = style_front.keypoint_info;
+    cloth_style_back_.cloth_contour = style_back.cloth_contour;
+    cloth_style_back_.keypoint_info = style_back.keypoint_info;
+    emit signSetPageFullParam(style_front);
+    emit signSetPageFullParam(style_back);
   }
 }
 
-void CreateFromSourceWizard::slotSetFullParam(syt_msgs::msg::ClothStyle cloth_style) {
+void CreateFromSourceWizard::slotSetWizardFullParam(syt_msgs::msg::ClothStyle cloth_style) {
   auto setClothStyle = [=](syt_msgs::msg::ClothStyle &cloth_style_to_set) {
-    cloth_style_to_set.cloth_type              = cloth_style.cloth_type;
-    cloth_style_to_set.cloth_color             = cloth_style.cloth_color;
-    cloth_style_to_set.cloth_size              = cloth_style.cloth_size;
-    cloth_style_to_set.elasticity_level        = cloth_style.elasticity_level;
-    cloth_style_to_set.thickness_level         = cloth_style.thickness_level;
-    cloth_style_to_set.glossiness_level        = cloth_style.glossiness_level;
-    cloth_style_to_set.cloth_weight            = cloth_style.cloth_weight;
-    cloth_style_to_set.cloth_length            = cloth_style.cloth_length;
-    cloth_style_to_set.bottom_length           = cloth_style.bottom_length;
-    cloth_style_to_set.oxter_length            = cloth_style.oxter_length;
-    cloth_style_to_set.shoulder_length         = cloth_style.shoulder_length;
-    cloth_style_to_set.side_length             = cloth_style.side_length;
-    cloth_style_to_set.cloth_length_tolerance  = cloth_style.cloth_length_tolerance;
+    cloth_style_to_set.cloth_type = cloth_style.cloth_type;
+    cloth_style_to_set.cloth_color = cloth_style.cloth_color;
+    cloth_style_to_set.cloth_size = cloth_style.cloth_size;
+    cloth_style_to_set.elasticity_level = cloth_style.elasticity_level;
+    cloth_style_to_set.thickness_level = cloth_style.thickness_level;
+    cloth_style_to_set.glossiness_level = cloth_style.glossiness_level;
+    cloth_style_to_set.cloth_weight = cloth_style.cloth_weight;
+    cloth_style_to_set.cloth_length = cloth_style.cloth_length;
+    cloth_style_to_set.bottom_length = cloth_style.bottom_length;
+    cloth_style_to_set.oxter_length = cloth_style.oxter_length;
+    cloth_style_to_set.shoulder_length = cloth_style.shoulder_length;
+    cloth_style_to_set.side_length = cloth_style.side_length;
+    cloth_style_to_set.cloth_length_tolerance = cloth_style.cloth_length_tolerance;
     cloth_style_to_set.bottom_length_tolerance = cloth_style.bottom_length_tolerance;
-    cloth_style_to_set.oxter_length_tolerance  = cloth_style.oxter_length_tolerance;
-    cloth_style_to_set.matching_level          = cloth_style.matching_level;
-    cloth_style_to_set.have_printings          = cloth_style.have_printings;
+    cloth_style_to_set.oxter_length_tolerance = cloth_style.oxter_length_tolerance;
+    cloth_style_to_set.matching_level = cloth_style.matching_level;
+    cloth_style_to_set.have_printings = cloth_style.have_printings;
   };
 
   if (cloth_style.cloth_type == 0) {

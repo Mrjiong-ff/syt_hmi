@@ -69,9 +69,9 @@ public:
   SytRclComm(QObject *parent = nullptr);
   ~SytRclComm() override;
 
-  enum CALL_RESULT { CALL_SUCCESS    = 0,
-                     CALL_TIMEOUT    = 1,
-                     CALL_INTERRUPT  = 2,
+  enum CALL_RESULT { CALL_SUCCESS = 0,
+                     CALL_TIMEOUT = 1,
+                     CALL_INTERRUPT = 2,
                      CALL_DISCONNECT = 3 };
   Q_ENUM(CALL_RESULT);
 
@@ -125,6 +125,7 @@ public:
   void composeMachineUnfastenSheet();                                                     // 关吸风台
   void composeMachineMoveHand(float x, float y, float z, float c);                        // 移动抓手
   void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states); // 移动吸盘
+  void composeMachineFittingPlane();                                                      // 平面拟合
 
   // 缝纫机
   void sewingMachineReset();                                                  // 缝纫机复位
@@ -142,16 +143,19 @@ public:
   void setCurrentStyle(QString prefix, QString file_name);                                                                             // 设置当前样式
   void getClothStyle(QString prefix, QString file_name);                                                                               // 获取当前样式
 
+  // 急停
+  void emergencyStop();
+
 protected:
   void run() override;
 
 private:
   bool start_flag_ = false;
-  int last_state_  = 0;
+  int last_state_ = 0;
   syt_msgs::msg::FSMRunMode run_mode_;
 
   // total
-  int total_size     = 0;
+  int total_size = 0;
   QProcess *process_ = nullptr;
 
   // 异常码提醒
@@ -210,7 +214,9 @@ signals:
   void visualLoadClothRes(int, int, QImage);
   void signLogPub(QString current_time, int level, QString, QString, QString);
   void machineIdle();
-  void finishOneRound();
+  void machinePause();
+  void machineStop();
+  void machineRun();
 
   // 标定相关信号
   void compCalibRes(bool);

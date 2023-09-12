@@ -338,17 +338,17 @@
        </property>
        <item>
         <property name="text">
-         <string extracomment="0.35~0.45mm">薄</string>
+         <string extracomment="0.35~0.45mm">低厚度</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string extracomment="0.45~1.0mm">中</string>
+         <string extracomment="0.45~1.0mm">中厚度</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string extracomment="大于1.0mm">厚</string>
+         <string extracomment="大于1.0mm">高厚度</string>
         </property>
        </item>
       </widget>

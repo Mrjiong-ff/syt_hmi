@@ -9,9 +9,9 @@ MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
   move_hand_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
   move_hand_btn->setFixedSize(250, 170);
   move_hand_btn->setFontSize(14);
-  QSpacerItem *spacer_left  = new QSpacerItem(200, 20, QSizePolicy::Preferred);
+  QSpacerItem *spacer_left = new QSpacerItem(200, 20, QSizePolicy::Preferred);
   QSpacerItem *spacer_right = new QSpacerItem(200, 20, QSizePolicy::Preferred);
-  QHBoxLayout *btn_layout   = new QHBoxLayout;
+  QHBoxLayout *btn_layout = new QHBoxLayout;
   btn_layout->addItem(spacer_left);
   btn_layout->addWidget(move_hand_btn);
   btn_layout->addItem(spacer_right);
@@ -25,9 +25,9 @@ MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
     }
   });
 
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 200, QSizePolicy::Preferred);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 200, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 200, QSizePolicy::Preferred);
-  QVBoxLayout *layout      = new QVBoxLayout;
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer_up);
   layout->addLayout(btn_layout);
   layout->addItem(spacer_down);
@@ -61,9 +61,9 @@ DetectClothPage::DetectClothPage(QWidget *parent, int cloth_type) : QWizardPage(
   detect_cloth_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
   detect_cloth_btn->setFixedSize(250, 170);
   detect_cloth_btn->setFontSize(14);
-  QSpacerItem *spacer_left  = new QSpacerItem(200, 20, QSizePolicy::Preferred);
+  QSpacerItem *spacer_left = new QSpacerItem(200, 20, QSizePolicy::Preferred);
   QSpacerItem *spacer_right = new QSpacerItem(200, 20, QSizePolicy::Preferred);
-  QHBoxLayout *btn_layout   = new QHBoxLayout;
+  QHBoxLayout *btn_layout = new QHBoxLayout;
   btn_layout->addItem(spacer_left);
   btn_layout->addWidget(detect_cloth_btn);
   btn_layout->addItem(spacer_right);
@@ -73,9 +73,9 @@ DetectClothPage::DetectClothPage(QWidget *parent, int cloth_type) : QWizardPage(
     emit signDetectCloth(cloth_type_);
   });
 
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 200, QSizePolicy::Preferred);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 200, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 200, QSizePolicy::Preferred);
-  QVBoxLayout *layout      = new QVBoxLayout(this);
+  QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addItem(spacer_up);
   layout->addLayout(btn_layout);
   layout->addItem(spacer_down);
@@ -109,9 +109,9 @@ InputExtraParamPage::InputExtraParamPage(QWidget *parent, int cloth_type) : QWiz
   input_extra_param_widget_ = new InputExtraParamWidget(parent);
   input_extra_param_widget_->setClothType(cloth_type_);
 
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 50, QSizePolicy::Preferred);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 50, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 50, QSizePolicy::Preferred);
-  QVBoxLayout *layout      = new QVBoxLayout;
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer_up);
   layout->addWidget(input_extra_param_widget_);
   layout->addItem(spacer_down);
@@ -120,7 +120,7 @@ InputExtraParamPage::InputExtraParamPage(QWidget *parent, int cloth_type) : QWiz
 
 bool InputExtraParamPage::validatePage() {
   syt_msgs::msg::ClothStyle cloth_style = input_extra_param_widget_->getClothStyle();
-  cloth_style.cloth_type                = cloth_type_;
+  cloth_style.cloth_type = cloth_type_;
   emit signSetExtraParam(cloth_style);
   return true;
 }
@@ -150,9 +150,9 @@ CreateStylePage::CreateStylePage(QWidget *parent) : QWizardPage(parent) {
   create_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
   create_style_btn->setFixedSize(250, 170);
   create_style_btn->setFontSize(14);
-  QSpacerItem *spacer_left  = new QSpacerItem(200, 20, QSizePolicy::Preferred);
+  QSpacerItem *spacer_left = new QSpacerItem(200, 20, QSizePolicy::Preferred);
   QSpacerItem *spacer_right = new QSpacerItem(200, 20, QSizePolicy::Preferred);
-  QHBoxLayout *btn_layout   = new QHBoxLayout;
+  QHBoxLayout *btn_layout = new QHBoxLayout;
   btn_layout->addItem(spacer_left);
   btn_layout->addWidget(create_style_btn);
   btn_layout->addItem(spacer_right);
@@ -166,9 +166,9 @@ CreateStylePage::CreateStylePage(QWidget *parent) : QWizardPage(parent) {
     }
   });
 
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 200, QSizePolicy::Preferred);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 200, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 200, QSizePolicy::Preferred);
-  QGridLayout *layout      = new QGridLayout;
+  QGridLayout *layout = new QGridLayout;
   layout->addItem(spacer_up, 0, 0);
   // layout->addLayout(h_layout, 1, 0);
   layout->addLayout(btn_layout, 1, 0);
@@ -197,26 +197,32 @@ void CreateStylePage::slotCreateStyleResult(bool result) {
 // 5. 修改样式名
 RenameClothStylePage::RenameClothStylePage(QWidget *parent) : QWizardPage(parent) {
   setTitle("修改样式名(可不修改)");
-  QLabel *old_name_label            = new QLabel(tr("旧文件名"), this);
-  QLabel *new_name_label_           = new QLabel(tr("新文件名"), this);
-  QLineEdit *old_name_line_edit     = new QLineEdit(this);
-  QLineEdit *new_name_line_edit     = new QLineEdit(this);
+  QLabel *old_name_label = new QLabel(tr("旧文件名"), this);
+  QLabel *new_name_label_ = new QLabel(tr("新文件名"), this);
+  QLineEdit *old_name_line_edit = new QLineEdit(this);
+  QLineEdit *new_name_line_edit = new QLineEdit(this);
   InteractiveButtonBase *rename_btn = new InteractiveButtonBase("重命名", this);
   rename_btn->setParentEnabled(true);
   rename_btn->setForeEnabled(false);
   rename_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
   rename_btn->setFixedSize(250, 70);
   rename_btn->setFontSize(14);
-  QSpacerItem *spacer_left  = new QSpacerItem(200, 20, QSizePolicy::Preferred);
+  QSpacerItem *spacer_left = new QSpacerItem(200, 20, QSizePolicy::Preferred);
   QSpacerItem *spacer_right = new QSpacerItem(200, 20, QSizePolicy::Preferred);
-  QHBoxLayout *btn_layout   = new QHBoxLayout;
+  QHBoxLayout *btn_layout = new QHBoxLayout;
   btn_layout->addItem(spacer_left);
   btn_layout->addWidget(rename_btn);
   btn_layout->addItem(spacer_right);
 
   connect(rename_btn, &QPushButton::clicked, this, [=]() {
     if (old_name_line_edit->text() != new_name_line_edit->text()) {
-      emit signRenameClothStyle();
+      QString file_path = QDir::homePath() + QDir::separator() + QString("style") + QDir::separator() + new_name_line_edit->text() + ".sty";
+      QFileInfo new_file(file_path);
+      if (new_file.exists()) {
+        showMessageBox(this, WARN, "该文件已存在，请修改文件名。", 1, {"确认"});
+      } else {
+        emit signRenameClothStyle();
+      }
     } else {
       showMessageBox(this, WARN, "如需重命名，请修改新文件名。", 1, {"确认"});
     }
@@ -230,9 +236,9 @@ RenameClothStylePage::RenameClothStylePage(QWidget *parent) : QWizardPage(parent
   QValidator *validator = new QRegExpValidator(exp, this);
   new_name_line_edit->setValidator(validator);
 
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 200, QSizePolicy::Preferred);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 200, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 200, QSizePolicy::Preferred);
-  QGridLayout *layout      = new QGridLayout;
+  QGridLayout *layout = new QGridLayout;
   layout->addItem(spacer_up, 0, 0);
   layout->addWidget(old_name_label, 1, 0);
   layout->addWidget(old_name_line_edit, 1, 1);
@@ -272,9 +278,9 @@ ChooseCADPage::ChooseCADPage(QWidget *parent) : QWizardPage(parent) {
   QLabel *label1 = new QLabel("page1.");
   label1->setWordWrap(true);
 
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 200, QSizePolicy::Preferred);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 200, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 200, QSizePolicy::Preferred);
-  QVBoxLayout *layout      = new QVBoxLayout;
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer_up);
   layout->addWidget(label1);
   layout->addItem(spacer_down);
@@ -287,9 +293,9 @@ InputLengthParamPage::InputLengthParamPage(QWidget *parent, int cloth_type) : QW
 
   input_length_param_widget_ = new InputLengthParamWidget(parent);
 
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 50, QSizePolicy::Preferred);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 50, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 50, QSizePolicy::Preferred);
-  QVBoxLayout *layout      = new QVBoxLayout;
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer_up);
   layout->addWidget(input_length_param_widget_);
   layout->addItem(spacer_down);
@@ -299,7 +305,7 @@ InputLengthParamPage::InputLengthParamPage(QWidget *parent, int cloth_type) : QW
 bool InputLengthParamPage::validatePage() {
   if (input_length_param_widget_->filled()) {
     syt_msgs::msg::ClothStyle cloth_style = input_length_param_widget_->getClothStyle();
-    cloth_style.cloth_type                = cloth_type_;
+    cloth_style.cloth_type = cloth_type_;
     emit signSetLengthParam(cloth_style);
     return true;
   }
@@ -313,9 +319,9 @@ InputToleranceParamPage::InputToleranceParamPage(QWidget *parent) : QWizardPage(
   setCommitPage(true);
 
   input_tolerance_param_widget_ = new InputToleranceParamWidget(parent);
-  QSpacerItem *spacer_up        = new QSpacerItem(20, 10, QSizePolicy::Preferred);
-  QSpacerItem *spacer_down      = new QSpacerItem(20, 10, QSizePolicy::Preferred);
-  QVBoxLayout *layout           = new QVBoxLayout;
+  QSpacerItem *spacer_up = new QSpacerItem(20, 10, QSizePolicy::Preferred);
+  QSpacerItem *spacer_down = new QSpacerItem(20, 10, QSizePolicy::Preferred);
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer_up);
   layout->addWidget(input_tolerance_param_widget_);
   layout->addItem(spacer_down);
@@ -335,10 +341,10 @@ StyleDisplayPage::StyleDisplayPage(QWidget *parent, int cloth_type) : QWizardPag
     setCommitPage(true);
   }
 
-  style_display_widget_    = new StyleDisplayWidget(parent);
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 5, QSizePolicy::Preferred);
+  style_display_widget_ = new StyleDisplayWidget(parent);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 5, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 5, QSizePolicy::Preferred);
-  QVBoxLayout *layout      = new QVBoxLayout;
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer_up);
   layout->addWidget(style_display_widget_);
   layout->addItem(spacer_down);
@@ -347,12 +353,12 @@ StyleDisplayPage::StyleDisplayPage(QWidget *parent, int cloth_type) : QWizardPag
 
 bool StyleDisplayPage::validatePage() {
   syt_msgs::msg::ClothStyle cloth_style = style_display_widget_->getClothStyle();
-  cloth_style.cloth_type                = cloth_type_;
-  emit signSetFullParam(cloth_style);
+  cloth_style.cloth_type = cloth_type_;
+  emit signSetWizardFullParam(cloth_style);
   return true;
 }
 
-void StyleDisplayPage::slotSetFullParam(syt_msgs::msg::ClothStyle cloth_style) {
+void StyleDisplayPage::slotSetPageFullParam(syt_msgs::msg::ClothStyle cloth_style) {
   if (cloth_type_ == cloth_style.cloth_type) {
     style_display_widget_->setClothStyle(cloth_style);
   }
@@ -377,9 +383,9 @@ ChooseStylePage::ChooseStylePage(QWidget *parent) : QWizardPage(parent) {
     get_style_ = false;
   });
 
-  QSpacerItem *spacer_left_com  = new QSpacerItem(80, 20, QSizePolicy::Preferred);
+  QSpacerItem *spacer_left_com = new QSpacerItem(80, 20, QSizePolicy::Preferred);
   QSpacerItem *spacer_right_com = new QSpacerItem(80, 20, QSizePolicy::Preferred);
-  QHBoxLayout *com_layout       = new QHBoxLayout;
+  QHBoxLayout *com_layout = new QHBoxLayout;
   com_layout->addItem(spacer_left_com);
   com_layout->addWidget(file_combo_box);
   com_layout->addItem(spacer_right_com);
@@ -390,9 +396,9 @@ ChooseStylePage::ChooseStylePage(QWidget *parent) : QWizardPage(parent) {
   get_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
   get_style_btn->setFixedSize(250, 70);
   get_style_btn->setFontSize(14);
-  QSpacerItem *spacer_left  = new QSpacerItem(200, 20, QSizePolicy::Preferred);
+  QSpacerItem *spacer_left = new QSpacerItem(200, 20, QSizePolicy::Preferred);
   QSpacerItem *spacer_right = new QSpacerItem(200, 20, QSizePolicy::Preferred);
-  QHBoxLayout *btn_layout   = new QHBoxLayout;
+  QHBoxLayout *btn_layout = new QHBoxLayout;
   btn_layout->addItem(spacer_left);
   btn_layout->addWidget(get_style_btn);
   btn_layout->addItem(spacer_right);
@@ -401,9 +407,9 @@ ChooseStylePage::ChooseStylePage(QWidget *parent) : QWizardPage(parent) {
     emit signGetClothStyle(QDir::homePath() + QDir::separator() + "style", file_combo_box->currentText());
   });
 
-  QSpacerItem *spacer_up   = new QSpacerItem(20, 200, QSizePolicy::Preferred);
+  QSpacerItem *spacer_up = new QSpacerItem(20, 200, QSizePolicy::Preferred);
   QSpacerItem *spacer_down = new QSpacerItem(20, 200, QSizePolicy::Preferred);
-  QVBoxLayout *layout      = new QVBoxLayout;
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->addItem(spacer_up);
   layout->addLayout(com_layout);
   layout->addLayout(btn_layout);
