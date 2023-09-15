@@ -1,5 +1,5 @@
 #include "syt_hmi/main_window.h"
-//#include "syt_lib_crypt/syt_decryption_utils.h"
+#include "syt_lib_crypt/syt_decryption_utils.h"
 #include <QApplication>
 #include <QFontDatabase>
 #include <QMovie>
@@ -8,10 +8,10 @@
 #include <rclcpp/rclcpp.hpp>
 
 int main(int argc, char **argv) {
-  //syt::crypt::Decryption decryptor;
-  //if (!decryptor.isAuthorized()) {
-      //return 0;
-  //}
+  syt::crypt::Decryption decryptor;
+  if (!decryptor.isAuthorized()) {
+      return 0;
+  }
 
   // 支持高分屏
   QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);

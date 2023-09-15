@@ -16,7 +16,7 @@
     <depend>std_srvs</depend>
     <depend>syt_msgs</depend>
     <depend>syt_common</depend>
-    <!--<depend>syt_lib_crypt</depend>-->
+    <depend>syt_lib_crypt</depend>
 
     <test_depend>ament_lint_auto</test_depend>
     <test_depend>ament_lint_common</test_depend>
