@@ -84,6 +84,7 @@ signals:
   void signLoadMachineGrabCloth(int id);
   void signLoadMachinePreSetup(int id);
   void signLoadMachineVisualAlign(int id);
+  void signLoadMachineThickness(int id, float thickness);
 
   // 合片机
   void signComposeMachineReset();
@@ -105,6 +106,7 @@ signals:
   void signSewingMachineMoveHand(float x, float y, float c, bool z);
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
   void signSewingMachineNeedle(float shoulder_length, float side_length);
+  void signSewingMachineLabelWidth(float width);
 
   // 其他
   void signChooseMode(int mode); // 模式切换
@@ -113,6 +115,11 @@ signals:
   void signUpdateSewingMachine();
   void signCheckCalib();   // 检测标定结果
   void signEmegencyStop(); // 急停
+  void signRedLight();     // 红灯
+  void signGreenLight();   // 绿灯
+  void signYellowLight();  // 黄灯
+  void signBellOpen();     // 蜂鸣器开
+  void signBellClose();    // 蜂鸣器关
 
   // 急停
 public slots:

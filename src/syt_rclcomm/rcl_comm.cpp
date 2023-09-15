@@ -737,6 +737,25 @@ void SytRclComm::loadMachineVisualAlign(int id) {
   }
 }
 
+// 视觉对位
+void SytRclComm::loadMachineThickness(int id, float thickness) {
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineClothThickness::Request>();
+  request->id.data = id;
+  request->thickness = thickness;
+
+  syt_msgs::srv::LoadMachineClothThickness::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineClothThickness>("/syt/robot_control/load_machine/primal/thickness", "设置厚度", 5000, request, response);
+  qDebug() << "设置厚度：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
 /* ---------------------------合片机------------------------------ */
 // 合片机复位
 void SytRclComm::composeMachineReset() {
@@ -1060,6 +1079,25 @@ void SytRclComm::sewingMachineNeedle(float shoulder_length, float side_length) {
   }
 }
 
+// 水洗标宽度
+void SytRclComm::sewingMachineLabelWidth(float width) {
+  auto request = std::make_shared<syt_msgs::srv::CareLabelMachineWidth::Request>();
+  request->width = width;
+
+  syt_msgs::srv::CareLabelMachineWidth::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::CareLabelMachineWidth>("/syt/robot_control/sewing_machine/primal/label_width", "水洗标宽度", 5000, request, response);
+  qDebug() << "水洗标宽度：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+
 /* ---------------------------视觉检测------------------------------ */
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
@@ -1215,6 +1253,7 @@ void SytRclComm::getClothStyle(QString prefix, QString file_name) {
   }
 }
 
+// 急停
 void SytRclComm::emergencyStop() {
   start_flag_ = true;
   auto request = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
@@ -1223,6 +1262,98 @@ void SytRclComm::emergencyStop() {
   syt_msgs::srv::FSMControlFlow::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机急停", 5000, request, response);
   qDebug() << "整机急停：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+// 红灯
+void SytRclComm::redLight() {
+  auto request = std::make_shared<syt_msgs::srv::WarningLight::Request>();
+  request->color.data = syt_msgs::msg::WarningLightColor::RED;
+
+  syt_msgs::srv::WarningLight::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::WarningLight>("/syt/robot_control/compose_machine/primal/warning_light", "亮红灯", 5000, request, response);
+  qDebug() << "亮红灯：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+// 绿灯
+void SytRclComm::greenLight() {
+  auto request = std::make_shared<syt_msgs::srv::WarningLight::Request>();
+  request->color.data = syt_msgs::msg::WarningLightColor::GREEN;
+
+  syt_msgs::srv::WarningLight::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::WarningLight>("/syt/robot_control/compose_machine/primal/warning_light", "亮绿灯", 5000, request, response);
+  qDebug() << "亮绿灯：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+// 黄灯
+void SytRclComm::yellowLight() {
+  auto request = std::make_shared<syt_msgs::srv::WarningLight::Request>();
+  request->color.data = syt_msgs::msg::WarningLightColor::YELLOW;
+
+  syt_msgs::srv::WarningLight::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::WarningLight>("/syt/robot_control/compose_machine/primal/warning_light", "亮黄灯", 5000, request, response);
+  qDebug() << "亮黄灯：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+// 蜂鸣器开
+void SytRclComm::bellOpen() {
+  auto request = std::make_shared<syt_msgs::srv::WarningLight::Request>();
+  request->color.data = syt_msgs::msg::WarningLightColor::NONE;
+  request->bell = true;
+
+  syt_msgs::srv::WarningLight::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::WarningLight>("/syt/robot_control/compose_machine/primal/warning_light", "蜂鸣器", 5000, request, response);
+  qDebug() << "蜂鸣器开：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+// 蜂鸣器关
+void SytRclComm::bellClose() {
+  auto request = std::make_shared<syt_msgs::srv::WarningLight::Request>();
+  request->color.data = syt_msgs::msg::WarningLightColor::NONE;
+  request->bell = false;
+
+  syt_msgs::srv::WarningLight::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::WarningLight>("/syt/robot_control/compose_machine/primal/warning_light", "蜂鸣器", 5000, request, response);
+  qDebug() << "蜂鸣器关：" << result;
   switch (result) {
   case CALL_SUCCESS:
     break;

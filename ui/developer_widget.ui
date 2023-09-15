@@ -228,7 +228,7 @@
        <widget class="QWidget" name="page_load">
         <layout class="QHBoxLayout" name="horizontalLayout_24">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <widget class="QLabel" name="label_B">
              <property name="maximumSize">
@@ -723,29 +723,44 @@
               <number>10</number>
              </property>
              <item>
-              <widget class="WaterZoomButton" name="hold_cloth_btn_B">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>60</height>
-                </size>
-               </property>
+              <widget class="QLabel" name="label_80">
                <property name="font">
                 <font>
                  <pointsize>14</pointsize>
                 </font>
                </property>
                <property name="text">
-                <string>抓住裁片</string>
+                <string>裁片厚度</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="WaterZoomButton" name="grab_cloth_btn_B">
+              <widget class="QDoubleSpinBox" name="thickness_spinbox_B">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="maximum">
+                <double>5.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="WaterZoomButton" name="thickness_btn_B">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>60</height>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>80</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -754,7 +769,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>上裁片</string>
+                <string>设置</string>
                </property>
               </widget>
              </item>
@@ -775,6 +790,27 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_23">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <item>
+              <widget class="WaterZoomButton" name="hold_cloth_btn_B">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>抓住裁片</string>
+               </property>
+              </widget>
+             </item>
              <item>
               <widget class="WaterZoomButton" name="pre_setup_btn_B">
                <property name="minimumSize">
@@ -811,6 +847,24 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="WaterZoomButton" name="grab_cloth_btn_B">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>上裁片</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>
@@ -823,7 +877,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QLabel" name="label_A">
              <property name="maximumSize">
@@ -1318,29 +1372,44 @@
               <number>10</number>
              </property>
              <item>
-              <widget class="WaterZoomButton" name="hold_cloth_btn_A">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>60</height>
-                </size>
-               </property>
+              <widget class="QLabel" name="label_81">
                <property name="font">
                 <font>
                  <pointsize>14</pointsize>
                 </font>
                </property>
                <property name="text">
-                <string>抓住裁片</string>
+                <string>裁片厚度</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="WaterZoomButton" name="grab_cloth_btn_A">
+              <widget class="QDoubleSpinBox" name="thickness_spinbox_A">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="maximum">
+                <double>5.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="WaterZoomButton" name="thickness_btn_A">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>60</height>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>80</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -1349,7 +1418,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>上裁片</string>
+                <string>设置</string>
                </property>
               </widget>
              </item>
@@ -1370,6 +1439,27 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <item>
+              <widget class="WaterZoomButton" name="hold_cloth_btn_A">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>抓住裁片</string>
+               </property>
+              </widget>
+             </item>
              <item>
               <widget class="WaterZoomButton" name="pre_setup_btn_A">
                <property name="minimumSize">
@@ -1403,6 +1493,24 @@
                </property>
                <property name="text">
                 <string>视觉对位</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="WaterZoomButton" name="grab_cloth_btn_A">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>上裁片</string>
                </property>
               </widget>
              </item>
@@ -3767,7 +3875,98 @@
               </layout>
              </item>
              <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_31">
+               <item>
+                <widget class="QLabel" name="label_82">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>水洗标宽度</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_33">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="label_width_spin_box">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="maximum">
+                  <double>50.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>15.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_32">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="WaterZoomButton" name="label_width_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>120</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>设置</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
               <layout class="QHBoxLayout" name="horizontalLayout_27">
+               <item>
+                <spacer name="horizontalSpacer_31">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
                <item>
                 <widget class="WaterZoomButton" name="sewing_reset_btn">
                  <property name="minimumSize">
@@ -3842,7 +4041,7 @@
         <widget class="QWidget" name="layoutWidget_update">
          <property name="geometry">
           <rect>
-           <x>330</x>
+           <x>370</x>
            <y>30</y>
            <width>531</width>
            <height>101</height>
@@ -4028,6 +4227,9 @@
               <weight>75</weight>
               <bold>true</bold>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>未复位成功时切换模式无效</string>
@@ -4256,6 +4458,111 @@
           <string>曲线缝纫</string>
          </property>
         </widget>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>250</x>
+           <y>170</y>
+           <width>151</width>
+           <height>292</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="WaterZoomButton" name="red_light_btn">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>红灯</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="green_light_btn">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>绿灯</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="yellow_light_btn">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>黄灯</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="bell_open_btn">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>蜂鸣器开</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="bell_close_btn">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>蜂鸣器关</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -4290,8 +4597,6 @@
   <tabstop>offset_spinbox_B</tabstop>
   <tabstop>add_cloth_btn_B</tabstop>
   <tabstop>clear_table_btn_B</tabstop>
-  <tabstop>hold_cloth_btn_B</tabstop>
-  <tabstop>grab_cloth_btn_B</tabstop>
   <tabstop>load_reset_btn_A</tabstop>
   <tabstop>add_cloth_btn_A</tabstop>
   <tabstop>clear_table_btn_A</tabstop>
@@ -4303,8 +4608,6 @@
   <tabstop>set_tray_gap_btn_A</tabstop>
   <tabstop>offset_spinbox_A</tabstop>
   <tabstop>set_offset_btn_A</tabstop>
-  <tabstop>hold_cloth_btn_A</tabstop>
-  <tabstop>grab_cloth_btn_A</tabstop>
   <tabstop>compose_hand_x_spinbox</tabstop>
   <tabstop>compose_hand_y_spinbox</tabstop>
   <tabstop>compose_hand_z_spinbox</tabstop>
