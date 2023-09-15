@@ -92,6 +92,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->pre_setup_btn_B);
   setFrame(ui->visual_align_btn_B);
   setFrame(ui->rough_align_btn_B);
+  setFrame(ui->thickness_btn_B);
 
   setFrame(ui->load_reset_btn_A);
   setFrame(ui->add_cloth_btn_A);
@@ -105,6 +106,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->pre_setup_btn_A);
   setFrame(ui->visual_align_btn_A);
   setFrame(ui->rough_align_btn_A);
+  setFrame(ui->thickness_btn_A);
 
   // 合片机界面
   setFrame(ui->compose_reset_btn);
@@ -128,11 +130,17 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->sewing_move_hand_btn);
   setFrame(ui->send_keypoints_btn);
   setFrame(ui->needle_length_btn);
+  setFrame(ui->label_width_btn);
 
   // 其他界面
   setFrame(ui->choose_bin_btn);
   setFrame(ui->flash_btn);
   setFrame(ui->emergency_stop_btn);
+  setFrame(ui->red_light_btn);
+  setFrame(ui->green_light_btn);
+  setFrame(ui->yellow_light_btn);
+  setFrame(ui->bell_open_btn);
+  setFrame(ui->bell_close_btn);
 }
 
 void DeveloperWidget::switchPage() {
@@ -202,6 +210,10 @@ void DeveloperWidget::bindLoadMachine() {
     emit signLoadMachineVisualAlign(0);
   });
 
+  connect(ui->thickness_btn_B, &QPushButton::clicked, [=]() {
+    emit signLoadMachineThickness(0, ui->thickness_spinbox_B->value());
+  });
+
   // 上料台A
   connect(ui->load_reset_btn_A, &QPushButton::clicked, [=]() {
     emit signLoadMachineReset(1);
@@ -249,6 +261,10 @@ void DeveloperWidget::bindLoadMachine() {
 
   connect(ui->visual_align_btn_A, &QPushButton::clicked, [=]() {
     emit signLoadMachineVisualAlign(1);
+  });
+
+  connect(ui->thickness_btn_A, &QPushButton::clicked, [=]() {
+    emit signLoadMachineThickness(1, ui->thickness_spinbox_A->value());
   });
 }
 
@@ -390,6 +406,10 @@ void DeveloperWidget::bindSewingMachine() {
   connect(ui->needle_length_btn, &QPushButton::clicked, [=]() {
     emit signSewingMachineNeedle(ui->shoulder_length_spin_box->value(), ui->side_length_spin_box->value());
   });
+
+  connect(ui->label_width_btn, &QPushButton::clicked, [=]() {
+    emit signSewingMachineLabelWidth(ui->label_width_spin_box->value());
+  });
 }
 
 void DeveloperWidget::bindOther() {
@@ -411,8 +431,34 @@ void DeveloperWidget::bindOther() {
   // 检查标定效果
   setCheckCalibration();
 
+  // 急停
   connect(ui->emergency_stop_btn, &QPushButton::clicked, [=]() {
     emit signEmegencyStop();
+  });
+
+  // 红灯
+  connect(ui->red_light_btn, &QPushButton::clicked, [=]() {
+    emit signRedLight();
+  });
+
+  // 绿灯
+  connect(ui->red_light_btn, &QPushButton::clicked, [=]() {
+    emit signGreenLight();
+  });
+
+  // 黄灯
+  connect(ui->red_light_btn, &QPushButton::clicked, [=]() {
+    emit signYellowLight();
+  });
+
+  // 蜂鸣器开
+  connect(ui->bell_open_btn, &QPushButton::clicked, [=]() {
+    emit signBellOpen();
+  });
+
+  // 蜂鸣器关
+  connect(ui->bell_close_btn, &QPushButton::clicked, [=]() {
+    emit signBellClose();
   });
 }
 

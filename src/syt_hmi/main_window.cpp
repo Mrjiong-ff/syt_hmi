@@ -881,6 +881,13 @@ void MainWindow::bindControlConnection() {
     });
   });
 
+  // 上料机-设置厚度
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineThickness, [=](int id, float thickness) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineThickness(id, thickness);
+    });
+  });
+
   // 合片机-复位
   connect(developer_widget_, &DeveloperWidget::signComposeMachineReset, [=]() {
     QtConcurrent::run([=]() {
@@ -993,6 +1000,13 @@ void MainWindow::bindControlConnection() {
     });
   });
 
+  // 缝纫机-水洗标宽度
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelWidth, [=](float width) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineLabelWidth(width);
+    });
+  });
+
   // 检测标定效果
   connect(developer_widget_, &DeveloperWidget::signCheckCalib, [=]() {
     QtConcurrent::run([=]() {
@@ -1005,6 +1019,41 @@ void MainWindow::bindControlConnection() {
   connect(developer_widget_, &DeveloperWidget::signEmegencyStop, rclcomm_, [=]() {
     QtConcurrent::run([=]() {
       rclcomm_->emergencyStop();
+    });
+  });
+
+  // 红灯
+  connect(developer_widget_, &DeveloperWidget::signRedLight, rclcomm_, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->redLight();
+    });
+  });
+
+  // 绿灯
+  connect(developer_widget_, &DeveloperWidget::signGreenLight, rclcomm_, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->greenLight();
+    });
+  });
+
+  // 黄灯
+  connect(developer_widget_, &DeveloperWidget::signYellowLight, rclcomm_, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->yellowLight();
+    });
+  });
+
+  // 蜂鸣器开
+  connect(developer_widget_, &DeveloperWidget::signBellOpen, rclcomm_, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->bellOpen();
+    });
+  });
+
+  // 蜂鸣器关
+  connect(developer_widget_, &DeveloperWidget::signBellClose, rclcomm_, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->bellClose();
     });
   });
 }
@@ -1052,7 +1101,7 @@ void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPus
     QPalette palette = i->palette();
     palette.setColor(QPalette::ButtonText, Qt::gray);
     i->setPalette(palette);
-    //i->setStyleSheet("color: gray;");
+    // i->setStyleSheet("color: gray;");
   }
 }
 

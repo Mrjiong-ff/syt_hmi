@@ -11,6 +11,7 @@ find_package(std_srvs REQUIRED) #
 find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
 find_package(syt_common REQUIRED)
 find_package(syt_msgs REQUIRED)
+#find_package(syt_lib_crypt REQUIRED)
 find_package(OpenCV REQUIRED)
 
 
@@ -49,7 +50,10 @@ add_executable(${PROJECT_NAME}
 ament_target_dependencies(${PROJECT_NAME}
         rclcpp
         std_srvs
-        syt_common syt_msgs)
+        syt_common
+        syt_msgs
+        #syt_lib_crypt
+        )
 
 target_link_libraries(${PROJECT_NAME}
         Qt5::Widgets
