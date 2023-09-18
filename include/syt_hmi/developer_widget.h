@@ -85,6 +85,8 @@ signals:
   void signLoadMachinePreSetup(int id);
   void signLoadMachineVisualAlign(int id);
   void signLoadMachineThickness(int id, float thickness);
+  void signLoadMachinePopNeedle(int id);
+  void signLoadMachineWithdrawNeedle(int id);
 
   // 合片机
   void signComposeMachineReset();
@@ -99,6 +101,7 @@ signals:
   void signComposeMachineMoveHand(float x, float y, float z, float c);
   void signComposeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states);
   void signComposeMachineFittingPlane();
+  void signComposeMachineBlowHeight(float height);
 
   // 缝纫机
   void signSewingMachineReset();
@@ -106,7 +109,7 @@ signals:
   void signSewingMachineMoveHand(float x, float y, float c, bool z);
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
   void signSewingMachineNeedle(float shoulder_length, float side_length);
-  void signSewingMachineLabelWidth(float width);
+  void signSewingMachineLabelWidth(float width, float position);
 
   // 其他
   void signChooseMode(int mode); // 模式切换

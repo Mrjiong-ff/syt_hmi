@@ -725,16 +725,6 @@ void SytRclComm::loadMachineVisualAlign(int id) {
   syt_msgs::srv::LoadMachineLoadCloth::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineLoadCloth>("/syt/robot_control/load_machine/load_cloth", "视觉对位", 10000, request, response);
   qDebug() << "视觉对位：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    emit signLoadMachineVisualAlignFinish(response.success, id);
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    emit signLoadMachineVisualAlignFinish(false, id);
-    break;
-  }
 }
 
 // 视觉对位
@@ -746,14 +736,26 @@ void SytRclComm::loadMachineThickness(int id, float thickness) {
   syt_msgs::srv::LoadMachineClothThickness::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineClothThickness>("/syt/robot_control/load_machine/primal/thickness", "设置厚度", 5000, request, response);
   qDebug() << "设置厚度：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    break;
-  }
+}
+
+// 出针
+void SytRclComm::loadMachinePopNeedle(int id) {
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
+  request->commands.extend_needle = true;
+
+  syt_msgs::srv::LoadMachineFunction::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "出针", 5000, request, response);
+  qDebug() << "出针：" << result;
+}
+
+// 收针
+void SytRclComm::loadMachineWithdrawNeedle(int id) {
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
+  request->commands.extend_needle = false;
+
+  syt_msgs::srv::LoadMachineFunction::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "收针", 5000, request, response);
+  qDebug() << "收针：" << result;
 }
 
 /* ---------------------------合片机------------------------------ */
@@ -765,14 +767,6 @@ void SytRclComm::composeMachineReset() {
   syt_msgs::srv::ComposeMachineReset::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineReset>("/syt/robot_control/compose_machine/primal/reset", "合片复位", 20000, request, response);
   qDebug() << "合片复位：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    break;
-  }
 }
 
 // 停止
@@ -783,14 +777,6 @@ void SytRclComm::composeMachineStop() {
   syt_msgs::srv::ComposeMachineFlow::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFlow>("/syt/robot_control/compose_machine/primal/flow", "合片停止", 5000, request, response);
   qDebug() << "合片停止：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    break;
-  }
 }
 
 // 除褶
@@ -801,16 +787,6 @@ void SytRclComm::composeMachineWipeFold() {
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "除褶", 10000, request, response);
   qDebug() << "除褶：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    emit signComposeMachineWipeFoldFinish(response.success);
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    emit signComposeMachineWipeFoldFinish(false);
-    break;
-  }
 }
 
 // 出针
@@ -821,16 +797,6 @@ void SytRclComm::composeMachineExtendNeedle() {
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "出针", 5000, request, response);
   qDebug() << "出针：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    emit signComposeMachineExtendNeedleFinish(response.success);
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    emit signComposeMachineExtendNeedleFinish(false);
-    break;
-  }
 }
 
 // 收针
@@ -841,16 +807,6 @@ void SytRclComm::composeMachineWithdrawNeedle() {
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "收针", 5000, request, response);
   qDebug() << "收针：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    emit signComposeMachineWithdrawNeedleFinish(response.success);
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    emit signComposeMachineWithdrawNeedleFinish(false);
-    break;
-  }
 }
 
 // 吹气
@@ -863,16 +819,6 @@ void SytRclComm::composeMachineBlowWind() {
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "吹气", 5000, request, response);
   qDebug() << "吹气：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    emit signComposeMachineBlowWindFinish(response.success);
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    emit signComposeMachineBlowWindFinish(false);
-    break;
-  }
 }
 
 // 停气
@@ -885,16 +831,6 @@ void SytRclComm::composeMachineStopBlow() {
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "停气", 5000, request, response);
   qDebug() << "停气：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    emit signComposeMachineStopBlowFinish(response.success);
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    emit signComposeMachineStopBlowFinish(false);
-    break;
-  }
 }
 
 // 开吸风台
@@ -905,14 +841,6 @@ void SytRclComm::composeMachineFastenSheet() {
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "开吸风台", 5000, request, response);
   qDebug() << "开吸风台：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    break;
-  }
 }
 
 // 关吸风台
@@ -988,6 +916,24 @@ void SytRclComm::composeMachineFittingPlane() {
   syt_msgs::srv::RunCalibration::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::RunCalibration>("/syt/calibration_system/calibration_service", "合片台平面拟合", 0, request, response);
   qDebug() << "合片台拟合平面：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    break;
+  }
+}
+
+// 吹气高度
+void SytRclComm::composeMachineBlowHeight(float height) {
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineBlowHeight::Request>();
+  request->height = height;
+
+  syt_msgs::srv::ComposeMachineBlowHeight::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineBlowHeight>("/syt/robot_control/compose_machine/primal/blow_height", "合片吹气高度", 0, request, response);
+  qDebug() << "合片吹气高度：" << result;
   switch (result) {
   case CALL_SUCCESS:
     break;
@@ -1080,9 +1026,10 @@ void SytRclComm::sewingMachineNeedle(float shoulder_length, float side_length) {
 }
 
 // 水洗标宽度
-void SytRclComm::sewingMachineLabelWidth(float width) {
+void SytRclComm::sewingMachineLabelWidth(float width, float position) {
   auto request = std::make_shared<syt_msgs::srv::CareLabelMachineWidth::Request>();
   request->width = width;
+  request->position = position;
 
   syt_msgs::srv::CareLabelMachineWidth::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::CareLabelMachineWidth>("/syt/robot_control/sewing_machine/primal/label_width", "水洗标宽度", 5000, request, response);
@@ -1096,7 +1043,6 @@ void SytRclComm::sewingMachineLabelWidth(float width) {
     break;
   }
 }
-
 
 /* ---------------------------视觉检测------------------------------ */
 // 获取衣服信息
