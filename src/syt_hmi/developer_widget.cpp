@@ -490,12 +490,12 @@ void DeveloperWidget::bindOther() {
   });
 
   // 绿灯
-  connect(ui->red_light_btn, &QPushButton::clicked, [=]() {
+  connect(ui->green_light_btn, &QPushButton::clicked, [=]() {
     emit signGreenLight();
   });
 
   // 黄灯
-  connect(ui->red_light_btn, &QPushButton::clicked, [=]() {
+  connect(ui->yellow_light_btn, &QPushButton::clicked, [=]() {
     emit signYellowLight();
   });
 

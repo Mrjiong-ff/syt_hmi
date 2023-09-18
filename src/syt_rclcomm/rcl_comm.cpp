@@ -741,6 +741,7 @@ void SytRclComm::loadMachineThickness(int id, float thickness) {
 // 出针
 void SytRclComm::loadMachinePopNeedle(int id) {
   auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
+  request->id.data = id;
   request->commands.extend_needle = true;
 
   syt_msgs::srv::LoadMachineFunction::Response response;
@@ -751,6 +752,7 @@ void SytRclComm::loadMachinePopNeedle(int id) {
 // 收针
 void SytRclComm::loadMachineWithdrawNeedle(int id) {
   auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
+  request->id.data = id;
   request->commands.extend_needle = false;
 
   syt_msgs::srv::LoadMachineFunction::Response response;
