@@ -993,6 +993,13 @@ void MainWindow::bindControlConnection() {
     });
   });
 
+  // 合片机-合片台灯
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineTableLight, [=](float ratio) {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineTableLight(ratio);
+    });
+  });
+
   // 缝纫机-复位
   connect(developer_widget_, &DeveloperWidget::signSewingMachineReset, [=]() {
     QtConcurrent::run([=]() {
@@ -1022,9 +1029,16 @@ void MainWindow::bindControlConnection() {
   });
 
   // 缝纫机-水洗标宽度
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelWidth, [=](float width, float position) {
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelWidth, [=](bool enable, int side, float width, float position) {
     QtConcurrent::run([=]() {
-      rclcomm_->sewingMachineLabelWidth(width, position);
+      rclcomm_->sewingMachineLabelWidth(enable, side, width, position);
+    });
+  });
+
+  // 缝纫机-运行模式
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineSpeed, [=](int speed) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineSpeed(speed);
     });
   });
 
@@ -1037,7 +1051,7 @@ void MainWindow::bindControlConnection() {
   connect(rclcomm_, &SytRclComm::signCheckCalibrationFinish, developer_widget_, &DeveloperWidget::setCheckCalibrationResult);
 
   // 急停
-  connect(developer_widget_, &DeveloperWidget::signEmegencyStop, rclcomm_, [=]() {
+  connect(developer_widget_, &DeveloperWidget::signEmergencyStop, rclcomm_, [=]() {
     QtConcurrent::run([=]() {
       rclcomm_->emergencyStop();
     });

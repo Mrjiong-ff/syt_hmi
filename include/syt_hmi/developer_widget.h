@@ -102,6 +102,7 @@ signals:
   void signComposeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states);
   void signComposeMachineFittingPlane();
   void signComposeMachineBlowHeight(float height);
+  void signComposeMachineTableLight(float ratio);
 
   // 缝纫机
   void signSewingMachineReset();
@@ -109,20 +110,21 @@ signals:
   void signSewingMachineMoveHand(float x, float y, float c, bool z);
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
   void signSewingMachineNeedle(float shoulder_length, float side_length);
-  void signSewingMachineLabelWidth(float width, float position);
+  void signSewingMachineLabelWidth(bool enable, int side, float width, float position);
+  void signSewingMachineSpeed(int speed);
 
   // 其他
   void signChooseMode(int mode); // 模式切换
   void signUpdateLoadMachine();  // 更新固件
   void signUpdateComposeMachine();
   void signUpdateSewingMachine();
-  void signCheckCalib();   // 检测标定结果
-  void signEmegencyStop(); // 急停
-  void signRedLight();     // 红灯
-  void signGreenLight();   // 绿灯
-  void signYellowLight();  // 黄灯
-  void signBellOpen();     // 蜂鸣器开
-  void signBellClose();    // 蜂鸣器关
+  void signCheckCalib();    // 检测标定结果
+  void signEmergencyStop(); // 急停
+  void signRedLight();      // 红灯
+  void signGreenLight();    // 绿灯
+  void signYellowLight();   // 黄灯
+  void signBellOpen();      // 蜂鸣器开
+  void signBellClose();     // 蜂鸣器关
 
   // 急停
 public slots:

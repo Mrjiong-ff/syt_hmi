@@ -20,6 +20,7 @@
 #include "syt_msgs/srv/compose_machine_move_hand.hpp"
 #include "syt_msgs/srv/compose_machine_move_sucker.hpp"
 #include "syt_msgs/srv/compose_machine_reset.hpp"
+#include "syt_msgs/srv/compose_machine_table_light.hpp"
 #include "syt_msgs/srv/create_style.hpp"
 #include "syt_msgs/srv/fsm_change_mode.hpp"
 #include "syt_msgs/srv/fsm_control_flow.hpp"
@@ -48,6 +49,7 @@
 #include "syt_msgs/srv/sewing_machine_move_hand.hpp"
 #include "syt_msgs/srv/sewing_machine_needle.hpp"
 #include "syt_msgs/srv/sewing_machine_reset.hpp"
+#include "syt_msgs/srv/sewing_machine_speed.hpp"
 #include "syt_msgs/srv/warning_light.hpp"
 #include "syt_msgs/srv/whole_machine_cmd.hpp"
 #include "utils/utils.h"
@@ -135,13 +137,15 @@ public:
   void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states); // 移动吸盘
   void composeMachineFittingPlane();                                                      // 平面拟合
   void composeMachineBlowHeight(float height);                                            // 吹气高度
+  void composeMachineTableLight(float ratio);                                             // 台面灯
 
   // 缝纫机
-  void sewingMachineReset();                                                  // 缝纫机复位
-  void sewingMachineMoveHand(float x, float y, float c, bool z);              // 移动抓手
-  void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints); // 发送关键点
-  void sewingMachineNeedle(float shoulder_length, float side_length);         // 发送针长
-  void sewingMachineLabelWidth(float width, float position);                  // 水洗标宽度
+  void sewingMachineReset();                                                        // 缝纫机复位
+  void sewingMachineMoveHand(float x, float y, float c, bool z);                    // 移动抓手
+  void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);       // 发送关键点
+  void sewingMachineNeedle(float shoulder_length, float side_length);               // 发送针长
+  void sewingMachineLabelWidth(bool enable, int side, float width, float position); // 水洗标宽度
+  void sewingMachineSpeed(int speed);                                               // 水洗标宽度
 
   // 视觉检测
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息
