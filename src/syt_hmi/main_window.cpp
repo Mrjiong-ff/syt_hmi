@@ -888,6 +888,20 @@ void MainWindow::bindControlConnection() {
     });
   });
 
+  // 上料机-出针
+  connect(developer_widget_, &DeveloperWidget::signLoadMachinePopNeedle, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachinePopNeedle(id);
+    });
+  });
+
+  // 上料机-收针
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineWithdrawNeedle, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineWithdrawNeedle(id);
+    });
+  });
+
   // 合片机-复位
   connect(developer_widget_, &DeveloperWidget::signComposeMachineReset, [=]() {
     QtConcurrent::run([=]() {
@@ -972,6 +986,13 @@ void MainWindow::bindControlConnection() {
     });
   });
 
+  // 合片机-吹气高度
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineBlowHeight, [=](float height) {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineBlowHeight(height);
+    });
+  });
+
   // 缝纫机-复位
   connect(developer_widget_, &DeveloperWidget::signSewingMachineReset, [=]() {
     QtConcurrent::run([=]() {
@@ -1001,9 +1022,9 @@ void MainWindow::bindControlConnection() {
   });
 
   // 缝纫机-水洗标宽度
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelWidth, [=](float width) {
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelWidth, [=](float width, float position) {
     QtConcurrent::run([=]() {
-      rclcomm_->sewingMachineLabelWidth(width);
+      rclcomm_->sewingMachineLabelWidth(width, position);
     });
   });
 

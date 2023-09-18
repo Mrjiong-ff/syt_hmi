@@ -14,6 +14,7 @@
 #include "syt_msgs/msg/motion_planner_state.hpp"
 #include "syt_msgs/msg/sewing_machine_state.hpp"
 #include "syt_msgs/srv/care_label_machine_width.hpp"
+#include "syt_msgs/srv/compose_machine_blow_height.hpp"
 #include "syt_msgs/srv/compose_machine_flow.hpp"
 #include "syt_msgs/srv/compose_machine_function.hpp"
 #include "syt_msgs/srv/compose_machine_move_hand.hpp"
@@ -30,6 +31,7 @@
 #include "syt_msgs/srv/load_machine_clear_table.hpp"
 #include "syt_msgs/srv/load_machine_cloth_size.hpp"
 #include "syt_msgs/srv/load_machine_cloth_thickness.hpp"
+#include "syt_msgs/srv/load_machine_function.hpp"
 #include "syt_msgs/srv/load_machine_grab_cloth.hpp"
 #include "syt_msgs/srv/load_machine_load_cloth.hpp"
 #include "syt_msgs/srv/load_machine_load_distance.hpp"
@@ -115,7 +117,9 @@ public:
   void loadMachineGrabCloth(int id);                                  // 上裁片
   void loadMachinePreSetup(int id);                                   // 预备设置
   void loadMachineVisualAlign(int id);                                // 视觉对位
-  void loadMachineThickness(int id, float thickness);                 // 视觉对位
+  void loadMachineThickness(int id, float thickness);                 // 布料厚度
+  void loadMachinePopNeedle(int id);                                  // 出针
+  void loadMachineWithdrawNeedle(int id);                             // 收针
 
   // 合片机
   void composeMachineReset();                                                             // 合片机复位
@@ -130,13 +134,14 @@ public:
   void composeMachineMoveHand(float x, float y, float z, float c);                        // 移动抓手
   void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states); // 移动吸盘
   void composeMachineFittingPlane();                                                      // 平面拟合
+  void composeMachineBlowHeight(float height);                                            // 吹气高度
 
   // 缝纫机
   void sewingMachineReset();                                                  // 缝纫机复位
   void sewingMachineMoveHand(float x, float y, float c, bool z);              // 移动抓手
   void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints); // 发送关键点
   void sewingMachineNeedle(float shoulder_length, float side_length);         // 发送针长
-  void sewingMachineLabelWidth(float width);                                  // 水洗标宽度
+  void sewingMachineLabelWidth(float width, float position);                  // 水洗标宽度
 
   // 视觉检测
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息
