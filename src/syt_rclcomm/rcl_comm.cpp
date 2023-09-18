@@ -741,6 +741,7 @@ void SytRclComm::loadMachineThickness(int id, float thickness) {
 // 出针
 void SytRclComm::loadMachinePopNeedle(int id) {
   auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
+  request->id.data = id;
   request->commands.extend_needle = true;
 
   syt_msgs::srv::LoadMachineFunction::Response response;
@@ -751,6 +752,7 @@ void SytRclComm::loadMachinePopNeedle(int id) {
 // 收针
 void SytRclComm::loadMachineWithdrawNeedle(int id) {
   auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
+  request->id.data = id;
   request->commands.extend_needle = false;
 
   syt_msgs::srv::LoadMachineFunction::Response response;
@@ -932,16 +934,16 @@ void SytRclComm::composeMachineBlowHeight(float height) {
   request->height = height;
 
   syt_msgs::srv::ComposeMachineBlowHeight::Response response;
-  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineBlowHeight>("/syt/robot_control/compose_machine/primal/blow_height", "合片吹气高度", 0, request, response);
-  qDebug() << "合片吹气高度：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    break;
-  }
+  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineBlowHeight>("/syt/robot_control/compose_machine/primal/blow_height", "合片吹气高度", 5000, request, response);
+}
+
+// 台面灯
+void SytRclComm::composeMachineTableLight(float ratio) {
+  auto request = std::make_shared<syt_msgs::srv::ComposeMachineTableLight::Request>();
+  request->ratio = ratio;
+
+  syt_msgs::srv::ComposeMachineTableLight::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineTableLight>("/syt/robot_control/compose_machine/primal/table_light", "合片台灯", 5000, request, response);
 }
 
 /* -----------------------------缝纫机---------------------------- */
@@ -974,16 +976,6 @@ void SytRclComm::sewingMachineMoveHand(float x, float y, float c, bool z) {
   syt_msgs::srv::SewingMachineMoveHand::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::SewingMachineMoveHand>("/syt/robot_control/sewing_machine/move_hand", "移动缝纫抓手", 20000, request, response);
   qDebug() << "移动缝纫抓手：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    emit signSewingMachineMoveHandFinish(response.success);
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    emit signSewingMachineMoveHandFinish(false);
-    break;
-  }
 }
 
 // 发送关键点
@@ -994,16 +986,6 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
   syt_msgs::srv::SewingMachineKeypoints::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::SewingMachineKeypoints>("/syt/robot_control/sewing_machine/primal/keypoints", "发送关键点", 5000, request, response);
   qDebug() << "发送关键点：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    emit signSewingMachineSendKeypointsFinish(response.success);
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    emit signSewingMachineSendKeypointsFinish(false);
-    break;
-  }
 }
 
 // 发送针长
@@ -1014,36 +996,28 @@ void SytRclComm::sewingMachineNeedle(float shoulder_length, float side_length) {
 
   syt_msgs::srv::SewingMachineNeedle::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::SewingMachineNeedle>("/syt/robot_control/sewing_machine/primal/needle", "设置针长", 5000, request, response);
-  qDebug() << "发送设置针长：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    break;
-  }
 }
 
 // 水洗标宽度
-void SytRclComm::sewingMachineLabelWidth(float width, float position) {
+void SytRclComm::sewingMachineLabelWidth(bool enable, int side, float width, float position) {
   auto request = std::make_shared<syt_msgs::srv::CareLabelMachineWidth::Request>();
+  request->enable = enable;
+  request->side.data = side;
   request->width = width;
   request->position = position;
 
   syt_msgs::srv::CareLabelMachineWidth::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::CareLabelMachineWidth>("/syt/robot_control/sewing_machine/primal/label_width", "水洗标宽度", 5000, request, response);
-  qDebug() << "水洗标宽度：" << result;
-  switch (result) {
-  case CALL_SUCCESS:
-    break;
-  case CALL_TIMEOUT:
-  case CALL_INTERRUPT:
-  case CALL_DISCONNECT:
-    break;
-  }
 }
 
+// 缝纫机运行档位
+void SytRclComm::sewingMachineSpeed(int speed) {
+  auto request = std::make_shared<syt_msgs::srv::SewingMachineSpeed::Request>();
+  request->gear.data = speed;
+
+  syt_msgs::srv::SewingMachineSpeed::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::SewingMachineSpeed>("/syt/robot_control/sewing_machine/primal/speed", "缝纫机档位", 5000, request, response);
+}
 /* ---------------------------视觉检测------------------------------ */
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {

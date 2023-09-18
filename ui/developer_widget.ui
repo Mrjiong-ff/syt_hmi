@@ -2214,7 +2214,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_35">
+          <layout class="QHBoxLayout" name="horizontalLayout_36">
            <item>
             <layout class="QGridLayout" name="gridLayout_7">
              <property name="horizontalSpacing">
@@ -2767,6 +2767,19 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_34">
                <item>
+                <spacer name="horizontalSpacer_37">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
                 <widget class="QLabel" name="label_83">
                  <property name="font">
                   <font>
@@ -2827,6 +2840,100 @@
                </item>
                <item>
                 <widget class="WaterZoomButton" name="blow_height_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>设置</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_35">
+               <item>
+                <spacer name="horizontalSpacer_38">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_85">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>吸风台灯</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_40">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="table_light_spin_box">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="minimum">
+                  <double>0.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>100.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>50.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_39">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="WaterZoomButton" name="table_light_btn">
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
@@ -3271,10 +3378,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_28" stretch="4,5">
-           <property name="spacing">
-            <number>20</number>
-           </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_26">
            <item>
             <layout class="QGridLayout" name="gridLayout_18">
              <property name="horizontalSpacing">
@@ -3817,9 +3921,35 @@
             </layout>
            </item>
            <item>
+            <spacer name="horizontalSpacer_32">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_22">
+               <item>
+                <spacer name="horizontalSpacer_11">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
                <item>
                 <widget class="QLabel" name="label_75">
                  <property name="font">
@@ -3881,8 +4011,26 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_26">
-               <item>
+              <layout class="QGridLayout" name="gridLayout_8">
+               <item row="0" column="4" rowspan="2">
+                <widget class="WaterZoomButton" name="needle_length_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>设置针距</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
                 <widget class="QLabel" name="label_74">
                  <property name="font">
                   <font>
@@ -3894,8 +4042,8 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_36">
+               <item row="0" column="1" rowspan="2">
+                <spacer name="horizontalSpacer_27">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -3907,7 +4055,7 @@
                  </property>
                 </spacer>
                </item>
-               <item>
+               <item row="0" column="2">
                 <widget class="QDoubleSpinBox" name="shoulder_length_spin_box">
                  <property name="minimumSize">
                   <size>
@@ -3931,20 +4079,20 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_27">
+               <item row="0" column="3" rowspan="2">
+                <spacer name="horizontalSpacer_23">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>40</width>
+                   <width>17</width>
                    <height>20</height>
                   </size>
                  </property>
                 </spacer>
                </item>
-               <item>
+               <item row="1" column="0">
                 <widget class="QLabel" name="label_76">
                  <property name="font">
                   <font>
@@ -3956,7 +4104,7 @@
                  </property>
                 </widget>
                </item>
-               <item>
+               <item row="1" column="2">
                 <widget class="QDoubleSpinBox" name="side_length_spin_box">
                  <property name="minimumSize">
                   <size>
@@ -3980,42 +4128,39 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_23">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>17</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="WaterZoomButton" name="needle_length_btn">
-                 <property name="minimumSize">
-                  <size>
-                   <width>100</width>
-                   <height>60</height>
-                  </size>
-                 </property>
+              </layout>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_20">
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="enable_label_check_box">
                  <property name="font">
                   <font>
                    <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="text">
-                  <string>设置针距</string>
+                  <string>启用水洗标</string>
                  </property>
                 </widget>
                </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_31">
-               <item>
+               <item row="0" column="2" rowspan="2">
+                <spacer name="horizontalSpacer_36">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Preferred</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>17</width>
+                   <height>48</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="0" column="3">
                 <widget class="QLabel" name="label_82">
                  <property name="font">
                   <font>
@@ -4023,11 +4168,11 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>水洗标宽度</string>
+                  <string>宽度</string>
                  </property>
                 </widget>
                </item>
-               <item>
+               <item row="0" column="4" rowspan="2">
                 <spacer name="horizontalSpacer_33">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -4037,13 +4182,13 @@
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>40</width>
-                   <height>20</height>
+                   <width>17</width>
+                   <height>48</height>
                   </size>
                  </property>
                 </spacer>
                </item>
-               <item>
+               <item row="0" column="5">
                 <widget class="QDoubleSpinBox" name="label_width_spin_box">
                  <property name="font">
                   <font>
@@ -4061,7 +4206,7 @@
                  </property>
                 </widget>
                </item>
-               <item>
+               <item row="0" column="6" rowspan="2">
                 <spacer name="horizontalSpacer_10">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -4071,13 +4216,55 @@
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>40</width>
-                   <height>20</height>
+                   <width>17</width>
+                   <height>48</height>
                   </size>
                  </property>
                 </spacer>
                </item>
-               <item>
+               <item row="0" column="7" rowspan="2">
+                <widget class="WaterZoomButton" name="label_width_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>设置水洗标</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QRadioButton" name="left_label_radio_box">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>边一</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QRadioButton" name="right_label_radio_box">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>边四</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
                 <widget class="QLabel" name="label_84">
                  <property name="font">
                   <font>
@@ -4089,20 +4276,7 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_32">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
+               <item row="1" column="5">
                 <widget class="QDoubleSpinBox" name="label_position_spin_box">
                  <property name="font">
                   <font>
@@ -4120,24 +4294,63 @@
                  </property>
                 </widget>
                </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_27">
                <item>
-                <spacer name="horizontalSpacer_11">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                <widget class="QLabel" name="label_86">
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
+                 <property name="text">
+                  <string>运行档位</string>
                  </property>
-                </spacer>
+                </widget>
                </item>
                <item>
-                <widget class="WaterZoomButton" name="label_width_btn">
+                <widget class="QComboBox" name="sewing_machine_speed_combo_box">
                  <property name="minimumSize">
                   <size>
-                   <width>100</width>
+                   <width>0</width>
+                   <height>60</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>70</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>低速</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>中速</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>高速</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="sewing_machine_speed_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
                    <height>60</height>
                   </size>
                  </property>
@@ -4151,10 +4364,6 @@
                  </property>
                 </widget>
                </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_27">
                <item>
                 <spacer name="horizontalSpacer_31">
                  <property name="orientation">
@@ -4172,7 +4381,7 @@
                 <widget class="WaterZoomButton" name="sewing_reset_btn">
                  <property name="minimumSize">
                   <size>
-                   <width>120</width>
+                   <width>80</width>
                    <height>60</height>
                   </size>
                  </property>
@@ -4203,7 +4412,7 @@
                 <widget class="WaterZoomButton" name="sewing_stop_btn">
                  <property name="minimumSize">
                   <size>
-                   <width>120</width>
+                   <width>80</width>
                    <height>60</height>
                   </size>
                  </property>

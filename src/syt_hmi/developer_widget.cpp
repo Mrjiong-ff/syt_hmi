@@ -127,6 +127,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->sucker_dilate_btn);
   setFrame(ui->sucker_shrink_btn);
   setFrame(ui->blow_height_btn);
+  setFrame(ui->table_light_btn);
 
   // 缝纫机界面
   setFrame(ui->sewing_reset_btn);
@@ -384,6 +385,10 @@ void DeveloperWidget::bindComposeMachine() {
   connect(ui->blow_height_btn, &QPushButton::clicked, [=]() {
     emit signComposeMachineBlowHeight(ui->blow_height_spin_box->value());
   });
+
+  connect(ui->table_light_btn, &QPushButton::clicked, [=]() {
+    emit signComposeMachineTableLight(ui->table_light_spin_box->value());
+  });
 }
 
 // 绑定缝纫机功能
@@ -433,7 +438,25 @@ void DeveloperWidget::bindSewingMachine() {
   });
 
   connect(ui->label_width_btn, &QPushButton::clicked, [=]() {
-    emit signSewingMachineLabelWidth(ui->label_width_spin_box->value(), ui->label_position_spin_box->value());
+    int side = 0;
+    if (ui->left_label_radio_box->isChecked()) {
+      side = 0;
+    } else if (ui->right_label_radio_box->isChecked()) {
+      side = 1;
+    }
+    emit signSewingMachineLabelWidth(ui->enable_label_check_box->isChecked(), side, ui->label_width_spin_box->value(), ui->label_position_spin_box->value());
+  });
+
+  connect(ui->sewing_machine_speed_btn, &QPushButton::clicked, [=]() {
+    if ("低速" == ui->sewing_machine_speed_combo_box->currentText()) {
+      emit signSewingMachineSpeed(0);
+    }
+    if ("中速" == ui->sewing_machine_speed_combo_box->currentText()) {
+      emit signSewingMachineSpeed(1);
+    }
+    if ("高速" == ui->sewing_machine_speed_combo_box->currentText()) {
+      emit signSewingMachineSpeed(2);
+    }
   });
 }
 
@@ -458,7 +481,7 @@ void DeveloperWidget::bindOther() {
 
   // 急停
   connect(ui->emergency_stop_btn, &QPushButton::clicked, [=]() {
-    emit signEmegencyStop();
+    emit signEmergencyStop();
   });
 
   // 红灯
@@ -467,12 +490,12 @@ void DeveloperWidget::bindOther() {
   });
 
   // 绿灯
-  connect(ui->red_light_btn, &QPushButton::clicked, [=]() {
+  connect(ui->green_light_btn, &QPushButton::clicked, [=]() {
     emit signGreenLight();
   });
 
   // 黄灯
-  connect(ui->red_light_btn, &QPushButton::clicked, [=]() {
+  connect(ui->yellow_light_btn, &QPushButton::clicked, [=]() {
     emit signYellowLight();
   });
 
@@ -600,12 +623,12 @@ void DeveloperWidget::setParam() {
   ui->compose_hand_c_spinbox->setMinimum(compose_min_hand_c);
 
   // 缝纫机
-  float sewing_max_hand_x = 0;
-  float sewing_min_hand_x = -120;
-  float sewing_max_hand_y = 1168;
-  float sewing_min_hand_y = 0;
-  float sewing_max_hand_c = 0.35;
-  float sewing_min_hand_c = -0.94;
+  float sewing_max_hand_x = 1225;
+  float sewing_min_hand_x = -880;
+  float sewing_max_hand_y = 310;
+  float sewing_min_hand_y = -348;
+  float sewing_max_hand_c = 1.8;
+  float sewing_min_hand_c = -1.8;
 
   config_fs["sewing_machine"]["hand_limit_position"]["x_max"] >> sewing_max_hand_x;
   config_fs["sewing_machine"]["hand_limit_position"]["x_min"] >> sewing_min_hand_x;
