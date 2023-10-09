@@ -111,6 +111,7 @@ signals:
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
   void signSewingMachineNeedle(float shoulder_length, float side_length);
   void signSewingMachineLabelWidth(bool enable, int side, float width, float position);
+  void signSewingMachineLabelReset(bool enable);
   void signSewingMachineSpeed(int speed);
 
   // 其他
@@ -126,7 +127,6 @@ signals:
   void signBellOpen();      // 蜂鸣器开
   void signBellClose();     // 蜂鸣器关
 
-  // 急停
 public slots:
   void setComposeMachineState(syt_msgs::msg::ComposeMachineState state);
   void setSewingMachineState(syt_msgs::msg::SewingMachineState state);

@@ -13,6 +13,7 @@
 #include "syt_msgs/msg/load_machine_state.hpp"
 #include "syt_msgs/msg/motion_planner_state.hpp"
 #include "syt_msgs/msg/sewing_machine_state.hpp"
+#include "syt_msgs/srv/care_label_machine_reset.hpp"
 #include "syt_msgs/srv/care_label_machine_width.hpp"
 #include "syt_msgs/srv/compose_machine_blow_height.hpp"
 #include "syt_msgs/srv/compose_machine_flow.hpp"
@@ -144,8 +145,9 @@ public:
   void sewingMachineMoveHand(float x, float y, float c, bool z);                    // 移动抓手
   void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);       // 发送关键点
   void sewingMachineNeedle(float shoulder_length, float side_length);               // 发送针长
-  void sewingMachineLabelWidth(bool enable, int side, float width, float position); // 水洗标宽度
-  void sewingMachineSpeed(int speed);                                               // 水洗标宽度
+  void sewingMachineLabelWidth(bool enable, int side, float width, float position); // 水洗标设置
+  void sewingMachineLabelReset(bool enable);                                        // 水洗标复位
+  void sewingMachineSpeed(int speed);                                               // 缝纫机档位
 
   // 视觉检测
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息

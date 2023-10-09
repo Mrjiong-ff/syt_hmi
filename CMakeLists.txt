@@ -77,5 +77,11 @@ ament_export_libraries(
         ${PROJECT_NAME}
 )
 
+# set up config files
+install(DIRECTORY etc/
+    DESTINATION etc
+    PATTERN ".svn" EXCLUDE
+    )
+
 ament_package()
 

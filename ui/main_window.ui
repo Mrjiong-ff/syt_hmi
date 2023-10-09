@@ -361,7 +361,7 @@
        <widget class="QLabel" name="current_time_label">
         <property name="minimumSize">
          <size>
-          <width>60</width>
+          <width>50</width>
           <height>0</height>
          </size>
         </property>
@@ -981,7 +981,7 @@
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>150</width>
+                    <width>200</width>
                     <height>40</height>
                    </size>
                   </property>
@@ -1049,12 +1049,12 @@
                 </property>
                 <column>
                  <property name="text">
-                  <string notr="true">属性</string>
+                  <string>属性</string>
                  </property>
                 </column>
                 <column>
                  <property name="text">
-                  <string notr="true">值</string>
+                  <string>值</string>
                  </property>
                 </column>
                </widget>
@@ -1101,8 +1101,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>644</width>
-             <height>320</height>
+             <width>1469</width>
+             <height>713</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -1475,8 +1475,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>684</width>
-             <height>168</height>
+             <width>1469</width>
+             <height>713</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1505,8 +1505,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>138</width>
-             <height>220</height>
+             <width>1469</width>
+             <height>713</height>
             </rect>
            </property>
            <property name="font">

@@ -137,6 +137,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->send_keypoints_btn);
   setFrame(ui->needle_length_btn);
   setFrame(ui->label_width_btn);
+  setFrame(ui->label_reset_btn);
 
   // 其他界面
   setFrame(ui->choose_bin_btn);
@@ -447,15 +448,21 @@ void DeveloperWidget::bindSewingMachine() {
     emit signSewingMachineLabelWidth(ui->enable_label_check_box->isChecked(), side, ui->label_width_spin_box->value(), ui->label_position_spin_box->value());
   });
 
+  connect(ui->label_reset_btn, &QPushButton::clicked, [=]() {
+    emit signSewingMachineLabelReset(true);
+  });
+
   connect(ui->sewing_machine_speed_btn, &QPushButton::clicked, [=]() {
-    if ("低速" == ui->sewing_machine_speed_combo_box->currentText()) {
+    switch (ui->sewing_machine_speed_combo_box->currentIndex()) {
+    case 0:
       emit signSewingMachineSpeed(0);
-    }
-    if ("中速" == ui->sewing_machine_speed_combo_box->currentText()) {
+      break;
+    case 1:
       emit signSewingMachineSpeed(1);
-    }
-    if ("高速" == ui->sewing_machine_speed_combo_box->currentText()) {
+      break;
+    case 2:
       emit signSewingMachineSpeed(2);
+      break;
     }
   });
 }
@@ -652,17 +659,21 @@ void DeveloperWidget::setChooseMode() {
   // 模式选择界面
   void (QComboBox::*index_change_signal)(int index) = &QComboBox::currentIndexChanged;
   connect(ui->choose_mode_combo_box, index_change_signal, [=]() {
-    if ("单次模式" == ui->choose_mode_combo_box->currentText()) {
-      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP_ONCE);
-    }
-    if ("循环模式" == ui->choose_mode_combo_box->currentText()) {
+    switch (ui->choose_mode_combo_box->currentIndex()) {
+    case 0:
       emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP);
-    }
-    if ("合片模式" == ui->choose_mode_combo_box->currentText()) {
+      break;
+    case 1:
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP_ONCE);
+      break;
+    case 2:
       emit signChooseMode(syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH);
-    }
-    if ("缝纫模式" == ui->choose_mode_combo_box->currentText()) {
+      break;
+    case 3:
       emit signChooseMode(syt_msgs::msg::FSMRunMode::SEW_CLOTH);
+      break;
+    default:
+      break;
     }
   });
 }
@@ -678,19 +689,21 @@ void DeveloperWidget::setUpdateBin() {
 
   connect(ui->flash_btn, &QPushButton::clicked, [=]() {
     if (QFile::exists(update_bin_path_)) {
-      QMap<QString, QString> port_map;
-      port_map.insert("上料机", "/dev/load_machine");
-      port_map.insert("合片机", "/dev/compose_machine");
-      port_map.insert("缝纫机", "/dev/sewing_machine");
+      QMap<int, QString> port_map;
+      port_map.insert(0, "/dev/load_machine");
+      port_map.insert(1, "/dev/compose_machine");
+      port_map.insert(2, "/dev/sewing_machine");
 
-      if (ui->choose_port_combo_box->currentText() == "上料机") {
+      switch (ui->choose_port_combo_box->currentIndex()) {
+      case 0:
         emit signUpdateLoadMachine();
-      }
-      if (ui->choose_port_combo_box->currentText() == "合片机") {
+        break;
+      case 1:
         emit signUpdateComposeMachine();
-      }
-      if (ui->choose_port_combo_box->currentText() == "缝纫机") {
+        break;
+      case 2:
         emit signUpdateSewingMachine();
+        break;
       }
 
       QThread::msleep(200);
@@ -699,7 +712,7 @@ void DeveloperWidget::setUpdateBin() {
         killProcesses("ros-args");
       }
 
-      QString command = QString("download %1 %2").arg(port_map.value(ui->choose_port_combo_box->currentText())).arg(update_bin_path_);
+      QString command = QString("download %1 %2").arg(port_map.value(ui->choose_port_combo_box->currentIndex())).arg(update_bin_path_);
       int result = system(command.toStdString().c_str());
 
       if (0 == result) {
