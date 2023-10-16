@@ -894,9 +894,16 @@ void MainWindow::bindControlConnection() {
   });
 
   // 上料机-上料间隔
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayGap, [=](int id, uint32_t height) {
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayGap, [=](int id, int32_t height) {
     QtConcurrent::run([=]() {
       rclcomm_->loadMachineTrayGap(id, height);
+    });
+  });
+
+  // 上料机-上料偏移
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayOffset, [=](int id, int32_t offset) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineTrayOffset(id, offset);
     });
   });
 
@@ -1083,9 +1090,9 @@ void MainWindow::bindControlConnection() {
   });
 
   // 缝纫机-设置针长
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineNeedle, [=](float shoulder_length, float side_length) {
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineNeedle, [=](float line_1, float line_2, float line_3, float line_4) {
     QtConcurrent::run([=]() {
-      rclcomm_->sewingMachineNeedle(shoulder_length, side_length);
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
     });
   });
 

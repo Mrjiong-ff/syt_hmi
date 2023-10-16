@@ -93,6 +93,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->set_cloth_size_btn_B);
   setFrame(ui->set_load_distance_btn_B);
   setFrame(ui->set_tray_gap_btn_B);
+  setFrame(ui->set_tray_offset_btn_B);
   setFrame(ui->set_offset_btn_B);
   setFrame(ui->hold_cloth_btn_B);
   setFrame(ui->grab_cloth_btn_B);
@@ -109,6 +110,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->set_cloth_size_btn_A);
   setFrame(ui->set_load_distance_btn_A);
   setFrame(ui->set_tray_gap_btn_A);
+  setFrame(ui->set_tray_offset_btn_A);
   setFrame(ui->set_offset_btn_A);
   setFrame(ui->hold_cloth_btn_A);
   setFrame(ui->grab_cloth_btn_A);
@@ -200,6 +202,10 @@ void DeveloperWidget::bindLoadMachine() {
     emit signLoadMachineTrayGap(0, ui->tray_gap_spinbox_B->value());
   });
 
+  connect(ui->set_tray_offset_btn_B, &QPushButton::clicked, [=]() {
+    emit signLoadMachineTrayOffset(0, ui->tray_offset_spinbox_B->value());
+  });
+
   connect(ui->rough_align_btn_B, &QPushButton::clicked, [=]() {
     emit signLoadMachineRoughAlign(0);
   });
@@ -259,6 +265,10 @@ void DeveloperWidget::bindLoadMachine() {
 
   connect(ui->set_tray_gap_btn_A, &QPushButton::clicked, [=]() {
     emit signLoadMachineTrayGap(1, ui->tray_gap_spinbox_A->value());
+  });
+
+  connect(ui->set_tray_offset_btn_A, &QPushButton::clicked, [=]() {
+    emit signLoadMachineTrayOffset(1, ui->tray_offset_spinbox_A->value());
   });
 
   connect(ui->rough_align_btn_A, &QPushButton::clicked, [=]() {
@@ -442,7 +452,7 @@ void DeveloperWidget::bindSewingMachine() {
   });
 
   connect(ui->needle_length_btn, &QPushButton::clicked, [=]() {
-    emit signSewingMachineNeedle(ui->shoulder_length_spin_box->value(), ui->side_length_spin_box->value());
+    emit signSewingMachineNeedle(ui->line_1_spin_box->value(), ui->line_2_spin_box->value(), ui->line_3_spin_box->value(), ui->line_4_spin_box->value());
   });
 
   connect(ui->label_width_btn, &QPushButton::clicked, [=]() {

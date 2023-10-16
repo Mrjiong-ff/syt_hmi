@@ -519,7 +519,7 @@ void SytRclComm::loadMachineOffset(int id, int offset) {
 }
 
 // 上料间隔
-void SytRclComm::loadMachineTrayGap(int id, uint32_t height) {
+void SytRclComm::loadMachineTrayGap(int id, int32_t height) {
   auto request = std::make_shared<syt_msgs::srv::LoadMachineTrayGap::Request>();
   request->id.data = id;
   request->height = height;
@@ -527,6 +527,17 @@ void SytRclComm::loadMachineTrayGap(int id, uint32_t height) {
   syt_msgs::srv::LoadMachineTrayGap::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineTrayGap>("/syt/robot_control/load_machine/primal/tray_gap", "上料间隔", 10000, request, response);
   qDebug() << "上料间隔：" << result;
+}
+
+// 上料偏移
+void SytRclComm::loadMachineTrayOffset(int id, int32_t offset) {
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineTrayOffset::Request>();
+  request->id.data = id;
+  request->offset = offset;
+
+  syt_msgs::srv::LoadMachineTrayOffset::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineTrayOffset>("/syt/robot_control/load_machine/primal/tray_offset", "上料偏移", 5000, request, response);
+  qDebug() << "上料偏移：" << result;
 }
 
 // 抓住裁片
@@ -743,9 +754,9 @@ void SytRclComm::composeMachineUnfastenSheet() {
 
 // 合片抓手移动
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
-  // TODO: delete
-  emit signComposeMachineMoveHandFinish(true);
-  return;
+  //// TODO: delete
+  //emit signComposeMachineMoveHandFinish(true);
+  //return;
 
   auto request = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
   request->target.x = x;
@@ -851,10 +862,12 @@ void SytRclComm::sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keyp
 }
 
 // 发送针长
-void SytRclComm::sewingMachineNeedle(float shoulder_length, float side_length) {
+void SytRclComm::sewingMachineNeedle(float line_1, float line_2, float line_3, float line_4) {
   auto request = std::make_shared<syt_msgs::srv::SewingMachineNeedle::Request>();
-  request->shoulder_length = shoulder_length;
-  request->side_length = side_length;
+  request->line_1 = line_1;
+  request->line_2 = line_2;
+  request->line_3 = line_3;
+  request->line_4 = line_4;
 
   syt_msgs::srv::SewingMachineNeedle::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::SewingMachineNeedle>("/syt/robot_control/sewing_machine/primal/needle", "设置针长", 5000, request, response);
@@ -893,9 +906,9 @@ void SytRclComm::sewingMachineSpeed(int speed) {
 /* ---------------------------视觉检测------------------------------ */
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
-  // TODO: delete
-  emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
-  return;
+  //// TODO: delete
+  //emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
+  //return;
 
   auto request = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
   request->frame_id.data = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机
@@ -961,9 +974,9 @@ void SytRclComm::checkCalibration() {
 /* ---------------------------样式相关------------------------------ */
 // 创建样式文件
 void SytRclComm::createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
-  // TODO
-  emit signCreateStyleFinish(true, QString("test"));
-  return;
+  //// TODO
+  //emit signCreateStyleFinish(true, QString("test"));
+  //return;
 
   auto request = std::make_shared<syt_msgs::srv::CreateStyle::Request>();
   request->mode.data = mode;
