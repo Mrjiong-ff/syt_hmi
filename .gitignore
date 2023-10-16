@@ -10,5 +10,4 @@ cmake-build-debug
 *.so
 *.idea
 *.pyc
-*.qm
 *.user
