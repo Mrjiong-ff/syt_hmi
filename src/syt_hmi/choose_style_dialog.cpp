@@ -8,7 +8,7 @@ ChooseStyleDialog::ChooseStyleDialog(QWidget *parent)
   this->setModal(true); // 设置为模态 父对象控件不可选
 
   pop_menu_ = new QMenu(this);
-  delete_act_ = new QAction("删除", this);
+  delete_act_ = new QAction(tr("删除"), this);
   pop_menu_->addAction(delete_act_);
 
   ui->style_path_btn->setParentEnabled(true);
@@ -69,7 +69,7 @@ ChooseStyleDialog::ChooseStyleDialog(QWidget *parent)
 ChooseStyleDialog::~ChooseStyleDialog() { delete ui; }
 
 void ChooseStyleDialog::slotSetStylePath() {
-  style_directory_ = QFileDialog::getExistingDirectory(this, "请选择模板路径",
+  style_directory_ = QFileDialog::getExistingDirectory(this, tr("请选择模板路径"),
                                                        style_directory_);
   if (!style_directory_.isEmpty()) {
     ui->style_path_line_edit->setText(style_directory_);
@@ -100,7 +100,7 @@ void ChooseStyleDialog::slotSetCurrentStyleFinish(bool result) {
             .toString());
     this->accept();
   } else {
-    showMessageBox(this, ERROR, "设置样式失败！", 1, {"确认"});
+    showMessageBox(this, ERROR, tr("设置样式失败！"), 1, {tr("确认")});
   }
 }
 
@@ -108,7 +108,7 @@ void ChooseStyleDialog::deleteStyleFile() {
   QString file_name = ui->style_file_list_view->model()
                           ->data(ui->style_file_list_view->currentIndex())
                           .toString();
-  int ret = showMessageBox(this, WARN, "确认删除？", 2, {"确认", "取消"});
+  int ret = showMessageBox(this, WARN, tr("确认删除？"), 2, {tr("确认"), tr("取消")});
 
   switch (ret) {
   case 0:

@@ -11,7 +11,7 @@ class TranslateDialog : public QDialog {
   Q_OBJECT
 
 public:
-  explicit TranslateDialog(QWidget *parent = nullptr);
+  explicit TranslateDialog(QWidget *parent = nullptr, int index = 0);
   ~TranslateDialog();
 
 signals:

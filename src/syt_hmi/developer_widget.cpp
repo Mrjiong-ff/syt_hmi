@@ -39,6 +39,13 @@ DeveloperWidget::~DeveloperWidget() {
   delete ui;
 }
 
+bool DeveloperWidget::event(QEvent *event) {
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+  }
+  return QWidget::event(event);
+}
+
 void DeveloperWidget::mousePressEvent(QMouseEvent *event) {
   switch (event->button()) {
   case Qt::LeftButton:
@@ -681,7 +688,7 @@ void DeveloperWidget::setChooseMode() {
 void DeveloperWidget::setUpdateBin() {
   // 保存bin文件路径
   connect(ui->choose_bin_btn, &QPushButton::clicked, this, [=]() {
-    update_bin_path_ = QFileDialog::getOpenFileName(this, "请选择模板路径", QDir::homePath(), "*.bin");
+    update_bin_path_ = QFileDialog::getOpenFileName(this, tr("请选择模板路径"), QDir::homePath(), "*.bin");
     if (!update_bin_path_.isEmpty()) {
       ui->bin_file_line_edit->setText(update_bin_path_);
     }
@@ -716,12 +723,12 @@ void DeveloperWidget::setUpdateBin() {
       int result = system(command.toStdString().c_str());
 
       if (0 == result) {
-        showMessageBox(this, SUCCESS, ui->choose_port_combo_box->currentText() + "更新成功", 1, {"确认"});
+        showMessageBox(this, SUCCESS, ui->choose_port_combo_box->currentText() + "更新成功", 1, {tr("确认")});
       } else {
-        showMessageBox(this, ERROR, ui->choose_port_combo_box->currentText() + "更新失败", 1, {"确认"});
+        showMessageBox(this, ERROR, ui->choose_port_combo_box->currentText() + "更新失败", 1, {tr("确认")});
       }
     } else {
-      showMessageBox(this, WARN, "所选文件不存在", 1, {"确认"});
+      showMessageBox(this, WARN, tr("所选文件不存在"), 1, {tr("确认")});
     }
   });
 }

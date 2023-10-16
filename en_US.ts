@@ -51,6 +51,8 @@
     </message>
     <message>
         <location filename="ui/choose_style_dialog.ui" line="67"/>
+        <location filename="src/syt_hmi/choose_style_dialog.cpp" line="103"/>
+        <location filename="src/syt_hmi/choose_style_dialog.cpp" line="111"/>
         <source>确认</source>
         <translation>OK</translation>
     </message>
@@ -63,6 +65,31 @@
         <location filename="ui/choose_style_dialog.ui" line="133"/>
         <source>设置路径</source>
         <translation>Prefix</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/choose_style_dialog.cpp" line="11"/>
+        <source>删除</source>
+        <translation>Delete</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/choose_style_dialog.cpp" line="72"/>
+        <source>请选择模板路径</source>
+        <translation>Please select prefix</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/choose_style_dialog.cpp" line="103"/>
+        <source>设置样式失败！</source>
+        <translation>Set style failed!</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/choose_style_dialog.cpp" line="111"/>
+        <source>确认删除？</source>
+        <translation>Sure?</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/choose_style_dialog.cpp" line="111"/>
+        <source>取消</source>
+        <translation>Cancel</translation>
     </message>
 </context>
 <context>
@@ -274,6 +301,16 @@ Create</translation>
         <source>管理员登录</source>
         <translation>Administrator Login</translation>
     </message>
+    <message>
+        <location filename="src/syt_hmi/dev_login_window.cpp" line="55"/>
+        <source>密码输入错误，请重新输入或联系管理员!</source>
+        <translation>Wrong password, retry or call administrator!</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/dev_login_window.cpp" line="55"/>
+        <source>确认</source>
+        <translation>OK</translation>
+    </message>
 </context>
 <context>
     <name>DeveloperWidget</name>
@@ -285,19 +322,19 @@ Create</translation>
     <message>
         <location filename="ui/developer_widget.ui" line="55"/>
         <location filename="ui/developer_widget.ui" line="114"/>
-        <location filename="ui/developer_widget.ui" line="4532"/>
+        <location filename="ui/developer_widget.ui" line="4569"/>
         <source>上料机</source>
         <translation>Load Machine</translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="134"/>
-        <location filename="ui/developer_widget.ui" line="4537"/>
+        <location filename="ui/developer_widget.ui" line="4574"/>
         <source>合片机</source>
         <translation>Compose Machine</translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="154"/>
-        <location filename="ui/developer_widget.ui" line="4542"/>
+        <location filename="ui/developer_widget.ui" line="4579"/>
         <source>缝纫机</source>
         <translation>Sewing Machine</translation>
     </message>
@@ -356,7 +393,7 @@ Needle</translation>
     <message>
         <location filename="ui/developer_widget.ui" line="398"/>
         <location filename="ui/developer_widget.ui" line="1092"/>
-        <location filename="ui/developer_widget.ui" line="4171"/>
+        <location filename="ui/developer_widget.ui" line="4232"/>
         <source>宽度</source>
         <translation>width</translation>
     </message>
@@ -377,7 +414,7 @@ Needle</translation>
         <location filename="ui/developer_widget.ui" line="1487"/>
         <location filename="ui/developer_widget.ui" line="2855"/>
         <location filename="ui/developer_widget.ui" line="2949"/>
-        <location filename="ui/developer_widget.ui" line="4363"/>
+        <location filename="ui/developer_widget.ui" line="4400"/>
         <source>设置</source>
         <translation>Set</translation>
     </message>
@@ -415,7 +452,7 @@ Needle</translation>
         <location filename="ui/developer_widget.ui" line="837"/>
         <location filename="ui/developer_widget.ui" line="1531"/>
         <location filename="ui/developer_widget.ui" line="2743"/>
-        <location filename="ui/developer_widget.ui" line="4394"/>
+        <location filename="ui/developer_widget.ui" line="4431"/>
         <source>复位</source>
         <translation>Reset</translation>
     </message>
@@ -622,7 +659,7 @@ Fitting</translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="2761"/>
-        <location filename="ui/developer_widget.ui" line="4425"/>
+        <location filename="ui/developer_widget.ui" line="4462"/>
         <source>停止</source>
         <translation>Stop</translation>
     </message>
@@ -647,186 +684,209 @@ Fitting</translation>
         <translation>Right Collar</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="3961"/>
+        <location filename="ui/developer_widget.ui" line="3964"/>
         <source>裁片尺码</source>
         <translation>Cloth Size</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4007"/>
+        <location filename="ui/developer_widget.ui" line="4010"/>
         <source>发送关键点</source>
         <translation>Send
 Keypoints</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4029"/>
+        <location filename="ui/developer_widget.ui" line="4032"/>
         <source>设置针距</source>
         <translation>Set Needle
 Distance</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4041"/>
+        <location filename="ui/developer_widget.ui" line="4044"/>
         <source>肩膀</source>
         <translation>Shoulder Seam</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4103"/>
+        <location filename="ui/developer_widget.ui" line="4106"/>
         <source>侧缝</source>
         <translation>Side Seam</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4143"/>
+        <location filename="ui/developer_widget.ui" line="4262"/>
         <source>启用水洗标</source>
         <translation>Use Care Label</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4239"/>
+        <location filename="ui/developer_widget.ui" line="4152"/>
         <source>设置水洗标</source>
         <translation>Set
 Care Label</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4251"/>
+        <location filename="ui/developer_widget.ui" line="4164"/>
         <source>边一</source>
         <translation>Edge1</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4263"/>
+        <location filename="ui/developer_widget.ui" line="4176"/>
         <source>边四</source>
         <translation>Edge4</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4275"/>
+        <location filename="ui/developer_widget.ui" line="4188"/>
         <source>位置</source>
         <translation>distance</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4309"/>
+        <location filename="ui/developer_widget.ui" line="4298"/>
+        <source>水洗标复位</source>
+        <translation>Reset
+Care Label</translation>
+    </message>
+    <message>
+        <location filename="ui/developer_widget.ui" line="4346"/>
         <source>运行档位</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4334"/>
+        <location filename="ui/developer_widget.ui" line="4371"/>
         <source>低速</source>
         <translation>Low</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4339"/>
+        <location filename="ui/developer_widget.ui" line="4376"/>
         <source>中速</source>
         <translation>Mid</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4344"/>
+        <location filename="ui/developer_widget.ui" line="4381"/>
         <source>高速</source>
         <translation>High</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4469"/>
+        <location filename="ui/developer_widget.ui" line="4506"/>
         <source>固件升级</source>
         <translation>Update
 Firmware</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4513"/>
+        <location filename="ui/developer_widget.ui" line="4550"/>
         <source>选择文件</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4574"/>
+        <location filename="ui/developer_widget.ui" line="4611"/>
         <source>写入</source>
         <translation>Flash</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4595"/>
+        <location filename="ui/developer_widget.ui" line="4632"/>
         <source>使用缝纫机</source>
         <translation>use sewing</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4616"/>
+        <location filename="ui/developer_widget.ui" line="4653"/>
         <source>老化测试</source>
         <translation>pressure test</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4645"/>
+        <location filename="ui/developer_widget.ui" line="4682"/>
         <source>未复位成功时切换模式无效</source>
         <translation>Useless when machine is not reseted</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4659"/>
+        <location filename="ui/developer_widget.ui" line="4696"/>
         <source>模式切换</source>
         <translation>Switch Mode</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4694"/>
+        <location filename="ui/developer_widget.ui" line="4731"/>
         <source>循环模式</source>
         <translation>Cycle Mode</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4699"/>
+        <location filename="ui/developer_widget.ui" line="4736"/>
         <source>单次模式</source>
         <translation>Single Mode</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4704"/>
+        <location filename="ui/developer_widget.ui" line="4741"/>
         <source>合片模式</source>
         <translation>Compose Mode</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4709"/>
+        <location filename="ui/developer_widget.ui" line="4746"/>
         <source>缝纫模式</source>
         <translation>Sewing Mode</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4742"/>
+        <location filename="ui/developer_widget.ui" line="4779"/>
         <source>检查标定结果</source>
         <translation>Check
 Calib
 Result</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4756"/>
+        <location filename="ui/developer_widget.ui" line="4793"/>
         <source>下摆长</source>
         <translation>Bottom</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4791"/>
-        <location filename="ui/developer_widget.ui" line="4842"/>
+        <location filename="ui/developer_widget.ui" line="4828"/>
+        <location filename="ui/developer_widget.ui" line="4879"/>
         <source>0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4810"/>
+        <location filename="ui/developer_widget.ui" line="4847"/>
         <source>A侧缝长</source>
         <translation>A Side Seam</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4868"/>
+        <location filename="ui/developer_widget.ui" line="4905"/>
         <source>曲线缝纫</source>
         <translation>Curve</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4898"/>
+        <location filename="ui/developer_widget.ui" line="4935"/>
         <source>红灯</source>
         <translation>Red Light</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4916"/>
+        <location filename="ui/developer_widget.ui" line="4953"/>
         <source>绿灯</source>
         <translation>Green Light</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4934"/>
+        <location filename="ui/developer_widget.ui" line="4971"/>
         <source>黄灯</source>
         <translation>Yellow Light</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4952"/>
+        <location filename="ui/developer_widget.ui" line="4989"/>
         <source>蜂鸣器开</source>
         <translation>Buzzer On</translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4970"/>
+        <location filename="ui/developer_widget.ui" line="5007"/>
         <source>蜂鸣器关</source>
         <translation>Buzzer Off</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="691"/>
+        <source>请选择模板路径</source>
+        <translation>Please select prefix</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="726"/>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="728"/>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="731"/>
+        <source>确认</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="731"/>
+        <source>所选文件不存在</source>
+        <translation>Chosen file doesn&apos;t exist</translation>
     </message>
 </context>
 <context>
@@ -850,6 +910,60 @@ Result</translation>
         <location filename="ui/hand_eye_dialog.ui" line="152"/>
         <source>启动缝纫台标定</source>
         <translation>Calibrate Sewing Table</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="19"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;b&gt;注意:&lt;/b&gt;
+&lt;body&gt;&lt;p&gt;即将启动&lt;font color=&quot;red&quot;&gt;&lt;b&gt;合片台&lt;/b&gt;&lt;/font&gt;标定。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;b&gt;Warning:&lt;/b&gt;
+&lt;body&gt;&lt;p&gt;About to start calibrating &lt;font color=&quot;red&quot;&gt;&lt;b&gt;compose table&lt;/b&gt;&lt;/font&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="24"/>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="42"/>
+        <source>确定</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="24"/>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="42"/>
+        <source>返回</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="37"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;b&gt;注意:&lt;/b&gt;
+&lt;body&gt;&lt;p&gt;即将启动&lt;font color=&quot;red&quot;&gt;&lt;b&gt;缝纫台&lt;/b&gt;&lt;/font&gt;的标定。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;b&gt;Warning:&lt;/b&gt;
+&lt;body&gt;&lt;p&gt;About to start calibrating &lt;font color=&quot;red&quot;&gt;&lt;b&gt;sewing table&lt;/b&gt;&lt;/font&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="66"/>
+        <source>合片台标定成功</source>
+        <translation>Calibrate Compose Table Done</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="66"/>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="69"/>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="77"/>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="80"/>
+        <source>确认</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="69"/>
+        <source>合片台标定失败,请联系相关人员</source>
+        <translation>Calibrate compose table failed, contact some technicians</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="77"/>
+        <source>缝纫台标定成功</source>
+        <translation>Calibrate Sewing Table Done</translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/hand_eye_dialog.cpp" line="80"/>
+        <source>缝纫台标定失败,请联系相关人员</source>
+        <translation>Calibrate sewing table failed, contact some technicians</translation>
     </message>
 </context>
 <context>
@@ -1320,180 +1434,180 @@ Result</translation>
         <translation>Jump to Bottom</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="358"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="378"/>
         <source>产量</source>
         <translation>Output</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="322"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="339"/>
         <source>请选择样式文件</source>
         <translation>Please Choose One Style</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="348"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="366"/>
         <source>B区余量</source>
         <translation>B Remaining</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="353"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="372"/>
         <source>A区余量</source>
         <translation>A Remaining</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="555"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="561"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="575"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="581"/>
         <source>隐藏</source>
         <translation>Hide</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="565"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="585"/>
         <source>显示</source>
         <translation>Show</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="582"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="602"/>
         <source>检查更新</source>
         <translation>Update</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="585"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="606"/>
         <source>关于速英</source>
         <translation>About Us</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="588"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="610"/>
         <source>语言选项</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="605"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="628"/>
         <source>最小化</source>
         <translation>Minimize</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="606"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="630"/>
         <source>最大化</source>
         <translation>Maximize</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="607"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="632"/>
         <source>全屏窗口化</source>
         <translation>FullScreen</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="608"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="634"/>
         <source>关闭</source>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1205"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1247"/>
         <source>请先设置裁片样式。</source>
         <translation>Please Choose Style First</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1205"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1241"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1266"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1291"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1316"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1353"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1356"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1377"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1496"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1845"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1847"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1247"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1283"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1308"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1333"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1358"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1395"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1398"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1419"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1538"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1887"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1889"/>
         <source>确认</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1225"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1267"/>
         <source>复位中</source>
         <translation>Reseting</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1235"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1277"/>
         <source>复位完成</source>
         <translation>Reset Done</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1239"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1241"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1281"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1283"/>
         <source>复位失败</source>
         <translation>Reset Failed</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1253"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1295"/>
         <source>开始运行</source>
         <translation>Start Runing</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1263"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1305"/>
         <source>运行中</source>
         <translation>Runing</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1265"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1266"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1307"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1308"/>
         <source>运行失败</source>
         <translation>Run Failed</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1278"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1320"/>
         <source>开始暂停</source>
         <translation>Start Pausing</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1288"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1330"/>
         <source>暂停中</source>
         <translation>Pausing</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1290"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1291"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1332"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1333"/>
         <source>暂停失败</source>
         <translation>Pause Failed</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1303"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1345"/>
         <source>开始结束</source>
         <oldsource>开始停止</oldsource>
         <translation>Start Ending</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1313"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1355"/>
         <source>结束中</source>
         <oldsource>停止中</oldsource>
         <translation>Ending</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1315"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1316"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1357"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1358"/>
         <source>结束失败</source>
         <translation>End Failed</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1329"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1371"/>
         <source>补料模式</source>
         <translation>Add Cloth Mode</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1352"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1394"/>
         <source>补料模式设置完成</source>
         <translation>Add Cloth Mode Setted</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1353"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1395"/>
         <source>补料模式设置成功，请在手动补充裁片后再点击确认。</source>
         <translation>After adding enough clothes, click OK</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1355"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1356"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1397"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1398"/>
         <source>补料模式设置失败</source>
         <translation>Add Cloth Mode Failed</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1487"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1529"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;b&gt;启动机器人手眼标定&lt;/b&gt;
 &lt;body&gt;&lt;b&gt;注意:&lt;/b&gt;&lt;p&gt;1.标定过程中,&lt;font color=&quot;red&quot;&gt;&lt;b&gt;禁止靠近机台&lt;/b&gt;&lt;/font&gt;;
 &lt;/p&gt;&lt;p&gt;2.请确认机器人处在一个&lt;font color=&quot;red&quot;&gt;&lt;b&gt;良好的位置&lt;/b&gt;&lt;/font&gt;,避免启动时发生碰撞;
@@ -1508,102 +1622,102 @@ Result</translation>
 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1496"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1538"/>
         <source>返回</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1812"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1854"/>
         <source>前片</source>
         <translation>Front</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1813"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1855"/>
         <source>后片</source>
         <translation>Back</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1819"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1861"/>
         <source>衣长</source>
         <translation>Cloth Length</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1820"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1862"/>
         <source>下摆长</source>
         <translation>Bottom</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1821"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1863"/>
         <source>腋下间距</source>
         <translation>Oxter Length</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1822"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1864"/>
         <source>肩缝长</source>
         <translation>Shoulder Length</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1823"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1865"/>
         <source>侧缝长</source>
         <translation>Side Length</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1824"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1866"/>
         <source>有无印花</source>
         <translation>Printing</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1824"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1866"/>
         <source>有</source>
         <translation>YES</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1824"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1866"/>
         <source>无</source>
         <translation>NO</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1827"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1869"/>
         <source>颜色</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1831"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1873"/>
         <source>裁片克数</source>
         <translation>Weight</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1832"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1874"/>
         <source>弹性</source>
         <translation>Elasticity</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1833"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1875"/>
         <source>厚度</source>
         <translation>Thickness</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1834"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1876"/>
         <source>尺码</source>
         <translation>Size</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1835"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1877"/>
         <source>光泽度</source>
         <translation>Glossiness</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1843"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1885"/>
         <source>已设置样式，允许运行</source>
         <translation>Setted Style, allow to run</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1845"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1887"/>
         <source>样式设置成功</source>
         <translation>Style Setted</translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1847"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1889"/>
         <source>获取样式信息失败</source>
         <translation>Get Style Failed</translation>
     </message>

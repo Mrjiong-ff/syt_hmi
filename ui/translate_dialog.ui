@@ -145,7 +145,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="confirm_btn">
+      <widget class="WaterZoomButton" name="confirm_btn">
        <property name="minimumSize">
         <size>
          <width>100</width>
@@ -186,7 +186,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cancel_btn">
+      <widget class="WaterZoomButton" name="cancel_btn">
        <property name="minimumSize">
         <size>
          <width>100</width>
@@ -230,6 +230,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WaterZoomButton</class>
+   <extends>QPushButton</extends>
+   <header>syt_btn/waterzoombutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resource/hmi.qrc"/>
  </resources>

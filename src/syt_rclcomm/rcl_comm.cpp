@@ -698,9 +698,10 @@ void SytRclComm::composeMachineWithdrawNeedle() {
 // 吹气
 void SytRclComm::composeMachineBlowWind() {
   auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
-  request->commands.pop_cylinder_bottom = true;
-  request->commands.pop_cylinder_chest = true;
-  request->commands.pop_cylinder_shoulder = true;
+  request->commands.gripper_fixed_shoulder = true;
+  request->commands.gripper_fixed_hem = true;
+  request->commands.gripper_spring_shoulder = true;
+  request->commands.gripper_spring_hem = true;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "吹气", 5000, request, response);
@@ -710,9 +711,10 @@ void SytRclComm::composeMachineBlowWind() {
 // 停气
 void SytRclComm::composeMachineStopBlow() {
   auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
-  request->commands.pop_cylinder_bottom = false;
-  request->commands.pop_cylinder_chest = false;
-  request->commands.pop_cylinder_shoulder = false;
+  request->commands.gripper_fixed_shoulder = false;
+  request->commands.gripper_fixed_hem = false;
+  request->commands.gripper_spring_shoulder = false;
+  request->commands.gripper_spring_hem = true;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "停气", 5000, request, response);

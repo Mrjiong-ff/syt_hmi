@@ -221,7 +221,6 @@ private:
   InteractiveButtonBase *prev_btn_;
   InteractiveButtonBase *next_btn_;
 
-  TranslateDialog *translate_dialog_; // 语言选项
   DeveloperWidget *developer_widget_; // 开发者界面
 
   WaitingSpinnerWidget *waiting_spinner_widget_;

@@ -639,9 +639,6 @@ void MainWindow::setBaseComponet() {
   title_menu_->addAction(full_act);
   title_menu_->addAction(close_act);
 
-  // 语言选项对话框
-  translate_dialog_ = new TranslateDialog(this);
-
   // main window右上角按钮 放大 缩小 菜单等
   connect(ui->close_btn, &WinCloseButton::clicked, this, &MainWindow::close);
   connect(ui->min_btn, &WinMaxButton::clicked, this, &MainWindow::showMinimized);
@@ -669,16 +666,22 @@ void MainWindow::setBaseComponet() {
 
   // 语言选项界面
   connect(translate_act, &QAction::triggered, this, [=]() {
-    translate_dialog_->show();
-  });
-
-  connect(translate_dialog_, &TranslateDialog::confirmLanguage, this, [=](int index) {
-    app->switchApplicationLanguage(index);
-
     std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
-    cv::FileStorage fs(config_path, cv::FileStorage::WRITE);
-    fs << "language" << index;
+    cv::FileStorage fs(config_path, cv::FileStorage::READ);
+    int idx;
+    fs["language"] >> idx;
     fs.release();
+    TranslateDialog *translate_dialog = new TranslateDialog(this, idx);
+
+    connect(translate_dialog, &TranslateDialog::confirmLanguage, this, [=](int index) {
+      app->switchApplicationLanguage(index);
+
+      std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
+      cv::FileStorage fs(config_path, cv::FileStorage::WRITE);
+      fs << "language" << index;
+      fs.release();
+    });
+    translate_dialog->show();
   });
 }
 
