@@ -1,3 +1,10 @@
+#include <QDesktopWidget>
+#include <QGraphicsOpacityEffect>
+#include <QScreen>
+#include <QScrollBar>
+#include <QTranslator>
+
+#include "syt_hmi/globalapplication.h"
 #include "syt_hmi/main_window.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), exe_count_(0), max_count_(0), cur_count_(0) {
@@ -80,6 +87,30 @@ void MainWindow::region(const QPoint &currentGlobalPoint) {
     dir_ = NONE;
     this->setCursor(QCursor(Qt::ArrowCursor));
   }
+}
+
+bool MainWindow::event(QEvent *event) {
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+
+    QString text;
+    text = QApplication::translate("MainWindow", ui->progress_bar_3->property("translator").toString().toStdString().c_str(), nullptr);
+    ui->progress_bar_3->setLabel(text);
+
+    text = QApplication::translate("MainWindow", ui->running_state_label->property("translator").toString().toStdString().c_str(), nullptr);
+    ui->running_state_label->setText(text);
+
+    for (auto act : title_menu_->actions()) {
+      text = QApplication::translate("MainWindow", act->property("translator").toString().toStdString().c_str(), nullptr);
+      act->setText(text);
+    }
+
+    for (auto act : ui->menu_btn->menu()->actions()) {
+      text = QApplication::translate("MainWindow", act->property("translator").toString().toStdString().c_str(), nullptr);
+      act->setText(text);
+    }
+  }
+  return QWidget::event(event);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
@@ -302,11 +333,12 @@ void MainWindow::checkOk() {
 }
 
 void MainWindow::initWidget() {
-  setMouseTracking(true);                                      // 用于捕获鼠标移动事件
-  ui->centralwidget->setMouseTracking(true);                   // 注意：mainwindow及其之类都要设置mouse track，不然不生效
-  ui->sytMainTitleWidget->installEventFilter(this);            // 事件过滤
-  ui->running_state_label->setText(QString("请选择样式文件")); // 初始标题
-  setWindowFlags(Qt::FramelessWindowHint);                     // 隐藏默认标题栏
+  setMouseTracking(true);                                               // 用于捕获鼠标移动事件
+  ui->centralwidget->setMouseTracking(true);                            // 注意：mainwindow及其之类都要设置mouse track，不然不生效
+  ui->sytMainTitleWidget->installEventFilter(this);                     // 事件过滤
+  ui->running_state_label->setText(QString(tr("请选择样式文件")));      // 初始标题
+  ui->running_state_label->setProperty("translator", "请选择样式文件"); // 初始标题
+  setWindowFlags(Qt::FramelessWindowHint);                              // 隐藏默认标题栏
   setWindowIcon(QIcon(":m_logo/logo/bg_logo.png"));
   // setMutuallyLight(GREEN);                                // 初始状态下，亮绿灯
 
@@ -331,15 +363,20 @@ void MainWindow::initWidget() {
 }
 
 void MainWindow::setStatisticComponent() {
-  ui->progress_bar_1->setLabel(QString("B区余量"));
+  ui->progress_bar_1->setLabel(QString(tr("B区余量")));
+  ui->progress_bar_1->setProperty("translator", "B区余量");
   ui->progress_bar_1->setPercentage(true);
   ui->progress_bar_1->setProgressBar(100, 100);
   ui->progress_bar_1->hide();
-  ui->progress_bar_2->setLabel(QString("A区余量"));
+
+  ui->progress_bar_2->setLabel(QString(tr("A区余量")));
+  ui->progress_bar_2->setProperty("translator", "A区余量");
   ui->progress_bar_2->setPercentage(true);
   ui->progress_bar_2->setProgressBar(100, 100);
   ui->progress_bar_2->hide();
-  ui->progress_bar_3->setLabel(QString("产量"));
+
+  ui->progress_bar_3->setLabel(QString(tr("产量")));
+  ui->progress_bar_3->setProperty("translator", "产量");
   ui->progress_bar_3->setProgressBar(0, 400);
 }
 
@@ -368,12 +405,10 @@ void MainWindow::setLogComponent() {
 
   ui->log_clear_btn->setParentEnabled(true);
   ui->log_clear_btn->setForeEnabled(false);
-  ui->log_clear_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
   // 移动至日志末尾
   ui->log_end_btn->setParentEnabled(true);
   ui->log_end_btn->setForeEnabled(false);
-  ui->log_end_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
   // 日志只读
   ui->log_plain_text_edit->setReadOnly(true);
@@ -405,12 +440,12 @@ void MainWindow::setTimeComponent() {
   time_timer_ = new QTimer(this);
   time_timer_->start(1000);
   QTime time_now = QTime::currentTime();
-  ui->current_time_label->setText(QString("时间：%1").arg(time_now.toString()));
+  ui->current_time_label->setText(QString("%1").arg(time_now.toString()));
 
   // 动态显示时间
   connect(time_timer_, &QTimer::timeout, ui->current_time_label, [=]() {
     QTime time_now = QTime::currentTime();
-    ui->current_time_label->setText(QString("时间：%1").arg(time_now.toString()));
+    ui->current_time_label->setText(QString("%1").arg(time_now.toString()));
   });
 }
 
@@ -537,17 +572,17 @@ void MainWindow::setPageJump() {
 void MainWindow::setVisualComponent() {
   // 可视化的两个按钮
   ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_close.svg"));
-  ui->load_machine_visible_btn->setText("隐藏");
+  ui->load_machine_visible_btn->setText(tr("隐藏"));
 
   connect(ui->load_machine_visible_btn, &QPushButton::clicked, [=] {
     is_load_cloth_on_ = !is_load_cloth_on_;
     if (is_load_cloth_on_) {
       ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_close.svg"));
-      ui->load_machine_visible_btn->setText("隐藏");
+      ui->load_machine_visible_btn->setText(tr("隐藏"));
       showLoadMachineImage();
     } else {
       ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_open.svg"));
-      ui->load_machine_visible_btn->setText("显示");
+      ui->load_machine_visible_btn->setText(tr("显示"));
       ui->B_left_visual_label->clear();
       ui->B_right_visual_label->clear();
       ui->A_left_visual_label->clear();
@@ -564,18 +599,22 @@ void MainWindow::setBaseComponet() {
   // 右上角菜单按钮
   QMenu *menu = new QMenu(this);
 
-  QAction *update_act = new QAction(this);
-  QAction *about_act = new QAction(this);
-
-  update_act->setText("检查更新");
+  QAction *update_act = new QAction(tr("检查更新"), this);
+  update_act->setProperty("translator", "检查更新");
   update_act->setIcon(QIcon(":m_icon/icon/update.svg"));
-  about_act->setText("关于速英");
+
+  QAction *about_act = new QAction(tr("关于速英"), this);
+  about_act->setProperty("translator", "关于速英");
   about_act->setIcon(QIcon(":m_icon/icon/about.svg"));
+
+  QAction *translate_act = new QAction(tr("语言选项"), this);
+  translate_act->setProperty("translator", "语言选项");
+  translate_act->setIcon(QIcon(":m_icon/icon/translate.svg"));
 
   menu->addAction(update_act);
   menu->addAction(about_act);
+  menu->addAction(translate_act);
   ui->menu_btn->setMenu(menu);
-  ui->menu_btn->hide(); // TODO:delete
 
   // 标题栏右键菜单
   ui->sytMainTitleWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -586,10 +625,14 @@ void MainWindow::setBaseComponet() {
   QAction *full_act = new QAction(this);
   QAction *close_act = new QAction(this);
 
-  min_act->setText("最小化");
-  max_act->setText("最大化");
-  full_act->setText("全屏窗口化");
-  close_act->setText("关闭");
+  min_act->setText(tr("最小化"));
+  min_act->setProperty("translator", "最小化");
+  max_act->setText(tr("最大化"));
+  max_act->setProperty("translator", "最大化");
+  full_act->setText(tr("全屏窗口化"));
+  full_act->setProperty("translator", "全屏窗口化");
+  close_act->setText(tr("关闭"));
+  close_act->setProperty("translator", "关闭");
 
   title_menu_->addAction(min_act);
   title_menu_->addAction(max_act);
@@ -620,6 +663,26 @@ void MainWindow::setBaseComponet() {
     showMessageBox(this, SUCCESS, "当前版本1.3.1", 1, {"返回"});
     return;
   });
+
+  // 语言选项界面
+  connect(translate_act, &QAction::triggered, this, [=]() {
+    std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
+    cv::FileStorage fs(config_path, cv::FileStorage::READ);
+    int idx;
+    fs["language"] >> idx;
+    fs.release();
+    TranslateDialog *translate_dialog = new TranslateDialog(this, idx);
+
+    connect(translate_dialog, &TranslateDialog::confirmLanguage, this, [=](int index) {
+      app->switchApplicationLanguage(index);
+
+      std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
+      cv::FileStorage fs(config_path, cv::FileStorage::WRITE);
+      fs << "language" << index;
+      fs.release();
+    });
+    translate_dialog->show();
+  });
 }
 
 void MainWindow::setChooseStyleComponet() {
@@ -628,8 +691,6 @@ void MainWindow::setChooseStyleComponet() {
   ui->cloth_style_tree_widget->setAlternatingRowColors(true);
   ui->cloth_style_tree_widget->setAnimated(true);
   ui->cloth_style_tree_widget->setUniformRowHeights(true);
-  ui->cloth_style_tree_widget->setHeaderLabels(QStringList() << "属性"
-                                                             << "值");
   // 设置样式line edit只读
   ui->choose_style_line_edit->setReadOnly(true);
 
@@ -833,9 +894,16 @@ void MainWindow::bindControlConnection() {
   });
 
   // 上料机-上料间隔
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayGap, [=](int id, uint32_t height) {
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayGap, [=](int id, int32_t height) {
     QtConcurrent::run([=]() {
       rclcomm_->loadMachineTrayGap(id, height);
+    });
+  });
+
+  // 上料机-上料偏移
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayOffset, [=](int id, int32_t offset) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineTrayOffset(id, offset);
     });
   });
 
@@ -1022,16 +1090,23 @@ void MainWindow::bindControlConnection() {
   });
 
   // 缝纫机-设置针长
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineNeedle, [=](float shoulder_length, float side_length) {
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineNeedle, [=](float line_1, float line_2, float line_3, float line_4) {
     QtConcurrent::run([=]() {
-      rclcomm_->sewingMachineNeedle(shoulder_length, side_length);
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
     });
   });
 
-  // 缝纫机-水洗标宽度
+  // 缝纫机-水洗标设置
   connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelWidth, [=](bool enable, int side, float width, float position) {
     QtConcurrent::run([=]() {
       rclcomm_->sewingMachineLabelWidth(enable, side, width, position);
+    });
+  });
+
+  // 缝纫机-水洗标复位
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelReset, [=](bool enable) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineLabelReset(enable);
     });
   });
 
@@ -1176,7 +1251,7 @@ void MainWindow::slotNextPage() {
 // 复位按钮槽函数
 void MainWindow::resetBtnClicked() {
   if (!is_style_seted_) {
-    showMessageBox(this, WARN, "请先设置裁片样式。", 1, {"确认"});
+    showMessageBox(this, WARN, tr("请先设置裁片样式。"), 1, {tr("确认")});
     return;
   }
 
@@ -1196,7 +1271,7 @@ void MainWindow::resetBtnClicked() {
   ui->A_right_visual_label->setText("NO IMAGE");
 
   // 复位指令
-  emit signUpdateLabelState("复位中");
+  emit signUpdateLabelState(tr("复位中"));
   QtConcurrent::run([=]() {
     rclcomm_->resetCmd();
   });
@@ -1206,13 +1281,13 @@ void MainWindow::resetBtnClicked() {
 void MainWindow::resetFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-    emit signUpdateLabelState("复位完成");
+    emit signUpdateLabelState(tr("复位完成"));
     // this->btnControl({ui->start_btn, ui->end_btn, ui->add_cloth_btn}, {ui->reset_btn, ui->pause_btn});
     //  setMutuallyLight(GREEN);
   } else {
-    emit signUpdateLabelState("复位失败");
+    emit signUpdateLabelState(tr("复位失败"));
     // this->btnControl({ui->reset_btn}, {ui->pause_btn, ui->start_btn, ui->end_btn, ui->add_cloth_btn});
-    showMessageBox(this, ERROR, "复位失败", 1, {"确认"});
+    showMessageBox(this, ERROR, tr("复位失败"), 1, {tr("确认")});
   }
 }
 
@@ -1224,7 +1299,7 @@ void MainWindow::startBtnClicked() {
   }
 
   // 开始指令
-  emit signUpdateLabelState("开始运行");
+  emit signUpdateLabelState(tr("开始运行"));
   QtConcurrent::run([=]() {
     rclcomm_->startCmd();
   });
@@ -1234,11 +1309,10 @@ void MainWindow::startBtnClicked() {
 void MainWindow::startFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-    emit signUpdateLabelState("运行中");
-    // this->btnControl({ui->pause_btn, ui->end_btn}, {ui->start_btn, ui->reset_btn, ui->add_cloth_btn});
+    emit signUpdateLabelState(tr("运行中"));
   } else {
-    emit signUpdateLabelState("运行失败");
-    showMessageBox(this, ERROR, "运行失败", 1, {"确认"});
+    emit signUpdateLabelState(tr("运行失败"));
+    showMessageBox(this, ERROR, tr("运行失败"), 1, {tr("确认")});
   }
 }
 
@@ -1250,7 +1324,7 @@ void MainWindow::pauseBtnClicked() {
   }
 
   // 开始指令
-  emit signUpdateLabelState("开始暂停");
+  emit signUpdateLabelState(tr("开始暂停"));
   QtConcurrent::run([=]() {
     rclcomm_->pauseCmd();
   });
@@ -1260,11 +1334,10 @@ void MainWindow::pauseBtnClicked() {
 void MainWindow::pauseFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-    emit signUpdateLabelState("暂停中");
-    // this->btnControl({ui->start_btn, ui->reset_btn}, {ui->pause_btn, ui->end_btn, ui->add_cloth_btn});
+    emit signUpdateLabelState(tr("暂停中"));
   } else {
-    emit signUpdateLabelState("暂停失败");
-    showMessageBox(this, ERROR, "暂停失败", 1, {"确认"});
+    emit signUpdateLabelState(tr("暂停失败"));
+    showMessageBox(this, ERROR, tr("暂停失败"), 1, {tr("确认")});
   }
 }
 
@@ -1276,7 +1349,7 @@ void MainWindow::stopBtnClicked() {
   }
 
   // 停止指令
-  emit signUpdateLabelState("开始停止");
+  emit signUpdateLabelState(tr("开始结束"));
   QtConcurrent::run([=]() {
     rclcomm_->stopCmd();
   });
@@ -1286,11 +1359,10 @@ void MainWindow::stopBtnClicked() {
 void MainWindow::stopFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-    emit signUpdateLabelState("停止中");
-    // this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->end_btn, ui->pause_btn});
+    emit signUpdateLabelState(tr("结束中"));
   } else {
-    emit signUpdateLabelState("停止失败");
-    showMessageBox(this, ERROR, "停止失败", 1, {"确认"});
+    emit signUpdateLabelState(tr("结束失败"));
+    showMessageBox(this, ERROR, tr("结束失败"), 1, {tr("确认")});
   }
 }
 
@@ -1303,7 +1375,7 @@ void MainWindow::addClothBtnClicked() {
 
   waiting_spinner_widget_->start();
 
-  emit signUpdateLabelState("补料模式");
+  emit signUpdateLabelState(tr("补料模式"));
 
   QFuture<void> future_B = QtConcurrent::run([=] {
     rclcomm_->loadMachineAddCloth(0);
@@ -1314,8 +1386,6 @@ void MainWindow::addClothBtnClicked() {
   QFuture<void> future_A = QtConcurrent::run([=] {
     rclcomm_->loadMachineAddCloth(1);
   });
-
-  // this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->end_btn, ui->pause_btn});
 }
 
 void MainWindow::addClothFinish(bool result, int id) {
@@ -1328,11 +1398,11 @@ void MainWindow::addClothFinish(bool result, int id) {
   if (++add_cloth_count_ == 2) {
     waiting_spinner_widget_->stop();
     if (add_cloth_result_A_ && add_cloth_result_B_) {
-      emit signUpdateLabelState("补料模式设置完成");
-      showMessageBox(this, SUCCESS, "补料模式设置成功，请在手动补充裁片后再点击确认。", 1, {"确认"});
+      emit signUpdateLabelState(tr("补料模式设置完成"));
+      showMessageBox(this, SUCCESS, tr("补料模式设置成功，请在手动补充裁片后再点击确认。"), 1, {tr("确认")});
     } else {
-      emit signUpdateLabelState("补料模式设置失败");
-      showMessageBox(this, ERROR, "补料模式设置失败", 1, {"确认"});
+      emit signUpdateLabelState(tr("补料模式设置失败"));
+      showMessageBox(this, ERROR, tr("补料模式设置失败"), 1, {tr("确认")});
     }
     add_cloth_count_ = 0;
   }
@@ -1345,7 +1415,6 @@ void MainWindow::changePlateBtnClicked() {
     return;
   }
 
-  // this->btnControl({ui->reset_btn, ui->add_cloth_btn}, {ui->start_btn, ui->end_btn, ui->pause_btn});
   emit signUpdateLabelState("换压板模式");
 
   // TODO
@@ -1354,7 +1423,7 @@ void MainWindow::changePlateBtnClicked() {
 
 // 错误提示槽函数
 void MainWindow::errorNodeMsgSlot(QString msg) {
-  showMessageBox(this, STATE::ERROR, msg, 1, {"退出"});
+  showMessageBox(this, STATE::ERROR, msg, 1, {tr("确认")});
 }
 
 void MainWindow::triggeredOTAUpdate() {
@@ -1464,16 +1533,16 @@ void MainWindow::slotLockScreen() {
 
 void MainWindow::slotStartHeadEyeWindow() {
   QString tip =
-      "<html>"
-      "<head/><b>启动机器人眼手标定</b>\n<body>"
-      "<b>注意:</b>"
-      "<p>1.标定过程中,<font color=\"red\"><b>禁止靠近机台</b></font>;\n</p>"
-      "<p>2.请确认机器人处在一个<font color=\"red\"><b>良好的位置</b></font>,避免启动时发生碰撞;\n</p>"
-      "<p>3.请时刻<font color=\"red\"><b>保持专注</b></font>,并<font color=\"red\"><b>手持急停开关</b></font>,务必保证危险时刻能按下;\n</p>"
-      "<p>4.确保机器人当前为<font color=\"red\"><b>停止状态</b></font>;\n</p>"
-      "</body></html>";
+      tr("<html>"
+         "<head/><b>启动机器人手眼标定</b>\n<body>"
+         "<b>注意:</b>"
+         "<p>1.标定过程中,<font color=\"red\"><b>禁止靠近机台</b></font>;\n</p>"
+         "<p>2.请确认机器人处在一个<font color=\"red\"><b>良好的位置</b></font>,避免启动时发生碰撞;\n</p>"
+         "<p>3.请时刻<font color=\"red\"><b>保持专注</b></font>,并<font color=\"red\"><b>手持急停开关</b></font>,务必保证危险时刻能按下;\n</p>"
+         "<p>4.确保机器人当前为<font color=\"red\"><b>停止状态</b></font>;\n</p>"
+         "</body></html>");
 
-  auto res = showMessageBox(this, WARN, tip, 2, {"确认", "返回"});
+  auto res = showMessageBox(this, WARN, tip, 2, {tr("确认"), tr("返回")});
   if (res == 0) {
     emit signHandEyeWindowShow();
   }
@@ -1789,30 +1858,30 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     ui->cloth_style_tree_widget->clear();
 
     // 设置信息到treewidget中
-    QTreeWidgetItem *front_item = new QTreeWidgetItem(QStringList() << "前片");
-    QTreeWidgetItem *back_item = new QTreeWidgetItem(QStringList() << "后片");
+    QTreeWidgetItem *front_item = new QTreeWidgetItem(QStringList() << tr("前片"));
+    QTreeWidgetItem *back_item = new QTreeWidgetItem(QStringList() << tr("后片"));
 
     ui->cloth_style_tree_widget->addTopLevelItem(front_item);
     ui->cloth_style_tree_widget->addTopLevelItem(back_item);
 
     auto fillTreeWidget = [&](QTreeWidgetItem *top_item, syt_msgs::msg::ClothStyle cloth_style) {
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "衣长" << QString::number(cloth_style.cloth_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "下摆长" << QString::number(cloth_style.bottom_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "腋下间距" << QString::number(cloth_style.oxter_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "肩缝长" << QString::number(cloth_style.shoulder_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "侧缝长" << QString::number(cloth_style.side_length)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "有无印花" << (cloth_style.have_printings ? QString("有") : QString("无"))));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("衣长") << QString::number(cloth_style.cloth_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("下摆长") << QString::number(cloth_style.bottom_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("腋下间距") << QString::number(cloth_style.oxter_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("肩缝长") << QString::number(cloth_style.shoulder_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("侧缝长") << QString::number(cloth_style.side_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("有无印花") << (cloth_style.have_printings ? QString(tr("有")) : QString(tr("无")))));
 
       // 设置颜色预览
-      QTreeWidgetItem *color_item = new QTreeWidgetItem(QStringList() << "颜色");
+      QTreeWidgetItem *color_item = new QTreeWidgetItem(QStringList() << tr("颜色"));
       top_item->addChild(color_item);
       ui->cloth_style_tree_widget->setItemWidget(color_item, 1, new ShowColorWidget(QString::number(cloth_style.cloth_color, 16)));
 
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "裁片克数" << QString::number(cloth_style.cloth_weight)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "弹性" << id_style_map.value(cloth_style.elasticity_level)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "厚度" << id_style_map.value(cloth_style.thickness_level)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "尺码" << id_style_map.value(cloth_style.cloth_size)));
-      top_item->addChild(new QTreeWidgetItem(QStringList() << "光泽度" << id_style_map.value(cloth_style.glossiness_level)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("裁片克数") << QString::number(cloth_style.cloth_weight)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("弹性") << id_style_map.value(cloth_style.elasticity_level)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("厚度") << id_style_map.value(cloth_style.thickness_level)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("尺码") << id_style_map.value(cloth_style.cloth_size)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("光泽度") << id_style_map.value(cloth_style.glossiness_level)));
     };
     fillTreeWidget(front_item, cloth_style_front_);
     fillTreeWidget(back_item, cloth_style_back_);
@@ -1820,11 +1889,11 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     waiting_spinner_widget_->stop();
 
     is_style_seted_ = true;
-    emit signUpdateLabelState("已设置样式，允许运行");
+    emit signUpdateLabelState(tr("已设置样式，允许运行"));
 
-    showMessageBox(this, SUCCESS, "样式设置成功", 1, {"确认"});
+    showMessageBox(this, SUCCESS, tr("样式设置成功"), 1, {tr("确认")});
   } else {
-    showMessageBox(this, WARN, "获取样式信息失败", 1, {"确认"});
+    showMessageBox(this, WARN, tr("获取样式信息失败"), 1, {tr("确认")});
   }
 }
 

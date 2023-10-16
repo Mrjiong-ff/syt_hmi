@@ -13,6 +13,7 @@
 #include "syt_msgs/msg/load_machine_state.hpp"
 #include "syt_msgs/msg/motion_planner_state.hpp"
 #include "syt_msgs/msg/sewing_machine_state.hpp"
+#include "syt_msgs/srv/care_label_machine_reset.hpp"
 #include "syt_msgs/srv/care_label_machine_width.hpp"
 #include "syt_msgs/srv/compose_machine_blow_height.hpp"
 #include "syt_msgs/srv/compose_machine_flow.hpp"
@@ -41,6 +42,7 @@
 #include "syt_msgs/srv/load_machine_reset.hpp"
 #include "syt_msgs/srv/load_machine_rough_align.hpp"
 #include "syt_msgs/srv/load_machine_tray_gap.hpp"
+#include "syt_msgs/srv/load_machine_tray_offset.hpp"
 #include "syt_msgs/srv/mcu_restart.hpp"
 #include "syt_msgs/srv/rename_cloth_style.hpp"
 #include "syt_msgs/srv/run_calibration.hpp"
@@ -113,7 +115,8 @@ public:
   void loadMachineClothSize(int id, uint32_t width, uint32_t length); // 裁片尺寸
   void loadMachineLoadDistance(int id, uint32_t distance);            // 上料行程
   void loadMachineOffset(int id, int offset);                         // 夹爪偏移
-  void loadMachineTrayGap(int id, uint32_t height);                   // 上料间隔
+  void loadMachineTrayGap(int id, int32_t height);                    // 上料间隔
+  void loadMachineTrayOffset(int id, int32_t offset);                 // 上料偏移
   void loadMachineRoughAlign(int id);                                 // 粗对位
   void loadMachineHoldCloth(int id);                                  // 抓住裁片
   void loadMachineGrabCloth(int id);                                  // 上裁片
@@ -143,9 +146,10 @@ public:
   void sewingMachineReset();                                                        // 缝纫机复位
   void sewingMachineMoveHand(float x, float y, float c, bool z);                    // 移动抓手
   void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);       // 发送关键点
-  void sewingMachineNeedle(float shoulder_length, float side_length);               // 发送针长
-  void sewingMachineLabelWidth(bool enable, int side, float width, float position); // 水洗标宽度
-  void sewingMachineSpeed(int speed);                                               // 水洗标宽度
+  void sewingMachineNeedle(float line_1, float line_2, float line_3, float line_4); // 发送针长
+  void sewingMachineLabelWidth(bool enable, int side, float width, float position); // 水洗标设置
+  void sewingMachineLabelReset(bool enable);                                        // 水洗标复位
+  void sewingMachineSpeed(int speed);                                               // 缝纫机档位
 
   // 视觉检测
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息

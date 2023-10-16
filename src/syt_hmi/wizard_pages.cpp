@@ -2,8 +2,8 @@
 
 // 1.移动抓手
 MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
-  setTitle("请确认台面上无人员后，移动抓手至检测位置");
-  InteractiveButtonBase *move_hand_btn = new InteractiveButtonBase("点击移动抓手", this);
+  setTitle(tr("请确认台面上无人员后，移动抓手至检测位置"));
+  InteractiveButtonBase *move_hand_btn = new InteractiveButtonBase(tr("点击移动抓手"), this);
   move_hand_btn->setParentEnabled(true);
   move_hand_btn->setForeEnabled(false);
   move_hand_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
@@ -21,7 +21,7 @@ MoveHandPage::MoveHandPage(QWidget *parent) : QWizardPage(parent) {
     if (!moved_hand_) {
       emit signMoveHand();
     } else {
-      showMessageBox(this, SUCCESS, "抓手已移动成功，请点击下一步。", 1, {"确认"});
+      showMessageBox(this, SUCCESS, tr("抓手已移动成功，请点击下一步。"), 1, {tr("确认")});
     }
   });
 
@@ -38,22 +38,22 @@ bool MoveHandPage::validatePage() {
   if (moved_hand_) {
     return true;
   }
-  showMessageBox(this, WARN, "请点击移动按钮并等待合片抓手移动完毕...", 1, {"确认"});
+  showMessageBox(this, WARN, tr("请点击移动按钮并等待合片抓手移动完毕..."), 1, {tr("确认")});
   return false;
 }
 
 void MoveHandPage::slotMoveHandResult(bool result) {
   moved_hand_ = result;
   if (result == false) {
-    showMessageBox(this, ERROR, "移动合片抓手失败!", 1, {"确认"});
+    showMessageBox(this, ERROR, tr("移动合片抓手失败!"), 1, {tr("确认")});
     return;
   }
-  showMessageBox(this, SUCCESS, "移动合片抓手成功，请点击下一步。", 1, {"确认"});
+  showMessageBox(this, SUCCESS, tr("移动合片抓手成功，请点击下一步。"), 1, {tr("确认")});
 }
 
 // 2.调用检测服务获取裁片轮廓和关键点
 DetectClothPage::DetectClothPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
-  setTitle(QString("确保放置%1裁片平整后点击按钮开始检测").arg(cloth_type_ ? "后片" : "前片"));
+  setTitle(QString(tr("确保放置%1裁片平整后点击按钮开始检测")).arg(cloth_type_ ? tr("后片") : tr("前片")));
 
   InteractiveButtonBase *detect_cloth_btn = new InteractiveButtonBase;
   detect_cloth_btn->setParentEnabled(true);
@@ -68,7 +68,7 @@ DetectClothPage::DetectClothPage(QWidget *parent, int cloth_type) : QWizardPage(
   btn_layout->addWidget(detect_cloth_btn);
   btn_layout->addItem(spacer_right);
 
-  detect_cloth_btn->setText(QString("点击开始检测%1").arg(cloth_type_ ? "后片" : "前片"));
+  detect_cloth_btn->setText(QString(tr("点击开始检测%1")).arg(cloth_type_ ? tr("后片") : tr("前片")));
   connect(detect_cloth_btn, &QPushButton::clicked, this, [=]() {
     emit signDetectCloth(cloth_type_);
   });
@@ -86,7 +86,7 @@ bool DetectClothPage::validatePage() {
   if (detected_result_) {
     return true;
   }
-  showMessageBox(this, WARN, "请点击检测按钮并等待检测完毕...", 1, {"确认"});
+  showMessageBox(this, WARN, tr("请点击检测按钮并等待检测完毕..."), 1, {tr("确认")});
   return false;
 }
 
@@ -96,15 +96,15 @@ void DetectClothPage::slotDetectClothResult(bool result, int cloth_type) {
   }
   detected_result_ = result;
   if (result == false) {
-    showMessageBox(this, ERROR, QString("%1检测失败!").arg(cloth_type_ ? "后片" : "前片"), 1, {"确认"});
+    showMessageBox(this, ERROR, QString(tr("%1检测失败!")).arg(cloth_type_ ? tr("后片") : tr("前片")), 1, {tr("确认")});
     return;
   }
-  showMessageBox(this, SUCCESS, QString("%1检测成功，请点击下一步。").arg(cloth_type_ ? "后片" : "前片"), 1, {"确认"});
+  showMessageBox(this, SUCCESS, QString(tr("%1检测成功，请点击下一步。")).arg(cloth_type_ ? tr("后片") : tr("前片")), 1, {tr("确认")});
 }
 
 // 3.手动输入额外参数
 InputExtraParamPage::InputExtraParamPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
-  setTitle(QString("输入%1额外参数").arg(cloth_type_ ? "后片" : "前片"));
+  setTitle(QString(tr("输入%1额外参数")).arg(cloth_type_ ? tr("后片"): tr("前片")));
 
   input_extra_param_widget_ = new InputExtraParamWidget(parent);
   input_extra_param_widget_->setClothType(cloth_type_);
@@ -127,7 +127,7 @@ bool InputExtraParamPage::validatePage() {
 
 // 4.调用创建样式服务
 CreateStylePage::CreateStylePage(QWidget *parent) : QWizardPage(parent) {
-  setTitle("创建样式");
+  setTitle(tr("创建样式"));
 
   // QHBoxLayout *h_layout            = new QHBoxLayout;
   // QSpacerItem *spacer_left         = new QSpacerItem(40, 10, QSizePolicy::Expanding);
@@ -157,12 +157,12 @@ CreateStylePage::CreateStylePage(QWidget *parent) : QWizardPage(parent) {
   btn_layout->addWidget(create_style_btn);
   btn_layout->addItem(spacer_right);
 
-  create_style_btn->setText("点击生成样式");
+  create_style_btn->setText(tr("点击生成样式"));
   connect(create_style_btn, &QPushButton::clicked, this, [=]() {
     if (!create_result_) {
       emit signCreateStyle(prefix_);
     } else {
-      showMessageBox(this, SUCCESS, "样式已创建成功，请点击下一步。", 1, {"确认"});
+      showMessageBox(this, SUCCESS, tr("样式已创建成功，请点击下一步。"), 1, {tr("确认")});
     }
   });
 
@@ -181,27 +181,27 @@ bool CreateStylePage::validatePage() {
     emit signSetRenameEdit();
     return true;
   }
-  showMessageBox(this, WARN, "请点击创建按钮并等待样式文件创建完毕...", 1, {"确认"});
+  showMessageBox(this, WARN, tr("请点击创建按钮并等待样式文件创建完毕..."), 1, {tr("确认")});
   return false;
 }
 
 void CreateStylePage::slotCreateStyleResult(bool result) {
   create_result_ = result;
   if (result == false) {
-    showMessageBox(this, ERROR, "样式文件创建失败!", 1, {"确认"});
+    showMessageBox(this, ERROR, tr("样式文件创建失败!"), 1, {tr("确认")});
     return;
   }
-  showMessageBox(this, SUCCESS, "样式文件创建成功，请点击下一步。", 1, {"确认"});
+  showMessageBox(this, SUCCESS, tr("样式文件创建成功，请点击下一步。"), 1, {tr("确认")});
 }
 
 // 5. 修改样式名
 RenameClothStylePage::RenameClothStylePage(QWidget *parent) : QWizardPage(parent) {
-  setTitle("修改样式名(可不修改)");
+  setTitle(tr("修改样式名(可选)"));
   QLabel *old_name_label = new QLabel(tr("旧文件名"), this);
   QLabel *new_name_label_ = new QLabel(tr("新文件名"), this);
   QLineEdit *old_name_line_edit = new QLineEdit(this);
   QLineEdit *new_name_line_edit = new QLineEdit(this);
-  InteractiveButtonBase *rename_btn = new InteractiveButtonBase("重命名", this);
+  InteractiveButtonBase *rename_btn = new InteractiveButtonBase(tr("重命名"), this);
   rename_btn->setParentEnabled(true);
   rename_btn->setForeEnabled(false);
   rename_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
@@ -219,12 +219,12 @@ RenameClothStylePage::RenameClothStylePage(QWidget *parent) : QWizardPage(parent
       QString file_path = QDir::homePath() + QDir::separator() + QString("style") + QDir::separator() + new_name_line_edit->text() + ".sty";
       QFileInfo new_file(file_path);
       if (new_file.exists()) {
-        showMessageBox(this, WARN, "该文件已存在，请修改文件名。", 1, {"确认"});
+        showMessageBox(this, WARN, tr("该文件已存在，请修改文件名。"), 1, {tr("确认")});
       } else {
         emit signRenameClothStyle();
       }
     } else {
-      showMessageBox(this, WARN, "如需重命名，请修改新文件名。", 1, {"确认"});
+      showMessageBox(this, WARN, tr("如需重命名，请修改新文件名。"), 1, {tr("确认")});
     }
   });
 
@@ -254,7 +254,7 @@ bool RenameClothStylePage::validatePage() {
     return true;
   }
 
-  showMessageBox(this, WARN, "请点击重命名并等待重命名完毕...", 1, {"确认"});
+  showMessageBox(this, WARN, tr("请点击重命名并等待重命名完毕..."), 1, {tr("确认")});
   return false;
 }
 
@@ -265,16 +265,16 @@ void RenameClothStylePage::slotSetRenameEdit(QString file_name) {
 
 void RenameClothStylePage::slotRenameClothStyleResult(bool result) {
   if (result == false) {
-    showMessageBox(this, ERROR, "重命名失败!", 1, {"确认"});
+    showMessageBox(this, ERROR, tr("重命名失败！"), 1, {tr("确认")});
     return;
   }
   slotSetRenameEdit(field("new_name").toString());
-  showMessageBox(this, SUCCESS, "重命名成功，请点击完成。", 1, {"确认"});
+  showMessageBox(this, SUCCESS, tr("重命名成功，请点击完成。"), 1, {tr("确认")});
 }
 
 // 6.选择cad文件page
 ChooseCADPage::ChooseCADPage(QWidget *parent) : QWizardPage(parent) {
-  setTitle("选择CAD文件");
+  setTitle(tr("选择CAD文件"));
   QLabel *label1 = new QLabel("page1.");
   label1->setWordWrap(true);
 
@@ -289,7 +289,7 @@ ChooseCADPage::ChooseCADPage(QWidget *parent) : QWizardPage(parent) {
 
 // 7.输入长度参数
 InputLengthParamPage::InputLengthParamPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
-  setTitle(QString("输入%1长度参数(单位毫米)").arg(cloth_type_ ? "后片" : "前片"));
+  setTitle(QString(tr("输入%1长度参数(单位毫米)")).arg(cloth_type_ ? tr("后片") : tr("前片")));
 
   input_length_param_widget_ = new InputLengthParamWidget(parent);
 
@@ -314,8 +314,8 @@ bool InputLengthParamPage::validatePage() {
 
 // 8.输入误差参数
 InputToleranceParamPage::InputToleranceParamPage(QWidget *parent) : QWizardPage(parent) {
-  setTitle(QString("输入误差参数(单位毫米)"));
-  setSubTitle("提交前请检查参数无误，提交后将不可修改。");
+  setTitle(QString(tr("输入误差参数(单位毫米)")));
+  setSubTitle(tr("提交前请检查参数无误，提交后将不可修改。"));
   setCommitPage(true);
 
   input_tolerance_param_widget_ = new InputToleranceParamWidget(parent);
@@ -336,7 +336,7 @@ bool InputToleranceParamPage::validatePage() {
 
 // 9.显示所有参数
 StyleDisplayPage::StyleDisplayPage(QWidget *parent, int cloth_type) : QWizardPage(parent), cloth_type_(cloth_type) {
-  setTitle(QString("修改%1样式参数(长度类单位为毫米)").arg(cloth_type_ ? "后片" : "前片"));
+  setTitle(QString(tr("修改%1样式参数(长度类单位为毫米)")).arg(cloth_type_ ? tr("后片") : tr("前片")));
   if (cloth_type_) {
     setCommitPage(true);
   }
@@ -366,10 +366,12 @@ void StyleDisplayPage::slotSetPageFullParam(syt_msgs::msg::ClothStyle cloth_styl
 
 // 10.选择样式文件
 ChooseStylePage::ChooseStylePage(QWidget *parent) : QWizardPage(parent) {
-  setTitle(QString("选择样式文件"));
+  setTitle(QString(tr("选择样式文件")));
 
   // 样式文件选项
   QComboBox *file_combo_box = new QComboBox(this);
+  file_combo_box->setStyleSheet("QComboBox{combobox-popup: 0;}");
+  file_combo_box->setMaxVisibleItems(10);
   QDir style_dir(QDir::homePath() + QDir::separator() + "style");
   if (style_dir.exists()) {
     QFileInfoList file_info_list = style_dir.entryInfoList(QStringList() << "*.sty");
@@ -390,7 +392,7 @@ ChooseStylePage::ChooseStylePage(QWidget *parent) : QWizardPage(parent) {
   com_layout->addWidget(file_combo_box);
   com_layout->addItem(spacer_right_com);
 
-  InteractiveButtonBase *get_style_btn = new InteractiveButtonBase("获取样式信息", this);
+  InteractiveButtonBase *get_style_btn = new InteractiveButtonBase(tr("获取样式信息"), this);
   get_style_btn->setParentEnabled(true);
   get_style_btn->setForeEnabled(false);
   get_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
@@ -421,15 +423,15 @@ bool ChooseStylePage::validatePage() {
   if (get_style_) {
     return true;
   }
-  showMessageBox(this, WARN, "请点击获取按钮并等待获取样式信息完毕...", 1, {"确认"});
+  showMessageBox(this, WARN, tr("请点击获取按钮并等待获取样式信息完毕..."), 1, {tr("确认")});
   return false;
 }
 
 void ChooseStylePage::slotGetClothStyleResult(bool result) {
   get_style_ = result;
   if (result == false) {
-    showMessageBox(this, ERROR, "获取样式信息失败!", 1, {"确认"});
+    showMessageBox(this, ERROR, tr("获取样式信息失败!"), 1, {tr("确认")});
     return;
   }
-  showMessageBox(this, SUCCESS, "获取样式信息成功，请点击下一步。", 1, {"确认"});
+  showMessageBox(this, SUCCESS, tr("获取样式信息成功，请点击下一步。"), 1, {tr("确认")});
 }

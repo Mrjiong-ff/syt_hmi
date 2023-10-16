@@ -52,7 +52,7 @@ DevLoginWindow::DevLoginWindow(QWidget *parent) : QDialog(parent), ui(new Ui::De
       hide();
     } else {
       ui->pwd_le->setText("");
-      showMessageBox(this, STATE::ERROR, "密码输入错误，请重新输入或联系管理员!", 1, {"确认"});
+      showMessageBox(this, STATE::ERROR, tr("密码输入错误，请重新输入或联系管理员!"), 1, {tr("确认")});
     }
   });
 }

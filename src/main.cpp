@@ -1,3 +1,4 @@
+#include "syt_hmi/globalapplication.h"
 #include "syt_hmi/main_window.h"
 #include "syt_lib_crypt/syt_decryption_utils.h"
 #include <QApplication>
@@ -10,13 +11,23 @@
 int main(int argc, char **argv) {
   syt::crypt::Decryption decryptor;
   if (!decryptor.isAuthorized()) {
-      return 0;
+    return 0;
   }
+
+  std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
+  cv::FileStorage fs(config_path, cv::FileStorage::READ);
+
+  int language;
+  fs["language"] >> language;
+
+  fs.release();
 
   // 支持高分屏
   QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-  QApplication app(argc, argv);
+  // QApplication a(argc, argv);
+  GlobalApplication a(argc, argv);
+  a.switchApplicationLanguage(language);
 
   // QPixmap pixmap(":m_bg/background/loading.gif");
   // QSplashScreen splash(pixmap);
@@ -30,7 +41,7 @@ int main(int argc, char **argv) {
 
   // splash.setCursor(Qt::BlankCursor);
   // for (int i = 0; i < 32000; i += mv.speed()) {
-  // app.processEvents(); // 使程序在显示启动画面的同时仍能响应鼠标等其他事件
+  // a.processEvents(); // 使程序在显示启动画面的同时仍能响应鼠标等其他事件
   // QThread::msleep(10); // 延时
   //}
 
@@ -49,7 +60,7 @@ int main(int argc, char **argv) {
   // qss 相关
   QFile qss(":m_qss/syt_style.qss");
   qss.open(QFile::ReadOnly);
-  app.setStyleSheet(qss.readAll());
+  a.setStyleSheet(qss.readAll());
   qss.close();
 
   MainWindow main_window;
@@ -57,7 +68,7 @@ int main(int argc, char **argv) {
 
   // splash.finish(&main_window); // 在主体对象初始化完成后结束启动动画
 
-  app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
+  a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
 
-  return app.exec();
+  return a.exec();
 }

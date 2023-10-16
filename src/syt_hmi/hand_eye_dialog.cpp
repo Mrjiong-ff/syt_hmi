@@ -16,12 +16,12 @@ HandEyeDialog::HandEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Hand
   ui->calib_sewing_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
   connect(ui->calib_compose_btn, &QPushButton::clicked, [=] {
-    QString tip = "<html>"
-                  "<head/><b>注意:</b>\n<body>"
-                  "<p>即将启动<font color=\"red\"><b>合片台</b></font>标定。</p>"
-                  "</body></html>";
+    QString tip = tr("<html>"
+                     "<head/><b>注意:</b>\n<body>"
+                     "<p>即将启动<font color=\"red\"><b>合片台</b></font>标定。</p>"
+                     "</body></html>");
 
-    auto res = showMessageBox(this, WARN, tip, 2, {"确定", "返回"});
+    auto res = showMessageBox(this, WARN, tip, 2, {tr("确定"), tr("返回")});
     switch (res) {
     case 0:
       waiting_spinner_widget_->start();
@@ -34,12 +34,12 @@ HandEyeDialog::HandEyeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Hand
   });
 
   connect(ui->calib_sewing_btn, &QPushButton::clicked, [=] {
-    QString tip = "<html>"
-                  "<head/><b>注意:</b>\n<body>"
-                  "<p>即将启动<font color=\"red\"><b>缝纫台</b></font>的标定。</p>"
-                  "</body></html>";
+    QString tip = tr("<html>"
+                     "<head/><b>注意:</b>\n<body>"
+                     "<p>即将启动<font color=\"red\"><b>缝纫台</b></font>的标定。</p>"
+                     "</body></html>");
 
-    auto res = showMessageBox(this, WARN, tip, 2, {"确定", "返回"});
+    auto res = showMessageBox(this, WARN, tip, 2, {tr("确定"), tr("返回")});
     switch (res) {
     case 0:
       waiting_spinner_widget_->start();
@@ -63,10 +63,10 @@ HandEyeDialog::~HandEyeDialog() {
 void HandEyeDialog::slotCompCalibRes(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-    showMessageBox(this, SUCCESS, "合片台标定成功", 1, {"确认"});
+    showMessageBox(this, SUCCESS, tr("合片台标定成功"), 1, {tr("确认")});
     return;
   } else {
-    showMessageBox(this, ERROR, "合片台标定失败,请联系相关人员", 1, {"确认"});
+    showMessageBox(this, ERROR, tr("合片台标定失败,请联系相关人员"), 1, {tr("确认")});
     return;
   }
 }
@@ -74,10 +74,10 @@ void HandEyeDialog::slotCompCalibRes(bool result) {
 void HandEyeDialog::slotSewingCalibRes(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-    showMessageBox(this, SUCCESS, "缝纫台标定成功", 1, {"确认"});
+    showMessageBox(this, SUCCESS, tr("缝纫台标定成功"), 1, {tr("确认")});
     return;
   } else {
-    showMessageBox(this, ERROR, "缝纫台标定失败,请联系相关人员", 1, {"确认"});
+    showMessageBox(this, ERROR, tr("缝纫台标定失败,请联系相关人员"), 1, {tr("确认")});
     return;
   }
 }

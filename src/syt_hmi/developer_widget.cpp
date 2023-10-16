@@ -39,6 +39,13 @@ DeveloperWidget::~DeveloperWidget() {
   delete ui;
 }
 
+bool DeveloperWidget::event(QEvent *event) {
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+  }
+  return QWidget::event(event);
+}
+
 void DeveloperWidget::mousePressEvent(QMouseEvent *event) {
   switch (event->button()) {
   case Qt::LeftButton:
@@ -86,6 +93,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->set_cloth_size_btn_B);
   setFrame(ui->set_load_distance_btn_B);
   setFrame(ui->set_tray_gap_btn_B);
+  setFrame(ui->set_tray_offset_btn_B);
   setFrame(ui->set_offset_btn_B);
   setFrame(ui->hold_cloth_btn_B);
   setFrame(ui->grab_cloth_btn_B);
@@ -102,6 +110,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->set_cloth_size_btn_A);
   setFrame(ui->set_load_distance_btn_A);
   setFrame(ui->set_tray_gap_btn_A);
+  setFrame(ui->set_tray_offset_btn_A);
   setFrame(ui->set_offset_btn_A);
   setFrame(ui->hold_cloth_btn_A);
   setFrame(ui->grab_cloth_btn_A);
@@ -137,6 +146,7 @@ void DeveloperWidget::setButtonFrame() {
   setFrame(ui->send_keypoints_btn);
   setFrame(ui->needle_length_btn);
   setFrame(ui->label_width_btn);
+  setFrame(ui->label_reset_btn);
 
   // 其他界面
   setFrame(ui->choose_bin_btn);
@@ -190,6 +200,10 @@ void DeveloperWidget::bindLoadMachine() {
 
   connect(ui->set_tray_gap_btn_B, &QPushButton::clicked, [=]() {
     emit signLoadMachineTrayGap(0, ui->tray_gap_spinbox_B->value());
+  });
+
+  connect(ui->set_tray_offset_btn_B, &QPushButton::clicked, [=]() {
+    emit signLoadMachineTrayOffset(0, ui->tray_offset_spinbox_B->value());
   });
 
   connect(ui->rough_align_btn_B, &QPushButton::clicked, [=]() {
@@ -251,6 +265,10 @@ void DeveloperWidget::bindLoadMachine() {
 
   connect(ui->set_tray_gap_btn_A, &QPushButton::clicked, [=]() {
     emit signLoadMachineTrayGap(1, ui->tray_gap_spinbox_A->value());
+  });
+
+  connect(ui->set_tray_offset_btn_A, &QPushButton::clicked, [=]() {
+    emit signLoadMachineTrayOffset(1, ui->tray_offset_spinbox_A->value());
   });
 
   connect(ui->rough_align_btn_A, &QPushButton::clicked, [=]() {
@@ -434,7 +452,7 @@ void DeveloperWidget::bindSewingMachine() {
   });
 
   connect(ui->needle_length_btn, &QPushButton::clicked, [=]() {
-    emit signSewingMachineNeedle(ui->shoulder_length_spin_box->value(), ui->side_length_spin_box->value());
+    emit signSewingMachineNeedle(ui->line_1_spin_box->value(), ui->line_2_spin_box->value(), ui->line_3_spin_box->value(), ui->line_4_spin_box->value());
   });
 
   connect(ui->label_width_btn, &QPushButton::clicked, [=]() {
@@ -447,15 +465,21 @@ void DeveloperWidget::bindSewingMachine() {
     emit signSewingMachineLabelWidth(ui->enable_label_check_box->isChecked(), side, ui->label_width_spin_box->value(), ui->label_position_spin_box->value());
   });
 
+  connect(ui->label_reset_btn, &QPushButton::clicked, [=]() {
+    emit signSewingMachineLabelReset(true);
+  });
+
   connect(ui->sewing_machine_speed_btn, &QPushButton::clicked, [=]() {
-    if ("低速" == ui->sewing_machine_speed_combo_box->currentText()) {
+    switch (ui->sewing_machine_speed_combo_box->currentIndex()) {
+    case 0:
       emit signSewingMachineSpeed(0);
-    }
-    if ("中速" == ui->sewing_machine_speed_combo_box->currentText()) {
+      break;
+    case 1:
       emit signSewingMachineSpeed(1);
-    }
-    if ("高速" == ui->sewing_machine_speed_combo_box->currentText()) {
+      break;
+    case 2:
       emit signSewingMachineSpeed(2);
+      break;
     }
   });
 }
@@ -652,17 +676,21 @@ void DeveloperWidget::setChooseMode() {
   // 模式选择界面
   void (QComboBox::*index_change_signal)(int index) = &QComboBox::currentIndexChanged;
   connect(ui->choose_mode_combo_box, index_change_signal, [=]() {
-    if ("单次模式" == ui->choose_mode_combo_box->currentText()) {
-      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP_ONCE);
-    }
-    if ("循环模式" == ui->choose_mode_combo_box->currentText()) {
+    switch (ui->choose_mode_combo_box->currentIndex()) {
+    case 0:
       emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP);
-    }
-    if ("合片模式" == ui->choose_mode_combo_box->currentText()) {
+      break;
+    case 1:
+      emit signChooseMode(syt_msgs::msg::FSMRunMode::LOOP_ONCE);
+      break;
+    case 2:
       emit signChooseMode(syt_msgs::msg::FSMRunMode::COMPOSE_CLOTH);
-    }
-    if ("缝纫模式" == ui->choose_mode_combo_box->currentText()) {
+      break;
+    case 3:
       emit signChooseMode(syt_msgs::msg::FSMRunMode::SEW_CLOTH);
+      break;
+    default:
+      break;
     }
   });
 }
@@ -670,7 +698,7 @@ void DeveloperWidget::setChooseMode() {
 void DeveloperWidget::setUpdateBin() {
   // 保存bin文件路径
   connect(ui->choose_bin_btn, &QPushButton::clicked, this, [=]() {
-    update_bin_path_ = QFileDialog::getOpenFileName(this, "请选择模板路径", QDir::homePath(), "*.bin");
+    update_bin_path_ = QFileDialog::getOpenFileName(this, tr("请选择模板路径"), QDir::homePath(), "*.bin");
     if (!update_bin_path_.isEmpty()) {
       ui->bin_file_line_edit->setText(update_bin_path_);
     }
@@ -678,19 +706,21 @@ void DeveloperWidget::setUpdateBin() {
 
   connect(ui->flash_btn, &QPushButton::clicked, [=]() {
     if (QFile::exists(update_bin_path_)) {
-      QMap<QString, QString> port_map;
-      port_map.insert("上料机", "/dev/load_machine");
-      port_map.insert("合片机", "/dev/compose_machine");
-      port_map.insert("缝纫机", "/dev/sewing_machine");
+      QMap<int, QString> port_map;
+      port_map.insert(0, "/dev/load_machine");
+      port_map.insert(1, "/dev/compose_machine");
+      port_map.insert(2, "/dev/sewing_machine");
 
-      if (ui->choose_port_combo_box->currentText() == "上料机") {
+      switch (ui->choose_port_combo_box->currentIndex()) {
+      case 0:
         emit signUpdateLoadMachine();
-      }
-      if (ui->choose_port_combo_box->currentText() == "合片机") {
+        break;
+      case 1:
         emit signUpdateComposeMachine();
-      }
-      if (ui->choose_port_combo_box->currentText() == "缝纫机") {
+        break;
+      case 2:
         emit signUpdateSewingMachine();
+        break;
       }
 
       QThread::msleep(200);
@@ -699,16 +729,16 @@ void DeveloperWidget::setUpdateBin() {
         killProcesses("ros-args");
       }
 
-      QString command = QString("download %1 %2").arg(port_map.value(ui->choose_port_combo_box->currentText())).arg(update_bin_path_);
+      QString command = QString("download %1 %2").arg(port_map.value(ui->choose_port_combo_box->currentIndex())).arg(update_bin_path_);
       int result = system(command.toStdString().c_str());
 
       if (0 == result) {
-        showMessageBox(this, SUCCESS, ui->choose_port_combo_box->currentText() + "更新成功", 1, {"确认"});
+        showMessageBox(this, SUCCESS, ui->choose_port_combo_box->currentText() + "更新成功", 1, {tr("确认")});
       } else {
-        showMessageBox(this, ERROR, ui->choose_port_combo_box->currentText() + "更新失败", 1, {"确认"});
+        showMessageBox(this, ERROR, ui->choose_port_combo_box->currentText() + "更新失败", 1, {tr("确认")});
       }
     } else {
-      showMessageBox(this, WARN, "所选文件不存在", 1, {"确认"});
+      showMessageBox(this, WARN, tr("所选文件不存在"), 1, {tr("确认")});
     }
   });
 }

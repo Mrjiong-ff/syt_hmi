@@ -3,11 +3,11 @@
 CreateFromSourceWizard::CreateFromSourceWizard(QWidget *parent) : QWizard(parent) {
   setWindowTitle("根据已有文件创建样式文件");
   setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-  setButtonText(WizardButton::BackButton, "上一步");
-  setButtonText(WizardButton::NextButton, "下一步");
-  setButtonText(WizardButton::CancelButton, "取消");
-  setButtonText(WizardButton::FinishButton, "完成");
-  setButtonText(WizardButton::CommitButton, "提交");
+  setButtonText(WizardButton::BackButton, tr("上一步"));
+  setButtonText(WizardButton::NextButton, tr("下一步"));
+  setButtonText(WizardButton::CancelButton, tr("取消"));
+  setButtonText(WizardButton::FinishButton, tr("完成"));
+  setButtonText(WizardButton::CommitButton, tr("提交"));
   setFixedSize(700, 600);
   setModal(true);
 

@@ -24,6 +24,7 @@ public:
   ~DeveloperWidget();
 
 protected:
+  bool event(QEvent *event) override;
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
@@ -77,7 +78,8 @@ signals:
   void signLoadMachineClearTable(int id);
   void signLoadMachineClothSize(int id, uint32_t width, uint32_t height);
   void signLoadMachineLoadDistance(int id, uint32_t distance);
-  void signLoadMachineTrayGap(int id, uint32_t height);
+  void signLoadMachineTrayGap(int id, int32_t height);
+  void signLoadMachineTrayOffset(int id, int32_t offset);
   void signLoadMachineRoughAlign(int id);
   void signLoadMachineOffset(int id, int offset);
   void signLoadMachineHoldCloth(int id);
@@ -109,8 +111,9 @@ signals:
   void signSewingMachineStop();
   void signSewingMachineMoveHand(float x, float y, float c, bool z);
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
-  void signSewingMachineNeedle(float shoulder_length, float side_length);
+  void signSewingMachineNeedle(float line_1, float line_2, float line_3, float line_4);
   void signSewingMachineLabelWidth(bool enable, int side, float width, float position);
+  void signSewingMachineLabelReset(bool enable);
   void signSewingMachineSpeed(int speed);
 
   // 其他
@@ -126,7 +129,6 @@ signals:
   void signBellOpen();      // 蜂鸣器开
   void signBellClose();     // 蜂鸣器关
 
-  // 急停
 public slots:
   void setComposeMachineState(syt_msgs::msg::ComposeMachineState state);
   void setSewingMachineState(syt_msgs::msg::SewingMachineState state);

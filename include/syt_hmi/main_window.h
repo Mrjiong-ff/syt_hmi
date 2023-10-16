@@ -1,10 +1,6 @@
 #pragma once
-#include <QDesktopWidget>
-#include <QGraphicsOpacityEffect>
 #include <QMainWindow>
 #include <QMenu>
-#include <QScreen>
-#include <QScrollBar>
 #include <QtConcurrent/QtConcurrent>
 #include <memory>
 
@@ -25,6 +21,7 @@
 #include "syt_hmi/manual_input_param_wizard.h"
 #include "syt_hmi/ota_update_dialog.h"
 #include "syt_hmi/show_color_widget.h"
+#include "syt_hmi/translate_dialog.h"
 #include "ui_main_window.h"
 #include "utils/utils.h"
 
@@ -41,7 +38,7 @@ QT_END_NAMESPACE
 
 // 定义方向枚举，用于判断鼠标在mainWindow的哪个位置
 enum Direction {
-  UP   = 0,
+  UP = 0,
   DOWN = 1,
   LEFT,
   RIGHT,
@@ -53,7 +50,7 @@ enum Direction {
 };
 
 enum LIGHT_COLOR {
-  RED    = 0,
+  RED = 0,
   YELLOW = 1,
   GREEN,
   GRAY
@@ -61,8 +58,8 @@ enum LIGHT_COLOR {
 
 enum LOG_LEVEL {
   LOG_DEBUG = 10,
-  LOG_INFO  = 20,
-  LOG_WARN  = 30,
+  LOG_INFO = 20,
+  LOG_WARN = 30,
   LOG_ERROR = 40,
   LOG_FATAL = 50,
 };
@@ -80,6 +77,7 @@ public:
   void region(const QPoint &currentGlobalPoint); // 用于定位鼠标移动的位置,改变光标
 
 protected:
+  bool event(QEvent *event) override;
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
@@ -196,11 +194,11 @@ private:
   LOG_LEVEL log_level_ = LOG_WARN;
 
   bool is_mouse_left_press_down_ = false;
-  bool is_load_cloth_on_         = true;
-  bool is_comp_cloth_on_         = true;
+  bool is_load_cloth_on_ = true;
+  bool is_comp_cloth_on_ = true;
 
   // 上料用标志位
-  int add_cloth_count_     = 0;
+  int add_cloth_count_ = 0;
   bool add_cloth_result_A_ = 0;
   bool add_cloth_result_B_ = 0;
 
