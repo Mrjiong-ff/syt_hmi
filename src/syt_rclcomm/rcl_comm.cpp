@@ -711,6 +711,7 @@ void SytRclComm::composeMachineBlowWind() {
   auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
   request->commands.gripper_fixed_shoulder = true;
   request->commands.gripper_fixed_hem = true;
+  request->commands.gripper_fixed_armpit = true;
   request->commands.gripper_spring_shoulder = true;
   request->commands.gripper_spring_hem = true;
 
@@ -724,8 +725,9 @@ void SytRclComm::composeMachineStopBlow() {
   auto request = std::make_shared<syt_msgs::srv::ComposeMachineFunction::Request>();
   request->commands.gripper_fixed_shoulder = false;
   request->commands.gripper_fixed_hem = false;
+  request->commands.gripper_fixed_armpit = false;
   request->commands.gripper_spring_shoulder = false;
-  request->commands.gripper_spring_hem = true;
+  request->commands.gripper_spring_hem = false;
 
   syt_msgs::srv::ComposeMachineFunction::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineFunction>("/syt/robot_control/compose_machine/primal/function", "停气", 5000, request, response);
@@ -755,8 +757,8 @@ void SytRclComm::composeMachineUnfastenSheet() {
 // 合片抓手移动
 void SytRclComm::composeMachineMoveHand(float x, float y, float z, float c) {
   //// TODO: delete
-  //emit signComposeMachineMoveHandFinish(true);
-  //return;
+  // emit signComposeMachineMoveHandFinish(true);
+  // return;
 
   auto request = std::make_shared<syt_msgs::srv::ComposeMachineMoveHand::Request>();
   request->target.x = x;
@@ -907,8 +909,8 @@ void SytRclComm::sewingMachineSpeed(int speed) {
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
   //// TODO: delete
-  //emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
-  //return;
+  // emit signGetClothInfoFinish(true, cloth_type, syt_msgs::msg::ClothInfo());
+  // return;
 
   auto request = std::make_shared<syt_msgs::srv::GetClothInfo::Request>();
   request->frame_id.data = frame_id; // 0 为相机系 1 为合片机 2 为缝纫机
@@ -975,8 +977,8 @@ void SytRclComm::checkCalibration() {
 // 创建样式文件
 void SytRclComm::createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
   //// TODO
-  //emit signCreateStyleFinish(true, QString("test"));
-  //return;
+  // emit signCreateStyleFinish(true, QString("test"));
+  // return;
 
   auto request = std::make_shared<syt_msgs::srv::CreateStyle::Request>();
   request->mode.data = mode;
