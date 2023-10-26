@@ -50,6 +50,7 @@ SOURCES += src/main.cpp \
            src/syt_hmi/style_display_widget.cpp \
            src/syt_hmi/translate_dialog.cpp \
            src/syt_hmi/wizard_pages.cpp \
+           src/syt_hmi/param_set_widget.cpp \
            src/syt_number/led_number.cpp \
            src/syt_plaintextedit/filtertextedit.cpp \
            src/syt_process/roundprogressbar.cpp \
@@ -107,6 +108,7 @@ HEADERS  += include/syt_btn/appendbutton.h \
             include/syt_hmi/style_display_widget.h \
             include/syt_hmi/translate_dialog.h \
             include/syt_hmi/wizard_pages.h \
+            include/syt_hmi/param_set_widget.h \
             include/syt_number/led_number.h \
             include/syt_plaintextedit/filtertextedit.h \
             include/syt_process/roundprogressbar.h \
@@ -127,6 +129,7 @@ FORMS    += \
             ui/lock_dialog.ui \
             ui/main_window.ui \
             ui/ota_update_dialog.ui \
+            ui/param_set_widget.ui \
             ui/progress_bar.ui \
             ui/style_display_widget.ui \
             ui/translate_dialog.ui \

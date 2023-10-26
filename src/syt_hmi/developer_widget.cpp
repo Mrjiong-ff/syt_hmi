@@ -8,8 +8,6 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
   setButtonFrame();
   ui->current_page_label->setText(ui->switch_load_btn->getText());
 
-  waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
-
   // 窗口操作
   connect(ui->close_btn, &QPushButton::clicked, this, &DeveloperWidget::close);
 
@@ -235,11 +233,11 @@ void DeveloperWidget::bindLoadMachine() {
   });
 
   connect(ui->pop_needle_btn_B, &QPushButton::clicked, [=]() {
-    emit signLoadMachinePopNeedle(0);
+    emit signLoadMachineExtendNeedle(0, 1);
   });
 
   connect(ui->withdraw_needle_btn_B, &QPushButton::clicked, [=]() {
-    emit signLoadMachineWithdrawNeedle(0);
+    emit signLoadMachineExtendNeedle(0, 0);
   });
 
   // 上料台A
@@ -300,11 +298,11 @@ void DeveloperWidget::bindLoadMachine() {
   });
 
   connect(ui->pop_needle_btn_A, &QPushButton::clicked, [=]() {
-    emit signLoadMachinePopNeedle(1);
+    emit signLoadMachineExtendNeedle(1, 1);
   });
 
   connect(ui->withdraw_needle_btn_A, &QPushButton::clicked, [=]() {
-    emit signLoadMachineWithdrawNeedle(1);
+    emit signLoadMachineExtendNeedle(1, 0);
   });
 }
 
@@ -466,7 +464,7 @@ void DeveloperWidget::bindSewingMachine() {
   });
 
   connect(ui->label_reset_btn, &QPushButton::clicked, [=]() {
-    emit signSewingMachineLabelReset(true);
+    emit signSewingMachineLabelReset();
   });
 
   connect(ui->sewing_machine_speed_btn, &QPushButton::clicked, [=]() {
@@ -496,6 +494,12 @@ void DeveloperWidget::bindOther() {
 
   // 是否老化测试
   setPressureTest();
+
+  // 称重传感器启用
+  setWeightSwitch();
+
+  // 称重传感器启用
+  setUnpleatSwitch();
 
   // 曲线缝纫
   setCurveSewing();
@@ -757,8 +761,36 @@ void DeveloperWidget::setPressureTest() {
   connect(ui->pressure_test_check_box, &QCheckBox::toggled, [=](bool toggled) {
     if (toggled) {
       system("ros2 param set /syt_compose_machine_node pressure_test True");
+      signLoadMachineAgingSwitch(0, 1);
+      signLoadMachineAgingSwitch(1, 1);
     } else {
       system("ros2 param set /syt_compose_machine_node pressure_test False");
+      signLoadMachineAgingSwitch(0, 0);
+      signLoadMachineAgingSwitch(1, 0);
+    }
+  });
+}
+
+void DeveloperWidget::setWeightSwitch() {
+  connect(ui->weight_switch_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled) {
+      signLoadMachineWeightSwitch(0, 1);
+      signLoadMachineWeightSwitch(1, 1);
+    } else {
+      signLoadMachineWeightSwitch(0, 0);
+      signLoadMachineWeightSwitch(1, 0);
+    }
+  });
+}
+
+void DeveloperWidget::setUnpleatSwitch() {
+  connect(ui->unpleat_switch_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled) {
+      signLoadMachineUnpleatSwitch(0, 1);
+      signLoadMachineUnpleatSwitch(1, 1);
+    } else {
+      signLoadMachineUnpleatSwitch(0, 0);
+      signLoadMachineUnpleatSwitch(1, 0);
     }
   });
 }

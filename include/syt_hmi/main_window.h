@@ -20,6 +20,7 @@
 #include "syt_hmi/lock_dialog.h"
 #include "syt_hmi/manual_input_param_wizard.h"
 #include "syt_hmi/ota_update_dialog.h"
+#include "syt_hmi/param_set_widget.h"
 #include "syt_hmi/show_color_widget.h"
 #include "syt_hmi/translate_dialog.h"
 #include "ui_main_window.h"
@@ -90,6 +91,7 @@ private:
   void initWidget();
   void settingConnection();
   void bindControlConnection();
+  void bindParamSetConnection();
   void deleteAll();
   void initOther();
   // void setMutuallyLight(LIGHT_COLOR color);
@@ -107,6 +109,7 @@ private:
   void setBaseComponet();
   void setChooseStyleComponet();
   void setDeveloperWidget();
+  void setParamSetWidget();
   void showLoadMachineImage();
 
 signals:
@@ -141,9 +144,10 @@ private slots:
 
   ////////////////////////// 工具栏函数 //////////////////////////
   void slotShowDevLoginWindow();
-  void slotLockScreen();
+  void slotParamSet();
   void slotStartHeadEyeWindow();
   void slotStartClothStyleWindow();
+  void slotLockScreen();
 
   void slotDeveloperMode();
 
@@ -222,6 +226,7 @@ private:
   InteractiveButtonBase *next_btn_;
 
   DeveloperWidget *developer_widget_; // 开发者界面
+  ParamSetWidget *param_set_widget_;  // 配置界面
 
   WaitingSpinnerWidget *waiting_spinner_widget_;
 

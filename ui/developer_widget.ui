@@ -501,21 +501,6 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
-              <widget class="QLabel" name="label_3">
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>上料行程</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QSpinBox" name="load_distance_spinbox_B">
                <property name="font">
                 <font>
@@ -546,7 +531,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>80</width>
+                 <width>16777215</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -556,41 +541,25 @@
                 </font>
                </property>
                <property name="text">
-                <string>设置</string>
+                <string>上料行程</string>
                </property>
               </widget>
              </item>
-            </layout>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>17</width>
-               <height>13</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QLabel" name="label_4">
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
+              <spacer name="horizontalSpacer_46">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
                </property>
-               <property name="text">
-                <string>托盘间隔</string>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>10</width>
+                 <height>20</height>
+                </size>
                </property>
-              </widget>
+              </spacer>
              </item>
              <item>
               <widget class="QSpinBox" name="tray_gap_spinbox_B">
@@ -623,7 +592,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>80</width>
+                 <width>16777215</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -633,14 +602,14 @@
                 </font>
                </property>
                <property name="text">
-                <string>设置</string>
+                <string>托盘间隔</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer_6">
+            <spacer name="verticalSpacer_5">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -769,21 +738,6 @@
               <number>10</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_80">
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>裁片厚度(mm)</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QDoubleSpinBox" name="thickness_spinbox_B">
                <property name="font">
                 <font>
@@ -814,7 +768,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>80</width>
+                 <width>16777215</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -824,7 +778,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>设置</string>
+                <string>裁片厚度(mm)</string>
                </property>
               </widget>
              </item>
@@ -1229,21 +1183,6 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
-              <widget class="QLabel" name="label_8">
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>上料行程</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QSpinBox" name="load_distance_spinbox_A">
                <property name="font">
                 <font>
@@ -1274,7 +1213,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>80</width>
+                 <width>16777215</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -1284,41 +1223,25 @@
                 </font>
                </property>
                <property name="text">
-                <string>设置</string>
+                <string>上料行程</string>
                </property>
               </widget>
              </item>
-            </layout>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_11">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>412</width>
-               <height>13</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11">
              <item>
-              <widget class="QLabel" name="label_9">
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
+              <spacer name="horizontalSpacer_47">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
                </property>
-               <property name="text">
-                <string>托盘间隔</string>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>10</width>
+                 <height>20</height>
+                </size>
                </property>
-              </widget>
+              </spacer>
              </item>
              <item>
               <widget class="QSpinBox" name="tray_gap_spinbox_A">
@@ -1351,7 +1274,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>80</width>
+                 <width>16777215</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -1361,7 +1284,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>设置</string>
+                <string>托盘间隔</string>
                </property>
               </widget>
              </item>
@@ -1497,21 +1420,6 @@
               <number>10</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_81">
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>裁片厚度(mm)</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QDoubleSpinBox" name="thickness_spinbox_A">
                <property name="font">
                 <font>
@@ -1542,7 +1450,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>80</width>
+                 <width>16777215</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -1552,7 +1460,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>设置</string>
+                <string>裁片厚度(mm)</string>
                </property>
               </widget>
              </item>
@@ -4768,48 +4676,6 @@
           </item>
          </layout>
         </widget>
-        <widget class="QCheckBox" name="use_sewing_check_box">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>180</y>
-           <width>141</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>使用缝纫机</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="pressure_test_check_box">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>260</y>
-           <width>141</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>老化测试</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
         <widget class="QWidget" name="layoutWidget_1000">
          <property name="geometry">
           <rect>
@@ -5041,24 +4907,6 @@
           </item>
          </layout>
         </widget>
-        <widget class="QCheckBox" name="curve_sewing_check_box">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>330</y>
-           <width>131</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>曲线缝纫</string>
-         </property>
-        </widget>
         <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
@@ -5164,6 +5012,90 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>180</y>
+           <width>161</width>
+           <height>271</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QCheckBox" name="use_sewing_check_box">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>使用缝纫机</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="unpleat_switch_check_box">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>上料除褶</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="weight_switch_check_box">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>重量传感器</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="pressure_test_check_box">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>老化测试</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="curve_sewing_check_box">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>曲线缝纫</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -5190,21 +5122,13 @@
   <tabstop>close_btn</tabstop>
   <tabstop>set_cloth_size_btn_B</tabstop>
   <tabstop>load_distance_spinbox_B</tabstop>
-  <tabstop>tray_gap_spinbox_B</tabstop>
   <tabstop>set_load_distance_btn_B</tabstop>
-  <tabstop>set_tray_gap_btn_B</tabstop>
   <tabstop>set_offset_btn_B</tabstop>
   <tabstop>offset_spinbox_B</tabstop>
-  <tabstop>add_cloth_btn_B</tabstop>
-  <tabstop>clear_table_btn_B</tabstop>
-  <tabstop>add_cloth_btn_A</tabstop>
-  <tabstop>clear_table_btn_A</tabstop>
   <tabstop>cloth_width_spinbox_A</tabstop>
   <tabstop>set_cloth_size_btn_A</tabstop>
   <tabstop>load_distance_spinbox_A</tabstop>
   <tabstop>set_load_distance_btn_A</tabstop>
-  <tabstop>tray_gap_spinbox_A</tabstop>
-  <tabstop>set_tray_gap_btn_A</tabstop>
   <tabstop>offset_spinbox_A</tabstop>
   <tabstop>set_offset_btn_A</tabstop>
   <tabstop>compose_hand_x_spinbox</tabstop>
