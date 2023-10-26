@@ -204,7 +204,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="sytToolBarHboxLayout" stretch="1,1,1,1,1,7,1">
+     <layout class="QHBoxLayout" name="sytToolBarHboxLayout" stretch="1,0,1,1,1,1,7,1">
       <property name="spacing">
        <number>10</number>
       </property>
@@ -231,6 +231,32 @@
         <property name="icon">
          <iconset resource="../resource/hmi.qrc">
           <normaloff>:/m_icon/icon/developer.svg</normaloff>:/m_icon/icon/developer.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="WaterZoomButton" name="param_set_btn">
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>参数配置</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../resource/hmi.qrc">
+          <normaloff>:/m_icon/icon/param_set.svg</normaloff>:/m_icon/icon/param_set.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -1101,8 +1127,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1469</width>
-             <height>713</height>
+             <width>644</width>
+             <height>320</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -1475,8 +1501,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1469</width>
-             <height>713</height>
+             <width>684</width>
+             <height>168</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1505,8 +1531,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1469</width>
-             <height>713</height>
+             <width>138</width>
+             <height>220</height>
             </rect>
            </property>
            <property name="font">

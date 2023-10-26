@@ -47,7 +47,9 @@
 #include "syt_msgs/srv/rename_cloth_style.hpp"
 #include "syt_msgs/srv/run_calibration.hpp"
 #include "syt_msgs/srv/set_current_cloth_style.hpp"
+#include "syt_msgs/srv/sewing_machine_cloth_thickness.hpp"
 #include "syt_msgs/srv/sewing_machine_keypoints.hpp"
+#include "syt_msgs/srv/sewing_machine_mode.hpp"
 #include "syt_msgs/srv/sewing_machine_move_hand.hpp"
 #include "syt_msgs/srv/sewing_machine_needle.hpp"
 #include "syt_msgs/srv/sewing_machine_reset.hpp"
@@ -123,8 +125,10 @@ public:
   void loadMachinePreSetup(int id);                                   // 预备设置
   void loadMachineVisualAlign(int id);                                // 视觉对位
   void loadMachineThickness(int id, float thickness);                 // 布料厚度
-  void loadMachinePopNeedle(int id);                                  // 出针
-  void loadMachineWithdrawNeedle(int id);                             // 收针
+  void loadMachineExtendNeedle(int id, bool enable);                  // 上料针
+  void loadMachineWeightSwitch(int id, bool enable);                  // 重量传感器
+  void loadMachineUnpleatSwitch(int id, bool enable);                 // 除褶动作
+  void loadMachineAgingSwitch(int id, bool enable);                   // 老化
 
   // 合片机
   void composeMachineReset();                                                             // 合片机复位
@@ -147,9 +151,11 @@ public:
   void sewingMachineMoveHand(float x, float y, float c, bool z);                    // 移动抓手
   void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);       // 发送关键点
   void sewingMachineNeedle(float line_1, float line_2, float line_3, float line_4); // 发送针长
+  void sewingMachineThickness(float thickness);                                     // 缝纫厚度
   void sewingMachineLabelWidth(bool enable, int side, float width, float position); // 水洗标设置
-  void sewingMachineLabelReset(bool enable);                                        // 水洗标复位
+  void sewingMachineLabelReset();                                                   // 水洗标复位
   void sewingMachineSpeed(int speed);                                               // 缝纫机档位
+  void sewingMachineMode(int mode);                                                 // 转换运行模式
 
   // 视觉检测
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息

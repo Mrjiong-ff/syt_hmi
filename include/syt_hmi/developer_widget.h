@@ -32,8 +32,6 @@ protected:
 private:
   Ui::DeveloperWidget *ui;
 
-  WaitingSpinnerWidget *waiting_spinner_widget_;
-
   // 移动窗口
   bool is_mouse_left_press_down_;
   QPoint mouse_pos_;
@@ -68,6 +66,8 @@ private:
   void setUpdateBin();
   void setUseSewing();
   void setPressureTest();
+  void setWeightSwitch();
+  void setUnpleatSwitch();
   void setCurveSewing();
   void setCheckCalibration();
 
@@ -87,8 +87,10 @@ signals:
   void signLoadMachinePreSetup(int id);
   void signLoadMachineVisualAlign(int id);
   void signLoadMachineThickness(int id, float thickness);
-  void signLoadMachinePopNeedle(int id);
-  void signLoadMachineWithdrawNeedle(int id);
+  void signLoadMachineExtendNeedle(int id, bool enable);
+  void signLoadMachineWeightSwitch(int id, bool enable);
+  void signLoadMachineUnpleatSwitch(int id, bool enable);
+  void signLoadMachineAgingSwitch(int id, bool enable);
 
   // 合片机
   void signComposeMachineReset();
@@ -113,7 +115,7 @@ signals:
   void signSewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);
   void signSewingMachineNeedle(float line_1, float line_2, float line_3, float line_4);
   void signSewingMachineLabelWidth(bool enable, int side, float width, float position);
-  void signSewingMachineLabelReset(bool enable);
+  void signSewingMachineLabelReset();
   void signSewingMachineSpeed(int speed);
 
   // 其他

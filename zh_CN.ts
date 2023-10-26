@@ -318,19 +318,19 @@
     <message>
         <location filename="ui/developer_widget.ui" line="55"/>
         <location filename="ui/developer_widget.ui" line="114"/>
-        <location filename="ui/developer_widget.ui" line="4569"/>
+        <location filename="ui/developer_widget.ui" line="4631"/>
         <source>上料机</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="134"/>
-        <location filename="ui/developer_widget.ui" line="4574"/>
+        <location filename="ui/developer_widget.ui" line="4636"/>
         <source>合片机</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="154"/>
-        <location filename="ui/developer_widget.ui" line="4579"/>
+        <location filename="ui/developer_widget.ui" line="4641"/>
         <source>缝纫机</source>
         <translation type="unfinished"></translation>
     </message>
@@ -351,512 +351,518 @@
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="291"/>
-        <location filename="ui/developer_widget.ui" line="985"/>
+        <location filename="ui/developer_widget.ui" line="973"/>
         <source>补料</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="315"/>
-        <location filename="ui/developer_widget.ui" line="1009"/>
+        <location filename="ui/developer_widget.ui" line="997"/>
         <source>清台</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="333"/>
-        <location filename="ui/developer_widget.ui" line="1027"/>
+        <location filename="ui/developer_widget.ui" line="1015"/>
         <source>粗对位</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="351"/>
-        <location filename="ui/developer_widget.ui" line="1045"/>
-        <location filename="ui/developer_widget.ui" line="1652"/>
+        <location filename="ui/developer_widget.ui" line="1033"/>
+        <location filename="ui/developer_widget.ui" line="1628"/>
         <source>出针</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="369"/>
-        <location filename="ui/developer_widget.ui" line="1063"/>
-        <location filename="ui/developer_widget.ui" line="1670"/>
+        <location filename="ui/developer_widget.ui" line="1051"/>
+        <location filename="ui/developer_widget.ui" line="1646"/>
         <source>收针</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="398"/>
-        <location filename="ui/developer_widget.ui" line="1092"/>
-        <location filename="ui/developer_widget.ui" line="4232"/>
+        <location filename="ui/developer_widget.ui" line="1080"/>
+        <location filename="ui/developer_widget.ui" line="4294"/>
         <source>宽度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="434"/>
-        <location filename="ui/developer_widget.ui" line="1128"/>
+        <location filename="ui/developer_widget.ui" line="1116"/>
         <source>长度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/developer_widget.ui" line="482"/>
-        <location filename="ui/developer_widget.ui" line="559"/>
-        <location filename="ui/developer_widget.ui" line="636"/>
-        <location filename="ui/developer_widget.ui" line="793"/>
-        <location filename="ui/developer_widget.ui" line="1176"/>
-        <location filename="ui/developer_widget.ui" line="1253"/>
-        <location filename="ui/developer_widget.ui" line="1330"/>
-        <location filename="ui/developer_widget.ui" line="1487"/>
-        <location filename="ui/developer_widget.ui" line="2855"/>
-        <location filename="ui/developer_widget.ui" line="2949"/>
-        <location filename="ui/developer_widget.ui" line="4400"/>
+        <location filename="ui/developer_widget.ui" line="1164"/>
+        <location filename="ui/developer_widget.ui" line="2831"/>
+        <location filename="ui/developer_widget.ui" line="2925"/>
+        <location filename="ui/developer_widget.ui" line="4462"/>
         <source>设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="511"/>
-        <location filename="ui/developer_widget.ui" line="1205"/>
+        <location filename="ui/developer_widget.ui" line="544"/>
+        <location filename="ui/developer_widget.ui" line="1226"/>
         <source>上料行程</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="588"/>
-        <location filename="ui/developer_widget.ui" line="1282"/>
-        <source>托盘抓手间隔</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ui/developer_widget.ui" line="665"/>
-        <location filename="ui/developer_widget.ui" line="1359"/>
+        <location filename="ui/developer_widget.ui" line="667"/>
+        <location filename="ui/developer_widget.ui" line="1349"/>
         <source>抓手偏移</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="713"/>
-        <location filename="ui/developer_widget.ui" line="1407"/>
-        <source>偏移</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ui/developer_widget.ui" line="745"/>
-        <location filename="ui/developer_widget.ui" line="1439"/>
+        <location filename="ui/developer_widget.ui" line="781"/>
+        <location filename="ui/developer_widget.ui" line="1463"/>
         <source>裁片厚度(mm)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="837"/>
-        <location filename="ui/developer_widget.ui" line="1531"/>
-        <location filename="ui/developer_widget.ui" line="2743"/>
-        <location filename="ui/developer_widget.ui" line="4431"/>
+        <location filename="ui/developer_widget.ui" line="825"/>
+        <location filename="ui/developer_widget.ui" line="1507"/>
+        <location filename="ui/developer_widget.ui" line="2719"/>
+        <location filename="ui/developer_widget.ui" line="4493"/>
         <source>复位</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="855"/>
-        <location filename="ui/developer_widget.ui" line="1549"/>
+        <location filename="ui/developer_widget.ui" line="843"/>
+        <location filename="ui/developer_widget.ui" line="1525"/>
         <source>抓住裁片</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="873"/>
-        <location filename="ui/developer_widget.ui" line="1567"/>
+        <location filename="ui/developer_widget.ui" line="861"/>
+        <location filename="ui/developer_widget.ui" line="1543"/>
         <source>预备上料</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="891"/>
-        <location filename="ui/developer_widget.ui" line="1585"/>
+        <location filename="ui/developer_widget.ui" line="879"/>
+        <location filename="ui/developer_widget.ui" line="1561"/>
         <source>视觉对位</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="909"/>
-        <location filename="ui/developer_widget.ui" line="1603"/>
+        <location filename="ui/developer_widget.ui" line="897"/>
+        <location filename="ui/developer_widget.ui" line="1579"/>
         <source>上裁片</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="940"/>
+        <location filename="ui/developer_widget.ui" line="928"/>
         <source>上料台A(未特殊标注单位为0.1mm)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1634"/>
+        <location filename="ui/developer_widget.ui" line="1610"/>
         <source>除褶</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1688"/>
+        <location filename="ui/developer_widget.ui" line="1664"/>
         <source>吹气</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1706"/>
+        <location filename="ui/developer_widget.ui" line="1682"/>
         <source>停气</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1724"/>
+        <location filename="ui/developer_widget.ui" line="1700"/>
         <source>吸风台开</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1742"/>
+        <location filename="ui/developer_widget.ui" line="1718"/>
         <source>吸风台关</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1778"/>
-        <location filename="ui/developer_widget.ui" line="2986"/>
+        <location filename="ui/developer_widget.ui" line="1754"/>
+        <location filename="ui/developer_widget.ui" line="2962"/>
         <source>当前抓手坐标</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1803"/>
-        <location filename="ui/developer_widget.ui" line="1973"/>
-        <location filename="ui/developer_widget.ui" line="2248"/>
-        <location filename="ui/developer_widget.ui" line="2327"/>
-        <location filename="ui/developer_widget.ui" line="2429"/>
-        <location filename="ui/developer_widget.ui" line="2486"/>
-        <location filename="ui/developer_widget.ui" line="2569"/>
-        <location filename="ui/developer_widget.ui" line="2626"/>
-        <location filename="ui/developer_widget.ui" line="3011"/>
-        <location filename="ui/developer_widget.ui" line="3149"/>
-        <location filename="ui/developer_widget.ui" line="3412"/>
-        <location filename="ui/developer_widget.ui" line="3469"/>
-        <location filename="ui/developer_widget.ui" line="3552"/>
-        <location filename="ui/developer_widget.ui" line="3609"/>
-        <location filename="ui/developer_widget.ui" line="3692"/>
-        <location filename="ui/developer_widget.ui" line="3749"/>
-        <location filename="ui/developer_widget.ui" line="3832"/>
-        <location filename="ui/developer_widget.ui" line="3889"/>
+        <location filename="ui/developer_widget.ui" line="1779"/>
+        <location filename="ui/developer_widget.ui" line="1949"/>
+        <location filename="ui/developer_widget.ui" line="2224"/>
+        <location filename="ui/developer_widget.ui" line="2303"/>
+        <location filename="ui/developer_widget.ui" line="2405"/>
+        <location filename="ui/developer_widget.ui" line="2462"/>
+        <location filename="ui/developer_widget.ui" line="2545"/>
+        <location filename="ui/developer_widget.ui" line="2602"/>
+        <location filename="ui/developer_widget.ui" line="2987"/>
+        <location filename="ui/developer_widget.ui" line="3125"/>
+        <location filename="ui/developer_widget.ui" line="3388"/>
+        <location filename="ui/developer_widget.ui" line="3445"/>
+        <location filename="ui/developer_widget.ui" line="3528"/>
+        <location filename="ui/developer_widget.ui" line="3585"/>
+        <location filename="ui/developer_widget.ui" line="3668"/>
+        <location filename="ui/developer_widget.ui" line="3725"/>
+        <location filename="ui/developer_widget.ui" line="3808"/>
+        <location filename="ui/developer_widget.ui" line="3865"/>
         <source>X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1835"/>
-        <location filename="ui/developer_widget.ui" line="2025"/>
-        <location filename="ui/developer_widget.ui" line="2267"/>
-        <location filename="ui/developer_widget.ui" line="2346"/>
-        <location filename="ui/developer_widget.ui" line="2448"/>
-        <location filename="ui/developer_widget.ui" line="2505"/>
-        <location filename="ui/developer_widget.ui" line="2588"/>
-        <location filename="ui/developer_widget.ui" line="2645"/>
-        <location filename="ui/developer_widget.ui" line="3043"/>
-        <location filename="ui/developer_widget.ui" line="3201"/>
-        <location filename="ui/developer_widget.ui" line="3431"/>
-        <location filename="ui/developer_widget.ui" line="3488"/>
-        <location filename="ui/developer_widget.ui" line="3571"/>
-        <location filename="ui/developer_widget.ui" line="3628"/>
-        <location filename="ui/developer_widget.ui" line="3711"/>
-        <location filename="ui/developer_widget.ui" line="3768"/>
-        <location filename="ui/developer_widget.ui" line="3851"/>
-        <location filename="ui/developer_widget.ui" line="3908"/>
+        <location filename="ui/developer_widget.ui" line="1811"/>
+        <location filename="ui/developer_widget.ui" line="2001"/>
+        <location filename="ui/developer_widget.ui" line="2243"/>
+        <location filename="ui/developer_widget.ui" line="2322"/>
+        <location filename="ui/developer_widget.ui" line="2424"/>
+        <location filename="ui/developer_widget.ui" line="2481"/>
+        <location filename="ui/developer_widget.ui" line="2564"/>
+        <location filename="ui/developer_widget.ui" line="2621"/>
+        <location filename="ui/developer_widget.ui" line="3019"/>
+        <location filename="ui/developer_widget.ui" line="3177"/>
+        <location filename="ui/developer_widget.ui" line="3407"/>
+        <location filename="ui/developer_widget.ui" line="3464"/>
+        <location filename="ui/developer_widget.ui" line="3547"/>
+        <location filename="ui/developer_widget.ui" line="3604"/>
+        <location filename="ui/developer_widget.ui" line="3687"/>
+        <location filename="ui/developer_widget.ui" line="3744"/>
+        <location filename="ui/developer_widget.ui" line="3827"/>
+        <location filename="ui/developer_widget.ui" line="3884"/>
         <source>Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1867"/>
-        <location filename="ui/developer_widget.ui" line="2074"/>
-        <location filename="ui/developer_widget.ui" line="3305"/>
+        <location filename="ui/developer_widget.ui" line="1843"/>
+        <location filename="ui/developer_widget.ui" line="2050"/>
+        <location filename="ui/developer_widget.ui" line="3281"/>
         <source>Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1899"/>
-        <location filename="ui/developer_widget.ui" line="2126"/>
-        <location filename="ui/developer_widget.ui" line="2286"/>
-        <location filename="ui/developer_widget.ui" line="2365"/>
-        <location filename="ui/developer_widget.ui" line="3075"/>
-        <location filename="ui/developer_widget.ui" line="3253"/>
+        <location filename="ui/developer_widget.ui" line="1875"/>
+        <location filename="ui/developer_widget.ui" line="2102"/>
+        <location filename="ui/developer_widget.ui" line="2262"/>
+        <location filename="ui/developer_widget.ui" line="2341"/>
+        <location filename="ui/developer_widget.ui" line="3051"/>
+        <location filename="ui/developer_widget.ui" line="3229"/>
         <source>C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="1937"/>
-        <location filename="ui/developer_widget.ui" line="3113"/>
+        <location filename="ui/developer_widget.ui" line="1913"/>
+        <location filename="ui/developer_widget.ui" line="3089"/>
         <source>设置当前值</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2190"/>
-        <location filename="ui/developer_widget.ui" line="3354"/>
+        <location filename="ui/developer_widget.ui" line="2166"/>
+        <location filename="ui/developer_widget.ui" line="3330"/>
         <source>移动抓手</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2236"/>
-        <location filename="ui/developer_widget.ui" line="3540"/>
+        <location filename="ui/developer_widget.ui" line="2212"/>
+        <location filename="ui/developer_widget.ui" line="3516"/>
         <source>左肩膀</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2315"/>
-        <location filename="ui/developer_widget.ui" line="3597"/>
+        <location filename="ui/developer_widget.ui" line="2291"/>
+        <location filename="ui/developer_widget.ui" line="3573"/>
         <source>右肩膀</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2417"/>
-        <location filename="ui/developer_widget.ui" line="3680"/>
+        <location filename="ui/developer_widget.ui" line="2393"/>
+        <location filename="ui/developer_widget.ui" line="3656"/>
         <source>左腋下</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2474"/>
-        <location filename="ui/developer_widget.ui" line="3737"/>
+        <location filename="ui/developer_widget.ui" line="2450"/>
+        <location filename="ui/developer_widget.ui" line="3713"/>
         <source>右腋下</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2557"/>
-        <location filename="ui/developer_widget.ui" line="3820"/>
+        <location filename="ui/developer_widget.ui" line="2533"/>
+        <location filename="ui/developer_widget.ui" line="3796"/>
         <source>左下摆</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2614"/>
-        <location filename="ui/developer_widget.ui" line="3877"/>
+        <location filename="ui/developer_widget.ui" line="2590"/>
+        <location filename="ui/developer_widget.ui" line="3853"/>
         <source>右下摆</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2667"/>
+        <location filename="ui/developer_widget.ui" line="2643"/>
         <source>切换吸盘系</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2685"/>
+        <location filename="ui/developer_widget.ui" line="2661"/>
         <source>吸盘外张</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2703"/>
+        <location filename="ui/developer_widget.ui" line="2679"/>
         <source>吸盘内缩</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2725"/>
+        <location filename="ui/developer_widget.ui" line="2701"/>
         <source>平面拟合</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2761"/>
-        <location filename="ui/developer_widget.ui" line="4462"/>
+        <location filename="ui/developer_widget.ui" line="2737"/>
+        <location filename="ui/developer_widget.ui" line="4524"/>
         <source>停止</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2790"/>
+        <location filename="ui/developer_widget.ui" line="2766"/>
         <source>吹气高度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="2884"/>
+        <location filename="ui/developer_widget.ui" line="2860"/>
         <source>吸风台灯</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="3400"/>
+        <location filename="ui/developer_widget.ui" line="3376"/>
         <source>左领口</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="3457"/>
+        <location filename="ui/developer_widget.ui" line="3433"/>
         <source>右领口</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="3964"/>
+        <location filename="ui/developer_widget.ui" line="3940"/>
         <source>裁片尺码</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4010"/>
+        <location filename="ui/developer_widget.ui" line="3986"/>
         <source>发送关键点</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4032"/>
+        <location filename="ui/developer_widget.ui" line="4015"/>
+        <source>边三</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/developer_widget.ui" line="4125"/>
         <source>设置针距</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4044"/>
-        <source>肩膀</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ui/developer_widget.ui" line="4106"/>
-        <source>侧缝</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ui/developer_widget.ui" line="4262"/>
+        <location filename="ui/developer_widget.ui" line="4324"/>
         <source>启用水洗标</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4152"/>
+        <location filename="ui/developer_widget.ui" line="4214"/>
         <source>设置水洗标</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4164"/>
+        <location filename="ui/developer_widget.ui" line="605"/>
+        <location filename="ui/developer_widget.ui" line="1287"/>
+        <source>托盘间隔</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/developer_widget.ui" line="716"/>
+        <location filename="ui/developer_widget.ui" line="1398"/>
+        <source>托盘偏移</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/developer_widget.ui" line="4137"/>
+        <location filename="ui/developer_widget.ui" line="4226"/>
         <source>边一</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4176"/>
+        <location filename="ui/developer_widget.ui" line="4167"/>
+        <source>边二</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/developer_widget.ui" line="4179"/>
+        <location filename="ui/developer_widget.ui" line="4238"/>
         <source>边四</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4188"/>
+        <location filename="ui/developer_widget.ui" line="4250"/>
         <source>位置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4298"/>
+        <location filename="ui/developer_widget.ui" line="4360"/>
         <source>水洗标复位</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4346"/>
+        <location filename="ui/developer_widget.ui" line="4408"/>
         <source>运行档位</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4371"/>
+        <location filename="ui/developer_widget.ui" line="4433"/>
         <source>低速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4376"/>
+        <location filename="ui/developer_widget.ui" line="4438"/>
         <source>中速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4381"/>
+        <location filename="ui/developer_widget.ui" line="4443"/>
         <source>高速</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4506"/>
+        <location filename="ui/developer_widget.ui" line="4568"/>
         <source>固件升级</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4550"/>
+        <location filename="ui/developer_widget.ui" line="4612"/>
         <source>选择文件</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4611"/>
+        <location filename="ui/developer_widget.ui" line="4673"/>
         <source>写入</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4632"/>
+        <location filename="ui/developer_widget.ui" line="5033"/>
         <source>使用缝纫机</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4653"/>
+        <location filename="ui/developer_widget.ui" line="5048"/>
+        <source>上料除褶</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/developer_widget.ui" line="5063"/>
+        <source>重量传感器</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/developer_widget.ui" line="5078"/>
         <source>老化测试</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4682"/>
+        <location filename="ui/developer_widget.ui" line="4702"/>
         <source>未复位成功时切换模式无效</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4696"/>
+        <location filename="ui/developer_widget.ui" line="4716"/>
         <source>模式切换</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4731"/>
+        <location filename="ui/developer_widget.ui" line="4751"/>
         <source>循环模式</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4736"/>
+        <location filename="ui/developer_widget.ui" line="4756"/>
         <source>单次模式</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4741"/>
+        <location filename="ui/developer_widget.ui" line="4761"/>
         <source>合片模式</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4746"/>
+        <location filename="ui/developer_widget.ui" line="4766"/>
         <source>缝纫模式</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4779"/>
+        <location filename="ui/developer_widget.ui" line="4799"/>
         <source>检查标定结果</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4793"/>
+        <location filename="ui/developer_widget.ui" line="4813"/>
         <source>下摆长</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4828"/>
-        <location filename="ui/developer_widget.ui" line="4879"/>
+        <location filename="ui/developer_widget.ui" line="4848"/>
+        <location filename="ui/developer_widget.ui" line="4899"/>
         <source>0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4847"/>
+        <location filename="ui/developer_widget.ui" line="4867"/>
         <source>A侧缝长</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4905"/>
+        <location filename="ui/developer_widget.ui" line="5093"/>
         <source>曲线缝纫</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4935"/>
+        <location filename="ui/developer_widget.ui" line="4937"/>
         <source>红灯</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4953"/>
+        <location filename="ui/developer_widget.ui" line="4955"/>
         <source>绿灯</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4971"/>
+        <location filename="ui/developer_widget.ui" line="4973"/>
         <source>黄灯</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="4989"/>
+        <location filename="ui/developer_widget.ui" line="4991"/>
         <source>蜂鸣器开</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/developer_widget.ui" line="5007"/>
+        <location filename="ui/developer_widget.ui" line="5009"/>
         <source>蜂鸣器关</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/developer_widget.cpp" line="691"/>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="705"/>
         <source>请选择模板路径</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/developer_widget.cpp" line="726"/>
-        <location filename="src/syt_hmi/developer_widget.cpp" line="728"/>
-        <location filename="src/syt_hmi/developer_widget.cpp" line="731"/>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="740"/>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="742"/>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="745"/>
         <source>确认</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/developer_widget.cpp" line="731"/>
+        <location filename="src/syt_hmi/developer_widget.cpp" line="745"/>
         <source>所选文件不存在</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1274,310 +1280,313 @@
     </message>
     <message>
         <location filename="ui/main_window.ui" line="252"/>
-        <source>精度校准</source>
+        <source>参数配置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/main_window.ui" line="278"/>
-        <source>创建样式</source>
+        <source>精度校准</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/main_window.ui" line="304"/>
-        <source>锁屏</source>
+        <source>创建样式</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ui/main_window.ui" line="330"/>
+        <source>锁屏</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/main_window.ui" line="356"/>
         <source>帮助说明</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="634"/>
+        <location filename="ui/main_window.ui" line="660"/>
         <source>结束</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="675"/>
+        <location filename="ui/main_window.ui" line="701"/>
         <source>复位</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="732"/>
+        <location filename="ui/main_window.ui" line="758"/>
         <source>补料</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="784"/>
+        <location filename="ui/main_window.ui" line="810"/>
         <source>暂停</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="825"/>
+        <location filename="ui/main_window.ui" line="851"/>
         <source>开始</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="967"/>
+        <location filename="ui/main_window.ui" line="993"/>
         <source>样式</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="996"/>
+        <location filename="ui/main_window.ui" line="1022"/>
         <source>样式选择</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1052"/>
+        <location filename="ui/main_window.ui" line="1078"/>
         <source>属性</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1057"/>
+        <location filename="ui/main_window.ui" line="1083"/>
         <source>值</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1112"/>
+        <location filename="ui/main_window.ui" line="1138"/>
         <source>上料机视觉监控</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1197"/>
+        <location filename="ui/main_window.ui" line="1223"/>
         <source>上料台B</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1230"/>
-        <location filename="ui/main_window.ui" line="1375"/>
+        <location filename="ui/main_window.ui" line="1256"/>
+        <location filename="ui/main_window.ui" line="1401"/>
         <source>左相机</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1261"/>
-        <location filename="ui/main_window.ui" line="1312"/>
-        <location filename="ui/main_window.ui" line="1406"/>
-        <location filename="ui/main_window.ui" line="1457"/>
-        <location filename="ui/main_window.ui" line="1494"/>
+        <location filename="ui/main_window.ui" line="1287"/>
+        <location filename="ui/main_window.ui" line="1338"/>
+        <location filename="ui/main_window.ui" line="1432"/>
+        <location filename="ui/main_window.ui" line="1483"/>
+        <location filename="ui/main_window.ui" line="1520"/>
         <source>NO IMAGE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1281"/>
-        <location filename="ui/main_window.ui" line="1426"/>
+        <location filename="ui/main_window.ui" line="1307"/>
+        <location filename="ui/main_window.ui" line="1452"/>
         <source>右相机</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1342"/>
+        <location filename="ui/main_window.ui" line="1368"/>
         <source>上料台A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1483"/>
+        <location filename="ui/main_window.ui" line="1509"/>
         <source>合片机视觉监控</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1521"/>
+        <location filename="ui/main_window.ui" line="1547"/>
         <source>日志监控</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1594"/>
+        <location filename="ui/main_window.ui" line="1620"/>
         <source>日志等级过滤</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1597"/>
+        <location filename="ui/main_window.ui" line="1623"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1637"/>
+        <location filename="ui/main_window.ui" line="1663"/>
         <source>清空日志窗口</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui/main_window.ui" line="1677"/>
+        <location filename="ui/main_window.ui" line="1703"/>
         <source>跳至最新日志</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="339"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="340"/>
         <source>请选择样式文件</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="366"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="367"/>
         <source>B区余量</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="372"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="373"/>
         <source>A区余量</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="378"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="379"/>
         <source>产量</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="575"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="581"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="577"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="583"/>
         <source>隐藏</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="585"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="587"/>
         <source>显示</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="602"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="604"/>
         <source>检查更新</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="606"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="608"/>
         <source>关于速英</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="610"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="612"/>
         <source>语言选项</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="628"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="630"/>
         <source>最小化</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="630"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="632"/>
         <source>最大化</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="632"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="634"/>
         <source>全屏窗口化</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="634"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="636"/>
         <source>关闭</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1247"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1358"/>
         <source>请先设置裁片样式。</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1247"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1283"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1308"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1333"/>
         <location filename="src/syt_hmi/main_window.cpp" line="1358"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1395"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1398"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1394"/>
         <location filename="src/syt_hmi/main_window.cpp" line="1419"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1538"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1887"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1889"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1444"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1469"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1506"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1509"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1530"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1654"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="2003"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="2005"/>
         <source>确认</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1267"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1378"/>
         <source>复位中</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1277"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1388"/>
         <source>复位完成</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1281"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1283"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1392"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1394"/>
         <source>复位失败</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1295"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1406"/>
         <source>开始运行</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1305"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1416"/>
         <source>运行中</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1307"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1308"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1418"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1419"/>
         <source>运行失败</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1320"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1431"/>
         <source>开始暂停</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1330"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1441"/>
         <source>暂停中</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1332"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1333"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1443"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1444"/>
         <source>暂停失败</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1345"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1456"/>
         <source>开始结束</source>
-        <oldsource>开始停止</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1355"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1466"/>
         <source>结束中</source>
-        <oldsource>停止中</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1357"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1358"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1468"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1469"/>
         <source>结束失败</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1371"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1482"/>
         <source>补料模式</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1394"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1505"/>
         <source>补料模式设置完成</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1395"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1506"/>
         <source>补料模式设置成功，请在手动补充裁片后再点击确认。</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1397"/>
-        <location filename="src/syt_hmi/main_window.cpp" line="1398"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1508"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1509"/>
         <source>补料模式设置失败</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1529"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1645"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;b&gt;启动机器人手眼标定&lt;/b&gt;
 &lt;body&gt;&lt;b&gt;注意:&lt;/b&gt;&lt;p&gt;1.标定过程中,&lt;font color=&quot;red&quot;&gt;&lt;b&gt;禁止靠近机台&lt;/b&gt;&lt;/font&gt;;
 &lt;/p&gt;&lt;p&gt;2.请确认机器人处在一个&lt;font color=&quot;red&quot;&gt;&lt;b&gt;良好的位置&lt;/b&gt;&lt;/font&gt;,避免启动时发生碰撞;
@@ -1587,102 +1596,102 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1538"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1654"/>
         <source>返回</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1854"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1970"/>
         <source>前片</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1855"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1971"/>
         <source>后片</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1861"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1977"/>
         <source>衣长</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1862"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1978"/>
         <source>下摆长</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1863"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1979"/>
         <source>腋下间距</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1864"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1980"/>
         <source>肩缝长</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1865"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1981"/>
         <source>侧缝长</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1866"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1982"/>
         <source>有无印花</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1866"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1982"/>
         <source>有</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1866"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1982"/>
         <source>无</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1869"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1985"/>
         <source>颜色</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1873"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1989"/>
         <source>裁片克数</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1874"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1990"/>
         <source>弹性</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1875"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1991"/>
         <source>厚度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1876"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1992"/>
         <source>尺码</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1877"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="1993"/>
         <source>光泽度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1885"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="2001"/>
         <source>已设置样式，允许运行</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1887"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="2003"/>
         <source>样式设置成功</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/main_window.cpp" line="1889"/>
+        <location filename="src/syt_hmi/main_window.cpp" line="2005"/>
         <source>获取样式信息失败</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1733,16 +1742,16 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/syt_hmi/wizard_pages.cpp" line="41"/>
-        <source>请点击移动按钮并等待合片抓手移动完毕...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/syt_hmi/wizard_pages.cpp" line="24"/>
         <location filename="src/syt_hmi/wizard_pages.cpp" line="41"/>
         <location filename="src/syt_hmi/wizard_pages.cpp" line="48"/>
         <location filename="src/syt_hmi/wizard_pages.cpp" line="51"/>
         <source>确认</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/syt_hmi/wizard_pages.cpp" line="41"/>
+        <source>请点击移动按钮并等待合片抓手移动完毕...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1766,6 +1775,146 @@
     <message>
         <location filename="ui/ota_update_dialog.ui" line="88"/>
         <source>取消升级</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ParamSetWidget</name>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="52"/>
+        <location filename="ui/param_set_widget.ui" line="110"/>
+        <source>模式选择</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="130"/>
+        <source>缝纫设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="150"/>
+        <source>合片设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="170"/>
+        <source>上料设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="223"/>
+        <source>设置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="260"/>
+        <source>正常模式</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="265"/>
+        <source>仅肩缝</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="270"/>
+        <source>仅摆缝/侧缝</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="363"/>
+        <source>水洗标复位</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="397"/>
+        <source>缝纫机复位</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="460"/>
+        <source>启用水洗标</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="472"/>
+        <source>宽度</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="484"/>
+        <location filename="ui/param_set_widget.ui" line="729"/>
+        <source>边一</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="520"/>
+        <source>设置水洗标</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="545"/>
+        <location filename="ui/param_set_widget.ui" line="675"/>
+        <source>边四</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="557"/>
+        <source>位置</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="626"/>
+        <source>设置针距</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="741"/>
+        <source>边三</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="753"/>
+        <source>边二</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="841"/>
+        <location filename="ui/param_set_widget.ui" line="1086"/>
+        <location filename="ui/param_set_widget.ui" line="1282"/>
+        <source>裁片厚度(mm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="962"/>
+        <location filename="ui/param_set_widget.ui" line="1112"/>
+        <location filename="ui/param_set_widget.ui" line="1321"/>
+        <source>复位</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="942"/>
+        <source>吹气高度</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="1003"/>
+        <source>背景灯强度</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="1182"/>
+        <source>上料台B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/param_set_widget.ui" line="1339"/>
+        <source>上料台A</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

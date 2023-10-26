@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   setBaseComponet();
   setChooseStyleComponet();
   setDeveloperWidget();
+  setParamSetWidget();
 
   // 初始化控件
   initWidget();
@@ -455,6 +456,7 @@ void MainWindow::setToolBar() {
   connect(ui->head_eye_calibration_btn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
   connect(ui->create_style_btn, &QPushButton::clicked, this, &MainWindow::slotStartClothStyleWindow);
   connect(ui->lock_screen_btn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
+  connect(ui->param_set_btn, &QPushButton::clicked, this, &MainWindow::slotParamSet);
   // TODO:delete
   ui->help_btn->hide();
   // connect(ui->help_btn, &QPushButton::clicked, [=] {
@@ -703,6 +705,13 @@ void MainWindow::setDeveloperWidget() {
 
   // 绑定机器控制按钮
   bindControlConnection();
+}
+
+void MainWindow::setParamSetWidget() {
+  param_set_widget_ = new ParamSetWidget(this);
+
+  // 绑定参数配置所需功能
+  bindParamSetConnection();
 }
 
 void MainWindow::showLoadMachineImage() {
@@ -957,16 +966,30 @@ void MainWindow::bindControlConnection() {
   });
 
   // 上料机-出针
-  connect(developer_widget_, &DeveloperWidget::signLoadMachinePopNeedle, [=](int id) {
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineExtendNeedle, [=](int id, bool enable) {
     QtConcurrent::run([=]() {
-      rclcomm_->loadMachinePopNeedle(id);
+      rclcomm_->loadMachineExtendNeedle(id, enable);
     });
   });
 
-  // 上料机-收针
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineWithdrawNeedle, [=](int id) {
+  // 上料机-重量传感器
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineWeightSwitch, [=](int id, bool enable) {
     QtConcurrent::run([=]() {
-      rclcomm_->loadMachineWithdrawNeedle(id);
+      rclcomm_->loadMachineWeightSwitch(id, enable);
+    });
+  });
+
+  // 上料机-除褶动作
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineUnpleatSwitch, [=](int id, bool enable) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineUnpleatSwitch(id, enable);
+    });
+  });
+
+  // 上料机-老化
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineAgingSwitch, [=](int id, bool enable) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineAgingSwitch(id, enable);
     });
   });
 
@@ -1104,9 +1127,9 @@ void MainWindow::bindControlConnection() {
   });
 
   // 缝纫机-水洗标复位
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelReset, [=](bool enable) {
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelReset, [=]() {
     QtConcurrent::run([=]() {
-      rclcomm_->sewingMachineLabelReset(enable);
+      rclcomm_->sewingMachineLabelReset();
     });
   });
 
@@ -1164,6 +1187,87 @@ void MainWindow::bindControlConnection() {
   connect(developer_widget_, &DeveloperWidget::signBellClose, rclcomm_, [=]() {
     QtConcurrent::run([=]() {
       rclcomm_->bellClose();
+    });
+  });
+
+  ////////////// 参数配置界面 /////////////////
+}
+
+void MainWindow::bindParamSetConnection() {
+  // 切换模式
+  connect(param_set_widget_, &ParamSetWidget::signSwitchSewingMode, [=](int mode) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineMode(mode);
+    });
+  });
+
+  // 缝纫机-复位
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineReset, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineReset();
+    });
+  });
+
+  // 缝纫机-水洗标复位
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineLabelReset, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineLabelReset();
+    });
+  });
+
+  // 缝纫机-水洗标设置
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineLabelWidth, [=](bool enable, int side, float width, float position) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineLabelWidth(enable, side, width, position);
+    });
+  });
+
+  // 缝纫机-设置针长
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineNeedle, [=](float line_1, float line_2, float line_3, float line_4) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
+    });
+  });
+
+  // 缝纫机-设置厚度
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineThickness, [=](float thickness) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineThickness(thickness);
+    });
+  });
+
+  // 合片机-复位
+  connect(param_set_widget_, &ParamSetWidget::signComposeMachineReset, [=]() {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineReset();
+    });
+  });
+
+  // 合片机-吹气高度
+  connect(param_set_widget_, &ParamSetWidget::signComposeMachineBlowHeight, [=](float height) {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineBlowHeight(height);
+    });
+  });
+
+  // 合片机-合片台灯
+  connect(param_set_widget_, &ParamSetWidget::signComposeMachineTableLight, [=](float ratio) {
+    QtConcurrent::run([=]() {
+      rclcomm_->composeMachineTableLight(ratio);
+    });
+  });
+
+  // 上料机-复位
+  connect(param_set_widget_, &ParamSetWidget::signLoadMachineReset, [=](int id) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineReset(id);
+    });
+  });
+
+  // 上料机-设置厚度
+  connect(param_set_widget_, &ParamSetWidget::signLoadMachineThickness, [=](int id, float thickness) {
+    QtConcurrent::run([=]() {
+      rclcomm_->loadMachineThickness(id, thickness);
     });
   });
 }
@@ -1523,6 +1627,11 @@ void MainWindow::slotShowDevLoginWindow() {
   connect(dev_login_window, &DevLoginWindow::signDevMode, this, &MainWindow::slotDeveloperMode);
   dev_login_window->show();
   dev_login_window->setAttribute(Qt::WA_DeleteOnClose);
+}
+
+void MainWindow::slotParamSet() {
+  param_set_widget_->move(this->geometry().center() - QPoint(param_set_widget_->width() / 2, param_set_widget_->height() / 2));
+  param_set_widget_->show();
 }
 
 void MainWindow::slotLockScreen() {

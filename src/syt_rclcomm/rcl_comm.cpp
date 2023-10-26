@@ -633,28 +633,53 @@ void SytRclComm::loadMachineThickness(int id, float thickness) {
   qDebug() << "设置厚度：" << result;
 }
 
-// 出针
-void SytRclComm::loadMachinePopNeedle(int id) {
+// 上料针
+void SytRclComm::loadMachineExtendNeedle(int id, bool enable) {
   auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
   request->id.data = id;
-  request->commands.extend_needle = true;
+  request->commands.data = syt_msgs::msg::LoadMachineFunctionCommands::EXTEND_NEEDLE;
+  request->enable = enable;
 
   syt_msgs::srv::LoadMachineFunction::Response response;
-  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "出针", 5000, request, response);
-  qDebug() << "出针：" << result;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "上料针", 5000, request, response);
+  qDebug() << "上料针：" << result;
 }
 
-// 收针
-void SytRclComm::loadMachineWithdrawNeedle(int id) {
+// 重量传感器
+void SytRclComm::loadMachineWeightSwitch(int id, bool enable) {
   auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
   request->id.data = id;
-  request->commands.extend_needle = false;
+  request->commands.data = syt_msgs::msg::LoadMachineFunctionCommands::WEIGHT_SWITCH;
+  request->enable = enable;
 
   syt_msgs::srv::LoadMachineFunction::Response response;
-  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "收针", 5000, request, response);
-  qDebug() << "收针：" << result;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "重量传感器", 5000, request, response);
+  qDebug() << "重量传感器：" << result;
 }
 
+// 上料针
+void SytRclComm::loadMachineUnpleatSwitch(int id, bool enable) {
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
+  request->id.data = id;
+  request->commands.data = syt_msgs::msg::LoadMachineFunctionCommands::UNPLEAT_SWITCH;
+  request->enable = enable;
+
+  syt_msgs::srv::LoadMachineFunction::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "不除褶", 5000, request, response);
+  qDebug() << "不除褶：" << result;
+}
+
+// 上料针
+void SytRclComm::loadMachineAgingSwitch(int id, bool enable) {
+  auto request = std::make_shared<syt_msgs::srv::LoadMachineFunction::Request>();
+  request->id.data = id;
+  request->commands.data = syt_msgs::msg::LoadMachineFunctionCommands::AGING_SWITCH;
+  request->enable = enable;
+
+  syt_msgs::srv::LoadMachineFunction::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "老化", 5000, request, response);
+  qDebug() << "老化：" << result;
+}
 /* ---------------------------合片机------------------------------ */
 // 合片机复位
 void SytRclComm::composeMachineReset() {
@@ -876,6 +901,16 @@ void SytRclComm::sewingMachineNeedle(float line_1, float line_2, float line_3, f
   qDebug() << "设置针长：" << result;
 }
 
+// 缝纫厚度
+void SytRclComm::sewingMachineThickness(float thickness) {
+  auto request = std::make_shared<syt_msgs::srv::SewingMachineClothThickness::Request>();
+  request->thickness = thickness;
+
+  syt_msgs::srv::SewingMachineClothThickness::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::SewingMachineClothThickness>("/syt/robot_control/sewing_machine/primal/thickness", "缝纫厚度", 5000, request, response);
+  qDebug() << "缝纫厚度：" << result;
+}
+
 // 水洗标宽度
 void SytRclComm::sewingMachineLabelWidth(bool enable, int side, float width, float position) {
   auto request = std::make_shared<syt_msgs::srv::CareLabelMachineWidth::Request>();
@@ -889,9 +924,9 @@ void SytRclComm::sewingMachineLabelWidth(bool enable, int side, float width, flo
 }
 
 // 水洗标复位
-void SytRclComm::sewingMachineLabelReset(bool enable) {
+void SytRclComm::sewingMachineLabelReset() {
   auto request = std::make_shared<syt_msgs::srv::CareLabelMachineReset::Request>();
-  request->enable = enable;
+  request->enable = true;
 
   syt_msgs::srv::CareLabelMachineReset::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::CareLabelMachineReset>("/syt/robot_control/sewing_machine/primal/label_reset", "水洗标重置", 60000, request, response);
@@ -905,6 +940,16 @@ void SytRclComm::sewingMachineSpeed(int speed) {
   syt_msgs::srv::SewingMachineSpeed::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::SewingMachineSpeed>("/syt/robot_control/sewing_machine/primal/speed", "缝纫机档位", 5000, request, response);
 }
+
+// 转换运行模式
+void SytRclComm::sewingMachineMode(int mode) {
+  auto request = std::make_shared<syt_msgs::srv::SewingMachineMode::Request>();
+  request->mode.data = mode;
+
+  syt_msgs::srv::SewingMachineMode::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::SewingMachineMode>("/syt/robot_control/sewing_machine/primal/mode", "缝纫机模式", 5000, request, response);
+}
+
 /* ---------------------------视觉检测------------------------------ */
 // 获取衣服信息
 void SytRclComm::getClothInfo(uint8_t frame_id, int cloth_type) {
