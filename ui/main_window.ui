@@ -429,7 +429,7 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="page0">
+      <widget class="QWidget" name="main_page">
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -992,100 +992,96 @@
            <attribute name="title">
             <string>样式</string>
            </attribute>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="6" column="2">
-             <layout class="QVBoxLayout" name="verticalLayout">
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,8">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,8">
-                <item>
-                 <widget class="WaterZoomButton" name="choose_style_btn">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>200</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <pointsize>14</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>样式选择</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../resource/hmi.qrc">
-                    <normaloff>:/m_icon/icon/selection.svg</normaloff>:/m_icon/icon/selection.svg</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>25</width>
-                    <height>25</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="choose_style_line_edit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>35</height>
-                   </size>
-                  </property>
-                  <property name="sizeIncrement">
-                   <size>
-                    <width>0</width>
-                    <height>35</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="WaterZoomButton" name="choose_style_btn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>200</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>样式选择</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../resource/hmi.qrc">
+                  <normaloff>:/m_icon/icon/selection.svg</normaloff>:/m_icon/icon/selection.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>25</width>
+                  <height>25</height>
+                 </size>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QTreeWidget" name="cloth_style_tree_widget">
+               <widget class="QLineEdit" name="choose_style_line_edit">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="font">
-                 <font>
-                  <pointsize>13</pointsize>
-                 </font>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>35</height>
+                 </size>
                 </property>
-                <property name="columnCount">
-                 <number>2</number>
+                <property name="sizeIncrement">
+                 <size>
+                  <width>0</width>
+                  <height>35</height>
+                 </size>
                 </property>
-                <column>
-                 <property name="text">
-                  <string>属性</string>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>值</string>
-                 </property>
-                </column>
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QTreeWidget" name="cloth_style_tree_widget">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>13</pointsize>
+               </font>
+              </property>
+              <property name="columnCount">
+               <number>2</number>
+              </property>
+              <column>
+               <property name="text">
+                <string>属性</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>值</string>
+               </property>
+              </column>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -1093,7 +1089,240 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page1">
+      <widget class="QWidget" name="param_page">
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <spacer name="horizontalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>78</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="export_param_btn">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resource/hmi.qrc">
+              <normaloff>:/m_icon/icon/export.svg</normaloff>:/m_icon/icon/export.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="import_param_btn">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resource/hmi.qrc">
+              <normaloff>:/m_icon/icon/import.svg</normaloff>:/m_icon/icon/import.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="save_param_btn">
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resource/hmi.qrc">
+              <normaloff>:/m_icon/icon/save.svg</normaloff>:/m_icon/icon/save.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="fold_all_btn">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resource/hmi.qrc">
+              <normaloff>:/m_icon/icon/fold.svg</normaloff>:/m_icon/icon/fold.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="unfold_all_btn">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resource/hmi.qrc">
+              <normaloff>:/m_icon/icon/unfold.svg</normaloff>:/m_icon/icon/unfold.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WaterZoomButton" name="apply_param_btn">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resource/hmi.qrc">
+              <normaloff>:/m_icon/icon/apply.svg</normaloff>:/m_icon/icon/apply.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="ParamTreeView" name="param_manage_tree_view">
+          <property name="font">
+           <font>
+            <pointsize>13</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="monitor_page">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -1812,6 +2041,11 @@
    <extends>QWidget</extends>
    <header>syt_hmi/progress_bar.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ParamTreeView</class>
+   <extends>QTreeView</extends>
+   <header>syt_hmi/param_tree_view.h</header>
   </customwidget>
  </customwidgets>
  <resources>

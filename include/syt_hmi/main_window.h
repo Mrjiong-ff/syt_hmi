@@ -1,6 +1,7 @@
 #pragma once
 #include <QMainWindow>
 #include <QMenu>
+#include <QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
 #include <memory>
 
@@ -108,9 +109,15 @@ private:
   void setVisualComponent();
   void setBaseComponet();
   void setChooseStyleComponet();
+  void setParamManageComponet();
   void setDeveloperWidget();
   void setParamSetWidget();
+
+  // 辅助函数
   void showLoadMachineImage();
+  bool readJson(const QString &json_file, QStandardItemModel *model);
+  bool dumpJson(const QString &json_file, QStandardItemModel *model);
+  int getItemLevel(QStandardItem *item);
 
 signals:
   void signClose();
@@ -232,4 +239,8 @@ private:
 
   QPoint m_mousePos_;
   Direction dir_; // 窗口大小改变时，记录改变方向
+
+  // 参数预览配置
+  QStandardItemModel *model_;
+  QString current_param_file_;
 };

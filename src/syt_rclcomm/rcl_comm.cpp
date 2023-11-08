@@ -680,6 +680,21 @@ void SytRclComm::loadMachineAgingSwitch(int id, bool enable) {
   CALL_RESULT result = callService<syt_msgs::srv::LoadMachineFunction>("/syt/robot_control/load_machine/primal/function", "老化", 5000, request, response);
   qDebug() << "老化：" << result;
 }
+
+// 参数设置
+void SytRclComm::loadMachineParam(int dtype, std::string field, std::string data, bool is_array) {
+  auto request = std::make_shared<syt_msgs::srv::ParamManage::Request>();
+  request->behavior.data = syt_msgs::msg::ParamBehavior::WRITE;
+  request->dtype.data = dtype;
+  request->field = field;
+  request->data = data;
+  request->is_array = is_array;
+
+  syt_msgs::srv::ParamManage::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ParamManage>("/syt/robot_control/load_machine/primal/param_manage", "上料参数", 5000, request, response);
+  qDebug() << "参数管理：" << result;
+}
+
 /* ---------------------------合片机------------------------------ */
 // 合片机复位
 void SytRclComm::composeMachineReset() {
@@ -854,6 +869,20 @@ void SytRclComm::composeMachineTableLight(float ratio) {
   CALL_RESULT result = callService<syt_msgs::srv::ComposeMachineTableLight>("/syt/robot_control/compose_machine/primal/table_light", "合片台灯", 5000, request, response);
 }
 
+// 参数设置
+void SytRclComm::composeMachineParam(int dtype, std::string field, std::string data, bool is_array) {
+  auto request = std::make_shared<syt_msgs::srv::ParamManage::Request>();
+  request->behavior.data = syt_msgs::msg::ParamBehavior::WRITE;
+  request->dtype.data = dtype;
+  request->field = field;
+  request->data = data;
+  request->is_array = is_array;
+
+  syt_msgs::srv::ParamManage::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ParamManage>("/syt/robot_control/compose_machine/primal/param_manage", "合片参数", 5000, request, response);
+  qDebug() << "参数管理：" << result;
+}
+
 /* -----------------------------缝纫机---------------------------- */
 // 缝纫机复位
 void SytRclComm::sewingMachineReset() {
@@ -948,6 +977,20 @@ void SytRclComm::sewingMachineMode(int mode) {
 
   syt_msgs::srv::SewingMachineMode::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::SewingMachineMode>("/syt/robot_control/sewing_machine/primal/mode", "缝纫机模式", 5000, request, response);
+}
+
+// 参数设置
+void SytRclComm::sewingMachineParam(int dtype, std::string field, std::string data, bool is_array) {
+  auto request = std::make_shared<syt_msgs::srv::ParamManage::Request>();
+  request->behavior.data = syt_msgs::msg::ParamBehavior::WRITE;
+  request->dtype.data = dtype;
+  request->field = field;
+  request->data = data;
+  request->is_array = is_array;
+
+  syt_msgs::srv::ParamManage::Response response;
+  CALL_RESULT result = callService<syt_msgs::srv::ParamManage>("/syt/robot_control/sewing_machine/primal/param_manage", "缝纫参数", 5000, request, response);
+  qDebug() << "参数管理：" << result;
 }
 
 /* ---------------------------视觉检测------------------------------ */

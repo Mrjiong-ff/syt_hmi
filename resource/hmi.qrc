@@ -20,6 +20,7 @@
         <file>icon/about.svg</file>
         <file>icon/accept.svg</file>
         <file>icon/add_cloth.svg</file>
+        <file>icon/apply.svg</file>
         <file>icon/auto_create.svg</file>
         <file>icon/axis.svg</file>
         <file>icon/cad_style.svg</file>
@@ -31,9 +32,12 @@
         <file>icon/developer.svg</file>
         <file>icon/end.svg</file>
         <file>icon/error.svg</file>
+        <file>icon/export.svg</file>
         <file>icon/filter.svg</file>
+        <file>icon/fold.svg</file>
         <file>icon/full_screen.svg</file>
         <file>icon/help.svg</file>
+        <file>icon/import.svg</file>
         <file>icon/l-page.svg</file>
         <file>icon/lock.svg</file>
         <file>icon/locking.png</file>
@@ -47,6 +51,7 @@
         <file>icon/preview_open.svg</file>
         <file>icon/r-page.svg</file>
         <file>icon/reset.svg</file>
+        <file>icon/save.svg</file>
         <file>icon/selection.svg</file>
         <file>icon/setting.svg</file>
         <file>icon/sewing.svg</file>
@@ -58,6 +63,7 @@
         <file>icon/success.svg</file>
         <file>icon/to_bottom.svg</file>
         <file>icon/translate.svg</file>
+        <file>icon/unfold.svg</file>
         <file>icon/unlock.svg</file>
         <file>icon/update.svg</file>
         <file>icon/warn.svg</file>

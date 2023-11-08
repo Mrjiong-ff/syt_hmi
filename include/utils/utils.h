@@ -20,6 +20,7 @@ enum STATE {
 
 extern QMap<QString, int> style_id_map;
 extern QMap<int, QString> id_style_map;
+extern QMap<QString, QString> param_meaning_map;
 
 /**
  * 一些消息弹窗

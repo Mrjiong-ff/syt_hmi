@@ -50,6 +50,10 @@ QMap<int, QString> id_style_map = {
     std::map<int, QString>::value_type(63, "D"),
 };
 
+//QMap<QString, QString> param_meaning_map = {
+    //std::map<QString, QString>::value_type(),
+//};
+
 int showMessageBox(QWidget *p, STATE state, QString text, int btn_num, QVector<QString> btn_text) {
   auto box = new QMessageBox(p);
   box->setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
@@ -84,7 +88,7 @@ unsigned long getTickCount() {
 
 bool isFastClick(QObject *target, int delayTimeMil) {
   qlonglong lastTick = (target->property("tick").toLongLong());
-  qlonglong tick     = getTickCount();
+  qlonglong tick = getTickCount();
   target->setProperty("tick", tick);
   if (tick - lastTick > delayTimeMil) {
     return true;
@@ -190,7 +194,7 @@ void checkConfigsExist() {
 
 std::string getConfigPath() {
   std::string folderPath = std::string(getenv("HOME")) + "/SytHmi";
-  std::string filePath   = folderPath + "/config.yaml";
+  std::string filePath = folderPath + "/config.yaml";
   return filePath;
 }
 
@@ -201,14 +205,14 @@ std::string getCurrentTime() {
   static const int MAX_BUFFER_SIZE = 128;
   char timestamp_str[MAX_BUFFER_SIZE];
   time_t sec = static_cast<time_t>(tv.tv_sec);
-  int ms     = static_cast<int>(tv.tv_usec) / 1000;
+  int ms = static_cast<int>(tv.tv_usec) / 1000;
 
   struct tm tm_time;
   localtime_r(&sec, &tm_time);
   static const char *formater = "%4d-%02d-%02d_%02d:%02d:%02d.%03d";
-  int wsize                   = snprintf(timestamp_str, MAX_BUFFER_SIZE, formater,
-                                         tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday,
-                                         tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, ms);
+  int wsize = snprintf(timestamp_str, MAX_BUFFER_SIZE, formater,
+                       tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday,
+                       tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, ms);
 
   timestamp_str[std::min(wsize, MAX_BUFFER_SIZE - 1)] = '\0';
   return std::string(timestamp_str);
@@ -216,7 +220,7 @@ std::string getCurrentTime() {
 
 void killProcesses(std::string process_pattern) {
   pid_t self_pid = getpid();
-  FILE *pipe     = popen(("ps -x | grep -v grep | grep -i " + process_pattern + " | awk '{print $1}'").c_str(), "r");
+  FILE *pipe = popen(("ps -x | grep -v grep | grep -i " + process_pattern + " | awk '{print $1}'").c_str(), "r");
   char buffer[128];
   while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
     int pid = atoi(buffer);

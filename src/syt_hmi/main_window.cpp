@@ -2,10 +2,13 @@
 #include <QGraphicsOpacityEffect>
 #include <QScreen>
 #include <QScrollBar>
+#include <QStandardItem>
+#include <QStandardItemModel>
 #include <QTranslator>
 
 #include "syt_hmi/globalapplication.h"
 #include "syt_hmi/main_window.h"
+#include "syt_hmi/param_item_delegate.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), exe_count_(0), max_count_(0), cur_count_(0) {
   ui->setupUi(this);
@@ -24,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
   setVisualComponent();
   setBaseComponet();
   setChooseStyleComponet();
+  setParamManageComponet();
   setDeveloperWidget();
   setParamSetWidget();
 
@@ -528,10 +532,6 @@ void MainWindow::setMainControlButton() {
   ui->add_cloth_btn->setForeEnabled(false);
   ui->add_cloth_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
 
-  ui->choose_style_btn->setParentEnabled(true);
-  ui->choose_style_btn->setForeEnabled(false);
-  ui->choose_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
   connect(ui->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
   connect(rclcomm_, &SytRclComm::signResetFinish, this, &MainWindow::resetFinish);
   connect(ui->start_btn, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
@@ -693,10 +693,389 @@ void MainWindow::setChooseStyleComponet() {
   ui->cloth_style_tree_widget->setAlternatingRowColors(true);
   ui->cloth_style_tree_widget->setAnimated(true);
   ui->cloth_style_tree_widget->setUniformRowHeights(true);
+
   // 设置样式line edit只读
   ui->choose_style_line_edit->setReadOnly(true);
 
+  ui->choose_style_btn->setParentEnabled(true);
+  ui->choose_style_btn->setForeEnabled(false);
+  ui->choose_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
   connect(ui->choose_style_btn, &QPushButton::clicked, this, &MainWindow::slotChooseStyleFile); // 选择样式信号槽
+}
+
+void MainWindow::setParamManageComponet() {
+  ui->unfold_all_btn->setParentEnabled(true);
+  ui->unfold_all_btn->setForeEnabled(false);
+  ui->unfold_all_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->fold_all_btn->setParentEnabled(true);
+  ui->fold_all_btn->setForeEnabled(false);
+  ui->fold_all_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->save_param_btn->setParentEnabled(true);
+  ui->save_param_btn->setForeEnabled(false);
+  ui->save_param_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->save_param_btn->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+
+  ui->apply_param_btn->setParentEnabled(true);
+  ui->apply_param_btn->setForeEnabled(false);
+  ui->apply_param_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->import_param_btn->setParentEnabled(true);
+  ui->import_param_btn->setForeEnabled(false);
+  ui->import_param_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  ui->export_param_btn->setParentEnabled(true);
+  ui->export_param_btn->setForeEnabled(false);
+  ui->export_param_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+
+  // 样式树形列表
+  ui->param_manage_tree_view->header()->resizeSection(0, 200);
+
+  // 构造Model
+  model_ = new QStandardItemModel(ui->param_manage_tree_view);
+
+  // 导入默认参数
+  QString param_path = QString(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/param.json";
+  current_param_file_ = param_path;
+  readJson(param_path, model_);
+
+  ui->param_manage_tree_view->setModel(model_);
+  ui->param_manage_tree_view->setAlternatingRowColors(true); // 间隔变色
+  ui->param_manage_tree_view->header()->resizeSection(0, 200);
+  ui->param_manage_tree_view->header()->resizeSection(5, 200);
+  ui->param_manage_tree_view->setSelectionBehavior(QTreeView::SelectRows);
+  ui->param_manage_tree_view->setSelectionMode(QTreeView::SingleSelection);
+  ui->param_manage_tree_view->setContextMenuPolicy(Qt::CustomContextMenu);
+  ui->param_manage_tree_view->expandAll();
+
+  // 设置委托
+  NameItemDelegate *name_delegate = new NameItemDelegate(ui->param_manage_tree_view);
+  ui->param_manage_tree_view->setItemDelegateForColumn(0, name_delegate);
+  TypeItemDelegate *type_delegate = new TypeItemDelegate(ui->param_manage_tree_view);
+  ui->param_manage_tree_view->setItemDelegateForColumn(1, type_delegate);
+  LengthItemDelegate *length_delegate = new LengthItemDelegate(ui->param_manage_tree_view);
+  ui->param_manage_tree_view->setItemDelegateForColumn(2, length_delegate);
+  RangeItemDelegate *min_delegate = new RangeItemDelegate(ui->param_manage_tree_view);
+  ui->param_manage_tree_view->setItemDelegateForColumn(3, min_delegate);
+  RangeItemDelegate *max_delegate = new RangeItemDelegate(ui->param_manage_tree_view);
+  ui->param_manage_tree_view->setItemDelegateForColumn(4, max_delegate);
+  ValueItemDelegate *value_delegate = new ValueItemDelegate(ui->param_manage_tree_view);
+  ui->param_manage_tree_view->setItemDelegateForColumn(5, value_delegate);
+  StoreItemDelegate *store_delegate = new StoreItemDelegate(ui->param_manage_tree_view);
+  ui->param_manage_tree_view->setItemDelegateForColumn(6, store_delegate);
+
+  // 右键菜单
+  connect(ui->param_manage_tree_view, &QTreeView::customContextMenuRequested, this, [=](const QPoint &pos) {
+    QMenu menu;
+    QModelIndex cur_index = ui->param_manage_tree_view->indexAt(pos); // 当前点击的元素的index
+    QModelIndex index = cur_index.sibling(cur_index.row(), 0);        // 该行的第1列元素的index
+    if (index.isValid()) {
+      QStandardItem *item = model_->itemFromIndex(index);
+      int item_level = getItemLevel(item);
+      switch (item_level) {
+      case 0:
+        menu.addAction(tr("增加参数组"), this, [=]() {
+          QStandardItem *new_group = new QStandardItem("group");
+          QList<QStandardItem *> new_items;
+          new_items << new_group;
+          model_->appendRow(new_items);
+        });
+        menu.addAction(tr("增加参数"), this, [=]() {
+          QStandardItem *new_param = new QStandardItem("name");
+          QStandardItem *new_type = new QStandardItem("bool");
+          QStandardItem *new_length = new QStandardItem("1");
+          QStandardItem *new_min = new QStandardItem("0");
+          QStandardItem *new_max = new QStandardItem("inf");
+          QStandardItem *new_value = new QStandardItem("1");
+          QStandardItem *new_storable = new QStandardItem("1");
+          QStandardItem *new_comment = new QStandardItem("参数注释");
+
+          QList<QStandardItem *> new_items;
+          new_items << new_param << new_type << new_length << new_min << new_max << new_value << new_storable << new_comment;
+          item->appendRow(new_items);
+        });
+        menu.addAction(tr("删除参数组"), this, [=]() {
+          bool ret = showMessageBox(this, WARN, tr("确认删除当前组？"), 2, {tr("确认"), tr("取消")});
+          if (ret == 0) {
+            model_->removeRow(index.row());
+          }
+        });
+        break;
+      case 1:
+        menu.addAction(tr("增加参数"), this, [=]() {
+          QStandardItem *new_param = new QStandardItem("name");
+          QStandardItem *new_type = new QStandardItem("bool");
+          QStandardItem *new_length = new QStandardItem("1");
+          QStandardItem *new_min = new QStandardItem("0");
+          QStandardItem *new_max = new QStandardItem("inf");
+          QStandardItem *new_value = new QStandardItem("1");
+          QStandardItem *new_storable = new QStandardItem("1");
+          QStandardItem *new_comment = new QStandardItem("参数注释");
+
+          QList<QStandardItem *> new_items;
+          new_items << new_param << new_type << new_length << new_min << new_max << new_value << new_storable << new_comment;
+          item->parent()->appendRow(new_items);
+        });
+        menu.addAction(tr("删除参数"), this, [=]() {
+          item->parent()->removeRow(index.row());
+        });
+        break;
+      }
+    }
+    menu.exec(QCursor::pos()); // 显示菜单
+  });
+
+  // 参数界面信号绑定
+  connect(ui->unfold_all_btn, &QPushButton::clicked, [=]() { ui->param_manage_tree_view->expandAll(); });
+  connect(ui->fold_all_btn, &QPushButton::clicked, [=]() { ui->param_manage_tree_view->collapseAll(); });
+  connect(ui->save_param_btn, &QPushButton::clicked, [=]() {
+    if (dumpJson(current_param_file_, model_) == false) {
+      showMessageBox(this, ERROR, tr("保存失败"), 1, {tr("确认")});
+    } else {
+      showMessageBox(this, SUCCESS, tr("保存成功"), 1, {tr("确认")});
+    }
+  });
+  connect(ui->import_param_btn, &QPushButton::clicked, [=]() {
+    QString file_name = QFileDialog::getOpenFileName(this, tr("导入参数文件"));
+    if (file_name.isEmpty()) {
+      return;
+    }
+    if (!readJson(file_name, model_)) {
+      showMessageBox(this, ERROR, tr("文件导入失败。"), 1, {tr("确认")});
+    } else {
+      current_param_file_ = file_name;
+      showMessageBox(this, SUCCESS, tr("文件导入成功。"), 1, {tr("确认")});
+      ui->param_manage_tree_view->setAlternatingRowColors(true); // 间隔变色
+      ui->param_manage_tree_view->header()->resizeSection(0, 200);
+      ui->param_manage_tree_view->header()->resizeSection(5, 200);
+      ui->param_manage_tree_view->setSelectionBehavior(QTreeView::SelectRows);
+      ui->param_manage_tree_view->setSelectionMode(QTreeView::SingleSelection);
+      ui->param_manage_tree_view->setContextMenuPolicy(Qt::CustomContextMenu);
+      ui->param_manage_tree_view->expandAll();
+    }
+  });
+  connect(ui->export_param_btn, &QPushButton::clicked, [=]() {
+    QString file_name = QFileDialog::getSaveFileName(this, tr("导出参数文件"));
+    if (file_name.isEmpty()) {
+      return;
+    }
+    if (!file_name.endsWith(".json", Qt::CaseInsensitive)) {
+      file_name.append(".json");
+    }
+    if (dumpJson(file_name, model_)) {
+      showMessageBox(this, SUCCESS, tr("保存成功。"), 1, {tr("确认")});
+    } else {
+      showMessageBox(this, ERROR, tr("保存失败。"), 1, {tr("确认")});
+    }
+  });
+  connect(ui->apply_param_btn, &QPushButton::clicked, [=]() {
+    QStandardItem *root_item = model_->invisibleRootItem();
+    for (int i = 0; i < root_item->rowCount(); ++i) {
+      QStandardItem *item = root_item->child(i);
+      if (item->hasChildren()) {
+        for (int j = 0; j < item->rowCount(); ++j) {
+          ParamLine param_line;
+          param_line.name = item->child(j, 0)->text().trimmed();
+          param_line.dtype = item->child(j, 1)->text().trimmed();
+          param_line.length = item->child(j, 2)->text().trimmed().toInt();
+          param_line.min_range = item->child(j, 3)->text().trimmed();
+          param_line.max_range = item->child(j, 4)->text().trimmed();
+          param_line.value = item->child(j, 5)->text().trimmed();
+          QStringList value_list = item->child(j, 5)->text().split(",");
+          if (value_list.size() > 1) {
+            param_line.is_array = true;
+          } else {
+            param_line.is_array = false;
+          }
+          param_line.comment = item->child(j, 7)->text();
+
+          std::string data;
+          DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
+          switch (dtype) {
+          case INT32: {
+            if (!param_line.is_array) {
+              int32_t type_value = param_line.value.toInt();
+              uint8_t byte_array[sizeof(int32_t)];
+              std::memcpy(byte_array, &type_value, sizeof(int32_t));
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            } else {
+              QStringList value_list = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+              QVector<int32_t> value_vec;
+              for (int i = 0; i < value_list.length(); ++i) {
+                value_vec.append(value_list.at(i).toInt());
+              }
+              int data_size = sizeof(int32_t) * value_vec.length();
+              uint8_t byte_array[data_size];
+              std::memcpy(byte_array, value_vec.data(), data_size);
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            }
+            break;
+          }
+          case UINT32: {
+            if (!param_line.is_array) {
+              uint32_t type_value = param_line.value.toUInt();
+              uint8_t byte_array[sizeof(uint32_t)];
+              std::memcpy(byte_array, &type_value, sizeof(uint32_t));
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            } else {
+              QStringList value_list = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+              QVector<uint32_t> value_vec;
+              for (int i = 0; i < value_list.length(); ++i) {
+                value_vec.append(value_list.at(i).toUInt());
+              }
+              int data_size = sizeof(uint32_t) * value_vec.length();
+              uint8_t byte_array[data_size];
+              std::memcpy(byte_array, value_vec.data(), data_size);
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            }
+            break;
+          }
+          case INT64: {
+            if (!param_line.is_array) {
+              int64_t type_value = param_line.value.toLongLong();
+              uint8_t byte_array[sizeof(int64_t)];
+              std::memcpy(byte_array, &type_value, sizeof(int64_t));
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            } else {
+              QStringList value_list = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+              QVector<int64_t> value_vec;
+              for (int i = 0; i < value_list.length(); ++i) {
+                value_vec.append(value_list.at(i).toLongLong());
+              }
+              int data_size = sizeof(int64_t) * value_vec.length();
+              uint8_t byte_array[data_size];
+              std::memcpy(byte_array, value_vec.data(), data_size);
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            }
+            break;
+          }
+          case UINT64: {
+            if (!param_line.is_array) {
+              uint64_t type_value = param_line.value.toULongLong();
+              uint8_t byte_array[sizeof(uint64_t)];
+              std::memcpy(byte_array, &type_value, sizeof(uint64_t));
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            } else {
+              QStringList value_list = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+              QVector<uint64_t> value_vec;
+              for (int i = 0; i < value_list.length(); ++i) {
+                value_vec.append(value_list.at(i).toULongLong());
+              }
+              int data_size = sizeof(uint64_t) * value_vec.length();
+              uint8_t byte_array[data_size];
+              std::memcpy(byte_array, value_vec.data(), data_size);
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            }
+            break;
+          }
+          case FLOAT32: {
+            if (!param_line.is_array) {
+              float type_value = param_line.value.toFloat();
+              uint8_t byte_array[sizeof(float)];
+              std::memcpy(byte_array, &type_value, sizeof(float));
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            } else {
+              QStringList value_list = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+              QVector<float> value_vec;
+              for (int i = 0; i < value_list.length(); ++i) {
+                value_vec.append(value_list.at(i).toFloat());
+              }
+              int data_size = sizeof(float) * value_vec.length();
+              uint8_t byte_array[data_size];
+              std::memcpy(byte_array, value_vec.data(), data_size);
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            }
+            break;
+          }
+          case FLOAT64: {
+            if (!param_line.is_array) {
+              double type_value = param_line.value.toDouble();
+              uint8_t byte_array[sizeof(double)];
+              std::memcpy(byte_array, &type_value, sizeof(double));
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            } else {
+              QStringList value_list = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+              QVector<double> value_vec;
+              for (int i = 0; i < value_list.length(); ++i) {
+                value_vec.append(value_list.at(i).toDouble());
+              }
+              int data_size = sizeof(double) * value_vec.length();
+              uint8_t byte_array[data_size];
+              std::memcpy(byte_array, value_vec.data(), data_size);
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            }
+            break;
+          }
+          case CHAR: {
+            if (!param_line.is_array) {
+              char type_value = param_line.value.at(0).toLatin1();
+              uint8_t byte_array[sizeof(char)];
+              std::memcpy(byte_array, &type_value, sizeof(char));
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            } else {
+              QStringList value_list = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+              QVector<char> value_vec;
+              for (int i = 0; i < value_list.length(); ++i) {
+                value_vec.append(value_list.at(i).at(0).toLatin1());
+              }
+              int data_size = sizeof(char) * value_vec.length();
+              uint8_t byte_array[data_size];
+              std::memcpy(byte_array, value_vec.data(), data_size);
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            }
+            break;
+          }
+          case UCHAR: {
+            if (!param_line.is_array) {
+              uchar type_value = param_line.value.at(0).toLatin1();
+              uint8_t byte_array[sizeof(uchar)];
+              std::memcpy(byte_array, &type_value, sizeof(uchar));
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            } else {
+              QStringList value_list = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+              QVector<uchar> value_vec;
+              for (int i = 0; i < value_list.length(); ++i) {
+                value_vec.append(value_list.at(i).at(0).toLatin1());
+              }
+              int data_size = sizeof(uchar) * value_vec.length();
+              uint8_t byte_array[data_size];
+              std::memcpy(byte_array, value_vec.data(), data_size);
+              data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+            }
+            break;
+          }
+          case STRING: {
+            if (!param_line.is_array) {
+              data = param_line.value.toStdString();
+            } else {
+              QString value = item->child(j, 5)->text().remove(QChar(' ', Qt::CaseInsensitive)).remove(QChar(',', Qt::CaseInsensitive));
+              data = value.toStdString();
+            }
+            break;
+          }
+          default:
+            break;
+          }
+
+          if (item->text() == "load_machine") {
+            QtConcurrent::run([=]() {
+              rclcomm_->loadMachineParam(dtype, param_line.name.toStdString(), data, param_line.is_array);
+            });
+          } else if (item->text() == "compose_machine") {
+            QtConcurrent::run([=]() {
+              rclcomm_->composeMachineParam(dtype, param_line.name.toStdString(), data, param_line.is_array);
+            });
+          } else if (item->text() == "sewing_machine") {
+            QtConcurrent::run([=]() {
+              rclcomm_->sewingMachineParam(dtype, param_line.name.toStdString(), data, param_line.is_array);
+            });
+          }
+        }
+      }
+    }
+  });
 }
 
 // 开发者界面
@@ -748,6 +1127,147 @@ void MainWindow::showLoadMachineImage() {
   }
 }
 
+bool MainWindow::readJson(const QString &json_file, QStandardItemModel *model) {
+  model->clear();
+  // 设置表头
+  model->setHorizontalHeaderLabels(QStringList() << tr("属性")
+                                                 << tr("类型")
+                                                 << tr("长度")
+                                                 << tr("最小值")
+                                                 << tr("最大值")
+                                                 << tr("值")
+                                                 << tr("是否存储")
+                                                 << tr("释义"));
+
+  // 打开JSON文件
+  QFile file(json_file);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    qDebug() << "无法打开参数文件";
+    return false;
+  }
+
+  // 读取JSON文件内容
+  QByteArray json_data = file.readAll();
+
+  // 解析JSON数据
+  QJsonDocument json_doc = QJsonDocument::fromJson(json_data);
+  if (!json_doc.isNull() && json_doc.isObject()) {
+    QJsonObject json_obj = json_doc.object(); // json对象
+
+    QStringList top_keys = json_obj.keys(); // 所有的keys
+
+    for (auto i = top_keys.constBegin(); i != top_keys.constEnd(); ++i) {
+      QJsonObject machine_obj = json_obj.value(*i).toObject(); // 当前机器
+      QStandardItem *machine_item = new QStandardItem(*i);
+      model->appendRow(machine_item);
+
+      // 遍历每个机器的参数
+      QStringList second_keys = machine_obj.keys();
+      for (auto j = second_keys.constBegin(); j != second_keys.constEnd(); ++j) {
+        QJsonObject key_obj = machine_obj.value(*j).toObject();
+
+        QStandardItem *key_item = new QStandardItem(*j);                                    // 属性
+        QStandardItem *dtype_item = new QStandardItem(key_obj.value("dtype").toString());   // 类型
+        QStandardItem *length_item = new QStandardItem(key_obj.value("length").toString()); // 长度
+        QStandardItem *min_item = new QStandardItem(key_obj.value("min").toString());       // 最小值
+        QStandardItem *max_item = new QStandardItem(key_obj.value("max").toString());       // 最大值
+        QStandardItem *value_item;                                                          // 值
+        if (length_item->text().toInt() > 1) {
+          QJsonArray value_array = key_obj.value("value").toArray();
+
+          QStringList value_list;
+          for (const QJsonValue &value : value_array) {
+            value_list.append(value.toString());
+          }
+          value_item = new QStandardItem(value_list.join(", "));
+        } else {
+          value_item = new QStandardItem(key_obj.value("value").toString());
+        }
+
+        QStandardItem *storable_item = new QStandardItem(key_obj.value("storable").toString()); // 是否存储
+        QStandardItem *comment_item = new QStandardItem(key_obj.value("comment").toString());   // 释义
+
+        // 存为一行
+        QList<QStandardItem *> item_line{key_item, dtype_item, length_item, min_item, max_item, value_item, storable_item, comment_item};
+        machine_item->appendRow(item_line);
+      }
+    }
+  } else {
+    qDebug() << "无效的JSON数据";
+    return false;
+  }
+
+  // 关闭文件
+  file.close();
+  return true;
+}
+
+bool MainWindow::dumpJson(const QString &json_file, QStandardItemModel *model) {
+  std::function<QJsonObject(QStandardItem * parent_item)> packJson = [&](QStandardItem *parent_item) -> QJsonObject {
+    QJsonObject parent_obj;
+    for (int i = 0; i < parent_item->rowCount(); ++i) {
+      if (parent_item->hasChildren()) {
+        QStandardItem *child_item = parent_item->child(i);
+        if (child_item->hasChildren()) {
+          parent_obj.insert(child_item->text(), packJson(child_item));
+        } else {
+          if (getItemLevel(child_item) == 0) {
+            parent_obj.insert(child_item->text(), "");
+          } else {
+            QJsonObject prop_obj;
+            prop_obj.insert("dtype", parent_item->child(i, 1)->text());
+            prop_obj.insert("length", parent_item->child(i, 2)->text());
+            prop_obj.insert("min", parent_item->child(i, 3)->text());
+            prop_obj.insert("max", parent_item->child(i, 4)->text());
+
+            if (parent_item->child(i, 2)->text().toInt() > 1) {
+              QJsonArray value_array;
+              QStringList value_list = parent_item->child(i, 5)->text().split(",");
+              for (int k = 0; k < value_list.length(); ++k) {
+                value_array.append(value_list.at(k));
+              }
+              prop_obj.insert("value", value_array);
+            } else {
+              prop_obj.insert("value", parent_item->child(i, 5)->text());
+            }
+            prop_obj.insert("storable", parent_item->child(i, 6)->text());
+            prop_obj.insert("comment", parent_item->child(i, 7)->text());
+            parent_obj.insert(parent_item->child(i, 0)->text(), prop_obj);
+          }
+        }
+      }
+    }
+    return parent_obj;
+  };
+
+  QJsonObject json_obj = packJson(model->invisibleRootItem());
+
+  QJsonDocument json_doc;
+  json_doc.setObject(json_obj);
+
+  // 创建文件
+  QFile file(json_file);
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+    qDebug() << "文件写入错误";
+    return false;
+  }
+
+  QTextStream stream(&file);
+  stream.setCodec("UTF-8");
+  stream << json_doc.toJson();
+  file.close();
+  return true;
+}
+
+int MainWindow::getItemLevel(QStandardItem *item) {
+  int level = 0;
+  while (item && item->parent()) {
+    item = item->parent();
+    level++;
+  }
+  return level;
+}
+
 void MainWindow::settingConnection() {
   // 状态label显示
   connect(this, &MainWindow::signUpdateLabelState, [=](QString text) {
@@ -771,7 +1291,7 @@ void MainWindow::settingConnection() {
 
   // 跳转界面显示上料机监控
   connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=]() {
-    if (ui->stackedWidget->currentWidget() == ui->page1) {
+    if (ui->stackedWidget->currentWidget() == ui->monitor_page) {
       showLoadMachineImage();
     }
   });

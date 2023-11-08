@@ -44,6 +44,7 @@
 #include "syt_msgs/srv/load_machine_tray_gap.hpp"
 #include "syt_msgs/srv/load_machine_tray_offset.hpp"
 #include "syt_msgs/srv/mcu_restart.hpp"
+#include "syt_msgs/srv/param_manage.hpp"
 #include "syt_msgs/srv/rename_cloth_style.hpp"
 #include "syt_msgs/srv/run_calibration.hpp"
 #include "syt_msgs/srv/set_current_cloth_style.hpp"
@@ -111,51 +112,54 @@ public:
   void updateSewingMachine();
 
   // 上料机
-  void loadMachineReset(int id);                                      // 上料机复位
-  void loadMachineAddCloth(int id);                                   // 补料模式
-  void loadMachineClearTable(int id);                                 // 清理台面
-  void loadMachineClothSize(int id, uint32_t width, uint32_t length); // 裁片尺寸
-  void loadMachineLoadDistance(int id, uint32_t distance);            // 上料行程
-  void loadMachineOffset(int id, int offset);                         // 夹爪偏移
-  void loadMachineTrayGap(int id, int32_t height);                    // 上料间隔
-  void loadMachineTrayOffset(int id, int32_t offset);                 // 上料偏移
-  void loadMachineRoughAlign(int id);                                 // 粗对位
-  void loadMachineHoldCloth(int id);                                  // 抓住裁片
-  void loadMachineGrabCloth(int id);                                  // 上裁片
-  void loadMachinePreSetup(int id);                                   // 预备设置
-  void loadMachineVisualAlign(int id);                                // 视觉对位
-  void loadMachineThickness(int id, float thickness);                 // 布料厚度
-  void loadMachineExtendNeedle(int id, bool enable);                  // 上料针
-  void loadMachineWeightSwitch(int id, bool enable);                  // 重量传感器
-  void loadMachineUnpleatSwitch(int id, bool enable);                 // 除褶动作
-  void loadMachineAgingSwitch(int id, bool enable);                   // 老化
+  void loadMachineReset(int id);                                                        // 上料机复位
+  void loadMachineAddCloth(int id);                                                     // 补料模式
+  void loadMachineClearTable(int id);                                                   // 清理台面
+  void loadMachineClothSize(int id, uint32_t width, uint32_t length);                   // 裁片尺寸
+  void loadMachineLoadDistance(int id, uint32_t distance);                              // 上料行程
+  void loadMachineOffset(int id, int offset);                                           // 夹爪偏移
+  void loadMachineTrayGap(int id, int32_t height);                                      // 上料间隔
+  void loadMachineTrayOffset(int id, int32_t offset);                                   // 上料偏移
+  void loadMachineRoughAlign(int id);                                                   // 粗对位
+  void loadMachineHoldCloth(int id);                                                    // 抓住裁片
+  void loadMachineGrabCloth(int id);                                                    // 上裁片
+  void loadMachinePreSetup(int id);                                                     // 预备设置
+  void loadMachineVisualAlign(int id);                                                  // 视觉对位
+  void loadMachineThickness(int id, float thickness);                                   // 布料厚度
+  void loadMachineExtendNeedle(int id, bool enable);                                    // 上料针
+  void loadMachineWeightSwitch(int id, bool enable);                                    // 重量传感器
+  void loadMachineUnpleatSwitch(int id, bool enable);                                   // 除褶动作
+  void loadMachineAgingSwitch(int id, bool enable);                                     // 老化
+  void loadMachineParam(int dtype, std::string field, std::string data, bool is_array); // 参数设置
 
   // 合片机
-  void composeMachineReset();                                                             // 合片机复位
-  void composeMachineStop();                                                              // 停止
-  void composeMachineWipeFold();                                                          // 除褶
-  void composeMachineExtendNeedle();                                                      // 出针
-  void composeMachineWithdrawNeedle();                                                    // 收针
-  void composeMachineBlowWind();                                                          // 吹气
-  void composeMachineStopBlow();                                                          // 停气
-  void composeMachineFastenSheet();                                                       // 开吸风台
-  void composeMachineUnfastenSheet();                                                     // 关吸风台
-  void composeMachineMoveHand(float x, float y, float z, float c);                        // 移动抓手
-  void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states); // 移动吸盘
-  void composeMachineFittingPlane();                                                      // 平面拟合
-  void composeMachineBlowHeight(float height);                                            // 吹气高度
-  void composeMachineTableLight(float ratio);                                             // 台面灯
+  void composeMachineReset();                                                              // 合片机复位
+  void composeMachineStop();                                                               // 停止
+  void composeMachineWipeFold();                                                           // 除褶
+  void composeMachineExtendNeedle();                                                       // 出针
+  void composeMachineWithdrawNeedle();                                                     // 收针
+  void composeMachineBlowWind();                                                           // 吹气
+  void composeMachineStopBlow();                                                           // 停气
+  void composeMachineFastenSheet();                                                        // 开吸风台
+  void composeMachineUnfastenSheet();                                                      // 关吸风台
+  void composeMachineMoveHand(float x, float y, float z, float c);                         // 移动抓手
+  void composeMachineMoveSucker(syt_msgs::msg::ComposeMachineSuckerStates sucker_states);  // 移动吸盘
+  void composeMachineFittingPlane();                                                       // 平面拟合
+  void composeMachineBlowHeight(float height);                                             // 吹气高度
+  void composeMachineTableLight(float ratio);                                              // 台面灯
+  void composeMachineParam(int dtype, std::string field, std::string data, bool is_array); // 参数设置
 
   // 缝纫机
-  void sewingMachineReset();                                                        // 缝纫机复位
-  void sewingMachineMoveHand(float x, float y, float c, bool z);                    // 移动抓手
-  void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);       // 发送关键点
-  void sewingMachineNeedle(float line_1, float line_2, float line_3, float line_4); // 发送针长
-  void sewingMachineThickness(float thickness);                                     // 缝纫厚度
-  void sewingMachineLabelWidth(bool enable, int side, float width, float position); // 水洗标设置
-  void sewingMachineLabelReset();                                                   // 水洗标复位
-  void sewingMachineSpeed(int speed);                                               // 缝纫机档位
-  void sewingMachineMode(int mode);                                                 // 转换运行模式
+  void sewingMachineReset();                                                              // 缝纫机复位
+  void sewingMachineMoveHand(float x, float y, float c, bool z);                          // 移动抓手
+  void sewingMachineSendKeypoints(syt_msgs::msg::ClothKeypoints2f keypoints);             // 发送关键点
+  void sewingMachineNeedle(float line_1, float line_2, float line_3, float line_4);       // 发送针长
+  void sewingMachineThickness(float thickness);                                           // 缝纫厚度
+  void sewingMachineLabelWidth(bool enable, int side, float width, float position);       // 水洗标设置
+  void sewingMachineLabelReset();                                                         // 水洗标复位
+  void sewingMachineSpeed(int speed);                                                     // 缝纫机档位
+  void sewingMachineMode(int mode);                                                       // 转换运行模式
+  void sewingMachineParam(int dtype, std::string field, std::string data, bool is_array); // 参数设置
 
   // 视觉检测
   void getClothInfo(uint8_t frame_id, int cloth_type); // 获取衣服信息

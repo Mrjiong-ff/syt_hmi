@@ -1,0 +1,42 @@
+{
+    "sewing_machine":{
+        "c_zero_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-pi",
+            "max": "pi",
+            "value": "0",
+            "storable": "1",
+            "comment": "C轴零位置偏移值"
+        },
+        "needle_pitch": {
+            "dtype": "float32",
+            "length": "4",
+            "min": "0",
+            "max": "inf",
+            "value": ["2.5", "2.5", "2.5", "2.5"],
+            "storable": "0",
+            "comment": "解释"
+        },
+        "care_label_side": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "水洗标"
+        }
+    },
+    "load_machine":{
+        "load_distance": {
+            "dtype": "uint32",
+            "length": "1",
+            "min": "7000",
+            "max": "10800",
+            "value": "9000",
+            "storable": "1",
+            "comment": "上料行程"
+        }
+    }
+}
