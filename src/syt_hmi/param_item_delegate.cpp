@@ -1,4 +1,5 @@
 #include "syt_hmi/param_item_delegate.h"
+
 #include <QComboBox>
 #include <QKeyEvent>
 #include <QLineEdit>
@@ -14,12 +15,17 @@ QMap<QString, DATA_TYPE> str_data_type_map = {
     std::map<QString, DATA_TYPE>::value_type("char", CHAR),
     std::map<QString, DATA_TYPE>::value_type("uchar", UCHAR),
     std::map<QString, DATA_TYPE>::value_type("string", STRING),
+    std::map<QString, DATA_TYPE>::value_type("bool", UCHAR),
 };
 
-//////////////////////////////////// 名称委托 ////////////////////////////////////
-NameItemDelegate::NameItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {}
+//////////////////////////////////// 名称委托
+///////////////////////////////////////
+NameItemDelegate::NameItemDelegate(QObject *parent)
+    : QStyledItemDelegate(parent) {}
 
-QWidget *NameItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+QWidget *NameItemDelegate::createEditor(QWidget *parent,
+                                        const QStyleOptionViewItem &option,
+                                        const QModelIndex &index) const {
   Q_UNUSED(option);
   QLineEdit *name_line_edit = new QLineEdit(parent);
   QRegExp reg_exp("^(?![_0-9])[a-z_][a-z0-9_]*$");
@@ -28,12 +34,14 @@ QWidget *NameItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
   return name_line_edit;
 }
 
-void NameItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
+void NameItemDelegate::setEditorData(QWidget *editor,
+                                     const QModelIndex &index) const {
   QLineEdit *name_line_edit = static_cast<QLineEdit *>(editor);
   name_line_edit->setText(index.data(Qt::EditRole).toString());
 }
 
-void NameItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+void NameItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                    const QModelIndex &index) const {
   QLineEdit *name_line_edit = static_cast<QLineEdit *>(editor);
   QString new_text = name_line_edit->text();
   QString old_text = index.data(Qt::EditRole).toString();
@@ -44,7 +52,9 @@ void NameItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
   model->setData(index, new_text, Qt::EditRole);
 }
 
-void NameItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void NameItemDelegate::updateEditorGeometry(QWidget *editor,
+                                            const QStyleOptionViewItem &option,
+                                            const QModelIndex &index) const {
   Q_UNUSED(index);
   editor->setGeometry(option.rect);
 }
@@ -62,10 +72,14 @@ bool NameItemDelegate::eventFilter(QObject *obj, QEvent *event) {
   return false;
 }
 
-//////////////////////////////////// 类型委托 ////////////////////////////////////
-TypeItemDelegate::TypeItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {}
+//////////////////////////////////// 类型委托
+///////////////////////////////////////
+TypeItemDelegate::TypeItemDelegate(QObject *parent)
+    : QStyledItemDelegate(parent) {}
 
-QWidget *TypeItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+QWidget *TypeItemDelegate::createEditor(QWidget *parent,
+                                        const QStyleOptionViewItem &option,
+                                        const QModelIndex &index) const {
   Q_UNUSED(option);
   if (index.model()->data(index, Qt::EditRole).toString().isEmpty()) {
     return NULL;
@@ -83,26 +97,34 @@ QWidget *TypeItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
   return type_combo_box;
 }
 
-void TypeItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
+void TypeItemDelegate::setEditorData(QWidget *editor,
+                                     const QModelIndex &index) const {
   QString value = index.model()->data(index, Qt::EditRole).toString();
   QComboBox *type_combo_box = static_cast<QComboBox *>(editor);
   type_combo_box->setCurrentText(value);
 }
 
-void TypeItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+void TypeItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                    const QModelIndex &index) const {
   QComboBox *type_combo_box = static_cast<QComboBox *>(editor);
   model->setData(index, type_combo_box->currentText(), Qt::EditRole);
 }
 
-void TypeItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void TypeItemDelegate::updateEditorGeometry(QWidget *editor,
+                                            const QStyleOptionViewItem &option,
+                                            const QModelIndex &index) const {
   Q_UNUSED(index);
   editor->setGeometry(option.rect);
 }
 
-//////////////////////////////////// 长度委托 ////////////////////////////////////
-LengthItemDelegate::LengthItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {}
+//////////////////////////////////// 长度委托
+///////////////////////////////////////
+LengthItemDelegate::LengthItemDelegate(QObject *parent)
+    : QStyledItemDelegate(parent) {}
 
-QWidget *LengthItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+QWidget *LengthItemDelegate::createEditor(QWidget *parent,
+                                          const QStyleOptionViewItem &option,
+                                          const QModelIndex &index) const {
   Q_UNUSED(option);
   if (index.model()->data(index, Qt::EditRole).toString().isEmpty()) {
     return NULL;
@@ -113,26 +135,35 @@ QWidget *LengthItemDelegate::createEditor(QWidget *parent, const QStyleOptionVie
   return length_spin_box;
 }
 
-void LengthItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
+void LengthItemDelegate::setEditorData(QWidget *editor,
+                                       const QModelIndex &index) const {
   QString value = index.model()->data(index, Qt::EditRole).toString();
   QSpinBox *length_spin_box = static_cast<QSpinBox *>(editor);
   length_spin_box->setValue(value.toInt());
 }
 
-void LengthItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+void LengthItemDelegate::setModelData(QWidget *editor,
+                                      QAbstractItemModel *model,
+                                      const QModelIndex &index) const {
   QSpinBox *length_spin_box = static_cast<QSpinBox *>(editor);
   model->setData(index, length_spin_box->value(), Qt::EditRole);
 }
 
-void LengthItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void LengthItemDelegate::updateEditorGeometry(
+    QWidget *editor, const QStyleOptionViewItem &option,
+    const QModelIndex &index) const {
   Q_UNUSED(index);
   editor->setGeometry(option.rect);
 }
 
-//////////////////////////////////// 范围委托 ////////////////////////////////////
-RangeItemDelegate::RangeItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {}
+//////////////////////////////////// 范围委托
+///////////////////////////////////////
+RangeItemDelegate::RangeItemDelegate(QObject *parent)
+    : QStyledItemDelegate(parent) {}
 
-QWidget *RangeItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+QWidget *RangeItemDelegate::createEditor(QWidget *parent,
+                                         const QStyleOptionViewItem &option,
+                                         const QModelIndex &index) const {
   Q_UNUSED(option);
   if (index.model()->data(index, Qt::EditRole).toString().isEmpty()) {
     return NULL;
@@ -149,7 +180,8 @@ QWidget *RangeItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
   return range_combo_box;
 }
 
-void RangeItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
+void RangeItemDelegate::setEditorData(QWidget *editor,
+                                      const QModelIndex &index) const {
   QString value = index.model()->data(index, Qt::EditRole).toString();
   if (value.isEmpty()) {
     value = QString("0");
@@ -158,7 +190,8 @@ void RangeItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
   range_combo_box->setCurrentText(value);
 }
 
-void RangeItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+void RangeItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                     const QModelIndex &index) const {
   QComboBox *range_combo_box = static_cast<QComboBox *>(editor);
   if (range_combo_box->currentText().isEmpty()) {
     range_combo_box->setCurrentText("0");
@@ -166,26 +199,35 @@ void RangeItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
   model->setData(index, range_combo_box->currentText(), Qt::EditRole);
 }
 
-void RangeItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void RangeItemDelegate::updateEditorGeometry(QWidget *editor,
+                                             const QStyleOptionViewItem &option,
+                                             const QModelIndex &index) const {
   Q_UNUSED(index);
   editor->setGeometry(option.rect);
 }
 
-//////////////////////////////////// 数值委托 ////////////////////////////////////
-ValueItemDelegate::ValueItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {}
+//////////////////////////////////// 数值委托
+///////////////////////////////////////
+ValueItemDelegate::ValueItemDelegate(QObject *parent)
+    : QStyledItemDelegate(parent) {}
 
-QWidget *ValueItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+QWidget *ValueItemDelegate::createEditor(QWidget *parent,
+                                         const QStyleOptionViewItem &option,
+                                         const QModelIndex &index) const {
   Q_UNUSED(option);
   if (index.model()->data(index, Qt::EditRole).toString().isEmpty()) {
     return NULL;
   }
   QLineEdit *value_line_edit = new QLineEdit(parent);
-  QRegExp reg_exp("^\\s*(-?inf|-?pi|-?\\d+(?:\\.\\d+)?)(?:\\s*,\\s*(-?inf|-?pi|-?\\d+(?:\\.\\d+)?))*\\s*$");
+  QRegExp reg_exp(
+      "^\\s*(-?inf|-?pi|-?\\d+(?:\\.\\d+)?)(?:\\s*,\\s*(-?inf|-?pi|-?\\d+(?:\\."
+      "\\d+)?))*\\s*$");
   value_line_edit->setValidator(new QRegExpValidator(reg_exp, parent));
   return value_line_edit;
 }
 
-void ValueItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
+void ValueItemDelegate::setEditorData(QWidget *editor,
+                                      const QModelIndex &index) const {
   QString text = index.model()->data(index, Qt::EditRole).toString();
   if (text.isEmpty()) {
     text = QString("0");
@@ -194,7 +236,8 @@ void ValueItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
   value_line_edit->setText(text);
 }
 
-void ValueItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+void ValueItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                     const QModelIndex &index) const {
   QLineEdit *value_line_edit = static_cast<QLineEdit *>(editor);
   if (value_line_edit->text().isEmpty()) {
     value_line_edit->setText("0");
@@ -202,15 +245,21 @@ void ValueItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
   model->setData(index, value_line_edit->text(), Qt::EditRole);
 }
 
-void ValueItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void ValueItemDelegate::updateEditorGeometry(QWidget *editor,
+                                             const QStyleOptionViewItem &option,
+                                             const QModelIndex &index) const {
   Q_UNUSED(index);
   editor->setGeometry(option.rect);
 }
 
-//////////////////////////////////// 存储委托 ////////////////////////////////////
-StoreItemDelegate::StoreItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {}
+//////////////////////////////////// 存储委托
+///////////////////////////////////////
+StoreItemDelegate::StoreItemDelegate(QObject *parent)
+    : QStyledItemDelegate(parent) {}
 
-QWidget *StoreItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+QWidget *StoreItemDelegate::createEditor(QWidget *parent,
+                                         const QStyleOptionViewItem &option,
+                                         const QModelIndex &index) const {
   Q_UNUSED(option);
   if (index.model()->data(index, Qt::EditRole).toString().isEmpty()) {
     return NULL;
@@ -221,18 +270,22 @@ QWidget *StoreItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
   return store_spin_box;
 }
 
-void StoreItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
+void StoreItemDelegate::setEditorData(QWidget *editor,
+                                      const QModelIndex &index) const {
   QString value = index.model()->data(index, Qt::EditRole).toString();
   QSpinBox *store_spin_box = static_cast<QSpinBox *>(editor);
   store_spin_box->setValue(value.toInt());
 }
 
-void StoreItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+void StoreItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                     const QModelIndex &index) const {
   QSpinBox *store_spin_box = static_cast<QSpinBox *>(editor);
   model->setData(index, store_spin_box->value(), Qt::EditRole);
 }
 
-void StoreItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void StoreItemDelegate::updateEditorGeometry(QWidget *editor,
+                                             const QStyleOptionViewItem &option,
+                                             const QModelIndex &index) const {
   Q_UNUSED(index);
   editor->setGeometry(option.rect);
 }
