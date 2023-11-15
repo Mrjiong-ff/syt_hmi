@@ -11,12 +11,11 @@
 #include "syt_hmi/globalapplication.h"
 #include "syt_hmi/param_item_delegate.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent),
-      ui(new Ui::MainWindow),
-      exe_count_(0),
-      max_count_(0),
-      cur_count_(0) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+                                          ui(new Ui::MainWindow),
+                                          exe_count_(0),
+                                          max_count_(0),
+                                          cur_count_(0) {
   ui->setupUi(this);
 
   // 初始化节点
@@ -29,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent)
   setTimeComponent();
   setToolBar();
   setMainControlButton();
-  setPageJump();
   setVisualComponent();
   setBaseComponet();
   setChooseStyleComponet();
@@ -54,17 +52,17 @@ void MainWindow::region(const QPoint &currentGlobalPoint) {
   QRect rect = this->rect();
 
   QPoint topLeft =
-      this->mapToGlobal(rect.topLeft());  // 将左上角的(0,0)转化为全局坐标
+      this->mapToGlobal(rect.topLeft()); // 将左上角的(0,0)转化为全局坐标
   QPoint rightButton = this->mapToGlobal(rect.bottomRight());
 
-  int x = currentGlobalPoint.x();  // 当前鼠标的坐标
+  int x = currentGlobalPoint.x(); // 当前鼠标的坐标
   int y = currentGlobalPoint.y();
 
   if (((topLeft.x() + PADDING >= x) && (topLeft.x() <= x)) &&
       ((topLeft.y() + PADDING >= y) && (topLeft.y() <= y))) {
     // 左上角
     dir_ = LEFTTOP;
-    this->setCursor(QCursor(Qt::SizeFDiagCursor));  // 设置光标形状
+    this->setCursor(QCursor(Qt::SizeFDiagCursor)); // 设置光标形状
   } else if (((x >= rightButton.x() - PADDING) && (x <= rightButton.x())) &&
              ((y >= rightButton.y() - PADDING) && (y <= rightButton.y()))) {
     // 右下角
@@ -116,28 +114,25 @@ bool MainWindow::event(QEvent *event) {
                                    nullptr);
     ui->progress_bar_3->setLabel(text);
 
-    text =
-        QApplication::translate("MainWindow",
-                                ui->running_state_label->property("translator")
-                                    .toString()
-                                    .toStdString()
-                                    .c_str(),
-                                nullptr);
+    text = QApplication::translate("MainWindow",
+                                   ui->running_state_label->property("translator")
+                                       .toString()
+                                       .toStdString()
+                                       .c_str(),
+                                   nullptr);
     ui->running_state_label->setText(text);
 
     for (auto act : title_menu_->actions()) {
-      text = QApplication::translate(
-          "MainWindow",
-          act->property("translator").toString().toStdString().c_str(),
-          nullptr);
+      text = QApplication::translate("MainWindow",
+                                     act->property("translator").toString().toStdString().c_str(),
+                                     nullptr);
       act->setText(text);
     }
 
     for (auto act : ui->menu_btn->menu()->actions()) {
-      text = QApplication::translate(
-          "MainWindow",
-          act->property("translator").toString().toStdString().c_str(),
-          nullptr);
+      text = QApplication::translate("MainWindow",
+                                     act->property("translator").toString().toStdString().c_str(),
+                                     nullptr);
       act->setText(text);
     }
   }
@@ -146,112 +141,110 @@ bool MainWindow::event(QEvent *event) {
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
   switch (event->button()) {
-    case Qt::LeftButton:
-      is_mouse_left_press_down_ = true;
-      if (ui->style_graphics_view->underMouse()) {
-        is_mouse_left_press_down_ = false;
-      }
+  case Qt::LeftButton:
+    is_mouse_left_press_down_ = true;
+    if (ui->style_graphics_view->underMouse()) {
+      is_mouse_left_press_down_ = false;
+    }
 
-      if (dir_ != NONE) {
-        this->mouseGrabber();  // 返回当前抓取鼠标输入的窗口
-      } else {
-        m_mousePos_ = event->globalPos() - this->frameGeometry().topLeft();
-      }
-      break;
-    case Qt::RightButton:
-      // this->setWindowState(Qt::WindowMinimized);
-      break;
-    default:
-      return;
+    if (dir_ != NONE) {
+      this->mouseGrabber(); // 返回当前抓取鼠标输入的窗口
+    } else {
+      m_mousePos_ = event->globalPos() - this->frameGeometry().topLeft();
+    }
+    break;
+  case Qt::RightButton:
+    // this->setWindowState(Qt::WindowMinimized);
+    break;
+  default:
+    return;
   }
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-  QPoint globalPoint = event->globalPos();  // 鼠标全局坐标
-  QRect rect = this->rect();                // rect == QRect(0,0 1280x720)
+  QPoint globalPoint = event->globalPos(); // 鼠标全局坐标
+  QRect rect = this->rect();               // rect == QRect(0,0 1280x720)
   QPoint topLeft = mapToGlobal(rect.topLeft());
   QPoint bottomRight = mapToGlobal(rect.bottomRight());
 
   if (this->windowState() != Qt::WindowMaximized) {
-    if (!is_mouse_left_press_down_)  // 没有按下左键时
+    if (!is_mouse_left_press_down_) // 没有按下左键时
     {
-      this->region(globalPoint);  // 窗口大小的改变——判断鼠标位置，改变光标形状
+      this->region(globalPoint); // 窗口大小的改变——判断鼠标位置，改变光标形状
     } else {
       if (dir_ != NONE) {
         QRect newRect(topLeft,
-                      bottomRight);  // 定义一个矩形  拖动后最大1000*1618
+                      bottomRight); // 定义一个矩形  拖动后最大1000*1618
 
         switch (dir_) {
-          case LEFT:
-            if (bottomRight.x() - globalPoint.x() <= this->minimumWidth()) {
-              newRect.setLeft(
-                  topLeft
-                      .x());  // 小于界面的最小宽度时，设置为左上角横坐标为窗口x
-              // 只改变左边界
-            } else {
-              newRect.setLeft(globalPoint.x());
-            }
-            break;
-          case RIGHT:
-            newRect.setWidth(globalPoint.x() - topLeft.x());  // 只能改变右边界
-            break;
-          case UP:
-            if (bottomRight.y() - globalPoint.y() <= this->minimumHeight()) {
-              newRect.setY(topLeft.y());
-            } else {
-              newRect.setY(globalPoint.y());
-            }
-            break;
-          case DOWN:
-            newRect.setHeight(globalPoint.y() - topLeft.y());
-            break;
-          case LEFTTOP:
-            if (bottomRight.x() - globalPoint.x() <= this->minimumWidth()) {
-              newRect.setX(topLeft.x());
-            } else {
-              newRect.setX(globalPoint.x());
-            }
+        case LEFT:
+          if (bottomRight.x() - globalPoint.x() <= this->minimumWidth()) {
+            newRect.setLeft(topLeft.x()); // 小于界面的最小宽度时，设置为左上角横坐标为窗口x
+            // 只改变左边界
+          } else {
+            newRect.setLeft(globalPoint.x());
+          }
+          break;
+        case RIGHT:
+          newRect.setWidth(globalPoint.x() - topLeft.x()); // 只能改变右边界
+          break;
+        case UP:
+          if (bottomRight.y() - globalPoint.y() <= this->minimumHeight()) {
+            newRect.setY(topLeft.y());
+          } else {
+            newRect.setY(globalPoint.y());
+          }
+          break;
+        case DOWN:
+          newRect.setHeight(globalPoint.y() - topLeft.y());
+          break;
+        case LEFTTOP:
+          if (bottomRight.x() - globalPoint.x() <= this->minimumWidth()) {
+            newRect.setX(topLeft.x());
+          } else {
+            newRect.setX(globalPoint.x());
+          }
 
-            if (bottomRight.y() - globalPoint.y() <= this->minimumHeight()) {
-              newRect.setY(topLeft.y());
-            } else {
-              newRect.setY(globalPoint.y());
-            }
-            break;
-          case RIGHTTOP:
-            if (globalPoint.x() - topLeft.x() >= this->minimumWidth()) {
-              newRect.setWidth(globalPoint.x() - topLeft.x());
-            } else {
-              newRect.setWidth(bottomRight.x() - topLeft.x());
-            }
-            if (bottomRight.y() - globalPoint.y() >= this->minimumHeight()) {
-              newRect.setY(globalPoint.y());
-            } else {
-              newRect.setY(topLeft.y());
-            }
-            break;
-          case LEFTBOTTOM:
-            if (bottomRight.x() - globalPoint.x() >= this->minimumWidth()) {
-              newRect.setX(globalPoint.x());
-            } else {
-              newRect.setX(topLeft.x());
-            }
-            if (globalPoint.y() - topLeft.y() >= this->minimumHeight()) {
-              newRect.setHeight(globalPoint.y() - topLeft.y());
-            } else {
-              newRect.setHeight(bottomRight.y() - topLeft.y());
-            }
-            break;
-          case RIGHTBOTTOM:
+          if (bottomRight.y() - globalPoint.y() <= this->minimumHeight()) {
+            newRect.setY(topLeft.y());
+          } else {
+            newRect.setY(globalPoint.y());
+          }
+          break;
+        case RIGHTTOP:
+          if (globalPoint.x() - topLeft.x() >= this->minimumWidth()) {
             newRect.setWidth(globalPoint.x() - topLeft.x());
+          } else {
+            newRect.setWidth(bottomRight.x() - topLeft.x());
+          }
+          if (bottomRight.y() - globalPoint.y() >= this->minimumHeight()) {
+            newRect.setY(globalPoint.y());
+          } else {
+            newRect.setY(topLeft.y());
+          }
+          break;
+        case LEFTBOTTOM:
+          if (bottomRight.x() - globalPoint.x() >= this->minimumWidth()) {
+            newRect.setX(globalPoint.x());
+          } else {
+            newRect.setX(topLeft.x());
+          }
+          if (globalPoint.y() - topLeft.y() >= this->minimumHeight()) {
             newRect.setHeight(globalPoint.y() - topLeft.y());
-            break;
-          default:
-            break;
+          } else {
+            newRect.setHeight(bottomRight.y() - topLeft.y());
+          }
+          break;
+        case RIGHTBOTTOM:
+          newRect.setWidth(globalPoint.x() - topLeft.x());
+          newRect.setHeight(globalPoint.y() - topLeft.y());
+          break;
+        default:
+          break;
         }
         this->setGeometry(newRect);
       } else {
-        move(event->globalPos() - m_mousePos_);  // 移动窗口
+        move(event->globalPos() - m_mousePos_); // 移动窗口
         event->accept();
       }
     }
@@ -262,7 +255,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
   if (event->button() == Qt::LeftButton) {
     is_mouse_left_press_down_ = false;
     if (dir_ != NONE) {
-      this->releaseMouse();  // 释放鼠标抓取
+      this->releaseMouse(); // 释放鼠标抓取
       this->setCursor(QCursor(Qt::ArrowCursor));
       dir_ = NONE;
     }
@@ -288,25 +281,12 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *ev) {
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
-  if (event->type() == QResizeEvent::Resize) {
-    // 翻页按钮
-    int init_page_btn_w = this->width() / 50;
-    int init_page_btn_h = this->height() / 9;
-
-    prev_btn_->setGeometry(0, this->height() / 2 - init_page_btn_h / 2,
-                           init_page_btn_w, init_page_btn_h);
-    next_btn_->setGeometry(this->width() - init_page_btn_w,
-                           this->height() / 2 - init_page_btn_h / 2,
-                           init_page_btn_w, init_page_btn_h);
-  }
-
   if (style_scene_->items().size()) {
     qreal gv_width = ui->style_graphics_view->width();
     qreal gv_height = ui->style_graphics_view->height();
 
     image_item_->setQGraphicsViewWH(gv_width, gv_height);
-    style_scene_->setSceneRect(-gv_width / 2, -gv_height / 2, gv_width,
-                               gv_height);
+    style_scene_->setSceneRect(-gv_width / 2, -gv_height / 2, gv_width, gv_height);
   }
   event->accept();
 }
@@ -315,14 +295,14 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   if (event->modifiers() == Qt::AltModifier) {
     // 一些主界面的快捷键
     switch (event->key()) {
-      case Qt::Key_A:
-        emit prev_btn_->click();
-        break;
-      case Qt::Key_D:
-        emit next_btn_->click();
-        break;
-      default:
-        break;
+    case Qt::Key_A:
+      slotPrevPage();
+      break;
+    case Qt::Key_D:
+      slotNextPage();
+      break;
+    default:
+      break;
     }
   }
 }
@@ -371,14 +351,13 @@ void MainWindow::checkOk() {
 }
 
 void MainWindow::initWidget() {
-  setMouseTracking(true);  // 用于捕获鼠标移动事件
+  setMouseTracking(true); // 用于捕获鼠标移动事件
   ui->centralwidget->setMouseTracking(
-      true);  // 注意：mainwindow及其之类都要设置mouse track，不然不生效
-  ui->sytMainTitleWidget->installEventFilter(this);  // 事件过滤
-  ui->running_state_label->setText(QString(tr("请选择样式文件")));  // 初始标题
-  ui->running_state_label->setProperty("translator",
-                                       "请选择样式文件");  // 初始标题
-  setWindowFlags(Qt::FramelessWindowHint);  // 隐藏默认标题栏
+      true);                                                            // 注意：mainwindow及其之类都要设置mouse track，不然不生效
+  ui->sytMainTitleWidget->installEventFilter(this);                     // 事件过滤
+  ui->running_state_label->setText(QString(tr("请选择样式文件")));      // 初始标题
+  ui->running_state_label->setProperty("translator", "请选择样式文件"); // 初始标题
+  setWindowFlags(Qt::FramelessWindowHint);                              // 隐藏默认标题栏
   setWindowIcon(QIcon(":m_logo/logo/bg_logo.png"));
   // setMutuallyLight(GREEN);                                //
   // 初始状态下，亮绿灯
@@ -387,26 +366,23 @@ void MainWindow::initWidget() {
   ui->style_graphics_view->setAttribute(Qt::WA_AlwaysStackOnTop, true);
 
   // 初始状态下按钮状态
-  this->btnControl(
-      {ui->reset_btn, ui->choose_style_btn},
-      {ui->start_btn, ui->pause_btn, ui->end_btn, ui->add_cloth_btn});
+  this->btnControl({ui->reset_btn, ui->choose_style_btn},
+                   {ui->start_btn, ui->pause_btn, ui->end_btn, ui->add_cloth_btn});
 
   // 旋转条初始化
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
 
   // title logo
   auto tit_logo = QPixmap(":m_logo/logo/logo2.png");
-  tit_logo =
-      tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(),
-                      Qt::AspectRatioMode::KeepAspectRatio,
-                      Qt::TransformationMode::SmoothTransformation);
+  tit_logo = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(),
+                             Qt::AspectRatioMode::KeepAspectRatio,
+                             Qt::TransformationMode::SmoothTransformation);
   ui->sytLogoLabel->setPixmap(tit_logo);
 
   // 移动到中心
   QScreen *desktop = QApplication::screenAt(QCursor::pos());
   QRect rect = desktop->availableGeometry();
-  move(rect.left() + (rect.width() - width()) / 2,
-       (rect.height() - height()) / 2);
+  move(rect.left() + (rect.width() - width()) / 2, (rect.height() - height()) / 2);
 }
 
 void MainWindow::setStatisticComponent() {
@@ -450,27 +426,15 @@ void MainWindow::setLogComponent() {
   ui->log_filter_tool_btn->addAction(set_log_level_error_act);
   ui->log_filter_tool_btn->addAction(set_log_level_fatal_act);
 
-  ui->log_clear_btn->setParentEnabled(true);
-  ui->log_clear_btn->setForeEnabled(false);
-
-  // 移动至日志末尾
-  ui->log_end_btn->setParentEnabled(true);
-  ui->log_end_btn->setForeEnabled(false);
-
   // 日志只读
   ui->log_plain_text_edit->setReadOnly(true);
 
   // 信号绑定
-  connect(set_log_level_debug_act, &QAction::triggered,
-          [=] { log_level_ = LOG_DEBUG; });
-  connect(set_log_level_info_act, &QAction::triggered,
-          [=] { log_level_ = LOG_INFO; });
-  connect(set_log_level_warn_act, &QAction::triggered,
-          [=] { log_level_ = LOG_WARN; });
-  connect(set_log_level_error_act, &QAction::triggered,
-          [=] { log_level_ = LOG_ERROR; });
-  connect(set_log_level_fatal_act, &QAction::triggered,
-          [=] { log_level_ = LOG_FATAL; });
+  connect(set_log_level_debug_act, &QAction::triggered, [=] { log_level_ = LOG_DEBUG; });
+  connect(set_log_level_info_act, &QAction::triggered, [=] { log_level_ = LOG_INFO; });
+  connect(set_log_level_warn_act, &QAction::triggered, [=] { log_level_ = LOG_WARN; });
+  connect(set_log_level_error_act, &QAction::triggered, [=] { log_level_ = LOG_ERROR; });
+  connect(set_log_level_fatal_act, &QAction::triggered, [=] { log_level_ = LOG_FATAL; });
 
   // 日志清除
   connect(ui->log_clear_btn, &QPushButton::clicked,
@@ -504,16 +468,11 @@ void MainWindow::setTimeComponent() {
 
 void MainWindow::setToolBar() {
   // 工具栏信号槽
-  connect(ui->developer_mode_btn, &QPushButton::clicked, this,
-          &MainWindow::slotShowDevLoginWindow);
-  connect(ui->head_eye_calibration_btn, &QPushButton::clicked, this,
-          &MainWindow::slotStartHeadEyeWindow);
-  connect(ui->create_style_btn, &QPushButton::clicked, this,
-          &MainWindow::slotStartClothStyleWindow);
-  connect(ui->lock_screen_btn, &QPushButton::clicked, this,
-          &MainWindow::slotLockScreen);
-  connect(ui->param_set_btn, &QPushButton::clicked, this,
-          &MainWindow::slotParamSet);
+  connect(ui->developer_mode_btn, &QPushButton::clicked, this, &MainWindow::slotShowDevLoginWindow);
+  connect(ui->head_eye_calibration_btn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
+  connect(ui->create_style_btn, &QPushButton::clicked, this, &MainWindow::slotStartClothStyleWindow);
+  connect(ui->lock_screen_btn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
+  connect(ui->param_set_btn, &QPushButton::clicked, this, &MainWindow::slotParamSet);
   // TODO:delete
   ui->help_btn->hide();
   // connect(ui->help_btn, &QPushButton::clicked, [=] {
@@ -525,14 +484,10 @@ void MainWindow::setToolBar() {
   // head eye dialog 信号槽
   connect(this, &MainWindow::signHandEyeWindowShow, [=] {
     auto hand_eye_dialog = new HandEyeDialog(this);
-    connect(hand_eye_dialog, &HandEyeDialog::signCompStart, this,
-            &MainWindow::slotCompCalibStart, Qt::UniqueConnection);
-    connect(hand_eye_dialog, &HandEyeDialog::signSewingStart, this,
-            &MainWindow::slotSewingCalibStart, Qt::UniqueConnection);
-    connect(rclcomm_, &SytRclComm::compCalibRes, hand_eye_dialog,
-            &HandEyeDialog::slotCompCalibRes, Qt::UniqueConnection);
-    connect(rclcomm_, &SytRclComm::sewingCalibRes, hand_eye_dialog,
-            &HandEyeDialog::slotSewingCalibRes, Qt::UniqueConnection);
+    connect(hand_eye_dialog, &HandEyeDialog::signCompStart, this, &MainWindow::slotCompCalibStart, Qt::UniqueConnection);
+    connect(hand_eye_dialog, &HandEyeDialog::signSewingStart, this, &MainWindow::slotSewingCalibStart, Qt::UniqueConnection);
+    connect(rclcomm_, &SytRclComm::compCalibRes, hand_eye_dialog, &HandEyeDialog::slotCompCalibRes, Qt::UniqueConnection);
+    connect(rclcomm_, &SytRclComm::sewingCalibRes, hand_eye_dialog, &HandEyeDialog::slotSewingCalibRes, Qt::UniqueConnection);
     hand_eye_dialog->show();
     hand_eye_dialog->setAttribute(Qt::WA_DeleteOnClose);
   });
@@ -550,28 +505,19 @@ void MainWindow::setToolBar() {
     // Qt::ConnectionType::QueuedConnection);
 
     // 自动创建
-    void (ClothStyleDialog::*auto_create_style_signal)(
-        ClothStyleDialog *parent) = &ClothStyleDialog::signAutoCreateStyle;
-    void (MainWindow::*auto_create_style_slot)(ClothStyleDialog *parent) =
-        &MainWindow::slotAutoCreateStyle;
-    connect(cloth_style_dialog, auto_create_style_signal, this,
-            auto_create_style_slot, Qt::ConnectionType::QueuedConnection);
+    void (ClothStyleDialog::*auto_create_style_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signAutoCreateStyle;
+    void (MainWindow::*auto_create_style_slot)(ClothStyleDialog *parent) = &MainWindow::slotAutoCreateStyle;
+    connect(cloth_style_dialog, auto_create_style_signal, this, auto_create_style_slot, Qt::ConnectionType::QueuedConnection);
 
     // 手动创建
-    void (ClothStyleDialog::*manual_input_param_signal)(
-        ClothStyleDialog *parent) = &ClothStyleDialog::signManualInputParam;
-    void (MainWindow::*manual_input_param_slot)(ClothStyleDialog *parent) =
-        &MainWindow::slotManualInputParam;
-    connect(cloth_style_dialog, manual_input_param_signal, this,
-            manual_input_param_slot, Qt::ConnectionType::QueuedConnection);
+    void (ClothStyleDialog::*manual_input_param_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signManualInputParam;
+    void (MainWindow::*manual_input_param_slot)(ClothStyleDialog *parent) = &MainWindow::slotManualInputParam;
+    connect(cloth_style_dialog, manual_input_param_signal, this, manual_input_param_slot, Qt::ConnectionType::QueuedConnection);
 
     // 从已有文件创建
-    void (ClothStyleDialog::*create_from_source_signal)(
-        ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
-    void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent) =
-        &MainWindow::slotCreateFromSource;
-    connect(cloth_style_dialog, create_from_source_signal, this,
-            create_from_source_slot, Qt::ConnectionType::QueuedConnection);
+    void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
+    void (MainWindow::*create_from_source_slot)(ClothStyleDialog *parent) = &MainWindow::slotCreateFromSource;
+    connect(cloth_style_dialog, create_from_source_signal, this, create_from_source_slot, Qt::ConnectionType::QueuedConnection);
 
     cloth_style_dialog->show();
     cloth_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -581,96 +527,31 @@ void MainWindow::setToolBar() {
 // 主体按钮
 void MainWindow::setMainControlButton() {
   // 主控组件
-  ui->reset_btn->setParentEnabled(true);
-  ui->reset_btn->setForeEnabled(false);
-  ui->reset_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->start_btn->setParentEnabled(true);
-  ui->start_btn->setForeEnabled(false);
-  ui->start_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->pause_btn->setParentEnabled(true);
-  ui->pause_btn->setForeEnabled(false);
-  ui->pause_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->end_btn->setParentEnabled(true);
-  ui->end_btn->setForeEnabled(false);
-  ui->end_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->add_cloth_btn->setParentEnabled(true);
-  ui->add_cloth_btn->setForeEnabled(false);
-  ui->add_cloth_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  connect(ui->reset_btn, &QPushButton::clicked, this,
-          &MainWindow::resetBtnClicked);
-  connect(rclcomm_, &SytRclComm::signResetFinish, this,
-          &MainWindow::resetFinish);
-  connect(ui->start_btn, &QPushButton::clicked, this,
-          &MainWindow::startBtnClicked);
-  connect(rclcomm_, &SytRclComm::signStartFinish, this,
-          &MainWindow::startFinish);
-  connect(ui->pause_btn, &QPushButton::clicked, this,
-          &MainWindow::pauseBtnClicked);
-  connect(rclcomm_, &SytRclComm::signPauseFinish, this,
-          &MainWindow::pauseFinish);
-  connect(ui->end_btn, &QPushButton::clicked, this,
-          &MainWindow::stopBtnClicked);
+  connect(ui->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
+  connect(rclcomm_, &SytRclComm::signResetFinish, this, &MainWindow::resetFinish);
+  connect(ui->start_btn, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
+  connect(rclcomm_, &SytRclComm::signStartFinish, this, &MainWindow::startFinish);
+  connect(ui->pause_btn, &QPushButton::clicked, this, &MainWindow::pauseBtnClicked);
+  connect(rclcomm_, &SytRclComm::signPauseFinish, this, &MainWindow::pauseFinish);
+  connect(ui->end_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
   connect(rclcomm_, &SytRclComm::signStopFinish, this, &MainWindow::stopFinish);
-  connect(ui->add_cloth_btn, &QPushButton::clicked, this,
-          &MainWindow::addClothBtnClicked);
-}
-
-// 添加左右翻页按钮
-void MainWindow::setPageJump() {
-  int init_page_btn_w = this->width() / 50;
-  int init_page_btn_h = this->height() / 9;
-
-  prev_btn_ = new InteractiveButtonBase(this);
-  prev_btn_->setIcon(QIcon(":m_icon/icon/l-page.svg"));
-  prev_btn_->setParentEnabled(true);
-  prev_btn_->setForeEnabled(false);
-  prev_btn_->setStyleSheet(
-      "background-color: rgba(150,150,150, 0.3);qproperty-press_color: "
-      "rgba(0,0,100,0.3);");
-
-  next_btn_ = new InteractiveButtonBase(this);
-  next_btn_->setIcon(QIcon(":m_icon/icon/r-page.svg"));
-  next_btn_->setParentEnabled(true);
-  next_btn_->setForeEnabled(false);
-  next_btn_->setStyleSheet(
-      "background-color:  rgba(150,150,150, 0.3);qproperty-press_color: "
-      "rgba(0,0,100,0.3);");
-
-  prev_btn_->setGeometry(0, this->height() / 2 - init_page_btn_h / 2,
-                         init_page_btn_w, init_page_btn_h);
-  next_btn_->setGeometry(this->width() - init_page_btn_w,
-                         this->height() / 2 - init_page_btn_h / 2,
-                         init_page_btn_w, init_page_btn_h);
-
-  prev_btn_->hide();
-  next_btn_->hide();
-
-  connect(prev_btn_, &QPushButton::clicked, this, &MainWindow::slotPrevPage);
-  connect(next_btn_, &QPushButton::clicked, this, &MainWindow::slotNextPage);
+  connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
 }
 
 // 视觉功能可视化
 void MainWindow::setVisualComponent() {
   // 可视化的两个按钮
-  ui->load_machine_visible_btn->setIcon(
-      QIcon(":m_icon/icon/preview_close.svg"));
+  ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_close.svg"));
   ui->load_machine_visible_btn->setText(tr("隐藏"));
 
   connect(ui->load_machine_visible_btn, &QPushButton::clicked, [=] {
     is_load_cloth_on_ = !is_load_cloth_on_;
     if (is_load_cloth_on_) {
-      ui->load_machine_visible_btn->setIcon(
-          QIcon(":m_icon/icon/preview_close.svg"));
+      ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_close.svg"));
       ui->load_machine_visible_btn->setText(tr("隐藏"));
       showLoadMachineImage();
     } else {
-      ui->load_machine_visible_btn->setIcon(
-          QIcon(":m_icon/icon/preview_open.svg"));
+      ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_open.svg"));
       ui->load_machine_visible_btn->setText(tr("显示"));
       ui->B_left_visual_label->clear();
       ui->B_right_visual_label->clear();
@@ -730,10 +611,8 @@ void MainWindow::setBaseComponet() {
 
   // main window右上角按钮 放大 缩小 菜单等
   connect(ui->close_btn, &WinCloseButton::clicked, this, &MainWindow::close);
-  connect(ui->min_btn, &WinMaxButton::clicked, this,
-          &MainWindow::showMinimized);
-  connect(ui->max_btn, &WinMaxButton::clicked, this,
-          &MainWindow::slotMaxBtnClicked);
+  connect(ui->min_btn, &WinMaxButton::clicked, this, &MainWindow::showMinimized);
+  connect(ui->max_btn, &WinMaxButton::clicked, this, &MainWindow::slotMaxBtnClicked);
   connect(ui->menu_btn, &WinMenuButton::toggled, [=] { menu->exec(); });
 
   // action 相关
@@ -758,24 +637,28 @@ void MainWindow::setBaseComponet() {
 
   // 语言选项界面
   connect(translate_act, &QAction::triggered, this, [=]() {
-    std::string config_path =
-        std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
+    std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
     cv::FileStorage fs(config_path, cv::FileStorage::READ);
     int idx;
     fs["language"] >> idx;
     fs.release();
     TranslateDialog *translate_dialog = new TranslateDialog(this, idx);
 
-    connect(translate_dialog, &TranslateDialog::confirmLanguage, this,
-            [=](int index) {
-              app->switchApplicationLanguage(index);
+    connect(translate_dialog, &TranslateDialog::confirmLanguage, this, [=](int index) {
+      app->switchApplicationLanguage(index);
 
-              std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) +
-                                        "/syt_hmi/syt_hmi.yaml";
-              cv::FileStorage fs(config_path, cv::FileStorage::WRITE);
-              fs << "language" << index;
-              fs.release();
-            });
+      if (getenv("ENV_GLOBAL_ETC")) {
+        std::string config_path = std::string(getenv("ENV_GLOBAL_ETC")) + "/syt_hmi/syt_hmi.yaml";
+        cv::FileStorage fs(config_path, cv::FileStorage::WRITE);
+        fs << "language" << index;
+        fs.release();
+      } else if (getenv("ENV_ROBOT_ETC")) {
+        std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
+        cv::FileStorage fs(config_path, cv::FileStorage::WRITE);
+        fs << "language" << index;
+        fs.release();
+      }
+    });
     translate_dialog->show();
   });
 }
@@ -790,46 +673,10 @@ void MainWindow::setChooseStyleComponet() {
   // 设置样式line edit只读
   ui->choose_style_line_edit->setReadOnly(true);
 
-  ui->choose_style_btn->setParentEnabled(true);
-  ui->choose_style_btn->setForeEnabled(false);
-  ui->choose_style_btn->setStyleSheet(
-      "qproperty-press_color: rgba(0,0,100,0.5);");
-
-  connect(ui->choose_style_btn, &QPushButton::clicked, this,
-          &MainWindow::slotChooseStyleFile);  // 选择样式信号槽
+  connect(ui->choose_style_btn, &QPushButton::clicked, this, &MainWindow::slotChooseStyleFile); // 选择样式信号槽
 }
 
 void MainWindow::setParamManageComponet() {
-  ui->unfold_all_btn->setParentEnabled(true);
-  ui->unfold_all_btn->setForeEnabled(false);
-  ui->unfold_all_btn->setStyleSheet(
-      "qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->fold_all_btn->setParentEnabled(true);
-  ui->fold_all_btn->setForeEnabled(false);
-  ui->fold_all_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->save_param_btn->setParentEnabled(true);
-  ui->save_param_btn->setForeEnabled(false);
-  ui->save_param_btn->setStyleSheet(
-      "qproperty-press_color: rgba(0,0,100,0.5);");
-  ui->save_param_btn->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
-
-  ui->apply_param_btn->setParentEnabled(true);
-  ui->apply_param_btn->setForeEnabled(false);
-  ui->apply_param_btn->setStyleSheet(
-      "qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->import_param_btn->setParentEnabled(true);
-  ui->import_param_btn->setForeEnabled(false);
-  ui->import_param_btn->setStyleSheet(
-      "qproperty-press_color: rgba(0,0,100,0.5);");
-
-  ui->export_param_btn->setParentEnabled(true);
-  ui->export_param_btn->setForeEnabled(false);
-  ui->export_param_btn->setStyleSheet(
-      "qproperty-press_color: rgba(0,0,100,0.5);");
-
   // 样式树形列表
   ui->param_manage_tree_view->header()->resizeSection(0, 200);
 
@@ -837,12 +684,18 @@ void MainWindow::setParamManageComponet() {
   model_ = new QStandardItemModel(ui->param_manage_tree_view);
 
   // 导入默认参数
-  QString param_path = QString(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/param.json";
-  current_param_file_ = param_path;
-  readJson(param_path, model_);
+  if (getenv("ENV_GLOBAL_ETC")) {
+    QString param_path = QString(getenv("ENV_GLOBAL_ETC")) + "/syt_hmi/param.json";
+    current_param_file_ = param_path;
+    readJson(param_path, model_);
+  } else if (getenv("ENV_ROBOT_ETC")) {
+    QString param_path = QString(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/param.json";
+    current_param_file_ = param_path;
+    readJson(param_path, model_);
+  }
 
   ui->param_manage_tree_view->setModel(model_);
-  ui->param_manage_tree_view->setAlternatingRowColors(true);  // 间隔变色
+  ui->param_manage_tree_view->setAlternatingRowColors(true); // 间隔变色
   ui->param_manage_tree_view->header()->resizeSection(0, 200);
   ui->param_manage_tree_view->header()->resizeSection(5, 200);
   ui->param_manage_tree_view->setSelectionBehavior(QTreeView::SelectRows);
@@ -851,98 +704,461 @@ void MainWindow::setParamManageComponet() {
   ui->param_manage_tree_view->expandAll();
 
   // 设置委托
-  NameItemDelegate *name_delegate =
-      new NameItemDelegate(ui->param_manage_tree_view);
+  NameItemDelegate *name_delegate = new NameItemDelegate(ui->param_manage_tree_view);
   ui->param_manage_tree_view->setItemDelegateForColumn(0, name_delegate);
-  TypeItemDelegate *type_delegate =
-      new TypeItemDelegate(ui->param_manage_tree_view);
+  TypeItemDelegate *type_delegate = new TypeItemDelegate(ui->param_manage_tree_view);
   ui->param_manage_tree_view->setItemDelegateForColumn(1, type_delegate);
-  LengthItemDelegate *length_delegate =
-      new LengthItemDelegate(ui->param_manage_tree_view);
+  LengthItemDelegate *length_delegate = new LengthItemDelegate(ui->param_manage_tree_view);
   ui->param_manage_tree_view->setItemDelegateForColumn(2, length_delegate);
-  RangeItemDelegate *min_delegate =
-      new RangeItemDelegate(ui->param_manage_tree_view);
+  RangeItemDelegate *min_delegate = new RangeItemDelegate(ui->param_manage_tree_view);
   ui->param_manage_tree_view->setItemDelegateForColumn(3, min_delegate);
-  RangeItemDelegate *max_delegate =
-      new RangeItemDelegate(ui->param_manage_tree_view);
+  RangeItemDelegate *max_delegate = new RangeItemDelegate(ui->param_manage_tree_view);
   ui->param_manage_tree_view->setItemDelegateForColumn(4, max_delegate);
-  ValueItemDelegate *value_delegate =
-      new ValueItemDelegate(ui->param_manage_tree_view);
+  ValueItemDelegate *value_delegate = new ValueItemDelegate(ui->param_manage_tree_view);
   ui->param_manage_tree_view->setItemDelegateForColumn(5, value_delegate);
-  // StoreItemDelegate *store_delegate =
-  //     new StoreItemDelegate(ui->param_manage_tree_view);
-  // ui->param_manage_tree_view->setItemDelegateForColumn(6, store_delegate);
+
+  auto getData = [=](QString data_type, bool is_array, QString value) -> std::string {
+    std::string data;
+    DATA_TYPE dtype = str_data_type_map.value(data_type);
+    switch (dtype) {
+    case INT32: {
+      if (!is_array) {
+        int32_t type_value = value.toInt();
+        uint8_t byte_array[sizeof(int32_t)];
+        std::memcpy(byte_array, &type_value, sizeof(int32_t));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      } else {
+        QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+        QVector<int32_t> value_vec;
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toInt());
+        }
+        int data_size = sizeof(int32_t) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      }
+      break;
+    }
+    case UINT32: {
+      if (!is_array) {
+        uint32_t type_value = value.toUInt();
+        uint8_t byte_array[sizeof(uint32_t)];
+        std::memcpy(byte_array, &type_value, sizeof(uint32_t));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      } else {
+        QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+        QVector<uint32_t> value_vec;
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toUInt());
+        }
+        int data_size = sizeof(uint32_t) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      }
+      break;
+    }
+    case INT64: {
+      if (!is_array) {
+        int64_t type_value = value.toLongLong();
+        uint8_t byte_array[sizeof(int64_t)];
+        std::memcpy(byte_array, &type_value, sizeof(int64_t));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      } else {
+        QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+        QVector<int64_t> value_vec;
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toLongLong());
+        }
+        int data_size = sizeof(int64_t) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      }
+      break;
+    }
+    case UINT64: {
+      if (!is_array) {
+        uint64_t type_value = value.toULongLong();
+        uint8_t byte_array[sizeof(uint64_t)];
+        std::memcpy(byte_array, &type_value, sizeof(uint64_t));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      } else {
+        QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+        QVector<uint64_t> value_vec;
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toULongLong());
+        }
+        int data_size = sizeof(uint64_t) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      }
+      break;
+    }
+    case FLOAT32: {
+      if (!is_array) {
+        float type_value = value.toFloat();
+        uint8_t byte_array[sizeof(float)];
+        std::memcpy(byte_array, &type_value, sizeof(float));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      } else {
+        QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+        QVector<float> value_vec;
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toFloat());
+        }
+        int data_size = sizeof(float) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      }
+      break;
+    }
+    case FLOAT64: {
+      if (!is_array) {
+        double type_value = value.toDouble();
+        uint8_t byte_array[sizeof(double)];
+        std::memcpy(byte_array, &type_value, sizeof(double));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      } else {
+        QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+        QVector<double> value_vec;
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toDouble());
+        }
+        int data_size = sizeof(double) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      }
+      break;
+    }
+    case CHAR: {
+      if (!is_array) {
+        char type_value = value.at(0).toLatin1();
+        uint8_t byte_array[sizeof(char)];
+        std::memcpy(byte_array, &type_value, sizeof(char));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      } else {
+        QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+        QVector<char> value_vec;
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).at(0).toLatin1());
+        }
+        int data_size = sizeof(char) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      }
+      break;
+    }
+    case UCHAR: {
+      if (!is_array) {
+        uchar type_value = value.at(0).toLatin1();
+        uint8_t byte_array[sizeof(uchar)];
+        std::memcpy(byte_array, &type_value, sizeof(uchar));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      } else {
+        QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
+        QVector<char> value_vec;
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).at(0).toLatin1());
+        }
+        int data_size = sizeof(uchar) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
+      }
+      break;
+    }
+    default:
+      break;
+    }
+    return data;
+  };
+
+  auto setData = [=](QStandardItem *item, syt_msgs::srv::ParamManage::Response response) -> QString {
+    if (item->parent()->child(item->row(), 0)->text() != response.field.c_str()) {
+      return item->parent()->child(item->row(), 5)->text();
+    }
+    QString data_str;
+    bool is_array = item->parent()->child(item->row(), 2)->text().toInt() > 1 ? true : false;
+    switch (response.dtype.data) {
+    case INT32: {
+      if (!is_array) {
+        int32_t data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
+      } else {
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        int32_t data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
+      }
+      break;
+    }
+    case UINT32: {
+      if (!is_array) {
+        uint32_t data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
+      } else {
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        uint32_t data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
+      }
+      break;
+    }
+    case INT64: {
+      if (!is_array) {
+        int64_t data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
+      } else {
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        int64_t data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
+      }
+      break;
+    }
+    case UINT64: {
+      if (!is_array) {
+        uint64_t data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
+      } else {
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        uint64_t data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
+      }
+      break;
+    }
+    case FLOAT32: {
+      if (!is_array) {
+        float data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
+      } else {
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        float data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
+      }
+      break;
+    }
+    case FLOAT64: {
+      if (!is_array) {
+        double data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
+      } else {
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        double data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
+      }
+      break;
+    }
+    case CHAR: {
+      if (!is_array) {
+        char data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
+      } else {
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        char data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
+      }
+      break;
+    }
+    case UCHAR: {
+      if (!is_array) {
+        uchar data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
+      } else {
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        uchar data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
+      }
+      break;
+    }
+    default:
+      break;
+    }
+    return data_str;
+  };
 
   // 右键菜单
-  connect(
-      ui->param_manage_tree_view, &QTreeView::customContextMenuRequested, this,
-      [=](const QPoint &pos) {
-        QMenu menu;
-        QModelIndex cur_index =
-            ui->param_manage_tree_view->indexAt(pos);  // 当前点击的元素的index
-        QModelIndex index =
-            cur_index.sibling(cur_index.row(), 0);  // 该行的第1列元素的index
-        if (index.isValid()) {
-          QStandardItem *item = model_->itemFromIndex(index);
-          int item_level = getItemLevel(item);
-          switch (item_level) {
-            case 0:
-              menu.addAction(tr("增加参数组"), this, [=]() {
-                QStandardItem *new_group = new QStandardItem("group");
-                QList<QStandardItem *> new_items;
-                new_items << new_group;
-                model_->appendRow(new_items);
-              });
-              menu.addAction(tr("增加参数"), this, [=]() {
-                QStandardItem *new_param = new QStandardItem("name");
-                QStandardItem *new_type = new QStandardItem("bool");
-                QStandardItem *new_length = new QStandardItem("1");
-                QStandardItem *new_min = new QStandardItem("0");
-                QStandardItem *new_max = new QStandardItem("inf");
-                QStandardItem *new_value = new QStandardItem("1");
-                QStandardItem *new_comment = new QStandardItem("参数注释");
+  connect(ui->param_manage_tree_view, &QTreeView::customContextMenuRequested, this, [=](const QPoint &pos) {
+    QMenu menu;
+    QModelIndex cur_index = ui->param_manage_tree_view->indexAt(pos); // 当前点击的元素的index
+    QModelIndex index = cur_index.sibling(cur_index.row(), 0);        // 该行的第1列元素的index
+    if (index.isValid()) {
+      QStandardItem *item = model_->itemFromIndex(index);
+      int item_level = getItemLevel(item);
+      switch (item_level) {
+      case 0:
+        menu.addAction(tr("写入参数组"), this, [=]() {
+          for (int j = 0; j < item->rowCount(); ++j) {
+            ParamLine param_line;
+            param_line.name = item->child(j, 0)->text().trimmed();
+            param_line.dtype = item->child(j, 1)->text().trimmed();
+            param_line.length = item->child(j, 2)->text().trimmed().toInt();
+            param_line.min_range = item->child(j, 3)->text().trimmed();
+            param_line.max_range = item->child(j, 4)->text().trimmed();
+            param_line.value = item->child(j, 5)->text().trimmed();
+            QStringList value_list = item->child(j, 5)->text().split(",");
+            if (value_list.size() > 1) {
+              param_line.is_array = true;
+            } else {
+              param_line.is_array = false;
+            }
+            param_line.comment = item->child(j, 6)->text();
 
-                QList<QStandardItem *> new_items;
-                new_items << new_param << new_type << new_length << new_min
-                          << new_max << new_value << new_comment;
-                item->appendRow(new_items);
-              });
-              menu.addAction(tr("删除参数组"), this, [=]() {
-                bool ret = showMessageBox(this, WARN, tr("确认删除当前组？"), 2,
-                                          {tr("确认"), tr("取消")});
-                if (ret == 0) {
-                  model_->removeRow(index.row());
-                }
-              });
-              break;
-            case 1:
-              menu.addAction(tr("增加参数"), this, [=]() {
-                QStandardItem *new_param = new QStandardItem("name");
-                QStandardItem *new_type = new QStandardItem("bool");
-                QStandardItem *new_length = new QStandardItem("1");
-                QStandardItem *new_min = new QStandardItem("0");
-                QStandardItem *new_max = new QStandardItem("inf");
-                QStandardItem *new_value = new QStandardItem("1");
-                QStandardItem *new_comment = new QStandardItem("参数注释");
+            DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
+            std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
 
-                QList<QStandardItem *> new_items;
-                new_items << new_param << new_type << new_length << new_min
-                          << new_max << new_value << new_comment;
-                item->parent()->appendRow(new_items);
+            if (item->text() == "load_machine") {
+              QtConcurrent::run([=]() {
+                rclcomm_->loadMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
               });
-              menu.addAction(tr("删除参数"), this,
-                             [=]() { item->parent()->removeRow(index.row()); });
-              break;
+            } else if (item->text() == "compose_machine") {
+              QtConcurrent::run([=]() {
+                rclcomm_->composeMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              });
+            } else if (item->text() == "sewing_machine") {
+              QtConcurrent::run([=]() {
+                rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              });
+            }
           }
-        }
-        menu.exec(QCursor::pos());  // 显示菜单
-      });
+        });
+        menu.addAction(tr("增加参数组"), this, [=]() {
+          QStandardItem *new_group = new QStandardItem("group");
+          QList<QStandardItem *> new_items;
+          new_items << new_group;
+          model_->appendRow(new_items);
+        });
+        menu.addAction(tr("增加参数"), this, [=]() {
+          QStandardItem *new_param = new QStandardItem("name");
+          QStandardItem *new_type = new QStandardItem("uint32");
+          QStandardItem *new_length = new QStandardItem("1");
+          QStandardItem *new_min = new QStandardItem("0");
+          QStandardItem *new_max = new QStandardItem("inf");
+          QStandardItem *new_value = new QStandardItem("0");
+          QStandardItem *new_comment = new QStandardItem("参数注释");
+
+          QList<QStandardItem *> new_items;
+          new_items << new_param << new_type << new_length << new_min << new_max << new_value << new_comment;
+          item->appendRow(new_items);
+        });
+        menu.addAction(tr("删除参数组"), this, [=]() {
+          bool ret = showMessageBox(this, WARN, tr("确认删除当前组？"), 2, {tr("确认"), tr("取消")});
+          if (ret == 0) {
+            model_->removeRow(index.row());
+          }
+        });
+        break;
+      case 1:
+        menu.addAction(tr("写入参数"), this, [=]() {
+          QString machine_name = item->parent()->text();
+          ParamLine param_line;
+          param_line.name = item->parent()->child(item->row(), 0)->text().trimmed();
+          param_line.dtype = item->parent()->child(item->row(), 1)->text().trimmed();
+          param_line.length = item->parent()->child(item->row(), 2)->text().trimmed().toInt();
+          param_line.min_range = item->parent()->child(item->row(), 3)->text().trimmed();
+          param_line.max_range = item->parent()->child(item->row(), 4)->text().trimmed();
+          param_line.value = item->parent()->child(item->row(), 5)->text().trimmed();
+          QStringList value_list = item->parent()->child(item->row(), 5)->text().split(",");
+          if (value_list.size() > 1) {
+            param_line.is_array = true;
+          } else {
+            param_line.is_array = false;
+          }
+          param_line.comment = item->parent()->child(item->row(), 6)->text();
+
+          DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
+          std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
+
+          if (machine_name == "load_machine") {
+            QtConcurrent::run([=]() {
+              rclcomm_->loadMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+            });
+          } else if (machine_name == "compose_machine") {
+            QtConcurrent::run([=]() {
+              rclcomm_->composeMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+            });
+          } else if (machine_name == "sewing_machine") {
+            QtConcurrent::run([=]() {
+              rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+            });
+          }
+        });
+        menu.addAction(tr("增加参数"), this, [=]() {
+          QStandardItem *new_param = new QStandardItem("name");
+          QStandardItem *new_type = new QStandardItem("uint8");
+          QStandardItem *new_length = new QStandardItem("1");
+          QStandardItem *new_min = new QStandardItem("0");
+          QStandardItem *new_max = new QStandardItem("inf");
+          QStandardItem *new_value = new QStandardItem("1");
+          QStandardItem *new_comment = new QStandardItem("参数注释");
+
+          QList<QStandardItem *> new_items;
+          new_items << new_param << new_type << new_length << new_min << new_max << new_value << new_comment;
+          item->parent()->appendRow(new_items);
+        });
+        menu.addAction(tr("删除参数"), this, [=]() { item->parent()->removeRow(index.row()); });
+        break;
+      }
+    }
+    menu.exec(QCursor::pos()); // 显示菜单
+  });
+
+  ui->save_param_btn->setShortcut(QKeySequence(QLatin1String("Ctrl+S")));
 
   // 参数界面信号绑定
-  connect(ui->unfold_all_btn, &QPushButton::clicked,
-          [=]() { ui->param_manage_tree_view->expandAll(); });
-  connect(ui->fold_all_btn, &QPushButton::clicked,
-          [=]() { ui->param_manage_tree_view->collapseAll(); });
+  connect(ui->unfold_all_btn, &QPushButton::clicked, [=]() { ui->param_manage_tree_view->expandAll(); });
+  connect(ui->fold_all_btn, &QPushButton::clicked, [=]() { ui->param_manage_tree_view->collapseAll(); });
   connect(ui->save_param_btn, &QPushButton::clicked, [=]() {
     if (dumpJson(current_param_file_, model_) == false) {
       showMessageBox(this, ERROR, tr("保存失败"), 1, {tr("确认")});
@@ -960,7 +1176,7 @@ void MainWindow::setParamManageComponet() {
     } else {
       current_param_file_ = file_name;
       showMessageBox(this, SUCCESS, tr("文件导入成功。"), 1, {tr("确认")});
-      ui->param_manage_tree_view->setAlternatingRowColors(true);  // 间隔变色
+      ui->param_manage_tree_view->setAlternatingRowColors(true); // 间隔变色
       ui->param_manage_tree_view->header()->resizeSection(0, 200);
       ui->param_manage_tree_view->header()->resizeSection(5, 200);
       ui->param_manage_tree_view->setSelectionBehavior(QTreeView::SelectRows);
@@ -981,6 +1197,123 @@ void MainWindow::setParamManageComponet() {
       showMessageBox(this, SUCCESS, tr("保存成功。"), 1, {tr("确认")});
     } else {
       showMessageBox(this, ERROR, tr("保存失败。"), 1, {tr("确认")});
+    }
+  });
+  connect(ui->load_param_btn, &QPushButton::clicked, [=]() {
+    QStandardItem *root_item = model_->invisibleRootItem();
+    for (int i = 0; i < root_item->rowCount(); ++i) {
+      QStandardItem *item = root_item->child(i);
+      if (item->hasChildren()) {
+        for (int j = 0; j < item->rowCount(); ++j) {
+          ParamLine param_line;
+          param_line.name = item->child(j, 0)->text().trimmed();
+          param_line.dtype = item->child(j, 1)->text().trimmed();
+          param_line.length = item->child(j, 2)->text().trimmed().toInt();
+          param_line.min_range = item->child(j, 3)->text().trimmed();
+          param_line.max_range = item->child(j, 4)->text().trimmed();
+          param_line.value = item->child(j, 5)->text().trimmed();
+          QStringList value_list = item->child(j, 5)->text().split(",");
+          if (value_list.size() > 1) {
+            param_line.is_array = true;
+          } else {
+            param_line.is_array = false;
+          }
+          param_line.comment = item->child(j, 6)->text();
+
+          DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
+          std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
+
+          if (item->text() == "load_machine") {
+            QtConcurrent::run([=]() {
+              // syt_msgs::srv::ParamManage::Response response;
+              // response.field = "load_distance";
+              // uint32_t load_distance = 9500;
+              // uint8_t byte_array[sizeof(uint32_t)];
+              // std::memcpy(byte_array, &load_distance, sizeof(uint32_t));
+              // response.data.resize(sizeof(uint32_t));
+              // for (int k = 0; k < sizeof(uint32_t); ++k) {
+              // response.data.at(k) = byte_array[k];
+              //}
+
+              auto response = rclcomm_->loadMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              QString data_str = setData(item->child(j), response);
+              item->child(j, 5)->setText(data_str);
+            });
+          } else if (item->text() == "compose_machine") {
+            QtConcurrent::run([=]() {
+              auto response = rclcomm_->composeMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              QString data_str = setData(item->child(j), response);
+              item->child(j, 5)->setText(data_str);
+            });
+          } else if (item->text() == "sewing_machine") {
+            QtConcurrent::run([=]() {
+              // syt_msgs::srv::ParamManage::Response response;
+              //  response.dtype.data = FLOAT32;
+              //  response.field="needle_pitch";
+
+              // QString pitch = "2.7,2.7,2.7,2.7";
+              // pitch.remove(QChar(' '), Qt::CaseInsensitive);
+              // QStringList pitch_list = pitch.split(",");
+
+              // QVector<float> pitch_vec;
+              // for (int k = 0; k < pitch_list.length(); ++k) {
+              // pitch_vec.append(pitch_list.at(k).toFloat());
+              //}
+
+              // int pitch_size = sizeof(float) * pitch_vec.length();
+              // uint8_t pitch_array[pitch_size];
+              // memcpy(pitch_array, pitch_vec.data(), pitch_size);
+              // response.data.resize(sizeof(float) * pitch_vec.length());
+              // for (int k = 0; k < response.data.size(); ++k) {
+              // response.data.at(k) = pitch_array[k];
+              //}
+
+              // response.dtype.data = UCHAR;
+              // response.field = "care_label_side";
+              // QString pitch = "a,b,c,d";
+              // pitch.remove(QChar(' '), Qt::CaseInsensitive);
+              // QStringList pitch_list = pitch.split(",");
+
+              // QVector<uchar> pitch_vec;
+              // for (int k = 0; k < pitch_list.length(); ++k) {
+              // pitch_vec.append(pitch_list.at(k).at(0).toLatin1());
+              //}
+
+              // int pitch_size = sizeof(uchar) * pitch_vec.length();
+              // uint8_t pitch_array[pitch_size];
+              // memcpy(pitch_array, pitch_vec.data(), pitch_size);
+              // response.data.resize(sizeof(uchar) * pitch_vec.length());
+              // for (int k = 0; k < response.data.size(); ++k) {
+              // response.data.at(k) = pitch_array[k];
+              //}
+
+              // response.dtype.data = FLOAT32;
+              // response.field = "c_zero_offset";
+              // float c_zero_offset = 2.12;
+              // uint8_t byte_array[sizeof(float)];
+              // std::memcpy(byte_array, &c_zero_offset, sizeof(float));
+              // response.data.resize(sizeof(float));
+              // for (int k = 0; k < sizeof(float); ++k) {
+              // response.data.at(k) = byte_array[k];
+              //}
+
+              // response.dtype.data = UCHAR;
+              // response.field="care_label_side";
+              // uchar care_label_side = 2;
+              // uint8_t byte_array[sizeof(uchar)];
+              // std::memcpy(byte_array, &care_label_side, sizeof(uchar));
+              // response.data.resize(sizeof(uchar));
+              // for (int k = 0; k < sizeof(uchar); ++k) {
+              // response.data.at(k) = byte_array[k];
+              //}
+
+              auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              QString data_str = setData(item->child(j), response);
+              item->child(j, 5)->setText(data_str);
+            });
+          }
+        }
+      }
     }
   });
   connect(ui->apply_param_btn, &QPushButton::clicked, [=]() {
@@ -1004,240 +1337,20 @@ void MainWindow::setParamManageComponet() {
           }
           param_line.comment = item->child(j, 6)->text();
 
-          std::string data;
           DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
-          switch (dtype) {
-            case INT32: {
-              if (!param_line.is_array) {
-                int32_t type_value = param_line.value.toInt();
-                uint8_t byte_array[sizeof(int32_t)];
-                std::memcpy(byte_array, &type_value, sizeof(int32_t));
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              } else {
-                QStringList value_list =
-                    item->child(j, 5)
-                        ->text()
-                        .remove(QChar(' ', Qt::CaseInsensitive))
-                        .split(",");
-                QVector<int32_t> value_vec;
-                for (int i = 0; i < value_list.length(); ++i) {
-                  value_vec.append(value_list.at(i).toInt());
-                }
-                int data_size = sizeof(int32_t) * value_vec.length();
-                uint8_t byte_array[data_size];
-                std::memcpy(byte_array, value_vec.data(), data_size);
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              }
-              break;
-            }
-            case UINT32: {
-              if (!param_line.is_array) {
-                uint32_t type_value = param_line.value.toUInt();
-                uint8_t byte_array[sizeof(uint32_t)];
-                std::memcpy(byte_array, &type_value, sizeof(uint32_t));
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              } else {
-                QStringList value_list =
-                    item->child(j, 5)
-                        ->text()
-                        .remove(QChar(' ', Qt::CaseInsensitive))
-                        .split(",");
-                QVector<uint32_t> value_vec;
-                for (int i = 0; i < value_list.length(); ++i) {
-                  value_vec.append(value_list.at(i).toUInt());
-                }
-                int data_size = sizeof(uint32_t) * value_vec.length();
-                uint8_t byte_array[data_size];
-                std::memcpy(byte_array, value_vec.data(), data_size);
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              }
-              break;
-            }
-            case INT64: {
-              if (!param_line.is_array) {
-                int64_t type_value = param_line.value.toLongLong();
-                uint8_t byte_array[sizeof(int64_t)];
-                std::memcpy(byte_array, &type_value, sizeof(int64_t));
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              } else {
-                QStringList value_list =
-                    item->child(j, 5)
-                        ->text()
-                        .remove(QChar(' ', Qt::CaseInsensitive))
-                        .split(",");
-                QVector<int64_t> value_vec;
-                for (int i = 0; i < value_list.length(); ++i) {
-                  value_vec.append(value_list.at(i).toLongLong());
-                }
-                int data_size = sizeof(int64_t) * value_vec.length();
-                uint8_t byte_array[data_size];
-                std::memcpy(byte_array, value_vec.data(), data_size);
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              }
-              break;
-            }
-            case UINT64: {
-              if (!param_line.is_array) {
-                uint64_t type_value = param_line.value.toULongLong();
-                uint8_t byte_array[sizeof(uint64_t)];
-                std::memcpy(byte_array, &type_value, sizeof(uint64_t));
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              } else {
-                QStringList value_list =
-                    item->child(j, 5)
-                        ->text()
-                        .remove(QChar(' ', Qt::CaseInsensitive))
-                        .split(",");
-                QVector<uint64_t> value_vec;
-                for (int i = 0; i < value_list.length(); ++i) {
-                  value_vec.append(value_list.at(i).toULongLong());
-                }
-                int data_size = sizeof(uint64_t) * value_vec.length();
-                uint8_t byte_array[data_size];
-                std::memcpy(byte_array, value_vec.data(), data_size);
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              }
-              break;
-            }
-            case FLOAT32: {
-              if (!param_line.is_array) {
-                float type_value = param_line.value.toFloat();
-                uint8_t byte_array[sizeof(float)];
-                std::memcpy(byte_array, &type_value, sizeof(float));
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              } else {
-                QStringList value_list =
-                    item->child(j, 5)
-                        ->text()
-                        .remove(QChar(' ', Qt::CaseInsensitive))
-                        .split(",");
-                QVector<float> value_vec;
-                for (int i = 0; i < value_list.length(); ++i) {
-                  value_vec.append(value_list.at(i).toFloat());
-                }
-                int data_size = sizeof(float) * value_vec.length();
-                uint8_t byte_array[data_size];
-                std::memcpy(byte_array, value_vec.data(), data_size);
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              }
-              break;
-            }
-            case FLOAT64: {
-              if (!param_line.is_array) {
-                double type_value = param_line.value.toDouble();
-                uint8_t byte_array[sizeof(double)];
-                std::memcpy(byte_array, &type_value, sizeof(double));
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              } else {
-                QStringList value_list =
-                    item->child(j, 5)
-                        ->text()
-                        .remove(QChar(' ', Qt::CaseInsensitive))
-                        .split(",");
-                QVector<double> value_vec;
-                for (int i = 0; i < value_list.length(); ++i) {
-                  value_vec.append(value_list.at(i).toDouble());
-                }
-                int data_size = sizeof(double) * value_vec.length();
-                uint8_t byte_array[data_size];
-                std::memcpy(byte_array, value_vec.data(), data_size);
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              }
-              break;
-            }
-            case CHAR: {
-              if (!param_line.is_array) {
-                char type_value = param_line.value.at(0).toLatin1();
-                uint8_t byte_array[sizeof(char)];
-                std::memcpy(byte_array, &type_value, sizeof(char));
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              } else {
-                QStringList value_list =
-                    item->child(j, 5)
-                        ->text()
-                        .remove(QChar(' ', Qt::CaseInsensitive))
-                        .split(",");
-                QVector<char> value_vec;
-                for (int i = 0; i < value_list.length(); ++i) {
-                  value_vec.append(value_list.at(i).at(0).toLatin1());
-                }
-                int data_size = sizeof(char) * value_vec.length();
-                uint8_t byte_array[data_size];
-                std::memcpy(byte_array, value_vec.data(), data_size);
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              }
-              break;
-            }
-            case UCHAR: {
-              if (!param_line.is_array) {
-                uchar type_value = param_line.value.toUInt();
-                uint8_t byte_array[sizeof(uchar)];
-                std::memcpy(byte_array, &type_value, sizeof(uchar));
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              } else {
-                QStringList value_list =
-                    item->child(j, 5)
-                        ->text()
-                        .remove(QChar(' ', Qt::CaseInsensitive))
-                        .split(",");
-                QVector<uchar> value_vec;
-                for (int i = 0; i < value_list.length(); ++i) {
-                  value_vec.append(value_list.at(i).at(0).toLatin1());
-                }
-                int data_size = sizeof(uchar) * value_vec.length();
-                uint8_t byte_array[data_size];
-                std::memcpy(byte_array, value_vec.data(), data_size);
-                data = std::string(reinterpret_cast<char *>(byte_array),
-                                   sizeof(byte_array) / sizeof(uint8_t));
-              }
-              break;
-            }
-            case STRING: {
-              if (!param_line.is_array) {
-                data = param_line.value.toStdString();
-              } else {
-                QString value = item->child(j, 5)
-                                    ->text()
-                                    .remove(QChar(' ', Qt::CaseInsensitive))
-                                    .remove(QChar(',', Qt::CaseInsensitive));
-                data = value.toStdString();
-              }
-              break;
-            }
-            default:
-              break;
-          }
+          std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
 
           if (item->text() == "load_machine") {
             QtConcurrent::run([=]() {
-              rclcomm_->loadMachineParam(dtype, param_line.name.toStdString(),
-                                         data, param_line.is_array);
+              rclcomm_->loadMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
             });
           } else if (item->text() == "compose_machine") {
             QtConcurrent::run([=]() {
-              rclcomm_->composeMachineParam(dtype,
-                                            param_line.name.toStdString(), data,
-                                            param_line.is_array);
+              rclcomm_->composeMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
             });
           } else if (item->text() == "sewing_machine") {
             QtConcurrent::run([=]() {
-              rclcomm_->sewingMachineParam(dtype, param_line.name.toStdString(),
-                                           data, param_line.is_array);
+              rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
             });
           }
         }
@@ -1264,45 +1377,33 @@ void MainWindow::setParamSetWidget() {
 void MainWindow::showLoadMachineImage() {
   if (!pix_A_left_.isNull()) {
     ui->A_left_visual_label->clear();
-    pix_A_left_ = pix_A_left_.scaled(ui->A_left_visual_label->width(),
-                                     ui->A_left_visual_label->height(),
-                                     Qt::KeepAspectRatio);
+    pix_A_left_ = pix_A_left_.scaled(ui->A_left_visual_label->width(), ui->A_left_visual_label->height(), Qt::KeepAspectRatio);
     ui->A_left_visual_label->setPixmap(pix_A_left_);
-    ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored,
-                                           QSizePolicy::Ignored);
+    ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     ui->A_left_visual_label->update();
   }
 
   if (!pix_A_right_.isNull()) {
     ui->A_right_visual_label->clear();
-    pix_A_right_ = pix_A_right_.scaled(ui->A_right_visual_label->width(),
-                                       ui->A_right_visual_label->height(),
-                                       Qt::KeepAspectRatio);
+    pix_A_right_ = pix_A_right_.scaled(ui->A_right_visual_label->width(), ui->A_right_visual_label->height(), Qt::KeepAspectRatio);
     ui->A_right_visual_label->setPixmap(pix_A_right_);
-    ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored,
-                                            QSizePolicy::Ignored);
+    ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     ui->A_right_visual_label->update();
   }
 
   if (!pix_B_left_.isNull()) {
     ui->B_left_visual_label->clear();
-    pix_B_left_ = pix_B_left_.scaled(ui->B_left_visual_label->width(),
-                                     ui->B_left_visual_label->height(),
-                                     Qt::KeepAspectRatio);
+    pix_B_left_ = pix_B_left_.scaled(ui->B_left_visual_label->width(), ui->B_left_visual_label->height(), Qt::KeepAspectRatio);
     ui->B_left_visual_label->setPixmap(pix_B_left_);
-    ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored,
-                                           QSizePolicy::Ignored);
+    ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     ui->B_left_visual_label->update();
   }
 
   if (!pix_B_right_.isNull()) {
     ui->B_right_visual_label->clear();
-    pix_B_right_ = pix_B_right_.scaled(ui->B_right_visual_label->width(),
-                                       ui->B_right_visual_label->height(),
-                                       Qt::KeepAspectRatio);
+    pix_B_right_ = pix_B_right_.scaled(ui->B_right_visual_label->width(), ui->B_right_visual_label->height(), Qt::KeepAspectRatio);
     ui->B_right_visual_label->setPixmap(pix_B_right_);
-    ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored,
-                                            QSizePolicy::Ignored);
+    ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     ui->B_right_visual_label->update();
   }
 }
@@ -1310,12 +1411,7 @@ void MainWindow::showLoadMachineImage() {
 bool MainWindow::readJson(const QString &json_file, QStandardItemModel *model) {
   model->clear();
   // 设置表头
-  model->setHorizontalHeaderLabels(QStringList()
-                                   << tr("属性") << tr("类型") << tr("长度")
-                                   << tr("最小值") << tr("最大值")
-                                   << tr("值")
-                                   // << tr("是否存储")
-                                   << tr("释义"));
+  model->setHorizontalHeaderLabels(QStringList() << tr("属性") << tr("类型") << tr("长度") << tr("最小值") << tr("最大值") << tr("值") << tr("释义"));
 
   // 打开JSON文件
   QFile file(json_file);
@@ -1330,31 +1426,26 @@ bool MainWindow::readJson(const QString &json_file, QStandardItemModel *model) {
   // 解析JSON数据
   QJsonDocument json_doc = QJsonDocument::fromJson(json_data);
   if (!json_doc.isNull() && json_doc.isObject()) {
-    QJsonObject json_obj = json_doc.object();  // json对象
+    QJsonObject json_obj = json_doc.object(); // json对象
 
-    QStringList top_keys = json_obj.keys();  // 所有的keys
+    QStringList top_keys = json_obj.keys(); // 所有的keys
 
     for (auto i = top_keys.constBegin(); i != top_keys.constEnd(); ++i) {
-      QJsonObject machine_obj = json_obj.value(*i).toObject();  // 当前机器
+      QJsonObject machine_obj = json_obj.value(*i).toObject(); // 当前机器
       QStandardItem *machine_item = new QStandardItem(*i);
       model->appendRow(machine_item);
 
       // 遍历每个机器的参数
       QStringList second_keys = machine_obj.keys();
-      for (auto j = second_keys.constBegin(); j != second_keys.constEnd();
-           ++j) {
+      for (auto j = second_keys.constBegin(); j != second_keys.constEnd(); ++j) {
         QJsonObject key_obj = machine_obj.value(*j).toObject();
 
-        QStandardItem *key_item = new QStandardItem(*j);  // 属性
-        QStandardItem *dtype_item =
-            new QStandardItem(key_obj.value("dtype").toString());  // 类型
-        QStandardItem *length_item =
-            new QStandardItem(key_obj.value("length").toString());  // 长度
-        QStandardItem *min_item =
-            new QStandardItem(key_obj.value("min").toString());  // 最小值
-        QStandardItem *max_item =
-            new QStandardItem(key_obj.value("max").toString());  // 最大值
-        QStandardItem *value_item;                               // 值
+        QStandardItem *key_item = new QStandardItem(*j);                                    // 属性
+        QStandardItem *dtype_item = new QStandardItem(key_obj.value("dtype").toString());   // 类型
+        QStandardItem *length_item = new QStandardItem(key_obj.value("length").toString()); // 长度
+        QStandardItem *min_item = new QStandardItem(key_obj.value("min").toString());       // 最小值
+        QStandardItem *max_item = new QStandardItem(key_obj.value("max").toString());       // 最大值
+        QStandardItem *value_item;                                                          // 值
         if (length_item->text().toInt() > 1) {
           QJsonArray value_array = key_obj.value("value").toArray();
 
@@ -1367,13 +1458,10 @@ bool MainWindow::readJson(const QString &json_file, QStandardItemModel *model) {
           value_item = new QStandardItem(key_obj.value("value").toString());
         }
 
-        QStandardItem *comment_item =
-            new QStandardItem(key_obj.value("comment").toString());  // 释义
+        QStandardItem *comment_item = new QStandardItem(key_obj.value("comment").toString()); // 释义
 
         // 存为一行
-        QList<QStandardItem *> item_line{key_item,    dtype_item, length_item,
-                                         min_item,    max_item,   value_item,
-                                         comment_item};
+        QList<QStandardItem *> item_line{key_item, dtype_item, length_item, min_item, max_item, value_item, comment_item};
         machine_item->appendRow(item_line);
       }
     }
@@ -1388,8 +1476,7 @@ bool MainWindow::readJson(const QString &json_file, QStandardItemModel *model) {
 }
 
 bool MainWindow::dumpJson(const QString &json_file, QStandardItemModel *model) {
-  std::function<QJsonObject(QStandardItem * parent_item)> packJson =
-      [&](QStandardItem *parent_item) -> QJsonObject {
+  std::function<QJsonObject(QStandardItem * parent_item)> packJson = [&](QStandardItem *parent_item) -> QJsonObject {
     QJsonObject parent_obj;
     for (int i = 0; i < parent_item->rowCount(); ++i) {
       if (parent_item->hasChildren()) {
@@ -1408,8 +1495,7 @@ bool MainWindow::dumpJson(const QString &json_file, QStandardItemModel *model) {
 
             if (parent_item->child(i, 2)->text().toInt() > 1) {
               QJsonArray value_array;
-              QStringList value_list =
-                  parent_item->child(i, 5)->text().split(",");
+              QStringList value_list = parent_item->child(i, 5)->text().split(",");
               for (int k = 0; k < value_list.length(); ++k) {
                 value_array.append(value_list.at(k));
               }
@@ -1456,17 +1542,14 @@ int MainWindow::getItemLevel(QStandardItem *item) {
 
 void MainWindow::settingConnection() {
   // 状态label显示
-  connect(this, &MainWindow::signUpdateLabelState,
-          [=](QString text) { ui->running_state_label->setText(text); });
+  connect(this, &MainWindow::signUpdateLabelState, [=](QString text) { ui->running_state_label->setText(text); });
 
   // 检测过量
   connect(this, &MainWindow::signOverLimit, [=]() {
     QMessageBox box;
     box.setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
     box.setText("使用次数已达限制，请联系相关人员处理。");
-    QImage qimage = QImage(":m_icon/icon/warn.svg")
-                        .scaled(50, 50, Qt::AspectRatioMode::KeepAspectRatio,
-                                Qt::TransformationMode::SmoothTransformation);
+    QImage qimage = QImage(":m_icon/icon/warn.svg").scaled(50, 50, Qt::AspectRatioMode::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);
     box.setIconPixmap(QPixmap::fromImage(qimage));
     box.addButton("确认", QMessageBox::ActionRole);
     box.exec();
@@ -1483,30 +1566,11 @@ void MainWindow::settingConnection() {
     }
   });
 
-  connect(rclcomm_, &SytRclComm::visualLoadClothRes, this,
-          &MainWindow::slotVisualLoadCloth);  // 上料机可视化
-  connect(rclcomm_, &SytRclComm::errorNodeMsgSign, this,
-          &MainWindow::errorNodeMsgSlot);  // 错误提示
-  connect(rclcomm_, &SytRclComm::waitUpdateResultSuccess, this,
-          &MainWindow::otaResultShow);  // ota停止
-  connect(rclcomm_, &SytRclComm::installRes, this,
-          &MainWindow::otaInstallSuccess);  // ota安装
-  connect(rclcomm_, &SytRclComm::signLogPub, this,
-          &MainWindow::slotLogShow);  // rosout回调消息
-  // connect(rclcomm_, &SytRclComm::signErrorLevel, [=](int level) {
-  //  switch (level) {
-  //  case 0:
-  //  case 1:
-  //  setMutuallyLight(GREEN);
-  //  break;
-  //  case 2:
-  //  setMutuallyLight(YELLOW);
-  //  break;
-  //  case 3:
-  //  setMutuallyLight(RED);
-  //  break;
-  // };
-  //});
+  connect(rclcomm_, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth); // 上料机可视化
+  connect(rclcomm_, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);      // 错误提示
+  connect(rclcomm_, &SytRclComm::waitUpdateResultSuccess, this, &MainWindow::otaResultShow);  // ota停止
+  connect(rclcomm_, &SytRclComm::installRes, this, &MainWindow::otaInstallSuccess);           // ota安装
+  connect(rclcomm_, &SytRclComm::signLogPub, this, &MainWindow::slotLogShow);                 // rosout回调消息
 
   // 产量统计
   connect(rclcomm_, &SytRclComm::signRunCount, [=](uint64_t count) {
@@ -1516,31 +1580,26 @@ void MainWindow::settingConnection() {
   });
 
   // 补料模式结束
-  connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this,
-          &MainWindow::addClothFinish);
+  connect(rclcomm_, &SytRclComm::signLoadMachineAddClothFinish, this, &MainWindow::addClothFinish);
 
   // 机器空闲
   connect(rclcomm_, &SytRclComm::machineIdle, [=]() {
-    this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->start_btn},
-                     {ui->end_btn, ui->pause_btn});
+    this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn});
   });
 
   // 机器运行
   connect(rclcomm_, &SytRclComm::machineRun, [=]() {
-    this->btnControl({ui->pause_btn, ui->end_btn},
-                     {ui->start_btn, ui->add_cloth_btn, ui->reset_btn});
+    this->btnControl({ui->pause_btn, ui->end_btn}, {ui->start_btn, ui->add_cloth_btn, ui->reset_btn});
   });
 
   // 机器暂停
   connect(rclcomm_, &SytRclComm::machinePause, [=]() {
-    this->btnControl({ui->reset_btn, ui->start_btn},
-                     {ui->end_btn, ui->pause_btn, ui->add_cloth_btn});
+    this->btnControl({ui->reset_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn});
   });
 
   // 机器停止
   connect(rclcomm_, &SytRclComm::machineStop, [=]() {
-    this->btnControl({ui->reset_btn}, {ui->end_btn, ui->pause_btn,
-                                       ui->add_cloth_btn, ui->start_btn});
+    this->btnControl({ui->reset_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn, ui->start_btn});
   });
 }
 
@@ -1553,16 +1612,14 @@ void MainWindow::bindControlConnection() {
   // 合片反馈
   qRegisterMetaType<syt_msgs::msg::ComposeMachineState>(
       "syt_msgs::msg::ComposeMachineState");
-  connect(rclcomm_, &SytRclComm::updateComposeMachineState,
-          [=](syt_msgs::msg::ComposeMachineState state) {
-            developer_widget_->setComposeMachineState(state);
-          });
+  connect(rclcomm_, &SytRclComm::updateComposeMachineState, [=](syt_msgs::msg::ComposeMachineState state) {
+    developer_widget_->setComposeMachineState(state);
+  });
 
   // 缝纫反馈
-  connect(rclcomm_, &SytRclComm::updateSewingMachineState,
-          [=](syt_msgs::msg::SewingMachineState state) {
-            developer_widget_->setSewingMachineState(state);
-          });
+  connect(rclcomm_, &SytRclComm::updateSewingMachineState, [=](syt_msgs::msg::SewingMachineState state) {
+    developer_widget_->setSewingMachineState(state);
+  });
 
   // 更新固件-上料机
   connect(developer_widget_, &DeveloperWidget::signUpdateLoadMachine, [=]() {
@@ -1580,122 +1637,94 @@ void MainWindow::bindControlConnection() {
   });
 
   // 上料机-复位
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineReset,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachineReset(id); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineReset, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineReset(id); });
+  });
 
   // 上料机-补料
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineAddCloth,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachineAddCloth(id); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineAddCloth, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineAddCloth(id); });
+  });
 
   // 上料机-清台
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineClearTable,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachineClearTable(id); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineClearTable, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineClearTable(id); });
+  });
 
   // 上料机-裁片尺寸
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineClothSize,
-          [=](int id, uint32_t width, uint32_t length) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineClothSize(id, width, length); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineClothSize, [=](int id, uint32_t width, uint32_t length) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineClothSize(id, width, length); });
+  });
 
   // 上料机-裁片尺寸
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineLoadDistance,
-          [=](int id, uint32_t distance) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineLoadDistance(id, distance); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineLoadDistance, [=](int id, uint32_t distance) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineLoadDistance(id, distance); });
+  });
 
   // 上料机-上料间隔
-  connect(
-      developer_widget_, &DeveloperWidget::signLoadMachineTrayGap,
-      [=](int id, int32_t height) {
-        QtConcurrent::run([=]() { rclcomm_->loadMachineTrayGap(id, height); });
-      });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayGap, [=](int id, int32_t height) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineTrayGap(id, height); });
+  });
 
   // 上料机-上料偏移
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayOffset,
-          [=](int id, int32_t offset) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineTrayOffset(id, offset); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineTrayOffset, [=](int id, int32_t offset) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineTrayOffset(id, offset); });
+  });
 
   // 上料机-粗对位
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineRoughAlign,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachineRoughAlign(id); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineRoughAlign, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineRoughAlign(id); });
+  });
 
   // 上料机-上料偏移
-  connect(
-      developer_widget_, &DeveloperWidget::signLoadMachineOffset,
-      [=](int id, int offset) {
-        QtConcurrent::run([=]() { rclcomm_->loadMachineOffset(id, offset); });
-      });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineOffset, [=](int id, int offset) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineOffset(id, offset); });
+  });
 
   // 上料机-抓住裁片
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineHoldCloth,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachineHoldCloth(id); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineHoldCloth, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineHoldCloth(id); });
+  });
 
   // 上料机-上裁片
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineGrabCloth,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachineGrabCloth(id); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineGrabCloth, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineGrabCloth(id); });
+  });
 
   // 上料机-预备设置
-  connect(developer_widget_, &DeveloperWidget::signLoadMachinePreSetup,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachinePreSetup(id); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachinePreSetup, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachinePreSetup(id); });
+  });
 
   // 上料机-视觉对位
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineVisualAlign,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachineVisualAlign(id); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineVisualAlign, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineVisualAlign(id); });
+  });
 
   // 上料机-设置厚度
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineThickness,
-          [=](int id, float thickness) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineThickness(id, thickness); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineThickness, [=](int id, float thickness) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineThickness(id, thickness); });
+  });
 
   // 上料机-出针
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineExtendNeedle,
-          [=](int id, bool enable) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineExtendNeedle(id, enable); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineExtendNeedle, [=](int id, bool enable) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineExtendNeedle(id, enable); });
+  });
 
   // 上料机-重量传感器
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineWeightSwitch,
-          [=](int id, bool enable) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineWeightSwitch(id, enable); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineWeightSwitch, [=](int id, bool enable) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineWeightSwitch(id, enable); });
+  });
 
   // 上料机-除褶动作
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineUnpleatSwitch,
-          [=](int id, bool enable) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineUnpleatSwitch(id, enable); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineUnpleatSwitch, [=](int id, bool enable) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineUnpleatSwitch(id, enable); });
+  });
 
   // 上料机-老化
-  connect(developer_widget_, &DeveloperWidget::signLoadMachineAgingSwitch,
-          [=](int id, bool enable) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineAgingSwitch(id, enable); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signLoadMachineAgingSwitch, [=](int id, bool enable) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineAgingSwitch(id, enable); });
+  });
 
   // 合片机-复位
   connect(developer_widget_, &DeveloperWidget::signComposeMachineReset, [=]() {
@@ -1708,84 +1737,64 @@ void MainWindow::bindControlConnection() {
   });
 
   // 合片机-除褶
-  connect(developer_widget_, &DeveloperWidget::signComposeMachineWipeFold,
-          [=]() {
-            QtConcurrent::run([=]() { rclcomm_->composeMachineWipeFold(); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineWipeFold, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineWipeFold(); });
+  });
 
   // 合片机-出针
-  connect(
-      developer_widget_, &DeveloperWidget::signComposeMachineExtendNeedle,
-      [=]() {
-        QtConcurrent::run([=]() { rclcomm_->composeMachineExtendNeedle(); });
-      });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineExtendNeedle, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineExtendNeedle(); });
+  });
 
   // 合片机-收针
-  connect(
-      developer_widget_, &DeveloperWidget::signComposeMachineWithdrawNeedle,
-      [=]() {
-        QtConcurrent::run([=]() { rclcomm_->composeMachineWithdrawNeedle(); });
-      });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineWithdrawNeedle, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineWithdrawNeedle(); });
+  });
 
   // 合片机-吹气
-  connect(developer_widget_, &DeveloperWidget::signComposeMachineBlowWind,
-          [=]() {
-            QtConcurrent::run([=]() { rclcomm_->composeMachineBlowWind(); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineBlowWind, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineBlowWind(); });
+  });
 
   // 合片机-停气
-  connect(developer_widget_, &DeveloperWidget::signComposeMachineStopBlow,
-          [=]() {
-            QtConcurrent::run([=]() { rclcomm_->composeMachineStopBlow(); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineStopBlow, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineStopBlow(); });
+  });
 
   // 合片机-开吸风台
-  connect(developer_widget_, &DeveloperWidget::signComposeMachineFastenSheet,
-          [=]() {
-            QtConcurrent::run([=]() { rclcomm_->composeMachineFastenSheet(); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineFastenSheet, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineFastenSheet(); });
+  });
 
   // 合片机-关吸风台
-  connect(
-      developer_widget_, &DeveloperWidget::signComposeMachineUnfastenSheet,
-      [=]() {
-        QtConcurrent::run([=]() { rclcomm_->composeMachineUnfastenSheet(); });
-      });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineUnfastenSheet, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineUnfastenSheet(); });
+  });
 
   // 合片机-移动抓手
-  connect(developer_widget_, &DeveloperWidget::signComposeMachineMoveHand,
-          [=](float x, float y, float z, float c) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->composeMachineMoveHand(x, y, z, c); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineMoveHand, [=](float x, float y, float z, float c) {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineMoveHand(x, y, z, c); });
+  });
 
   // 合片机-移动吸盘
-  connect(developer_widget_, &DeveloperWidget::signComposeMachineMoveSucker,
-          [=](syt_msgs::msg::ComposeMachineSuckerStates sucker_states) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->composeMachineMoveSucker(sucker_states); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineMoveSucker, [=](syt_msgs::msg::ComposeMachineSuckerStates sucker_states) {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineMoveSucker(sucker_states); });
+  });
 
   // 合片机-平面拟合
-  connect(
-      developer_widget_, &DeveloperWidget::signComposeMachineFittingPlane,
-      [=]() {
-        QtConcurrent::run([=]() { rclcomm_->composeMachineFittingPlane(); });
-      });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineFittingPlane, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineFittingPlane(); });
+  });
 
   // 合片机-吹气高度
-  connect(developer_widget_, &DeveloperWidget::signComposeMachineBlowHeight,
-          [=](float height) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->composeMachineBlowHeight(height); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineBlowHeight, [=](float height) {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineBlowHeight(height); });
+  });
 
   // 合片机-合片台灯
-  connect(
-      developer_widget_, &DeveloperWidget::signComposeMachineTableLight,
-      [=](float ratio) {
-        QtConcurrent::run([=]() { rclcomm_->composeMachineTableLight(ratio); });
-      });
+  connect(developer_widget_, &DeveloperWidget::signComposeMachineTableLight, [=](float ratio) {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineTableLight(ratio); });
+  });
 
   // 缝纫机-复位
   connect(developer_widget_, &DeveloperWidget::signSewingMachineReset, [=]() {
@@ -1793,87 +1802,71 @@ void MainWindow::bindControlConnection() {
   });
 
   // 缝纫机-移动抓手
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineMoveHand,
-          [=](float x, float y, float c, bool z) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->sewingMachineMoveHand(x, y, c, z); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineMoveHand, [=](float x, float y, float c, bool z) {
+    QtConcurrent::run([=]() { rclcomm_->sewingMachineMoveHand(x, y, c, z); });
+  });
 
   // 缝纫机-发送关键点
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineSendKeypoints,
-          [=](syt_msgs::msg::ClothKeypoints2f keypoints) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->sewingMachineSendKeypoints(keypoints); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineSendKeypoints, [=](syt_msgs::msg::ClothKeypoints2f keypoints) {
+    QtConcurrent::run([=]() { rclcomm_->sewingMachineSendKeypoints(keypoints); });
+  });
 
   // 缝纫机-设置针长
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineNeedle,
-          [=](float line_1, float line_2, float line_3, float line_4) {
-            QtConcurrent::run([=]() {
-              rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
-            });
-          });
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineNeedle, [=](float line_1, float line_2, float line_3, float line_4) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
+    });
+  });
 
   // 缝纫机-水洗标设置
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelWidth,
-          [=](bool enable, int side, float width, float position) {
-            QtConcurrent::run([=]() {
-              rclcomm_->sewingMachineLabelWidth(enable, side, width, position);
-            });
-          });
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelWidth, [=](bool enable, int side, float width, float position) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineLabelWidth(enable, side, width, position);
+    });
+  });
 
   // 缝纫机-水洗标复位
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelReset,
-          [=]() {
-            QtConcurrent::run([=]() { rclcomm_->sewingMachineLabelReset(); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineLabelReset, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->sewingMachineLabelReset(); });
+  });
 
   // 缝纫机-运行模式
-  connect(developer_widget_, &DeveloperWidget::signSewingMachineSpeed,
-          [=](int speed) {
-            QtConcurrent::run([=]() { rclcomm_->sewingMachineSpeed(speed); });
-          });
+  connect(developer_widget_, &DeveloperWidget::signSewingMachineSpeed, [=](int speed) {
+    QtConcurrent::run([=]() { rclcomm_->sewingMachineSpeed(speed); });
+  });
 
   // 检测标定效果
   connect(developer_widget_, &DeveloperWidget::signCheckCalib, [=]() {
     QtConcurrent::run([=]() { rclcomm_->checkCalibration(); });
   });
-  connect(rclcomm_, &SytRclComm::signCheckCalibrationFinish, developer_widget_,
-          &DeveloperWidget::setCheckCalibrationResult);
+  connect(rclcomm_, &SytRclComm::signCheckCalibrationFinish, developer_widget_, &DeveloperWidget::setCheckCalibrationResult);
 
   // 急停
-  connect(developer_widget_, &DeveloperWidget::signEmergencyStop, rclcomm_,
-          [=]() { QtConcurrent::run([=]() { rclcomm_->emergencyStop(); }); });
+  connect(developer_widget_, &DeveloperWidget::signEmergencyStop, rclcomm_, [=]() { QtConcurrent::run([=]() { rclcomm_->emergencyStop(); }); });
 
   // 红灯
-  connect(developer_widget_, &DeveloperWidget::signRedLight, rclcomm_,
-          [=]() { QtConcurrent::run([=]() { rclcomm_->redLight(); }); });
+  connect(developer_widget_, &DeveloperWidget::signRedLight, rclcomm_, [=]() { QtConcurrent::run([=]() { rclcomm_->redLight(); }); });
 
   // 绿灯
-  connect(developer_widget_, &DeveloperWidget::signGreenLight, rclcomm_,
-          [=]() { QtConcurrent::run([=]() { rclcomm_->greenLight(); }); });
+  connect(developer_widget_, &DeveloperWidget::signGreenLight, rclcomm_, [=]() { QtConcurrent::run([=]() { rclcomm_->greenLight(); }); });
 
   // 黄灯
-  connect(developer_widget_, &DeveloperWidget::signYellowLight, rclcomm_,
-          [=]() { QtConcurrent::run([=]() { rclcomm_->yellowLight(); }); });
+  connect(developer_widget_, &DeveloperWidget::signYellowLight, rclcomm_, [=]() { QtConcurrent::run([=]() { rclcomm_->yellowLight(); }); });
 
   // 蜂鸣器开
-  connect(developer_widget_, &DeveloperWidget::signBellOpen, rclcomm_,
-          [=]() { QtConcurrent::run([=]() { rclcomm_->bellOpen(); }); });
+  connect(developer_widget_, &DeveloperWidget::signBellOpen, rclcomm_, [=]() { QtConcurrent::run([=]() { rclcomm_->bellOpen(); }); });
 
   // 蜂鸣器关
-  connect(developer_widget_, &DeveloperWidget::signBellClose, rclcomm_,
-          [=]() { QtConcurrent::run([=]() { rclcomm_->bellClose(); }); });
+  connect(developer_widget_, &DeveloperWidget::signBellClose, rclcomm_, [=]() { QtConcurrent::run([=]() { rclcomm_->bellClose(); }); });
 
   ////////////// 参数配置界面 /////////////////
 }
 
 void MainWindow::bindParamSetConnection() {
   // 切换模式
-  connect(param_set_widget_, &ParamSetWidget::signSwitchSewingMode,
-          [=](int mode) {
-            QtConcurrent::run([=]() { rclcomm_->sewingMachineMode(mode); });
-          });
+  connect(param_set_widget_, &ParamSetWidget::signSwitchSewingMode, [=](int mode) {
+    QtConcurrent::run([=]() { rclcomm_->sewingMachineMode(mode); });
+  });
 
   // 缝纫机-复位
   connect(param_set_widget_, &ParamSetWidget::signSewingMachineReset, [=]() {
@@ -1881,33 +1874,28 @@ void MainWindow::bindParamSetConnection() {
   });
 
   // 缝纫机-水洗标复位
-  connect(param_set_widget_, &ParamSetWidget::signSewingMachineLabelReset,
-          [=]() {
-            QtConcurrent::run([=]() { rclcomm_->sewingMachineLabelReset(); });
-          });
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineLabelReset, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->sewingMachineLabelReset(); });
+  });
 
   // 缝纫机-水洗标设置
-  connect(param_set_widget_, &ParamSetWidget::signSewingMachineLabelWidth,
-          [=](bool enable, int side, float width, float position) {
-            QtConcurrent::run([=]() {
-              rclcomm_->sewingMachineLabelWidth(enable, side, width, position);
-            });
-          });
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineLabelWidth, [=](bool enable, int side, float width, float position) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineLabelWidth(enable, side, width, position);
+    });
+  });
 
   // 缝纫机-设置针长
-  connect(param_set_widget_, &ParamSetWidget::signSewingMachineNeedle,
-          [=](float line_1, float line_2, float line_3, float line_4) {
-            QtConcurrent::run([=]() {
-              rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
-            });
-          });
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineNeedle, [=](float line_1, float line_2, float line_3, float line_4) {
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
+    });
+  });
 
   // 缝纫机-设置厚度
-  connect(param_set_widget_, &ParamSetWidget::signSewingMachineThickness,
-          [=](float thickness) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->sewingMachineThickness(thickness); });
-          });
+  connect(param_set_widget_, &ParamSetWidget::signSewingMachineThickness, [=](float thickness) {
+    QtConcurrent::run([=]() { rclcomm_->sewingMachineThickness(thickness); });
+  });
 
   // 合片机-复位
   connect(param_set_widget_, &ParamSetWidget::signComposeMachineReset, [=]() {
@@ -1915,31 +1903,24 @@ void MainWindow::bindParamSetConnection() {
   });
 
   // 合片机-吹气高度
-  connect(param_set_widget_, &ParamSetWidget::signComposeMachineBlowHeight,
-          [=](float height) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->composeMachineBlowHeight(height); });
-          });
+  connect(param_set_widget_, &ParamSetWidget::signComposeMachineBlowHeight, [=](float height) {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineBlowHeight(height); });
+  });
 
   // 合片机-合片台灯
-  connect(
-      param_set_widget_, &ParamSetWidget::signComposeMachineTableLight,
-      [=](float ratio) {
-        QtConcurrent::run([=]() { rclcomm_->composeMachineTableLight(ratio); });
-      });
+  connect(param_set_widget_, &ParamSetWidget::signComposeMachineTableLight, [=](float ratio) {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineTableLight(ratio); });
+  });
 
   // 上料机-复位
-  connect(param_set_widget_, &ParamSetWidget::signLoadMachineReset,
-          [=](int id) {
-            QtConcurrent::run([=]() { rclcomm_->loadMachineReset(id); });
-          });
+  connect(param_set_widget_, &ParamSetWidget::signLoadMachineReset, [=](int id) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineReset(id); });
+  });
 
   // 上料机-设置厚度
-  connect(param_set_widget_, &ParamSetWidget::signLoadMachineThickness,
-          [=](int id, float thickness) {
-            QtConcurrent::run(
-                [=]() { rclcomm_->loadMachineThickness(id, thickness); });
-          });
+  connect(param_set_widget_, &ParamSetWidget::signLoadMachineThickness, [=](int id, float thickness) {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineThickness(id, thickness); });
+  });
 }
 
 void MainWindow::deleteAll() {
@@ -1956,33 +1937,18 @@ void MainWindow::initOther() {
   checkConfigsExist();
 }
 
-// void MainWindow::setMutuallyLight(LIGHT_COLOR c) {
-// switch (c) {
-// case RED:
-// ui->error_level_label->setStyleSheet("QLabel{background-color: rgb(255, 0,
-// 0);border: 1px solid #fba30e; border-radius: 5px;}"); break; case YELLOW:
-// ui->error_level_label->setStyleSheet("QLabel{background-color: rgb(255, 255,
-// 0);border: 1px solid #fba30e; border-radius: 5px;}"); break; case GREEN:
-// ui->error_level_label->setStyleSheet("QLabel{background-color: rgb(0, 255,
-// 0);border: 1px solid #fba30e; border-radius: 5px;}"); break; default: break;
-//}
-//}
-
-void MainWindow::btnControl(std::vector<QPushButton *> enables,
-                            std::vector<QPushButton *> disables) {
+void MainWindow::btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> disables) {
   for (auto i : enables) {
     i->setEnabled(true);
     QPalette palette = i->palette();
     palette.setColor(QPalette::ButtonText, Qt::black);
     i->setPalette(palette);
-    // i->setStyleSheet("color: black;");
   }
   for (auto i : disables) {
     i->setEnabled(false);
     QPalette palette = i->palette();
     palette.setColor(QPalette::ButtonText, Qt::gray);
     i->setPalette(palette);
-    // i->setStyleSheet("color: gray;");
   }
 }
 
@@ -2200,9 +2166,7 @@ void MainWindow::otaResultShow(bool res, QString msg) {
   waiting_spinner_widget_->stop();
   if (res) {
     // todo show ota res
-    auto res = showMessageBox(this, STATE::SUCCESS,
-                              "检测到远端存在新安装包,请选择是否升级", 2,
-                              {"一键升级", "取消升级"});
+    auto res = showMessageBox(this, STATE::SUCCESS, "检测到远端存在新安装包,请选择是否升级", 2, {"一键升级", "取消升级"});
     if (res == 0) {
       future_ = QtConcurrent::run([=] { rclcomm_->otaDownload(); });
       // future2.waitForFinished();
@@ -2213,12 +2177,9 @@ void MainWindow::otaResultShow(bool res, QString msg) {
 
     // todo 完成后的
     auto ota_dialog = new OtaUpdateDialog(this);
-    connect(rclcomm_, &SytRclComm::processZero, ota_dialog,
-            &OtaUpdateDialog::clearProcessValue);
-    connect(rclcomm_, &SytRclComm::updateProcess, ota_dialog,
-            &OtaUpdateDialog::updateProcessValue);
-    connect(rclcomm_, &SytRclComm::downloadRes, ota_dialog,
-            &OtaUpdateDialog::getDownloadRes);
+    connect(rclcomm_, &SytRclComm::processZero, ota_dialog, &OtaUpdateDialog::clearProcessValue);
+    connect(rclcomm_, &SytRclComm::updateProcess, ota_dialog, &OtaUpdateDialog::updateProcessValue);
+    connect(rclcomm_, &SytRclComm::downloadRes, ota_dialog, &OtaUpdateDialog::getDownloadRes);
     ota_dialog->show();
     auto res_ = ota_dialog->exec();
 
@@ -2226,19 +2187,16 @@ void MainWindow::otaResultShow(bool res, QString msg) {
       showMessageBox(this, STATE::WARN, "取消升级", 1, {"退出"});
       return;
     } else if (res_ == 9) {
-      showMessageBox(this, STATE::SUCCESS,
-                     "下载完成,请点击以下按钮进行软件安装", 1, {"安装"});
+      showMessageBox(this, STATE::SUCCESS, "下载完成,请点击以下按钮进行软件安装", 1, {"安装"});
       // todo call server
       waiting_spinner_widget_->start();
       future_ = QtConcurrent::run([=] { rclcomm_->otaInstall(); });
     } else if (res_ == 10) {
-      showMessageBox(this, STATE::ERROR, "升级失败,请检查网络是否异常", 1,
-                     {"退出"});
+      showMessageBox(this, STATE::ERROR, "升级失败,请检查网络是否异常", 1, {"退出"});
       return;
     }
 
     delete ota_dialog;
-
   } else {
     showMessageBox(this, STATE::ERROR, "升级出错", 1, {"退出"});
   }
@@ -2285,16 +2243,13 @@ void MainWindow::slotVisualLoadCloth(int machine_id, int cam_id, QImage image) {
 void MainWindow::slotShowDevLoginWindow() {
   DevLoginWindow *dev_login_window = new DevLoginWindow(this);
   // 开发者界面
-  connect(dev_login_window, &DevLoginWindow::signDevMode, this,
-          &MainWindow::slotDeveloperMode);
+  connect(dev_login_window, &DevLoginWindow::signDevMode, this, &MainWindow::slotDeveloperMode);
   dev_login_window->show();
   dev_login_window->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void MainWindow::slotParamSet() {
-  param_set_widget_->move(
-      this->geometry().center() -
-      QPoint(param_set_widget_->width() / 2, param_set_widget_->height() / 2));
+  param_set_widget_->move(this->geometry().center() - QPoint(param_set_widget_->width() / 2, param_set_widget_->height() / 2));
   param_set_widget_->show();
 }
 
@@ -2328,9 +2283,7 @@ void MainWindow::slotStartClothStyleWindow() {
 }
 
 void MainWindow::slotDeveloperMode() {
-  developer_widget_->move(
-      this->geometry().center() -
-      QPoint(developer_widget_->width() / 2, developer_widget_->height() / 2));
+  developer_widget_->move(this->geometry().center() - QPoint(developer_widget_->width() / 2, developer_widget_->height() / 2));
   developer_widget_->show();
 }
 
@@ -2344,8 +2297,7 @@ void MainWindow::slotSewingCalibStart() {
 }
 
 ////////////////////////// 显示log槽函数 //////////////////////////
-void MainWindow::slotLogShow(QString time, int level, QString location,
-                             QString func, QString msg) {
+void MainWindow::slotLogShow(QString time, int level, QString location, QString func, QString msg) {
   Q_UNUSED(func)
 
   if (level < log_level_) {
@@ -2354,58 +2306,23 @@ void MainWindow::slotLogShow(QString time, int level, QString location,
 
   QString htmlText;
   switch (level) {
-    case 10:
-      htmlText =
-          QString(
-              "<span style=\"background-color: green; color: white; "
-              "font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-              .arg("DEBUG")
-              .arg(time)
-              .arg(location)
-              .arg(msg);
-      break;
-    case 20:
-      htmlText =
-          QString(
-              "<span style=\"background-color: white; color: black; "
-              "font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-              .arg("INFO")
-              .arg(time)
-              .arg(location)
-              .arg(msg);
-      break;
-    case 30:
-      htmlText =
-          QString(
-              "<span style=\"background-color: orange; color: white; "
-              "font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-              .arg("WARN")
-              .arg(time)
-              .arg(location)
-              .arg(msg);
-      break;
-    case 40:
-      htmlText =
-          QString(
-              "<span style=\"background-color: darkred; color: white; "
-              "font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-              .arg("ERROR")
-              .arg(time)
-              .arg(location)
-              .arg(msg);
-      break;
-    case 50:
-      htmlText =
-          QString(
-              "<span style=\"background-color: red; color: white; font-weight: "
-              "bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>")
-              .arg("FATAL")
-              .arg(time)
-              .arg(location)
-              .arg(msg);
-      break;
-    default:
-      break;
+  case 10:
+    htmlText = QString("<span style=\"background-color: green; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("DEBUG").arg(time).arg(location).arg(msg);
+    break;
+  case 20:
+    htmlText = QString("<span style=\"background-color: white; color: black; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("INFO").arg(time).arg(location).arg(msg);
+    break;
+  case 30:
+    htmlText = QString("<span style=\"background-color: orange; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("WARN").arg(time).arg(location).arg(msg);
+    break;
+  case 40:
+    htmlText = QString("<span style=\"background-color: darkred; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("ERROR").arg(time).arg(location).arg(msg);
+    break;
+  case 50:
+    htmlText = QString("<span style=\"background-color: red; color: white; font-weight: bold;\">【 %1 】 【 %2 】 【 %3 】：  %4\n</span>").arg("FATAL").arg(time).arg(location).arg(msg);
+    break;
+  default:
+    break;
   }
   ui->log_plain_text_edit->appendHtml(htmlText);
 }
@@ -2413,32 +2330,21 @@ void MainWindow::slotLogShow(QString time, int level, QString location,
 ////////////////////////// 选择设置样式槽函数 //////////////////////////
 void MainWindow::slotChooseStyleFile() {
   auto choose_style_dialog = new ChooseStyleDialog(this);
-  disconnect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyle, this,
-             &MainWindow::slotSetCurrentStyleFile);
-  connect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyle, this,
-          &MainWindow::slotSetCurrentStyleFile);
-  disconnect(rclcomm_, &SytRclComm::signSetCurrentClothStyleFinish,
-             choose_style_dialog,
-             &ChooseStyleDialog::slotSetCurrentStyleFinish);
-  connect(rclcomm_, &SytRclComm::signSetCurrentClothStyleFinish,
-          choose_style_dialog, &ChooseStyleDialog::slotSetCurrentStyleFinish);
+  disconnect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyle, this, &MainWindow::slotSetCurrentStyleFile);
+  connect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyle, this, &MainWindow::slotSetCurrentStyleFile);
+  disconnect(rclcomm_, &SytRclComm::signSetCurrentClothStyleFinish, choose_style_dialog, &ChooseStyleDialog::slotSetCurrentStyleFinish);
+  connect(rclcomm_, &SytRclComm::signSetCurrentClothStyleFinish, choose_style_dialog, &ChooseStyleDialog::slotSetCurrentStyleFinish);
 
   qRegisterMetaType<syt_msgs::msg::ClothStyle>("syt_msgs::msg::ClothStyle");
   connect(choose_style_dialog, &ChooseStyleDialog::accepted, this, [=] {
     emit signGetClothStyle(style_file_prefix_, style_file_name_);
   });
-  disconnect(this, SIGNAL(signGetClothStyle(QString, QString)), this,
-             SLOT(slotGetClothStyle(QString, QString)));
-  connect(this, SIGNAL(signGetClothStyle(QString, QString)), this,
-          SLOT(slotGetClothStyle(QString, QString)));
-  disconnect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this,
-             &MainWindow::slotGetClothStyleFinish);
-  connect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this,
-          &MainWindow::slotGetClothStyleFinish);
-  disconnect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyleName,
-             this, &MainWindow::slotSetCurrentStyleName);
-  connect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyleName,
-          this, &MainWindow::slotSetCurrentStyleName);
+  disconnect(this, SIGNAL(signGetClothStyle(QString, QString)), this, SLOT(slotGetClothStyle(QString, QString)));
+  connect(this, SIGNAL(signGetClothStyle(QString, QString)), this, SLOT(slotGetClothStyle(QString, QString)));
+  disconnect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish);
+  connect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish);
+  disconnect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyleName, this, &MainWindow::slotSetCurrentStyleName);
+  connect(choose_style_dialog, &ChooseStyleDialog::signSetCurrentStyleName, this, &MainWindow::slotSetCurrentStyleName);
 
   choose_style_dialog->show();
   choose_style_dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -2447,165 +2353,79 @@ void MainWindow::slotChooseStyleFile() {
 void MainWindow::slotSetCurrentStyleFile(QString prefix, QString file_name) {
   style_file_prefix_ = prefix;
   style_file_name_ = file_name;
-  future_ =
-      QtConcurrent::run([=] { rclcomm_->setCurrentStyle(prefix, file_name); });
+  future_ = QtConcurrent::run([=] { rclcomm_->setCurrentStyle(prefix, file_name); });
 }
 
 void MainWindow::slotGetClothStyle(QString prefix, QString file_name) {
-  if (sender()->metaObject()->className() !=
-      QString("CreateFromSourceWizard")) {
+  if (sender()->metaObject()->className() != QString("CreateFromSourceWizard")) {
     waiting_spinner_widget_->start();
   }
   future_ =
       QtConcurrent::run([=] { rclcomm_->getClothStyle(prefix, file_name); });
 }
 
-void MainWindow::slotGetClothStyleFinish(
-    bool result, syt_msgs::msg::ClothStyle cloth_style_front,
-    syt_msgs::msg::ClothStyle cloth_style_back) {
+void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
   if (result) {
     cloth_style_front_ = cloth_style_front;
     cloth_style_back_ = cloth_style_back;
 
-    auto rotatePoints = [=](QPointF point, QPointF center,
-                            qreal angle_radius) -> QPointF {
+    auto rotatePoints = [=](QPointF point, QPointF center, qreal angle_radius) -> QPointF {
       qreal x_offset = point.x() - center.x();
       qreal y_offset = point.y() - center.y();
-      qreal x_rotated = center.x() + x_offset * qCos(angle_radius) -
-                        y_offset * qSin(angle_radius);
-      qreal y_rotated = center.y() + x_offset * qSin(angle_radius) +
-                        y_offset * qCos(angle_radius);
+      qreal x_rotated = center.x() + x_offset * qCos(angle_radius) - y_offset * qSin(angle_radius);
+      qreal y_rotated = center.y() + x_offset * qSin(angle_radius) + y_offset * qCos(angle_radius);
       return QPointF(x_rotated, y_rotated);
     };
 
     // 旋转端点
-    QPointF front_anchor =
-        QPointF(cloth_style_front.keypoint_info.left_bottom.x,
-                cloth_style_front.keypoint_info.left_bottom.y);
-    QPointF back_anchor =
-        QPointF(cloth_style_front.keypoint_info.left_bottom.x,
-                cloth_style_front.keypoint_info.left_bottom.y);
+    QPointF front_anchor = QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y);
+    QPointF back_anchor = QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y);
 
     // 旋转角度
-    qreal front_angle =
-        -atan2(cloth_style_front.keypoint_info.right_bottom.y -
-                   cloth_style_front.keypoint_info.left_bottom.y,
-               cloth_style_front.keypoint_info.right_bottom.x -
-                   cloth_style_front.keypoint_info.left_bottom.x) +
-        PI;
-    qreal back_angle =
-        -atan2(cloth_style_back.keypoint_info.right_bottom.y -
-                   cloth_style_back.keypoint_info.left_bottom.y,
-               cloth_style_back.keypoint_info.right_bottom.x -
-                   cloth_style_back.keypoint_info.left_bottom.x) +
-        PI;
+    qreal front_angle = -atan2(cloth_style_front.keypoint_info.right_bottom.y - cloth_style_front.keypoint_info.left_bottom.y,
+                               cloth_style_front.keypoint_info.right_bottom.x - cloth_style_front.keypoint_info.left_bottom.x) +
+                        PI;
+    qreal back_angle = -atan2(cloth_style_back.keypoint_info.right_bottom.y - cloth_style_back.keypoint_info.left_bottom.y,
+                              cloth_style_back.keypoint_info.right_bottom.x - cloth_style_back.keypoint_info.left_bottom.x) +
+                       PI;
 
     QVector<QPointF> front_points;
     for (int i = 0; i < cloth_style_front.cloth_contour.points.size(); ++i) {
-      front_points.push_back(
-          rotatePoints(QPointF(cloth_style_front.cloth_contour.points.at(i).x,
-                               cloth_style_front.cloth_contour.points.at(i).y),
-                       front_anchor, front_angle));
+      front_points.push_back(rotatePoints(QPointF(cloth_style_front.cloth_contour.points.at(i).x, cloth_style_front.cloth_contour.points.at(i).y), front_anchor, front_angle));
     }
 
     QVector<QPointF> back_points;
     for (int i = 0; i < cloth_style_back.cloth_contour.points.size(); ++i) {
-      back_points.push_back(
-          rotatePoints(QPointF(cloth_style_back.cloth_contour.points.at(i).x,
-                               cloth_style_back.cloth_contour.points.at(i).y),
-                       back_anchor, back_angle));
+      back_points.push_back(rotatePoints(QPointF(cloth_style_back.cloth_contour.points.at(i).x, cloth_style_back.cloth_contour.points.at(i).y), back_anchor, back_angle));
     }
 
     QMap<QString, QPointF> front_keypoints;
-    front_keypoints["left_bottom"] =
-        rotatePoints(QPointF(cloth_style_front.keypoint_info.left_bottom.x,
-                             cloth_style_front.keypoint_info.left_bottom.y),
-                     front_anchor, front_angle);
-    front_keypoints["left_oxter"] =
-        rotatePoints(QPointF(cloth_style_front.keypoint_info.left_oxter.x,
-                             cloth_style_front.keypoint_info.left_oxter.y),
-                     front_anchor, front_angle);
-    front_keypoints["left_shoulder"] =
-        rotatePoints(QPointF(cloth_style_front.keypoint_info.left_shoulder.x,
-                             cloth_style_front.keypoint_info.left_shoulder.y),
-                     front_anchor, front_angle);
-    front_keypoints["left_collar"] =
-        rotatePoints(QPointF(cloth_style_front.keypoint_info.left_collar.x,
-                             cloth_style_front.keypoint_info.left_collar.y),
-                     front_anchor, front_angle);
-    front_keypoints["right_collar"] =
-        rotatePoints(QPointF(cloth_style_front.keypoint_info.right_collar.x,
-                             cloth_style_front.keypoint_info.right_collar.y),
-                     front_anchor, front_angle);
-    front_keypoints["right_shoulder"] =
-        rotatePoints(QPointF(cloth_style_front.keypoint_info.right_shoulder.x,
-                             cloth_style_front.keypoint_info.right_shoulder.y),
-                     front_anchor, front_angle);
-    front_keypoints["right_oxter"] =
-        rotatePoints(QPointF(cloth_style_front.keypoint_info.right_oxter.x,
-                             cloth_style_front.keypoint_info.right_oxter.y),
-                     front_anchor, front_angle);
-    front_keypoints["right_bottom"] =
-        rotatePoints(QPointF(cloth_style_front.keypoint_info.right_bottom.x,
-                             cloth_style_front.keypoint_info.right_bottom.y),
-                     front_anchor, front_angle);
+    front_keypoints["left_bottom"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_bottom.x, cloth_style_front.keypoint_info.left_bottom.y), front_anchor, front_angle);
+    front_keypoints["left_oxter"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_oxter.x, cloth_style_front.keypoint_info.left_oxter.y), front_anchor, front_angle);
+    front_keypoints["left_shoulder"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_shoulder.x, cloth_style_front.keypoint_info.left_shoulder.y), front_anchor, front_angle);
+    front_keypoints["left_collar"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.left_collar.x, cloth_style_front.keypoint_info.left_collar.y), front_anchor, front_angle);
+    front_keypoints["right_collar"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_collar.x, cloth_style_front.keypoint_info.right_collar.y), front_anchor, front_angle);
+    front_keypoints["right_shoulder"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_shoulder.x, cloth_style_front.keypoint_info.right_shoulder.y), front_anchor, front_angle);
+    front_keypoints["right_oxter"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_oxter.x, cloth_style_front.keypoint_info.right_oxter.y), front_anchor, front_angle);
+    front_keypoints["right_bottom"] = rotatePoints(QPointF(cloth_style_front.keypoint_info.right_bottom.x, cloth_style_front.keypoint_info.right_bottom.y), front_anchor, front_angle);
 
     QMap<QString, QPointF> back_keypoints;
-    back_keypoints["left_bottom"] =
-        rotatePoints(QPointF(cloth_style_back.keypoint_info.left_bottom.x,
-                             cloth_style_back.keypoint_info.left_bottom.y),
-                     back_anchor, back_angle);
-    back_keypoints["left_oxter"] =
-        rotatePoints(QPointF(cloth_style_back.keypoint_info.left_oxter.x,
-                             cloth_style_back.keypoint_info.left_oxter.y),
-                     back_anchor, back_angle);
-    back_keypoints["left_shoulder"] =
-        rotatePoints(QPointF(cloth_style_back.keypoint_info.left_shoulder.x,
-                             cloth_style_back.keypoint_info.left_shoulder.y),
-                     back_anchor, back_angle);
-    back_keypoints["left_collar"] =
-        rotatePoints(QPointF(cloth_style_back.keypoint_info.left_collar.x,
-                             cloth_style_back.keypoint_info.left_collar.y),
-                     back_anchor, back_angle);
-    back_keypoints["right_collar"] =
-        rotatePoints(QPointF(cloth_style_back.keypoint_info.right_collar.x,
-                             cloth_style_back.keypoint_info.right_collar.y),
-                     back_anchor, back_angle);
-    back_keypoints["right_shoulder"] =
-        rotatePoints(QPointF(cloth_style_back.keypoint_info.right_shoulder.x,
-                             cloth_style_back.keypoint_info.right_shoulder.y),
-                     back_anchor, back_angle);
-    back_keypoints["right_oxter"] =
-        rotatePoints(QPointF(cloth_style_back.keypoint_info.right_oxter.x,
-                             cloth_style_back.keypoint_info.right_oxter.y),
-                     back_anchor, back_angle);
-    back_keypoints["right_bottom"] =
-        rotatePoints(QPointF(cloth_style_back.keypoint_info.right_bottom.x,
-                             cloth_style_back.keypoint_info.right_bottom.y),
-                     back_anchor, back_angle);
+    back_keypoints["left_bottom"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_bottom.x, cloth_style_back.keypoint_info.left_bottom.y), back_anchor, back_angle);
+    back_keypoints["left_oxter"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_oxter.x, cloth_style_back.keypoint_info.left_oxter.y), back_anchor, back_angle);
+    back_keypoints["left_shoulder"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_shoulder.x, cloth_style_back.keypoint_info.left_shoulder.y), back_anchor, back_angle);
+    back_keypoints["left_collar"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.left_collar.x, cloth_style_back.keypoint_info.left_collar.y), back_anchor, back_angle);
+    back_keypoints["right_collar"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_collar.x, cloth_style_back.keypoint_info.right_collar.y), back_anchor, back_angle);
+    back_keypoints["right_shoulder"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_shoulder.x, cloth_style_back.keypoint_info.right_shoulder.y), back_anchor, back_angle);
+    back_keypoints["right_oxter"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_oxter.x, cloth_style_back.keypoint_info.right_oxter.y), back_anchor, back_angle);
+    back_keypoints["right_bottom"] = rotatePoints(QPointF(cloth_style_back.keypoint_info.right_bottom.x, cloth_style_back.keypoint_info.right_bottom.y), back_anchor, back_angle);
 
     // 预览图
-    QImage style_image(
-        2 * (qMax(cloth_style_front.bottom_length,
-                  cloth_style_back.bottom_length) +
-             600),
-        qMax(cloth_style_front.cloth_length, cloth_style_back.cloth_length) +
-            400,
-        QImage::Format_RGB32);
+    QImage style_image(2 * (qMax(cloth_style_front.bottom_length, cloth_style_back.bottom_length) + 600), qMax(cloth_style_front.cloth_length, cloth_style_back.cloth_length) + 400, QImage::Format_RGB32);
     style_image.fill(Qt::white);
-    qreal width_offset_front =
-        qreal(style_image.width()) / 4 - (front_keypoints["left_bottom"].x() +
-                                          front_keypoints["right_bottom"].x()) /
-                                             2;
-    qreal height_offset_front =
-        -front_keypoints["left_bottom"].y() + style_image.height() - 100;
-    qreal width_offset_back = qreal(style_image.width()) / 2 +
-                              qreal(style_image.width()) / 4 -
-                              (back_keypoints["left_bottom"].x() +
-                               back_keypoints["right_bottom"].x()) /
-                                  2;
-    qreal height_offset_back =
-        -back_keypoints["left_bottom"].y() + style_image.height() - 100;
+    qreal width_offset_front = qreal(style_image.width()) / 4 - (front_keypoints["left_bottom"].x() + front_keypoints["right_bottom"].x()) / 2;
+    qreal height_offset_front = -front_keypoints["left_bottom"].y() + style_image.height() - 100;
+    qreal width_offset_back = qreal(style_image.width()) / 2 + qreal(style_image.width()) / 4 - (back_keypoints["left_bottom"].x() + back_keypoints["right_bottom"].x()) / 2;
+    qreal height_offset_back = -back_keypoints["left_bottom"].y() + style_image.height() - 100;
 
     // 画笔对象
     QPainter painter(&style_image);
@@ -2616,23 +2436,17 @@ void MainWindow::slotGetClothStyleFinish(
     int front_color_value = cloth_style_front.cloth_color;
     int back_color_value = cloth_style_back.cloth_color;
 
-    front_color =
-        QColor((front_color_value & 0xff0000) >> 16,
-               (front_color_value & 0xff00) >> 8, (front_color_value & 0xff));
-    back_color =
-        QColor((back_color_value & 0xff0000) >> 16,
-               (back_color_value & 0xff00) >> 8, (back_color_value & 0xff));
+    front_color = QColor((front_color_value & 0xff0000) >> 16, (front_color_value & 0xff00) >> 8, (front_color_value & 0xff));
+    back_color = QColor((back_color_value & 0xff0000) >> 16, (back_color_value & 0xff00) >> 8, (back_color_value & 0xff));
 
     // 提取轮廓线
     QVector<QPointF> front_contour, back_contour;
     for (int i = 0; i < front_points.size(); ++i) {
-      front_contour.push_back(front_points.at(i) +
-                              QPointF(width_offset_front, height_offset_front));
+      front_contour.push_back(front_points.at(i) + QPointF(width_offset_front, height_offset_front));
     }
 
     for (int i = 0; i < back_points.size(); ++i) {
-      back_contour.push_back(back_points.at(i) +
-                             QPointF(width_offset_back, height_offset_back));
+      back_contour.push_back(back_points.at(i) + QPointF(width_offset_back, height_offset_back));
     }
 
     // 绘制轮廓线
@@ -2656,71 +2470,38 @@ void MainWindow::slotGetClothStyleFinish(
     location_font.setPointSize(50);
     location_font.setBold(true);
     painter.setFont(location_font);
-    painter.drawText(
-        style_image.width() / 4 - 250, 100, 500, 70, Qt::AlignCenter,
-        QString("放置%1区")
-            .arg(cloth_style_front.cloth_location - 50 ? "B" : "A"));
-    painter.drawText(
-        style_image.width() / 4 + style_image.width() / 2 - 250, 100, 500, 70,
-        Qt::AlignCenter,
-        QString("放置%1区")
-            .arg(cloth_style_back.cloth_location - 50 ? "B" : "A"));
+    painter.drawText(style_image.width() / 4 - 250, 100, 500, 70, Qt::AlignCenter, QString("放置%1区").arg(cloth_style_front.cloth_location - 50 ? "B" : "A"));
+    painter.drawText(style_image.width() / 4 + style_image.width() / 2 - 250, 100, 500, 70, Qt::AlignCenter, QString("放置%1区").arg(cloth_style_back.cloth_location - 50 ? "B" : "A"));
 
     // 绘制关键点
-    auto draw_keypoints = [&](QMap<QString, QPointF> keypoints, int w_offset,
-                              int h_offset, QPointF center,
-                              qreal angle_radius) {
+    auto draw_keypoints = [&](QMap<QString, QPointF> keypoints, int w_offset, int h_offset, QPointF center, qreal angle_radius) {
       qreal radius = 8;
-      painter.drawEllipse(
-          QPointF(w_offset, h_offset) + keypoints["left_bottom"], radius,
-          radius);
-      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_oxter"],
-                          radius, radius);
-      painter.drawEllipse(
-          QPointF(w_offset, h_offset) + keypoints["left_shoulder"], radius,
-          radius);
-      painter.drawEllipse(
-          QPointF(w_offset, h_offset) + keypoints["left_collar"], radius,
-          radius);
-      painter.drawEllipse(
-          QPointF(w_offset, h_offset) + keypoints["right_collar"], radius,
-          radius);
-      painter.drawEllipse(
-          QPointF(w_offset, h_offset) + keypoints["right_shoulder"], radius,
-          radius);
-      painter.drawEllipse(
-          QPointF(w_offset, h_offset) + keypoints["right_oxter"], radius,
-          radius);
-      painter.drawEllipse(
-          QPointF(w_offset, h_offset) + keypoints["right_bottom"], radius,
-          radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_bottom"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_oxter"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_shoulder"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["left_collar"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["right_collar"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["right_shoulder"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["right_oxter"], radius, radius);
+      painter.drawEllipse(QPointF(w_offset, h_offset) + keypoints["right_bottom"], radius, radius);
     };
 
     // 黑色点画关键点
     painter.setPen(QPen(Qt::black, 3));
     painter.setBrush(Qt::white);
-    draw_keypoints(front_keypoints, width_offset_front, height_offset_front,
-                   front_anchor, front_angle);
-    draw_keypoints(back_keypoints, width_offset_back, height_offset_back,
-                   back_anchor, back_angle);
+    draw_keypoints(front_keypoints, width_offset_front, height_offset_front, front_anchor, front_angle);
+    draw_keypoints(back_keypoints, width_offset_back, height_offset_back, back_anchor, back_angle);
 
     // 绘制刻度
-    auto drawLength = [&](QPointF begin, QPointF end, float length,
-                          bool invert_text = false) {
+    auto drawLength = [&](QPointF begin, QPointF end, float length, bool invert_text = false) {
       QLineF line(begin, end);
-      QVector2D direction_vec =
-          QVector2D(end.x() - begin.x(), end.y() - begin.y()).normalized();
+      QVector2D direction_vec = QVector2D(end.x() - begin.x(), end.y() - begin.y()).normalized();
       QVector2D norm_vec(direction_vec.y(), -direction_vec.x());
       int edge_length = 40;
-      QPointF edge_begin_1 =
-          QPointF(begin.x() + norm_vec.x() * 15, begin.y() + norm_vec.y() * 15);
-      QPointF edge_begin_2 =
-          QPointF(edge_begin_1.x() + norm_vec.x() * edge_length,
-                  edge_begin_1.y() + norm_vec.y() * edge_length);
-      QPointF edge_end_1 =
-          QPointF(end.x() + norm_vec.x() * 15, end.y() + norm_vec.y() * 15);
-      QPointF edge_end_2 = QPointF(edge_end_1.x() + norm_vec.x() * edge_length,
-                                   edge_end_1.y() + norm_vec.y() * edge_length);
+      QPointF edge_begin_1 = QPointF(begin.x() + norm_vec.x() * 15, begin.y() + norm_vec.y() * 15);
+      QPointF edge_begin_2 = QPointF(edge_begin_1.x() + norm_vec.x() * edge_length, edge_begin_1.y() + norm_vec.y() * edge_length);
+      QPointF edge_end_1 = QPointF(end.x() + norm_vec.x() * 15, end.y() + norm_vec.y() * 15);
+      QPointF edge_end_2 = QPointF(edge_end_1.x() + norm_vec.x() * edge_length, edge_end_1.y() + norm_vec.y() * edge_length);
       QPointF edge_begin_center = (edge_begin_1 + edge_begin_2) / 2;
       QPointF edge_end_center = (edge_end_1 + edge_end_2) / 2;
       QPointF edge_center = (edge_begin_center + edge_end_center) / 2;
@@ -2746,8 +2527,7 @@ void MainWindow::slotGetClothStyleFinish(
       QString text = QString("%1").arg(length);
       qreal text_width = painter.fontMetrics().width(text);
       qreal text_height = painter.fontMetrics().height();
-      QPointF text_center = QPointF(edge_center.x() + norm_vec.x() * 30,
-                                    edge_center.y() + norm_vec.y() * 30);
+      QPointF text_center = QPointF(edge_center.x() + norm_vec.x() * 30, edge_center.y() + norm_vec.y() * 30);
       qreal angle = atan2(direction_vec.y(), direction_vec.x());
       if (invert_text) {
         angle += PI;
@@ -2761,60 +2541,18 @@ void MainWindow::slotGetClothStyleFinish(
     };
 
     // 前片
-    drawLength(QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["left_bottom"],
-               QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["right_bottom"],
-               cloth_style_front.bottom_length, true);
-    drawLength(QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["right_bottom"],
-               QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["right_oxter"],
-               cloth_style_front.side_length);
-    drawLength(QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["right_shoulder"],
-               QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["right_collar"],
-               cloth_style_front.shoulder_length);
-    drawLength(QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["right_oxter"],
-               QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["left_oxter"],
-               cloth_style_front.oxter_length);
-    drawLength(QPointF(width_offset_front, height_offset_front) +
-                   QPointF(front_keypoints["left_bottom"].x(),
-                           front_keypoints["left_collar"].y()),
-               QPointF(width_offset_front, height_offset_front) +
-                   front_keypoints["left_bottom"],
-               cloth_style_front.cloth_length, true);
+    drawLength(QPointF(width_offset_front, height_offset_front) + front_keypoints["left_bottom"], QPointF(width_offset_front, height_offset_front) + front_keypoints["right_bottom"], cloth_style_front.bottom_length, true);
+    drawLength(QPointF(width_offset_front, height_offset_front) + front_keypoints["right_bottom"], QPointF(width_offset_front, height_offset_front) + front_keypoints["right_oxter"], cloth_style_front.side_length);
+    drawLength(QPointF(width_offset_front, height_offset_front) + front_keypoints["right_shoulder"], QPointF(width_offset_front, height_offset_front) + front_keypoints["right_collar"], cloth_style_front.shoulder_length);
+    drawLength(QPointF(width_offset_front, height_offset_front) + front_keypoints["right_oxter"], QPointF(width_offset_front, height_offset_front) + front_keypoints["left_oxter"], cloth_style_front.oxter_length);
+    drawLength(QPointF(width_offset_front, height_offset_front) + QPointF(front_keypoints["left_bottom"].x(), front_keypoints["left_collar"].y()), QPointF(width_offset_front, height_offset_front) + front_keypoints["left_bottom"], cloth_style_front.cloth_length, true);
 
     // 后片
-    drawLength(QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["left_bottom"],
-               QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["right_bottom"],
-               cloth_style_back.bottom_length, true);
-    drawLength(QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["right_bottom"],
-               QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["right_oxter"],
-               cloth_style_back.side_length);
-    drawLength(QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["right_shoulder"],
-               QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["right_collar"],
-               cloth_style_back.shoulder_length);
-    drawLength(QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["right_oxter"],
-               QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["left_oxter"],
-               cloth_style_back.oxter_length);
-    drawLength(QPointF(width_offset_back, height_offset_back) +
-                   QPointF(back_keypoints["left_bottom"].x(),
-                           back_keypoints["left_collar"].y()),
-               QPointF(width_offset_back, height_offset_back) +
-                   back_keypoints["left_bottom"],
-               cloth_style_back.cloth_length, true);
+    drawLength(QPointF(width_offset_back, height_offset_back) + back_keypoints["left_bottom"], QPointF(width_offset_back, height_offset_back) + back_keypoints["right_bottom"], cloth_style_back.bottom_length, true);
+    drawLength(QPointF(width_offset_back, height_offset_back) + back_keypoints["right_bottom"], QPointF(width_offset_back, height_offset_back) + back_keypoints["right_oxter"], cloth_style_back.side_length);
+    drawLength(QPointF(width_offset_back, height_offset_back) + back_keypoints["right_shoulder"], QPointF(width_offset_back, height_offset_back) + back_keypoints["right_collar"], cloth_style_back.shoulder_length);
+    drawLength(QPointF(width_offset_back, height_offset_back) + back_keypoints["right_oxter"], QPointF(width_offset_back, height_offset_back) + back_keypoints["left_oxter"], cloth_style_back.oxter_length);
+    drawLength(QPointF(width_offset_back, height_offset_back) + QPointF(back_keypoints["left_bottom"].x(), back_keypoints["left_collar"].y()), QPointF(width_offset_back, height_offset_back) + back_keypoints["left_bottom"], cloth_style_back.cloth_length, true);
 
     style_scene_->clear();
     image_item_ = new ImageItem(style_image);
@@ -2825,91 +2563,56 @@ void MainWindow::slotGetClothStyleFinish(
     qreal gv_height = ui->style_graphics_view->height();
     image_item_->setQGraphicsViewWH(gv_width, gv_height);
 
-    connect(style_scene_, &QGraphicsScene::changed,
-            [=](const QList<QRectF> &region) {
-              if (image_item_->pos().x() < style_scene_->sceneRect().left()) {
-                image_item_->setPos(style_scene_->sceneRect().left(),
-                                    image_item_->pos().y());
-              }
-              if (image_item_->pos().x() > style_scene_->sceneRect().right()) {
-                image_item_->setPos(style_scene_->sceneRect().right(),
-                                    image_item_->pos().y());
-              }
-              if (image_item_->pos().y() < style_scene_->sceneRect().top()) {
-                image_item_->setPos(image_item_->pos().x(),
-                                    style_scene_->sceneRect().top());
-              }
-              if (image_item_->pos().y() > style_scene_->sceneRect().bottom()) {
-                image_item_->setPos(image_item_->pos().x(),
-                                    style_scene_->sceneRect().bottom());
-              }
-            });
+    connect(style_scene_, &QGraphicsScene::changed, [=](const QList<QRectF> &region) {
+      if (image_item_->pos().x() < style_scene_->sceneRect().left()) {
+        image_item_->setPos(style_scene_->sceneRect().left(), image_item_->pos().y());
+      }
+      if (image_item_->pos().x() > style_scene_->sceneRect().right()) {
+        image_item_->setPos(style_scene_->sceneRect().right(), image_item_->pos().y());
+      }
+      if (image_item_->pos().y() < style_scene_->sceneRect().top()) {
+        image_item_->setPos(image_item_->pos().x(), style_scene_->sceneRect().top());
+      }
+      if (image_item_->pos().y() > style_scene_->sceneRect().bottom()) {
+        image_item_->setPos(image_item_->pos().x(), style_scene_->sceneRect().bottom());
+      }
+    });
 
     // 设置可视框
-    style_scene_->setSceneRect(-gv_width / 2, -gv_height / 2, gv_width,
-                               gv_height);
+    style_scene_->setSceneRect(-gv_width / 2, -gv_height / 2, gv_width, gv_height);
 
     // 清空原有信息
     ui->cloth_style_tree_widget->clear();
 
     // 设置信息到treewidget中
-    QTreeWidgetItem *front_item =
-        new QTreeWidgetItem(QStringList() << tr("前片"));
-    QTreeWidgetItem *back_item =
-        new QTreeWidgetItem(QStringList() << tr("后片"));
+    QTreeWidgetItem *front_item = new QTreeWidgetItem(QStringList() << tr("前片"));
+    QTreeWidgetItem *back_item = new QTreeWidgetItem(QStringList() << tr("后片"));
 
     ui->cloth_style_tree_widget->addTopLevelItem(front_item);
     ui->cloth_style_tree_widget->addTopLevelItem(back_item);
 
-    auto fillTreeWidget = [&](QTreeWidgetItem *top_item,
-                              syt_msgs::msg::ClothStyle cloth_style) {
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("衣长")
-                        << QString::number(cloth_style.cloth_length)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("下摆长")
-                        << QString::number(cloth_style.bottom_length)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("腋下间距")
-                        << QString::number(cloth_style.oxter_length)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("肩缝长")
-                        << QString::number(cloth_style.shoulder_length)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("侧缝长")
-                        << QString::number(cloth_style.side_length)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("有无印花")
-                        << (cloth_style.have_printings ? QString(tr("有"))
-                                                       : QString(tr("无")))));
+    auto fillTreeWidget = [&](QTreeWidgetItem *top_item, syt_msgs::msg::ClothStyle cloth_style) {
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("衣长") << QString::number(cloth_style.cloth_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("下摆长") << QString::number(cloth_style.bottom_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("腋下间距") << QString::number(cloth_style.oxter_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("肩缝长") << QString::number(cloth_style.shoulder_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("侧缝长") << QString::number(cloth_style.side_length)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("有无印花") << (cloth_style.have_printings ? QString(tr("有")) : QString(tr("无")))));
 
       // 设置颜色预览
-      QTreeWidgetItem *color_item =
-          new QTreeWidgetItem(QStringList() << tr("颜色"));
+      QTreeWidgetItem *color_item = new QTreeWidgetItem(QStringList() << tr("颜色"));
       top_item->addChild(color_item);
-      ui->cloth_style_tree_widget->setItemWidget(
-          color_item, 1,
-          new ShowColorWidget(QString::number(cloth_style.cloth_color, 16)));
+      ui->cloth_style_tree_widget->setItemWidget(color_item, 1, new ShowColorWidget(QString::number(cloth_style.cloth_color, 16)));
 
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("裁片克数")
-                        << QString::number(cloth_style.cloth_weight)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("弹性")
-                        << id_style_map.value(cloth_style.elasticity_level)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("厚度")
-                        << id_style_map.value(cloth_style.thickness_level)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("尺码")
-                        << id_style_map.value(cloth_style.cloth_size)));
-      top_item->addChild(new QTreeWidgetItem(
-          QStringList() << tr("光泽度")
-                        << id_style_map.value(cloth_style.glossiness_level)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("裁片克数") << QString::number(cloth_style.cloth_weight)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("弹性") << id_style_map.value(cloth_style.elasticity_level)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("厚度") << id_style_map.value(cloth_style.thickness_level)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("尺码") << id_style_map.value(cloth_style.cloth_size)));
+      top_item->addChild(new QTreeWidgetItem(QStringList() << tr("光泽度") << id_style_map.value(cloth_style.glossiness_level)));
     };
     fillTreeWidget(front_item, cloth_style_front_);
     fillTreeWidget(back_item, cloth_style_back_);
-    ui->cloth_style_tree_widget->expandAll();  // 展开
+    ui->cloth_style_tree_widget->expandAll(); // 展开
     waiting_spinner_widget_->stop();
 
     is_style_seted_ = true;
@@ -2935,32 +2638,19 @@ void MainWindow::slotCreateFromCAD(ClothStyleDialog *parent) {
 
 // 自动创建
 void MainWindow::slotAutoCreateStyle(ClothStyleDialog *parent) {
-  AutoCreateStyleWizard *auto_create_style_wizard =
-      new AutoCreateStyleWizard(parent);
+  AutoCreateStyleWizard *auto_create_style_wizard = new AutoCreateStyleWizard(parent);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this,
-          &MainWindow::slotMoveHand);
-  connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish,
-          auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signMoveHand, this, &MainWindow::slotMoveHand);
+  connect(rclcomm_, &SytRclComm::signComposeMachineMoveHandFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotMoveHandResult);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signDetectCloth,
-          this, &MainWindow::slotDetectClothByAutoCreateStyle);
-  connect(rclcomm_, &SytRclComm::signGetClothInfoFinish,
-          auto_create_style_wizard,
-          &AutoCreateStyleWizard::slotDetectClothResult);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signDetectCloth, this, &MainWindow::slotDetectClothByAutoCreateStyle);
+  connect(rclcomm_, &SytRclComm::signGetClothInfoFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotDetectClothResult);
 
-  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signCreateStyle,
-          this, &MainWindow::slotCreateStyle);
-  connect(rclcomm_, &SytRclComm::signCreateStyleFinish,
-          auto_create_style_wizard,
-          &AutoCreateStyleWizard::slotCreateStyleResult);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signCreateStyle, this, &MainWindow::slotCreateStyle);
+  connect(rclcomm_, &SytRclComm::signCreateStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotCreateStyleResult);
 
-  connect(auto_create_style_wizard,
-          &AutoCreateStyleWizard::signRenameClothStyle, this,
-          &MainWindow::slotRenameClothStyle);
-  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish,
-          auto_create_style_wizard,
-          &AutoCreateStyleWizard::slotRenameClothStyleResult);
+  connect(auto_create_style_wizard, &AutoCreateStyleWizard::signRenameClothStyle, this, &MainWindow::slotRenameClothStyle);
+  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish, auto_create_style_wizard, &AutoCreateStyleWizard::slotRenameClothStyleResult);
 
   auto_create_style_wizard->show();
   auto_create_style_wizard->setAttribute(Qt::WA_DeleteOnClose);
@@ -2968,21 +2658,13 @@ void MainWindow::slotAutoCreateStyle(ClothStyleDialog *parent) {
 
 // 手动输入创建
 void MainWindow::slotManualInputParam(ClothStyleDialog *parent) {
-  ManualInputParamWizard *manual_input_param_wizard =
-      new ManualInputParamWizard(parent);
+  ManualInputParamWizard *manual_input_param_wizard = new ManualInputParamWizard(parent);
 
-  connect(manual_input_param_wizard, &ManualInputParamWizard::signCreateStyle,
-          this, &MainWindow::slotCreateStyle);
-  connect(rclcomm_, &SytRclComm::signCreateStyleFinish,
-          manual_input_param_wizard,
-          &ManualInputParamWizard::slotCreateStyleResult);
+  connect(manual_input_param_wizard, &ManualInputParamWizard::signCreateStyle, this, &MainWindow::slotCreateStyle);
+  connect(rclcomm_, &SytRclComm::signCreateStyleFinish, manual_input_param_wizard, &ManualInputParamWizard::slotCreateStyleResult);
 
-  connect(manual_input_param_wizard,
-          &ManualInputParamWizard::signRenameClothStyle, this,
-          &MainWindow::slotRenameClothStyle);
-  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish,
-          manual_input_param_wizard,
-          &ManualInputParamWizard::slotRenameClothStyleResult);
+  connect(manual_input_param_wizard, &ManualInputParamWizard::signRenameClothStyle, this, &MainWindow::slotRenameClothStyle);
+  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish, manual_input_param_wizard, &ManualInputParamWizard::slotRenameClothStyleResult);
 
   manual_input_param_wizard->show();
   manual_input_param_wizard->setAttribute(Qt::WA_DeleteOnClose);
@@ -2990,52 +2672,36 @@ void MainWindow::slotManualInputParam(ClothStyleDialog *parent) {
 
 // 从已有文件创建
 void MainWindow::slotCreateFromSource(ClothStyleDialog *parent) {
-  CreateFromSourceWizard *create_from_source_wizard =
-      new CreateFromSourceWizard(parent);
+  CreateFromSourceWizard *create_from_source_wizard = new CreateFromSourceWizard(parent);
 
-  connect(create_from_source_wizard, &CreateFromSourceWizard::signGetClothStyle,
-          this, &MainWindow::slotGetClothStyle);
-  disconnect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this,
-             &MainWindow::slotGetClothStyleFinish);
-  connect(rclcomm_, &SytRclComm::signGetClothStyleFinish,
-          create_from_source_wizard,
-          &CreateFromSourceWizard::slotGetClothStyleResult);
-
-  connect(create_from_source_wizard, &CreateFromSourceWizard::signCreateStyle,
-          this, &MainWindow::slotCreateStyle);
-  connect(rclcomm_, &SytRclComm::signCreateStyleFinish,
-          create_from_source_wizard,
-          &CreateFromSourceWizard::slotCreateStyleResult);
-
-  connect(create_from_source_wizard,
-          &CreateFromSourceWizard::signRenameClothStyle, this,
-          &MainWindow::slotRenameClothStyle);
-  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish,
-          create_from_source_wizard,
-          &CreateFromSourceWizard::slotRenameClothStyleResult);
+  connect(create_from_source_wizard, &CreateFromSourceWizard::signGetClothStyle, this, &MainWindow::slotGetClothStyle);
+  disconnect(rclcomm_, &SytRclComm::signGetClothStyleFinish, this, &MainWindow::slotGetClothStyleFinish);
+  connect(rclcomm_, &SytRclComm::signGetClothStyleFinish, create_from_source_wizard, &CreateFromSourceWizard::slotGetClothStyleResult);
+  connect(create_from_source_wizard, &CreateFromSourceWizard::signCreateStyle, this, &MainWindow::slotCreateStyle);
+  connect(rclcomm_, &SytRclComm::signCreateStyleFinish, create_from_source_wizard, &CreateFromSourceWizard::slotCreateStyleResult);
+  connect(create_from_source_wizard, &CreateFromSourceWizard::signRenameClothStyle, this, &MainWindow::slotRenameClothStyle);
+  connect(rclcomm_, &SytRclComm::signRenameClothStyleFinish, create_from_source_wizard, &CreateFromSourceWizard::slotRenameClothStyleResult);
 
   create_from_source_wizard->show();
   create_from_source_wizard->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void MainWindow::slotMoveHand() {
-  future_ = QtConcurrent::run(
-      [=] { rclcomm_->composeMachineMoveHand(0, 900, 0, 0); });
+  future_ = QtConcurrent::run([=] { rclcomm_->composeMachineMoveHand(0, 900, 0, 0); });
 }
 
 void MainWindow::slotDetectClothByAutoCreateStyle(int cloth_type) {
   future_ = QtConcurrent::run([=] { rclcomm_->getClothInfo(1, cloth_type); });
 }
 
-void MainWindow::slotCreateStyle(int mode, QString prefix,
-                                 syt_msgs::msg::ClothStyle cloth_style_front,
-                                 syt_msgs::msg::ClothStyle cloth_style_back) {
+void MainWindow::slotCreateStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
   future_ = QtConcurrent::run([=] {
     rclcomm_->createStyle(mode, prefix, cloth_style_front, cloth_style_back);
   });
 }
 
 void MainWindow::slotRenameClothStyle(QString old_name, QString new_name) {
-  future_ = QtConcurrent::run(
-      [=] { rclcomm_->renameClothStyle(old_name, new_name); });
+  future_ = QtConcurrent::run([=] {
+    rclcomm_->renameClothStyle(old_name, new_name);
+  });
 }
