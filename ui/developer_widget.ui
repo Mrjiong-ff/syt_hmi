@@ -2788,10 +2788,10 @@
                   </font>
                  </property>
                  <property name="minimum">
-                  <double>-134.000000000000000</double>
+                  <double>-200.000000000000000</double>
                  </property>
                  <property name="maximum">
-                  <double>-102.000000000000000</double>
+                  <double>-50.000000000000000</double>
                  </property>
                  <property name="singleStep">
                   <double>1.000000000000000</double>

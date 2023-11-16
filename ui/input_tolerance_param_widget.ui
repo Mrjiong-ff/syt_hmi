@@ -62,7 +62,7 @@
         </size>
        </property>
        <property name="maximum">
-        <double>30.000000000000000</double>
+        <double>50.000000000000000</double>
        </property>
        <property name="value">
         <double>5.000000000000000</double>
@@ -108,7 +108,7 @@
         </size>
        </property>
        <property name="maximum">
-        <double>30.000000000000000</double>
+        <double>50.000000000000000</double>
        </property>
        <property name="value">
         <double>5.000000000000000</double>
@@ -154,7 +154,7 @@
         </size>
        </property>
        <property name="maximum">
-        <double>30.000000000000000</double>
+        <double>50.000000000000000</double>
        </property>
        <property name="value">
         <double>5.000000000000000</double>
