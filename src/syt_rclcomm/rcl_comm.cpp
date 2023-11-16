@@ -1110,6 +1110,55 @@ void SytRclComm::checkCalibration() {
   }
 }
 
+void SytRclComm::updateParam(std::string node, int type, QString field, QString value, bool is_array) {
+  rcl_interfaces::msg::Parameter param;
+  param.name = field.toStdString();
+  switch (type) {
+  case 0:
+    param.value.integer_value = value.toInt();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+    break;
+  case 1:
+    param.value.integer_value = value.toUInt();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+    break;
+  case 2:
+    param.value.integer_value = value.toLongLong();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+    break;
+  case 3:
+    param.value.integer_value = value.toULongLong();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+    break;
+  case 4:
+    param.value.double_value = value.toFloat();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
+    break;
+  case 5:
+    param.value.double_value = value.toDouble();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
+    break;
+  case 6:
+    param.value.integer_value = (char)value.at(0).toLatin1();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+    break;
+  case 7:
+    param.value.integer_value = (uchar)value.at(0).toLatin1();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+    break;
+  case 8:
+    param.value.string_value = value.toStdString();
+    param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
+    break;
+  }
+
+  auto request = std::make_shared<rcl_interfaces::srv::SetParameters::Request>();
+  request->parameters.emplace_back(param);
+
+  rcl_interfaces::srv::SetParameters::Response response;
+  CALL_RESULT result = callService<rcl_interfaces::srv::SetParameters>("/" + node + "/set_parameters", "上位机参数设置", 5000, request, response);
+}
+
 /* ---------------------------样式相关------------------------------ */
 // 创建样式文件
 void SytRclComm::createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {

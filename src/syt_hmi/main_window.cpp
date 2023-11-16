@@ -1070,6 +1070,10 @@ void MainWindow::setParamManageComponet() {
               QtConcurrent::run([=]() {
                 rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
               });
+            } else {
+              QtConcurrent::run([=]() {
+                rclcomm_->updateParam(item->text().toStdString(), dtype, param_line.name, param_line.value, param_line.is_array);
+              });
             }
           }
         });
@@ -1131,6 +1135,10 @@ void MainWindow::setParamManageComponet() {
           } else if (machine_name == "sewing_machine") {
             QtConcurrent::run([=]() {
               rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+            });
+          } else {
+            QtConcurrent::run([=]() {
+              rclcomm_->updateParam(machine_name.toStdString(), dtype, param_line.name, param_line.value, param_line.is_array);
             });
           }
         });
