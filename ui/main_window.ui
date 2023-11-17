@@ -209,7 +209,7 @@
        <number>10</number>
       </property>
       <item>
-       <widget class="WaterZoomButton" name="developer_mode_btn">
+       <widget class="QPushButton" name="developer_mode_btn">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -241,7 +241,7 @@
        </widget>
       </item>
       <item>
-       <widget class="WaterZoomButton" name="param_set_btn">
+       <widget class="QPushButton" name="param_set_btn">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -267,7 +267,7 @@
        </widget>
       </item>
       <item>
-       <widget class="WaterZoomButton" name="head_eye_calibration_btn">
+       <widget class="QPushButton" name="head_eye_calibration_btn">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -293,7 +293,7 @@
        </widget>
       </item>
       <item>
-       <widget class="WaterZoomButton" name="create_style_btn">
+       <widget class="QPushButton" name="create_style_btn">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -319,7 +319,7 @@
        </widget>
       </item>
       <item>
-       <widget class="WaterZoomButton" name="lock_screen_btn">
+       <widget class="QPushButton" name="lock_screen_btn">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -345,7 +345,7 @@
        </widget>
       </item>
       <item>
-       <widget class="WaterZoomButton" name="help_btn">
+       <widget class="QPushButton" name="help_btn">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -634,7 +634,7 @@
                </spacer>
               </item>
               <item row="8" column="1">
-               <widget class="WaterZoomButton" name="end_btn">
+               <widget class="QPushButton" name="end_btn">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -672,7 +672,7 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="WaterZoomButton" name="reset_btn">
+               <widget class="QPushButton" name="reset_btn">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -729,7 +729,7 @@
                </spacer>
               </item>
               <item row="10" column="1">
-               <widget class="WaterZoomButton" name="add_cloth_btn">
+               <widget class="QPushButton" name="add_cloth_btn">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -786,7 +786,7 @@
                </spacer>
               </item>
               <item row="6" column="1">
-               <widget class="WaterZoomButton" name="pause_btn">
+               <widget class="QPushButton" name="pause_btn">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -822,7 +822,7 @@
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="WaterZoomButton" name="start_btn">
+               <widget class="QPushButton" name="start_btn">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -996,7 +996,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,8">
               <item>
-               <widget class="WaterZoomButton" name="choose_style_btn">
+               <widget class="QPushButton" name="choose_style_btn">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -1107,7 +1107,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="WaterZoomButton" name="export_param_btn">
+           <widget class="QPushButton" name="export_param_btn">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1126,6 +1126,9 @@
               <weight>75</weight>
               <bold>true</bold>
              </font>
+            </property>
+            <property name="toolTip">
+             <string>导出</string>
             </property>
             <property name="text">
              <string/>
@@ -1143,7 +1146,7 @@
            </widget>
           </item>
           <item>
-           <widget class="WaterZoomButton" name="import_param_btn">
+           <widget class="QPushButton" name="import_param_btn">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1162,6 +1165,9 @@
               <weight>75</weight>
               <bold>true</bold>
              </font>
+            </property>
+            <property name="toolTip">
+             <string>导入</string>
             </property>
             <property name="text">
              <string/>
@@ -1179,12 +1185,15 @@
            </widget>
           </item>
           <item>
-           <widget class="WaterZoomButton" name="save_param_btn">
+           <widget class="QPushButton" name="save_param_btn">
             <property name="maximumSize">
              <size>
               <width>40</width>
               <height>40</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>保存</string>
             </property>
             <property name="text">
              <string/>
@@ -1202,7 +1211,7 @@
            </widget>
           </item>
           <item>
-           <widget class="WaterZoomButton" name="fold_all_btn">
+           <widget class="QPushButton" name="fold_all_btn">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1221,6 +1230,9 @@
               <weight>75</weight>
               <bold>true</bold>
              </font>
+            </property>
+            <property name="toolTip">
+             <string>全部收起</string>
             </property>
             <property name="text">
              <string/>
@@ -1238,7 +1250,7 @@
            </widget>
           </item>
           <item>
-           <widget class="WaterZoomButton" name="unfold_all_btn">
+           <widget class="QPushButton" name="unfold_all_btn">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1257,6 +1269,9 @@
               <weight>75</weight>
               <bold>true</bold>
              </font>
+            </property>
+            <property name="toolTip">
+             <string>全部展开</string>
             </property>
             <property name="text">
              <string/>
@@ -1274,7 +1289,44 @@
            </widget>
           </item>
           <item>
-           <widget class="WaterZoomButton" name="apply_param_btn">
+           <widget class="QPushButton" name="load_param_btn">
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>全部读取</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resource/hmi.qrc">
+              <normaloff>:/m_icon/icon/upload.svg</normaloff>:/m_icon/icon/upload.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="apply_param_btn">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1294,12 +1346,15 @@
               <bold>true</bold>
              </font>
             </property>
+            <property name="toolTip">
+             <string>全部写入</string>
+            </property>
             <property name="text">
              <string/>
             </property>
             <property name="icon">
              <iconset resource="../resource/hmi.qrc">
-              <normaloff>:/m_icon/icon/apply.svg</normaloff>:/m_icon/icon/apply.svg</iconset>
+              <normaloff>:/m_icon/icon/download.svg</normaloff>:/m_icon/icon/download.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -1370,7 +1425,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
-               <widget class="WaterZoomButton" name="load_machine_visible_btn">
+               <widget class="QPushButton" name="load_machine_visible_btn">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1867,7 +1922,7 @@
                   </widget>
                  </item>
                  <item row="2" column="0">
-                  <widget class="WaterZoomButton" name="log_clear_btn">
+                  <widget class="QPushButton" name="log_clear_btn">
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
@@ -1907,7 +1962,7 @@
                   </widget>
                  </item>
                  <item row="3" column="0">
-                  <widget class="WaterZoomButton" name="log_end_btn">
+                  <widget class="QPushButton" name="log_end_btn">
                    <property name="minimumSize">
                     <size>
                      <width>40</width>
@@ -2015,11 +2070,6 @@
    <class>WinCloseButton</class>
    <extends>QPushButton</extends>
    <header>syt_btn/winclosebutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WaterZoomButton</class>
-   <extends>QPushButton</extends>
-   <header>syt_btn/waterzoombutton.h</header>
   </customwidget>
   <customwidget>
    <class>WinMaxButton</class>

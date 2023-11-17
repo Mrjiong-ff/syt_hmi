@@ -105,7 +105,6 @@ private:
   void setTimeComponent();
   void setToolBar();
   void setMainControlButton();
-  void setPageJump();
   void setVisualComponent();
   void setBaseComponet();
   void setChooseStyleComponet();
@@ -228,9 +227,6 @@ private:
   QTimer *time_timer_;
 
   QMenu *title_menu_;
-
-  InteractiveButtonBase *prev_btn_;
-  InteractiveButtonBase *next_btn_;
 
   DeveloperWidget *developer_widget_; // 开发者界面
   ParamSetWidget *param_set_widget_;  // 配置界面

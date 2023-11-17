@@ -1,0 +1,351 @@
+{
+    "sewing_machine": {},
+    "load_machine": {
+        "l_grip_mech_width_dir": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "True",
+            "storable": "1",
+            "comment": "【B面上料抓手开合方向】上料抓手开合方向控制",
+            "modify_freq": 0
+        },
+        "l_grip_mech_width_ratio": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "900",
+            "storable": "1",
+            "comment": "【B面上料抓手宽度传动系数】上料抓手控制开合宽度的传动比系数",
+            "modify_freq": 0
+        },
+        "l_grip_mech_width_stroke": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "1325",
+            "storable": "1",
+            "comment": "【B面上料抓手宽度行程】上料抓手开合的宽度行程，单位：0.1mm",
+            "modify_freq": 0
+        },
+        "l_grip_mech_width_min": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "4100",
+            "storable": "1",
+            "comment": "【B面上料抓手最小宽度】上料抓手开合的最小宽度，单位：0.1mm",
+            "modify_freq": 0
+        },
+        "l_grip_mech_offset_dir": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "False",
+            "storable": "1",
+            "comment": "【B面上料抓手平移方向】上料抓手平移方向控制",
+            "modify_freq": 0
+        },
+        "l_grip_mech_offset_ratio": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "753",
+            "storable": "1",
+            "comment": "【B面上料抓手平移传动系数】上料抓手平移传动比系数",
+            "modify_freq": 0
+        },
+        "l_grip_mech_offset_stroke": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "1400",
+            "storable": "1",
+            "comment": "【B面上料抓手平移行程】上料抓手平移行程，单位：0.1mm",
+            "modify_freq": 0
+        },
+        "l_raise_motor_subdivision": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "800",
+            "storable": "1",
+            "comment": "【B面升降电机细分数】升降电机细分数",
+            "modify_freq": 0
+        },
+        "l_raise_motor_reduction": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1",
+            "storable": "1",
+            "comment": "【B面升降电机减速比】升降电机减速比",
+            "modify_freq": 0
+        },
+        "l_raise_motor_ratio": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "7.4992",
+            "storable": "1",
+            "comment": "【B面升降电机传动系数】升降电机转一圏对应运动的直线距离，单位：mm/r",
+            "modify_freq": 0
+        },
+        "l_pull_motor_subdivision": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "800",
+            "storable": "1",
+            "comment": "【B面拉片电机细分数】拉片电机细分数",
+            "modify_freq": 0
+        },
+        "l_pull_motor_reduction": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1",
+            "storable": "1",
+            "comment": "【B面拉片电机减速比】拉片电机减速比",
+            "modify_freq": 0
+        },
+        "l_pull_motor_ratio": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "120",
+            "storable": "1",
+            "comment": "【B面拉片电机传动系数】拉片电机转一圏对应运动的直线距离，单位：mm/r",
+            "modify_freq": 0
+        },
+        "r_grip_mech_width_dir": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "False",
+            "storable": "1",
+            "comment": "【A面上料抓手开合方向】上料抓手开合方向控制",
+            "modify_freq": 0
+        },
+        "r_grip_mech_width_ratio": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "900",
+            "storable": "1",
+            "comment": "【A面上料抓手宽度传动系数】上料抓手控制开合宽度的传动比系数",
+            "modify_freq": 0
+        },
+        "r_grip_mech_width_stroke": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "1325",
+            "storable": "1",
+            "comment": "【A面上料抓手宽度行程】上料抓手开合的宽度行程，单位：0.1mm",
+            "modify_freq": 0
+        },
+        "r_grip_mech_width_min": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "4100",
+            "storable": "1",
+            "comment": "【A面上料抓手最小宽度】上料抓手开合的最小宽度，单位：0.1mm",
+            "modify_freq": 0
+        },
+        "r_grip_mech_offset_dir": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "True",
+            "storable": "1",
+            "comment": "【A面上料抓手平移方向】上料抓手平移方向控制",
+            "modify_freq": 0
+        },
+        "r_grip_mech_offset_ratio": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "749",
+            "storable": "1",
+            "comment": "【A面上料抓手平移传动系数】上料抓手平移传动比系数",
+            "modify_freq": 0
+        },
+        "r_grip_mech_offset_stroke": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "1400",
+            "storable": "1",
+            "comment": "【A面上料抓手平移行程】上料抓手平移行程，单位：0.1mm",
+            "modify_freq": 0
+        },
+        "r_raise_motor_subdivision": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "800",
+            "storable": "1",
+            "comment": "【A面升降电机细分数】升降电机细分数",
+            "modify_freq": 0
+        },
+        "r_raise_motor_reduction": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1",
+            "storable": "1",
+            "comment": "【A面升降电机减速比】升降电机减速比",
+            "modify_freq": 0
+        },
+        "r_raise_motor_ratio": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "7.4798",
+            "storable": "1",
+            "comment": "【A面升降电机传动系数】升降电机转一圏对应运动的直线距离，单位：mm/r",
+            "modify_freq": 0
+        },
+        "r_pull_motor_subdivision": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "800",
+            "storable": "1",
+            "comment": "【A面拉片电机细分数】拉片电机细分数",
+            "modify_freq": 0
+        },
+        "r_pull_motor_reduction": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1",
+            "storable": "1",
+            "comment": "【A面拉片电机减速比】拉片电机减速比",
+            "modify_freq": 0
+        },
+        "r_pull_motor_ratio": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "120",
+            "storable": "1",
+            "comment": "【A面拉片电机传动系数】拉片电机转一圏对应运动的直线距离，单位：mm/r",
+            "modify_freq": 0
+        },
+        "bus_motor1_reduction": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "10",
+            "storable": "1",
+            "comment": "【1号总线电机减速比】总线电机减速比",
+            "modify_freq": 0
+        },
+        "bus_motor1_ppr": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "16384",
+            "storable": "1",
+            "comment": "【1号总线电机PPR】总线电机PPR",
+            "modify_freq": 0
+        },
+        "bus_motor2_reduction": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "10",
+            "storable": "1",
+            "comment": "【2号总线电机减速比】总线电机减速比",
+            "modify_freq": 0
+        },
+        "bus_motor2_ppr": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "16384",
+            "storable": "1",
+            "comment": "【2号总线电机PPR】总线电机PPR",
+            "modify_freq": 0
+        },
+        "bus_motor3_reduction": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "10",
+            "storable": "1",
+            "comment": "【3号总线电机减速比】总线电机减速比",
+            "modify_freq": 0
+        },
+        "bus_motor3_ppr": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "16384",
+            "storable": "1",
+            "comment": "【3号总线电机PPR】总线电机PPR",
+            "modify_freq": 0
+        },
+        "bus_motor4_reduction": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "10",
+            "storable": "1",
+            "comment": "【4号总线电机减速比】总线电机减速比",
+            "modify_freq": 0
+        },
+        "bus_motor4_ppr": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "16384",
+            "storable": "1",
+            "comment": "【4号总线电机PPR】总线电机PPR",
+            "modify_freq": 0
+        }
+    },
+    "compose_machine": {},
+    "care_label": {},
+    "syt_motion_planner_node": {},
+    "syt_sewing_machine_node": {},
+    "syt_compose_machine_node": {},
+    "syt_load_machine_node": {}
+}

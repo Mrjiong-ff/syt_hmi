@@ -1,0 +1,1050 @@
+{
+    "sewing_machine": {
+        "c_zero_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.14 ",
+            "max": " 3.14",
+            "value": "1.57",
+            "storable": "1",
+            "comment": "【C轴零位偏移值】",
+            "modify_freq": 1
+        },
+        "machine_version": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0 ",
+            "max": " 2",
+            "value": "1",
+            "storable": "1",
+            "comment": "【缝纫平台机械版本】",
+            "modify_freq": 1
+        },
+        "side_before_foot_point": {
+            "dtype": "float32",
+            "length": "2",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": [
+                "524",
+                " -512"
+            ],
+            "storable": "1",
+            "comment": "【侧边缝纫对点先行位】",
+            "modify_freq": 1
+        },
+        "shoulder_before_foot_point": {
+            "dtype": "float32",
+            "length": "2",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": [
+                "793",
+                " 620"
+            ],
+            "storable": "1",
+            "comment": "【肩部缝纫对点先行位】",
+            "modify_freq": 1
+        },
+        "x_min_pos": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "-880",
+            "storable": "1",
+            "comment": "【X轴负限位】",
+            "modify_freq": 1
+        }
+    },
+    "load_machine": {
+        "l_feeder_en_aging_test": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "False",
+            "storable": "1",
+            "comment": "【B面使能老化运行模式】是否运行老化模式，FALSE：失能，TRUE：使能",
+            "modify_freq": 1
+        },
+        "l_feeder_en_unpleat": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "True",
+            "storable": "1",
+            "comment": "【B面推平下摆使能】是否推平下摆，FALSE：失能，TRUE：使能",
+            "modify_freq": 1
+        },
+        "l_feeder_sheet_len_min": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "440",
+            "storable": "1",
+            "comment": "【B面裁片长度最小值】可以上料的最短裁片的长度，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_sheet_len_max": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "837",
+            "storable": "1",
+            "comment": "【B面裁片长度最大值】可以上料的最长裁片的长度，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_sepa_down_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "62",
+            "storable": "1",
+            "comment": "【B面升降台分离距离】上料分离裁片时升降台下降距离，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_sepa_down_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "80",
+            "max": "300",
+            "value": "200",
+            "storable": "1",
+            "comment": "【B面升降台分离速度】上料分离裁片时升降台下降速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "l_feeder_sepa_down_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "80",
+            "max": "300",
+            "value": "180",
+            "storable": "1",
+            "comment": "【B面升降台分离加速度】上料分离裁片时升降台下降加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "l_feeder_sepa_pull_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "200",
+            "max": "2000",
+            "value": "800",
+            "storable": "1",
+            "comment": "【B面上料抓手分离速度】上料分离裁片时上料抓手拉片速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "l_feeder_sepa_pull_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "200",
+            "max": "2000",
+            "value": "800",
+            "storable": "1",
+            "comment": "【B面上料抓手分离加速度】上料分离裁片时上料抓手拉片加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "l_feeder_flat_sheet_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "50",
+            "max": "100",
+            "value": "80",
+            "storable": "1",
+            "comment": "【B面上料推平裁片行程】运上料行模式为厚料模式时，推平裁片的运动行程，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_flat_sheet_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1800",
+            "max": "2400",
+            "value": "2400",
+            "storable": "1",
+            "comment": "【B面上料推平裁片速度】运上料行模式为厚料模式时，推平裁片的速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "l_feeder_flat_sheet_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1800",
+            "max": "2400",
+            "value": "2400",
+            "storable": "1",
+            "comment": "【B面上料推平裁片加速度】运上料行模式为厚料模式时，推平裁片的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "l_feeder_with_load_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1500",
+            "max": "2400",
+            "value": "2000",
+            "storable": "1",
+            "comment": "【B面上料空载速度】上料运行动作不带负载时的速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "l_feeder_with_load_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1500",
+            "max": "2400",
+            "value": "2000",
+            "storable": "1",
+            "comment": "【B面上料空载加速度】上料运行动作不带负载时的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "l_feeder_no_load_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1500",
+            "max": "2400",
+            "value": "2200",
+            "storable": "1",
+            "comment": "【B面上料带载速度】上料运行动作带负载时的速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "l_feeder_no_load_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1500",
+            "max": "2400",
+            "value": "2200",
+            "storable": "1",
+            "comment": "【B面上料带载加速度】上料运行动作带负载时的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "l_feeder_back_end_pos": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "240",
+            "max": "250",
+            "value": "240",
+            "storable": "1",
+            "comment": "【B面上料向后推落裁片位置】向后推落裁片领口的目标位置，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_edge_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "40",
+            "value": "24",
+            "storable": "1",
+            "comment": "【B面上料下摆边沿偏移距离】寻找到下摆边沿后运动的偏移距离，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_loose_needle_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "30",
+            "max": "60",
+            "value": "40",
+            "storable": "1",
+            "comment": "【B面松针移动距离】上料松开针爪前向后移动距离，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_edge_detec_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "120",
+            "max": "200",
+            "value": "150",
+            "storable": "1",
+            "comment": "【B面下摆边沿检测范围】检测下摆的距离范围，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_on_table_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "280",
+            "max": "400",
+            "value": "340",
+            "storable": "1",
+            "comment": "【B面在台面上长度】向前推落下摆时在合片台上的裁片的剩余长度，单位：mm",
+            "modify_freq": 1
+        },
+        "l_feeder_blow_move_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "60",
+            "max": "100",
+            "value": "90",
+            "storable": "1",
+            "comment": "【B面吹风移动距离】放置裁片吹风时同时向前运动的运动距离，单位：mm",
+            "modify_freq": 1
+        },
+        "l_grip_mech_width_reset_veloc": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "2000",
+            "max": "4000",
+            "value": "3200",
+            "storable": "1",
+            "comment": "【B面上料抓手宽度复位速度】上料抓手开合宽度控制复位速度，单位：0.1mm/s",
+            "modify_freq": 1
+        },
+        "l_grip_mech_width_veloc": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "2000",
+            "max": "4000",
+            "value": "3200",
+            "storable": "1",
+            "comment": "【B面上料抓手宽度运行速度】上料抓手开合宽度控制运行速度，单位：0.1mm/s",
+            "modify_freq": 1
+        },
+        "l_grip_mech_offset_reset_veloc": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "3200",
+            "storable": "1",
+            "comment": "【B面上料抓手平移复位速度】上料抓手平移复位速度，单位：0.1mm/s",
+            "modify_freq": 1
+        },
+        "l_grip_mech_offset_veloc": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "3200",
+            "storable": "1",
+            "comment": "【B面上料抓手平移运行速度】上料抓手平移运行速度，单位：0.1mm/s",
+            "modify_freq": 1
+        },
+        "l_weigher_en_state": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "True",
+            "storable": "1",
+            "comment": "【B面称重传感器使能控制】是否使用称重传感器检测多抓，FALSE：不使用，TRUE：使用",
+            "modify_freq": 1
+        },
+        "l_raise_motor_home_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "15",
+            "storable": "1",
+            "comment": "【B面升降电机回零速度】升降电机回零速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "l_raise_motor_home_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "3",
+            "storable": "1",
+            "comment": "【B面升降电机零点偏置】升降电机零点相对触发位置的偏移距离，单位：mm",
+            "modify_freq": 1
+        },
+        "l_raise_motor_stroke": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "130",
+            "storable": "1",
+            "comment": "【B面升降电机行程】升降台电机运动行程，单位：mm",
+            "modify_freq": 1
+        },
+        "l_raise_motor_home_end_pos": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "0",
+            "storable": "1",
+            "comment": "【B面升降电机回零点结束位置】回零完成时可以直接去一个不等于零点的位置",
+            "modify_freq": 1
+        },
+        "l_pull_motor_home_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "40",
+            "storable": "1",
+            "comment": "【B面拉片电机回零速度】拉片电机回零速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "l_pull_motor_home_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "15.5",
+            "storable": "1",
+            "comment": "【B面拉片电机零点偏置】拉片电机零点相对触发位置的偏移距离，单位：mm",
+            "modify_freq": 1
+        },
+        "l_pull_motor_stroke": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1086.5",
+            "storable": "1",
+            "comment": "【B面拉片电机行程】拉片电机运动行程，单位：mm",
+            "modify_freq": 1
+        },
+        "l_pull_motor_home_end_pos": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "0",
+            "storable": "1",
+            "comment": "【B面拉片电机回零点结束位置】回零完成时可以直接去一个不等于零点的位置",
+            "modify_freq": 1
+        },
+        "r_feeder_en_aging_test": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "False",
+            "storable": "1",
+            "comment": "【A面使能老化运行模式】是否运行老化模式，FALSE：失能，TRUE：使能",
+            "modify_freq": 1
+        },
+        "r_feeder_en_unpleat": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "True",
+            "storable": "1",
+            "comment": "【A面推平下摆使能】是否推平下摆，FALSE：失能，TRUE：使能",
+            "modify_freq": 1
+        },
+        "r_feeder_sheet_len_min": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "440",
+            "storable": "1",
+            "comment": "【A面裁片长度最小值】可以上料的最短裁片的长度，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_sheet_len_max": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "837",
+            "storable": "1",
+            "comment": "【A面裁片长度最大值】可以上料的最长裁片的长度，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_sepa_down_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "62",
+            "storable": "1",
+            "comment": "【A面升降台分离距离】上料分离裁片时升降台下降距离，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_sepa_down_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "80",
+            "max": "300",
+            "value": "200",
+            "storable": "1",
+            "comment": "【A面升降台分离速度】上料分离裁片时升降台下降速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "r_feeder_sepa_down_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "80",
+            "max": "300",
+            "value": "180",
+            "storable": "1",
+            "comment": "【A面升降台分离加速度】上料分离裁片时升降台下降加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "r_feeder_sepa_pull_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "200",
+            "max": "2000",
+            "value": "800",
+            "storable": "1",
+            "comment": "【A面上料抓手分离速度】上料分离裁片时上料抓手拉片速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "r_feeder_sepa_pull_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "200",
+            "max": "2000",
+            "value": "800",
+            "storable": "1",
+            "comment": "【A面上料抓手分离加速度】上料分离裁片时上料抓手拉片加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "r_feeder_flat_sheet_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "50",
+            "max": "100",
+            "value": "80",
+            "storable": "1",
+            "comment": "【A面上料推平裁片行程】运上料行模式为厚料模式时，推平裁片的运动行程，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_flat_sheet_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1800",
+            "max": "2400",
+            "value": "2400",
+            "storable": "1",
+            "comment": "【A面上料推平裁片速度】运上料行模式为厚料模式时，推平裁片的速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "r_feeder_flat_sheet_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1800",
+            "max": "2400",
+            "value": "2400",
+            "storable": "1",
+            "comment": "【A面上料推平裁片加速度】运上料行模式为厚料模式时，推平裁片的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "r_feeder_with_load_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1500",
+            "max": "2400",
+            "value": "2000",
+            "storable": "1",
+            "comment": "【A面上料空载速度】上料运行动作不带负载时的速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "r_feeder_with_load_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1500",
+            "max": "2400",
+            "value": "2000",
+            "storable": "1",
+            "comment": "【A面上料空载加速度】上料运行动作不带负载时的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "r_feeder_no_load_veloc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1500",
+            "max": "2400",
+            "value": "2200",
+            "storable": "1",
+            "comment": "【A面上料带载速度】上料运行动作带负载时的速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "r_feeder_no_load_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "1500",
+            "max": "2400",
+            "value": "2200",
+            "storable": "1",
+            "comment": "【A面上料带载加速度】上料运行动作带负载时的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "r_feeder_back_end_pos": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "240",
+            "max": "250",
+            "value": "240",
+            "storable": "1",
+            "comment": "【A面上料向后推落裁片位置】向后推落裁片领口的目标位置，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_edge_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "40",
+            "value": "6",
+            "storable": "1",
+            "comment": "【A面上料下摆边沿偏移距离】寻找到下摆边沿后运动的偏移距离，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_loose_needle_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "30",
+            "max": "60",
+            "value": "40",
+            "storable": "1",
+            "comment": "【A面松针移动距离】上料松开针爪前向后移动距离，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_edge_detec_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "120",
+            "max": "200",
+            "value": "150",
+            "storable": "1",
+            "comment": "【A面下摆边沿检测范围】检测下摆的距离范围，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_on_table_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "280",
+            "max": "400",
+            "value": "340",
+            "storable": "1",
+            "comment": "【A面在台面上长度】向前推落下摆时在合片台上的裁片的剩余长度，单位：mm",
+            "modify_freq": 1
+        },
+        "r_feeder_blow_move_len": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "60",
+            "max": "100",
+            "value": "90",
+            "storable": "1",
+            "comment": "【A面吹风移动距离】放置裁片吹风时同时向前运动的运动距离，单位：mm",
+            "modify_freq": 1
+        },
+        "r_grip_mech_width_reset_veloc": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "2000",
+            "max": "4000",
+            "value": "3200",
+            "storable": "1",
+            "comment": "【A面上料抓手宽度复位速度】上料抓手开合宽度控制复位速度，单位：0.1mm/s",
+            "modify_freq": 1
+        },
+        "r_grip_mech_width_veloc": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "2000",
+            "max": "4000",
+            "value": "3200",
+            "storable": "1",
+            "comment": "【A面上料抓手宽度运行速度】上料抓手开合宽度控制运行速度，单位：0.1mm/s",
+            "modify_freq": 1
+        },
+        "r_grip_mech_offset_reset_veloc": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "3200",
+            "storable": "1",
+            "comment": "【A面上料抓手平移复位速度】上料抓手平移复位速度，单位：0.1mm/s",
+            "modify_freq": 1
+        },
+        "r_grip_mech_offset_veloc": {
+            "dtype": "int32",
+            "length": "1",
+            "min": "-2147483648",
+            "max": "2147483647",
+            "value": "3200",
+            "storable": "1",
+            "comment": "【A面上料抓手平移运行速度】上料抓手平移运行速度，单位：0.1mm/s",
+            "modify_freq": 1
+        },
+        "r_weigher_en_state": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "True",
+            "storable": "1",
+            "comment": "【A面称重传感器使能控制】是否使用称重传感器检测多抓，FALSE：不使用，TRUE：使用",
+            "modify_freq": 1
+        },
+        "r_raise_motor_home_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "15",
+            "storable": "1",
+            "comment": "【A面升降电机回零速度】升降电机回零速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "r_raise_motor_home_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "5",
+            "storable": "1",
+            "comment": "【A面升降电机零点偏置】升降电机零点相对触发位置的偏移距离，单位：mm",
+            "modify_freq": 1
+        },
+        "r_raise_motor_stroke": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "134",
+            "storable": "1",
+            "comment": "【A面升降电机行程】升降台电机运动行程，单位：mm",
+            "modify_freq": 1
+        },
+        "r_raise_motor_home_end_pos": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "0",
+            "storable": "1",
+            "comment": "【A面升降电机回零点结束位置】回零完成时可以直接去一个不等于零点的位置",
+            "modify_freq": 1
+        },
+        "r_pull_motor_home_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "40",
+            "storable": "1",
+            "comment": "【A面拉片电机回零速度】拉片电机回零速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "r_pull_motor_home_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "14",
+            "storable": "1",
+            "comment": "【A面拉片电机零点偏置】拉片电机零点相对触发位置的偏移距离，单位：mm",
+            "modify_freq": 1
+        },
+        "r_pull_motor_stroke": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1085.5",
+            "storable": "1",
+            "comment": "【A面拉片电机行程】拉片电机运动行程，单位：mm",
+            "modify_freq": 1
+        },
+        "r_pull_motor_home_end_pos": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "0",
+            "storable": "1",
+            "comment": "【A面拉片电机回零点结束位置】回零完成时可以直接去一个不等于零点的位置",
+            "modify_freq": 1
+        }
+    },
+    "compose_machine": {
+        "motor_y_reset": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "【Y轴报警复位】单独控制Y轴驱动器报警清除引脚，\n0：停止清除报警，1：持续清除报警",
+            "modify_freq": 1
+        },
+        "motor_z_reset": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "【Z轴报警复位】单独控制Z轴驱动器报警清除引脚，\n0：停止清除报警，1：持续清除报警",
+            "modify_freq": 1
+        },
+        "motor_x_en": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "【X电机使能】单独控制X轴电机使能引脚，0：失能，1：使能",
+            "modify_freq": 1
+        },
+        "motor_y_en": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "【Y电机使能】单独控制Y轴电机使能引脚，0：失能，1：使能",
+            "modify_freq": 1
+        },
+        "motor_z_en": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "【Z电机使能】单独控制Z轴电机使能引脚，0：失能，1：使能",
+            "modify_freq": 1
+        },
+        "motor_c_en": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "【C电机使能】单独控制C轴电机使能引脚，0：失能，1：使能",
+            "modify_freq": 1
+        },
+        "motor_x_min_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "600",
+            "value": "0",
+            "storable": "1",
+            "comment": "【X电机最小速度】X轴运行时的最小速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "motor_y_min_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "942.45",
+            "value": "0",
+            "storable": "1",
+            "comment": "【Y电机最小速度】Y轴运行时的最小速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "motor_z_min_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "500",
+            "value": "0",
+            "storable": "1",
+            "comment": "【Z电机最小速度】Z轴运行时的最小速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "motor_c_min_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "1.5708",
+            "value": "0",
+            "storable": "1",
+            "comment": "【C电机最小速度】C轴运行时的最小速度，单位：rad/s",
+            "modify_freq": 1
+        },
+        "motor_x_max_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "600",
+            "value": "400",
+            "storable": "1",
+            "comment": "【X电机最大速度】X轴运行时的最大速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "motor_y_max_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "942.45",
+            "value": "942.45",
+            "storable": "1",
+            "comment": "【Y电机最大速度】Y轴运行时的最大速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "motor_z_max_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "500",
+            "value": "400",
+            "storable": "1",
+            "comment": "【Z电机最大速度】Z轴运行时的最大速度，单位：mm/s",
+            "modify_freq": 1
+        },
+        "motor_c_max_spd": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "1.5708",
+            "value": "1",
+            "storable": "1",
+            "comment": "【C电机最大速度】C轴运行时的最大速度，单位：rad/s",
+            "modify_freq": 1
+        },
+        "motor_x_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "400",
+            "storable": "1",
+            "comment": "【X电机加速度】X轴运行时的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "motor_y_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1600",
+            "storable": "1",
+            "comment": "【Y电机加速度】Y轴运行时的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "motor_z_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "600",
+            "storable": "1",
+            "comment": "【Z电机加速度】Z轴运行时的加速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "motor_c_acc": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1",
+            "storable": "1",
+            "comment": "【C电机加速度】C轴运行时的加速度，单位：rad/s^2",
+            "modify_freq": 1
+        },
+        "motor_x_dec": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "400",
+            "storable": "1",
+            "comment": "【X电机减速度】X轴运行时的减速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "motor_y_dec": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1600",
+            "storable": "1",
+            "comment": "【Y电机减速度】Y轴运行时的减速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "motor_z_dec": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "1",
+            "storable": "1",
+            "comment": "【Z电机减速度】Z轴运行时的减速度，单位：mm/s^2",
+            "modify_freq": 1
+        },
+        "motor_c_dec": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-3.4028235e+38",
+            "max": "3.4028235e+38",
+            "value": "600",
+            "storable": "1",
+            "comment": "【C电机减速度】C轴运行时的减速度，单位：rad/s^2",
+            "modify_freq": 1
+        },
+        "c_zero_offset": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-1",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "【C轴零位偏移值】单位：rad",
+            "modify_freq": 1
+        },
+        "wipe_fold": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "1",
+            "value": "0",
+            "storable": "1",
+            "comment": "【除褶指令】0：不除褶，1：执行除褶动作",
+            "modify_freq": 1
+        },
+        "wipe_fold_start_pos": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "-220",
+            "max": "0",
+            "value": "-198",
+            "storable": "1",
+            "comment": "【除褶初始高度】单位：mm",
+            "modify_freq": 1
+        },
+        "table_light_ratio": {
+            "dtype": "uchar",
+            "length": "1",
+            "min": "0",
+            "max": "100",
+            "value": "13",
+            "storable": "1",
+            "comment": "【吸风台灯带亮度】",
+            "modify_freq": 1
+        }
+    },
+    "care_label": {},
+    "syt_motion_planner_node": {
+        "sewing_cut_width": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "0",
+            "max": "15",
+            "value": "8",
+            "storable": "1",
+            "comment": "【缝纫裁剪宽度】该参数的值应为缝纫时裁剪的宽度加上线宽",
+            "modify_freq": 1
+        },
+        "mid_collar_and_shoulder_to_center": {
+            "dtype": "float32",
+            "length": "1",
+            "min": "380",
+            "max": "500",
+            "value": "410",
+            "storable": "1",
+            "comment": "【缝纫抓手Z轴线至裁片肩缝距离】调节该参数的目的是为了使缝纫压板能够良好地控制裁片，且留出余量来缝纫。",
+            "modify_freq": 1
+        }
+    },
+    "syt_sewing_machine_node": {},
+    "syt_compose_machine_node": {},
+    "syt_load_machine_node": {}
+}
