@@ -856,7 +856,7 @@ void MainWindow::setParamManageComponet() {
     }
     case UCHAR: {
       if (!is_array) {
-        uchar type_value = value.at(0).toLatin1();
+        uchar type_value = value.toUInt();
         uint8_t byte_array[sizeof(uchar)];
         std::memcpy(byte_array, &type_value, sizeof(uchar));
         data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));

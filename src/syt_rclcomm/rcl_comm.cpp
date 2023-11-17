@@ -1143,7 +1143,7 @@ void SytRclComm::updateParam(std::string node, int type, QString field, QString 
     param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
     break;
   case 7:
-    param.value.integer_value = (uchar)value.at(0).toLatin1();
+    param.value.integer_value = value.toUInt();
     param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
     break;
   case 8:
