@@ -864,7 +864,7 @@ void MainWindow::setParamManageComponet() {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<char> value_vec;
         for (int i = 0; i < value_list.length(); ++i) {
-          value_vec.append(value_list.at(i).at(0).toUInt());
+          value_vec.append(value_list.at(i).toUInt());
         }
         int data_size = sizeof(uchar) * value_vec.length();
         uint8_t byte_array[data_size];
