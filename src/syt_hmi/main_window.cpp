@@ -2015,6 +2015,26 @@ void MainWindow::resetBtnClicked() {
   ui->A_left_visual_label->setText("NO IMAGE");
   ui->A_right_visual_label->setText("NO IMAGE");
 
+  // 在复位时自动设置软件参数
+  QVector<QString> embeded_param_group{"care_label", "sewing_machine", 
+                                       "load_machine", "compose_machine"};
+  for (int i = 0; i < model_->rowCount(); i++) {
+    QStandardItem* item = model_->item(i, 0);
+    if (qFind(embeded_param_group, item->text()) == embeded_param_group.end()) {
+      for (int j = 0; j < item->rowCount(); j++) {
+        ParamLine param_line;
+        param_line.name = item->child(j, 0)->text().trimmed();
+        param_line.dtype = item->child(j, 1)->text().trimmed();
+        param_line.length = item->child(j, 2)->text().trimmed().toInt();
+        param_line.min_range = item->child(j, 3)->text().trimmed();
+        param_line.max_range = item->child(j, 4)->text().trimmed();
+        param_line.value = item->child(j, 5)->text().trimmed();
+        DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
+        rclcomm_->updateParam(item->text().toStdString(), dtype, param_line.name, param_line.value, param_line.is_array);
+      }
+    }
+  }
+
   // 复位指令
   emit signUpdateLabelState(tr("复位中"));
   QtConcurrent::run([=]() { rclcomm_->resetCmd(); });
