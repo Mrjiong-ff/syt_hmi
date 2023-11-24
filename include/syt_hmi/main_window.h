@@ -125,6 +125,7 @@ signals:
   void signClothStyleWindowShow();
   void signUpdateLabelState(QString);
   void signGetClothStyle(QString prefix, QString file_name);
+  void signparamProcessFinish(bool);
 
 private slots:
   void slotMaxBtnClicked();
@@ -138,6 +139,7 @@ private slots:
   void pauseFinish(bool);
   void stopBtnClicked();
   void stopFinish(bool);
+  void paramProcessFinish(bool);
   void addClothBtnClicked();
   void addClothFinish(bool result, int id);
   void changePlateBtnClicked();
