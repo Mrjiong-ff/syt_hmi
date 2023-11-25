@@ -536,7 +536,7 @@ void MainWindow::setMainControlButton() {
   connect(ui->end_btn, &QPushButton::clicked, this, &MainWindow::stopBtnClicked);
   connect(rclcomm_, &SytRclComm::signStopFinish, this, &MainWindow::stopFinish);
   connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
-  connect(this, &MainWindow::signparamProcessFinish, this, &MainWindow::paramProcessFinish);
+  connect(this, &MainWindow::signParamProcessFinish, this, &MainWindow::paramProcessFinish);
 }
 
 // 视觉功能可视化
@@ -1040,7 +1040,14 @@ void MainWindow::setParamManageComponet() {
       switch (item_level) {
       case 0:
         menu.addAction(tr("写入参数组"), this, [=]() {
+          waiting_spinner_widget_->start();
+          QFuture<void> exec_state = QtConcurrent::run([=](){
+          stop_param_process_ = false;
+          param_processing_ = true;
           for (int j = 0; j < item->rowCount(); ++j) {
+            if (stop_param_process_) {
+              break;
+            }
             ParamLine param_line;
             param_line.name = item->child(j, 0)->text().trimmed();
             param_line.dtype = item->child(j, 1)->text().trimmed();
@@ -1060,23 +1067,38 @@ void MainWindow::setParamManageComponet() {
             std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
 
             if (item->text() == "load_machine") {
-              QtConcurrent::run([=]() {
-                rclcomm_->loadMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
-              });
+              rclcomm_->loadMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
             } else if (item->text() == "compose_machine") {
-              QtConcurrent::run([=]() {
-                rclcomm_->composeMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
-              });
+              rclcomm_->composeMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
             } else if (item->text() == "sewing_machine") {
-              QtConcurrent::run([=]() {
-                rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
-              });
+              rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
             } else {
-              QtConcurrent::run([=]() {
-                rclcomm_->updateParam(item->text().toStdString(), dtype, param_line.name, param_line.value, param_line.is_array);
-              });
+              rclcomm_->updateParam(item->text().toStdString(), dtype, param_line.name, param_line.value, param_line.is_array);
             }
-          }
+          }});
+          QtConcurrent::run([=](){
+            auto time_begin = std::chrono::steady_clock::now();
+            auto time_end = std::chrono::steady_clock::now();
+            int time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
+            while (time_cost < 5000) {
+              if (exec_state.isFinished()) {
+                break;
+              }
+              std::this_thread::sleep_for(50ms);
+              time_end = std::chrono::steady_clock::now();
+              time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
+            }
+            bool success = exec_state.isFinished();
+            stop_param_process_ = true;
+            while (true) {
+              if (exec_state.isFinished()) {
+                break;
+              }
+              std::this_thread::sleep_for(50ms);
+            }
+            param_processing_ = false;
+            emit signParamProcessFinish(success);
+          });
         });
         menu.addAction(tr("增加参数组"), this, [=]() {
           QStandardItem *new_group = new QStandardItem("group");
@@ -1212,11 +1234,16 @@ void MainWindow::setParamManageComponet() {
     waiting_spinner_widget_->start();
     QStandardItem *root_item = model_->invisibleRootItem();
     QList<QFuture<void>> state_list;
+    param_processing_ = true;
+    stop_param_process_ = false;
     for (int i = 0; i < root_item->rowCount(); ++i) {
       QStandardItem *item = root_item->child(i);
       if (item->hasChildren()) {
         state_list.push_back(QtConcurrent::run([=](){
           for (int j = 0; j < item->rowCount(); ++j) {
+            if (stop_param_process_) {
+              break;
+            }
             ParamLine param_line;
             param_line.name = item->child(j, 0)->text().trimmed();
             param_line.dtype = item->child(j, 1)->text().trimmed();
@@ -1341,26 +1368,32 @@ void MainWindow::setParamManageComponet() {
         std::this_thread::sleep_for(50ms);
         time_end = std::chrono::steady_clock::now();
         time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
-        qDebug() << time_cost;
         success = checkFinished();
       }
-      for (auto exec_state : state_list) {
-        if (!exec_state.isFinished()) {
-          exec_state.cancel();
+      stop_param_process_ = true;
+      while (true) {
+        if (checkFinished()) {
+          break;
         }
       }
-      emit signparamProcessFinish(success);
+      param_processing_ = false;
+      emit signParamProcessFinish(success);
     });
   });
   connect(ui->apply_param_btn, &QPushButton::clicked, [=]() {
     QStandardItem *root_item = model_->invisibleRootItem();
     QList<QFuture<void>> state_list;
+    param_processing_ = true;
+    stop_param_process_ = false;
     waiting_spinner_widget_->start();
     for (int i = 0; i < root_item->rowCount(); ++i) {
       QStandardItem *item = root_item->child(i);
       if (item->hasChildren()) {
         state_list.push_back(QtConcurrent::run([=](){
           for (int j = 0; j < item->rowCount(); ++j) {
+            if (stop_param_process_) {
+              break;
+            }
             ParamLine param_line;
             param_line.name = item->child(j, 0)->text().trimmed();
             param_line.dtype = item->child(j, 1)->text().trimmed();
@@ -1410,7 +1443,6 @@ void MainWindow::setParamManageComponet() {
         std::this_thread::sleep_for(50ms);
         time_end = std::chrono::steady_clock::now();
         time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
-        qDebug() << time_cost;
         success = checkFinished();
       }
       for (auto exec_state : state_list) {
@@ -1418,7 +1450,14 @@ void MainWindow::setParamManageComponet() {
           exec_state.cancel();
         }
       }
-      emit signparamProcessFinish(success);
+      stop_param_process_ = true;
+      while (true) {
+        if (checkFinished()) {
+          break;
+        }
+      }
+      param_processing_ = false;
+      emit signParamProcessFinish(success);
     });
   });
 }
@@ -2138,7 +2177,7 @@ void MainWindow::startFinish(bool result) {
 void MainWindow::paramProcessFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (!result) {
-    showMessageBox(this, ERROR, tr("参数操作失败"), 1, {tr("确认")});
+    showMessageBox(this, ERROR, tr("参数配置失败"), 1, {tr("确认")});
   }
 }
 
