@@ -710,8 +710,10 @@ syt_msgs::srv::ParamManage::Response SytRclComm::loadMachineParam(int behavior, 
   request->dtype.data = dtype;
   request->field = field;
   request->data.resize(data.size());
-  for (size_t i = 0; i < data.size(); i++) {
-    request->data[i] = (uint8_t)(data[i]);
+  if (behavior == 0) {
+    for (size_t i = 0; i < data.size(); i++) {
+      request->data[i] = (uint8_t)(data[i]);
+    }
   }
   request->is_array = is_array;
   // std::cout << "DataLen: " << request->data.size() << std::endl;
@@ -916,8 +918,10 @@ syt_msgs::srv::ParamManage::Response SytRclComm::composeMachineParam(int behavio
   request->dtype.data = dtype;
   request->field = field;
   request->data.resize(data.size());
-  for (size_t i = 0; i < data.size(); i++) {
-    request->data[i] = (uint8_t)(data[i]);
+  if (behavior == 0) {
+    for (size_t i = 0; i < data.size(); i++) {
+      request->data[i] = (uint8_t)(data[i]);
+    }
   }
   request->is_array = is_array;
 
@@ -1031,8 +1035,10 @@ syt_msgs::srv::ParamManage::Response SytRclComm::sewingMachineParam(int behavior
   request->dtype.data = dtype;
   request->field = field;
   request->data.resize(data.size());
-  for (size_t i = 0; i < data.size(); i++) {
-    request->data[i] = (uint8_t)(data[i]);
+  if (behavior == 0) {
+    for (size_t i = 0; i < data.size(); i++) {
+      request->data[i] = (uint8_t)(data[i]);
+    }
   }
   request->is_array = is_array;
 

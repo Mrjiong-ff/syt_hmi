@@ -1167,7 +1167,7 @@ void MainWindow::setParamManageComponet() {
         });
         menu.addAction(tr("增加参数"), this, [=]() {
           QStandardItem *new_param = new QStandardItem("name");
-          QStandardItem *new_type = new QStandardItem("uint8");
+          QStandardItem *new_type = new QStandardItem("uchar");
           QStandardItem *new_length = new QStandardItem("1");
           QStandardItem *new_min = new QStandardItem("0");
           QStandardItem *new_max = new QStandardItem("inf");
@@ -1342,6 +1342,8 @@ void MainWindow::setParamManageComponet() {
               //}
 
               auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              QString data_str = setData(item->child(j), response);
+              item->child(j, 5)->setText(data_str);
             }
           }
         }));
