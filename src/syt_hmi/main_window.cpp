@@ -1100,6 +1100,74 @@ void MainWindow::setParamManageComponet() {
             emit signParamProcessFinish(success);
           });
         });
+        menu.addAction(tr("读取参数组"), this, [=](){
+          waiting_spinner_widget_->start();
+          param_processing_ = true;
+          stop_param_process_ = false;
+          QFuture<void> exec_state = QtConcurrent::run([=](){
+            if (item->hasChildren()) {
+              for (int j = 0; j < item->rowCount(); ++j) {
+                if (stop_param_process_) {
+                  break;
+                }
+                ParamLine param_line;
+                param_line.name = item->child(j, 0)->text().trimmed();
+                param_line.dtype = item->child(j, 1)->text().trimmed();
+                param_line.length = item->child(j, 2)->text().trimmed().toInt();
+                param_line.min_range = item->child(j, 3)->text().trimmed();
+                param_line.max_range = item->child(j, 4)->text().trimmed();
+                param_line.value = item->child(j, 5)->text().trimmed();
+                QStringList value_list = item->child(j, 5)->text().split(",");
+                if (value_list.size() > 1) {
+                  param_line.is_array = true;
+                } else {
+                  param_line.is_array = false;
+                }
+                param_line.comment = item->child(j, 6)->text();
+
+                DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
+                std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
+
+                if (item->text() == "load_machine") {
+                  auto response = rclcomm_->loadMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+                  QString data_str = setData(item->child(j), response);
+                  item->child(j, 5)->setText(data_str);
+                } else if (item->text() == "compose_machine") {
+                  auto response = rclcomm_->composeMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+                  QString data_str = setData(item->child(j), response);
+                  item->child(j, 5)->setText(data_str);
+                } else if (item->text() == "sewing_machine") {
+                  auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+                  QString data_str = setData(item->child(j), response);
+                  item->child(j, 5)->setText(data_str);
+                }
+              }
+            }
+          });
+          QtConcurrent::run([=](){
+            auto time_begin = std::chrono::steady_clock::now();
+            auto time_end = std::chrono::steady_clock::now();
+            int time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
+            bool success = exec_state.isFinished();
+            while (time_cost < 5000) {
+              if (success) {
+                break;
+              }
+              std::this_thread::sleep_for(50ms);
+              time_end = std::chrono::steady_clock::now();
+              time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
+              success = exec_state.isFinished();
+            }
+            stop_param_process_ = true;
+            while (true) {
+              if (success) {
+                break;
+              }
+            }
+            param_processing_ = false;
+            emit signParamProcessFinish(success);
+          });
+        });
         menu.addAction(tr("增加参数组"), this, [=]() {
           QStandardItem *new_group = new QStandardItem("group");
           QList<QStandardItem *> new_items;
@@ -1164,6 +1232,41 @@ void MainWindow::setParamManageComponet() {
               rclcomm_->updateParam(machine_name.toStdString(), dtype, param_line.name, param_line.value, param_line.is_array);
             });
           }
+        });
+        menu.addAction(tr("读取参数"), this, [=](){
+          ParamLine param_line;
+          param_line.name = item->parent()->child(item->row(), 0)->text().trimmed();
+          param_line.dtype = item->parent()->child(item->row(), 1)->text().trimmed();
+          param_line.length = item->parent()->child(item->row(), 2)->text().trimmed().toInt();
+          param_line.min_range = item->parent()->child(item->row(), 3)->text().trimmed();
+          param_line.max_range = item->parent()->child(item->row(), 4)->text().trimmed();
+          param_line.value = item->parent()->child(item->row(), 5)->text().trimmed();
+          QStringList value_list = item->parent()->child(item->row(), 5)->text().split(",");
+          if (value_list.size() > 1) {
+            param_line.is_array = true;
+          } else {
+            param_line.is_array = false;
+          }
+          param_line.comment = item->parent()->child(item->row(), 6)->text();
+
+          DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
+          std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
+
+          QtConcurrent::run([=](){
+            if (item->text() == "load_machine") {
+              auto response = rclcomm_->loadMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              QString data_str = setData(item->parent()->child(item->row()), response);
+              item->parent()->child(item->row(), 5)->setText(data_str);
+            } else if (item->text() == "compose_machine") {
+              auto response = rclcomm_->composeMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              QString data_str = setData(item->parent()->child(item->row()), response);
+              item->parent()->child(item->row(), 5)->setText(data_str);
+            } else if (item->text() == "sewing_machine") {
+              auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              QString data_str = setData(item->parent()->child(item->row()), response);
+              item->parent()->child(item->row(), 5)->setText(data_str);
+            }
+          });
         });
         menu.addAction(tr("增加参数"), this, [=]() {
           QStandardItem *new_param = new QStandardItem("name");
