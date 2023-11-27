@@ -1160,9 +1160,10 @@ void MainWindow::setParamManageComponet() {
             }
             stop_param_process_ = true;
             while (true) {
-              if (success) {
+              if (exec_state.isFinished()) {
                 break;
               }
+              std::this_thread::sleep_for(50ms);
             }
             param_processing_ = false;
             emit signParamProcessFinish(success);
@@ -1480,6 +1481,7 @@ void MainWindow::setParamManageComponet() {
         if (checkFinished()) {
           break;
         }
+        std::this_thread::sleep_for(50ms);
       }
       param_processing_ = false;
       emit signParamProcessFinish(success);
