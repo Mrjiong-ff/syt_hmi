@@ -1254,15 +1254,15 @@ void MainWindow::setParamManageComponet() {
           std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
 
           QtConcurrent::run([=](){
-            if (item->text() == "load_machine") {
+            if (item->parent()->text() == "load_machine") {
               auto response = rclcomm_->loadMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
               QString data_str = setData(item->parent()->child(item->row()), response);
               item->parent()->child(item->row(), 5)->setText(data_str);
-            } else if (item->text() == "compose_machine") {
+            } else if (item->parent()->text() == "compose_machine") {
               auto response = rclcomm_->composeMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
               QString data_str = setData(item->parent()->child(item->row()), response);
               item->parent()->child(item->row(), 5)->setText(data_str);
-            } else if (item->text() == "sewing_machine") {
+            } else if (item->parent()->text() == "sewing_machine") {
               auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
               QString data_str = setData(item->parent()->child(item->row()), response);
               item->parent()->child(item->row(), 5)->setText(data_str);
