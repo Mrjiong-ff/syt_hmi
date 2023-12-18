@@ -1651,10 +1651,15 @@ bool MainWindow::readJson(const QString &json_file, QStandardItemModel *model) {
         QJsonObject key_obj = machine_obj.value(*j).toObject();
 
         QStandardItem *key_item = new QStandardItem(*j);                                    // 属性
+        key_item->setEditable(false);
         QStandardItem *dtype_item = new QStandardItem(key_obj.value("dtype").toString());   // 类型
+        dtype_item->setEditable(false);
         QStandardItem *length_item = new QStandardItem(key_obj.value("length").toString()); // 长度
+        length_item->setEditable(false);
         QStandardItem *min_item = new QStandardItem(key_obj.value("min").toString());       // 最小值
+        length_item->setEditable(false);
         QStandardItem *max_item = new QStandardItem(key_obj.value("max").toString());       // 最大值
+        max_item->setEditable(false);
         QStandardItem *value_item;                                                          // 值
         if (length_item->text().toInt() > 1) {
           QJsonArray value_array = key_obj.value("value").toArray();
@@ -1669,6 +1674,7 @@ bool MainWindow::readJson(const QString &json_file, QStandardItemModel *model) {
         }
 
         QStandardItem *comment_item = new QStandardItem(key_obj.value("comment").toString()); // 释义
+        comment_item->setEditable(false);
 
         // 存为一行
         QList<QStandardItem *> item_line{key_item, dtype_item, length_item, min_item, max_item, value_item, comment_item};
