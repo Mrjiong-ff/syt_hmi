@@ -2,6 +2,7 @@
 
 #include "utils/utils.h"
 #include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class ParamSetWidget;

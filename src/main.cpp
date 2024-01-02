@@ -9,10 +9,10 @@
 #include <rclcpp/rclcpp.hpp>
 
 int main(int argc, char **argv) {
-  syt::crypt::Decryption decryptor;
-  if (!decryptor.isAuthorized()) {
-    return 0;
-  }
+  /* syt::crypt::Decryption decryptor; */
+  /* if (!decryptor.isAuthorized()) { */
+  /*   return 0; */
+  /* } */
 
   std::string config_path = std::string(getenv("ENV_ROBOT_ETC")) + "/syt_hmi/syt_hmi.yaml";
   cv::FileStorage fs(config_path, cv::FileStorage::READ);

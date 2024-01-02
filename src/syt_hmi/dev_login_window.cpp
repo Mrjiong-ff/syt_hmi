@@ -10,6 +10,7 @@ DevLoginWindow::DevLoginWindow(QWidget *parent) : QDialog(parent), ui(new Ui::De
   // dialog必须要加 Qt::Dialog，不然背景会变成透明
   setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
 
+
   m_closeBtn_ = new WinCloseButton(this);
   m_closeBtn_->setFixedSize(30, 30);
 

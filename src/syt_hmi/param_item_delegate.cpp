@@ -219,9 +219,11 @@ QWidget *ValueItemDelegate::createEditor(QWidget *parent,
     return NULL;
   }
   QLineEdit *value_line_edit = new QLineEdit(parent);
-  QRegExp reg_exp(
-      "^\\s*(-?inf|-?pi|-?\\d+(?:\\.\\d+)?)(?:\\s*,\\s*(-?inf|-?pi|-?\\d+(?:\\."
-      "\\d+)?))*\\s*$");
+  // QRegExp reg_exp(
+  //     "^\\s*(-?inf|-?pi|-?\\d+(?:\\.\\d+)?)(?:\\s*,\\s*(-?inf|-?pi|-?\\d+(?:\\."
+  //     "\\d+)?))*\\s*$");  
+
+  QRegExp reg_exp("^\\s*(-?inf|-?pi|-?\\d*(?:\\.\\d*)?)(?:\\s*,\\s*(-?inf|-?pi|-?\\d*(?:\\.\\d*)?))*\\s*$");
   value_line_edit->setValidator(new QRegExpValidator(reg_exp, parent));
   return value_line_edit;
 }

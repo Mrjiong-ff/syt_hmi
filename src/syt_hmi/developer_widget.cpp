@@ -7,7 +7,6 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
   setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
   setButtonFrame();
   ui->current_page_label->setText(ui->switch_load_btn->getText());
-
   // 窗口操作
   connect(ui->close_btn, &QPushButton::clicked, this, &DeveloperWidget::close);
 
@@ -76,7 +75,7 @@ void DeveloperWidget::setButtonFrame() {
   auto setFrame = [&](WaterZoomButton *button) {
     button->setParentEnabled(true);
     button->setForeEnabled(false);
-    button->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+    button->setStyleSheet("qproperty-press_color: rgba(0,0,120,0.5);");
   };
 
   setFrame(ui->switch_load_btn);

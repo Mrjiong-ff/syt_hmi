@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QVariant>
 #include <QWidget>
+#include <QDialog>
 #include <csignal>
 #include <fstream>
 #include <opencv2/highgui.hpp>

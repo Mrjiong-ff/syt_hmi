@@ -1023,6 +1023,11 @@ void MainWindow::setParamManageComponet() {
       }
       break;
     }
+    case 8: {
+      QByteArray byteArray(reinterpret_cast<const char*>(response.data.data()), response.data.size());
+      data_str = QString::fromUtf8(byteArray);
+      break;
+    }
     default:
       break;
     }
@@ -1264,6 +1269,16 @@ void MainWindow::setParamManageComponet() {
               item->parent()->child(item->row(), 5)->setText(data_str);
             } else if (item->parent()->text() == "sewing_machine") {
               auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              QString data_str = setData(item->parent()->child(item->row()), response);
+              item->parent()->child(item->row(), 5)->setText(data_str);
+            } else {
+              QString machine_name = item->parent()->text();
+              auto value = rclcomm_->readParam(machine_name.toStdString(), dtype, param_line.name, param_line.is_array);
+              syt_msgs::srv::ParamManage::Response response;
+              response.success = true;
+              response.dtype.data = 8;
+              response.field = param_line.name.toStdString();
+              response.data = value;
               QString data_str = setData(item->parent()->child(item->row()), response);
               item->parent()->child(item->row(), 5)->setText(data_str);
             }

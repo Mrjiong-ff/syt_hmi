@@ -157,6 +157,7 @@ public:
   void composeMachineBlowHeight(float height);                                                                                           // 吹气高度
   void composeMachineTableLight(float ratio);                                                                                            // 台面灯
   syt_msgs::srv::ParamManage::Response composeMachineParam(int behavior, int dtype, std::string field, std::string data, bool is_array); // 参数设置
+  // std::vector<uchar> readParam(std::string node, int type, QString field, bool is_array);
 
   // 缝纫机
   void sewingMachineReset();                                                                                                            // 缝纫机复位
@@ -174,6 +175,8 @@ public:
   void getClothInfo(uint8_t frame_id, int cloth_type);                                       // 获取衣服信息
   void checkCalibration();                                                                   // 检测标定结果
   void updateParam(std::string node, int type, QString field, QString value, bool is_array); // 更新参数
+  // rcl_interfaces::srv::GetParameters::Response readParam(std::string node, int type, QString field, bool is_array);// 读取参数
+  std::vector<uchar> readParam(std::string node, int type, QString field, bool is_array);
 
   // 样式相关
   void createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back); // 创建样式
