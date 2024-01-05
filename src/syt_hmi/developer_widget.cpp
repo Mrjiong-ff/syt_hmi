@@ -7,6 +7,7 @@ DeveloperWidget::DeveloperWidget(QWidget *parent) : QWidget(parent),
   setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
   setButtonFrame();
   ui->current_page_label->setText(ui->switch_load_btn->getText());
+
   // 窗口操作
   connect(ui->close_btn, &QPushButton::clicked, this, &DeveloperWidget::close);
 

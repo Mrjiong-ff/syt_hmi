@@ -94,7 +94,6 @@ void ChooseStyleDialog::slotSetStylePath() {
 void ChooseStyleDialog::slotSetCurrentStyleFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-  // if (1) {
     emit signSetCurrentStyleName(
         ui->style_file_list_view->model()
             ->data(ui->style_file_list_view->currentIndex())
