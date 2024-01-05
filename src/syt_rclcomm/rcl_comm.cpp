@@ -369,7 +369,7 @@ void SytRclComm::pauseCmd() {
   request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::PAUSE;
 
   syt_msgs::srv::FSMControlFlow::Response response;
-  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机暂停", 5000, request, response);
+  CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机暂停", 30000, request, response);
   qDebug() << "整机暂停：" << result;
   switch (result) {
   case CALL_SUCCESS:
