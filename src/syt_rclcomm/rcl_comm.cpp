@@ -1165,6 +1165,161 @@ void SytRclComm::updateParam(std::string node, int type, QString field, QString 
   CALL_RESULT result = callService<rcl_interfaces::srv::SetParameters>("/" + node + "/set_parameters", "上位机参数设置", 5000, request, response);
 }
 
+std::vector<uchar> SytRclComm::readParam(std::string node, int type, QString field, bool is_array) {
+  auto title_ = field.toStdString();
+  auto request = std::make_shared<rcl_interfaces::srv::GetParameters::Request>();
+  std::string value;
+  std::vector<int64_t> a_value;
+  std::vector<double> d_value;
+  std::vector<std::string> s_value;
+  std::vector<uchar> u_value;
+
+  request->names.emplace_back(title_);
+  rcl_interfaces::srv::GetParameters::Response response;
+  CALL_RESULT result = callService<rcl_interfaces::srv::GetParameters>("/" + node + "/get_parameters", "rosparam参数读取",  5000, request, response);
+  if(!result) {
+    if(!is_array) {
+      switch(type) {
+      case 0:
+        value = std::to_string(response.values[0].integer_value);
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      case 1:
+        value = std::to_string(response.values[0].integer_value);
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      case 2:
+        value = std::to_string(response.values[0].integer_value);
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      case 3:
+        value = std::to_string(response.values[0].integer_value);
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      case 4:
+        value = std::to_string(response.values[0].double_value);
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      case 5:
+        value = std::to_string(response.values[0].double_value);
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      case 6:
+        value = std::to_string(response.values[0].integer_value);
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      case 7:
+        value = std::to_string(response.values[0].integer_value);
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      case 8:
+        value = response.values[0].string_value;
+        for(char c : value){
+          u_value.push_back(static_cast<unsigned char>(c));
+        }
+        break;
+      }
+    }else {
+      switch(type){
+        case 0:
+        a_value = response.values[0].integer_array_value;
+        for(int i = 0; i < a_value.size(); i++){
+          std::string str = std::to_string(a_value[i]);
+          for(char c : str){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+        break;
+        case 1:
+        a_value = response.values[0].integer_array_value;
+        for(int i = 0; i < a_value.size(); i++){
+          std::string str = std::to_string(a_value[i]);
+          for(char c : str){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+        break;
+        case 2:
+        a_value = response.values[0].integer_array_value;
+        for(int i = 0; i < a_value.size(); i++){
+          std::string str = std::to_string(a_value[i]);
+          for(char c : str){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+        break;
+        case 3:
+        a_value = response.values[0].integer_array_value;
+        for(int i = 0; i < a_value.size(); i++){
+          std::string str = std::to_string(a_value[i]);
+          for(char c : str){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+        break;
+        case 4:
+        d_value = response.values[0].double_array_value;
+        for(int i = 0; i < d_value.size(); i++){
+          std::string str = std::to_string(d_value[i]);
+          for(char c : str){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+        break;
+        case 5:
+        d_value = response.values[0].double_array_value;
+        for(int i = 0; i < d_value.size(); i++){
+          std::string str = std::to_string(d_value[i]);
+          for(char c : str){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+        break;
+        case 6:
+        a_value = response.values[0].integer_array_value;
+        for(int i = 0; i < a_value.size(); i++){
+          std::string str = std::to_string(a_value[i]);
+          for(char c : str){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+        case 7:
+        a_value = response.values[0].integer_array_value;
+        for(int i = 0; i < a_value.size(); i++){
+          std::string str = std::to_string(a_value[i]);
+          for(char c : str){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+        case 8:
+        s_value = response.values[0].string_array_value;
+        for(int i = 0; i < s_value.size(); i++){
+          for(char c : s_value[i]){
+            u_value.push_back(static_cast<unsigned char>(c));
+          }
+        }
+      }
+    }
+  }
+  return u_value;
+}
+
 /* ---------------------------样式相关------------------------------ */
 // 创建样式文件
 void SytRclComm::createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {

@@ -174,6 +174,7 @@ public:
   void getClothInfo(uint8_t frame_id, int cloth_type);                                       // 获取衣服信息
   void checkCalibration();                                                                   // 检测标定结果
   void updateParam(std::string node, int type, QString field, QString value, bool is_array); // 更新参数
+  std::vector<uchar> readParam(std::string node, int type, QString field, bool is_array);
 
   // 样式相关
   void createStyle(int mode, QString prefix, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back); // 创建样式

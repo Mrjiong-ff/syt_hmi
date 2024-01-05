@@ -218,10 +218,13 @@ QWidget *ValueItemDelegate::createEditor(QWidget *parent,
   if (index.model()->data(index, Qt::EditRole).toString().isEmpty()) {
     return NULL;
   }
+  QModelIndex sibling = index.sibling(index.row(), 2);
+  QVariant data = sibling.data(Qt::DisplayRole);
+  int length = data.toInt();
   QLineEdit *value_line_edit = new QLineEdit(parent);
-  QRegExp reg_exp(
-      "^\\s*(-?inf|-?pi|-?\\d+(?:\\.\\d+)?)(?:\\s*,\\s*(-?inf|-?pi|-?\\d+(?:\\."
-      "\\d+)?))*\\s*$");
+  const char* formula = std::to_string(length - 1).c_str();
+  QString pattern = QString("^\\s*(-?inf|-?pi|-?\\d*(?:\\.\\d*)?)(?:(?:\\s*,\\s*(-?inf|-?pi|-?\\d*(?:\\.\\d*)?)){%1})?\\s*[,]?\\s*$").arg(formula);  
+  QRegExp reg_exp(pattern);
   value_line_edit->setValidator(new QRegExpValidator(reg_exp, parent));
   return value_line_edit;
 }

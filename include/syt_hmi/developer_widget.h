@@ -9,6 +9,7 @@
 #include "utils/waitingspinnerwidget.h"
 
 #include <QFileDialog>
+#include <QDialog>
 #include <QWidget>
 #include <QtConcurrent/QtConcurrent>
 

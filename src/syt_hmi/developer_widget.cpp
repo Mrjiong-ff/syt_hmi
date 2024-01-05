@@ -76,7 +76,7 @@ void DeveloperWidget::setButtonFrame() {
   auto setFrame = [&](WaterZoomButton *button) {
     button->setParentEnabled(true);
     button->setForeEnabled(false);
-    button->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+    button->setStyleSheet("qproperty-press_color: rgba(0,0,120,0.5);");
   };
 
   setFrame(ui->switch_load_btn);
