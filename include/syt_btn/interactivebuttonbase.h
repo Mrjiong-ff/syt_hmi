@@ -142,8 +142,8 @@ public:
   void setPressAniDuration(int d);
   void setClickAniDuration(int d);
   void setWaterAniDuration(int press, int release, int finish);
-  void setWaterRipple(bool enable = true);
-  void setJitterAni(bool enable = true);
+  void setWaterRipple(bool enable = false);
+  void setJitterAni(bool enable = false);
   void setUnifyGeomerey(bool enable = true);
   void setBgColor(QColor bg);
   void setBgColor(QColor hover, QColor press);
