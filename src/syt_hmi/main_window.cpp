@@ -800,11 +800,11 @@ void MainWindow::setParamManageComponet() {
     }
     case FLOAT32: {
       if (!is_array) {
-        float type_value = value.toFloat();
+                float type_value = value.toFloat();
         uint8_t byte_array[sizeof(float)];
         std::memcpy(byte_array, &type_value, sizeof(float));
         data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
-      } else {
+              } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<float> value_vec;
         for (int i = 0; i < value_list.length(); ++i) {
@@ -1082,19 +1082,15 @@ void MainWindow::setParamManageComponet() {
             }
           }});
           QtConcurrent::run([=](){
-            auto time_begin = std::chrono::steady_clock::now();
-            auto time_end = std::chrono::steady_clock::now();
-            int time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
-            while (time_cost < 5000) {
-              if (exec_state.isFinished()) {
+            bool success = exec_state.isFinished();
+            while (rclcomm_->returntrycount() < 5) {
+              if (success) {
                 break;
               }
-              std::this_thread::sleep_for(50ms);
-              time_end = std::chrono::steady_clock::now();
-              time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
+              success = exec_state.isFinished();
             }
-            bool success = exec_state.isFinished();
             stop_param_process_ = true;
+            std::this_thread::sleep_for(50ms);
             while (true) {
               if (exec_state.isFinished()) {
                 break;
@@ -1150,20 +1146,15 @@ void MainWindow::setParamManageComponet() {
             }
           });
           QtConcurrent::run([=](){
-            auto time_begin = std::chrono::steady_clock::now();
-            auto time_end = std::chrono::steady_clock::now();
-            int time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
             bool success = exec_state.isFinished();
-            while (time_cost < 5000) {
+            while (rclcomm_->returntrycount() < 5) {
               if (success) {
                 break;
               }
-              std::this_thread::sleep_for(50ms);
-              time_end = std::chrono::steady_clock::now();
-              time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
               success = exec_state.isFinished();
             }
             stop_param_process_ = true;
+            std::this_thread::sleep_for(50ms);
             while (true) {
               if (exec_state.isFinished()) {
                 break;
@@ -1202,6 +1193,7 @@ void MainWindow::setParamManageComponet() {
         break;
       case 1:
         menu.addAction(tr("写入参数"), this, [=]() {
+          stop_param_process_ = false;
           QString machine_name = item->parent()->text();
           ParamLine param_line;
           param_line.name = item->parent()->child(item->row(), 0)->text().trimmed();
@@ -1220,26 +1212,42 @@ void MainWindow::setParamManageComponet() {
 
           DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
           std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
-
-          if (machine_name == "load_machine") {
-            QtConcurrent::run([=]() {
-              rclcomm_->loadMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
-            });
-          } else if (machine_name == "compose_machine") {
-            QtConcurrent::run([=]() {
-              rclcomm_->composeMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
-            });
-          } else if (machine_name == "sewing_machine") {
-            QtConcurrent::run([=]() {
-              rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
-            });
-          } else {
-            QtConcurrent::run([=]() {
-              rclcomm_->updateParam(machine_name.toStdString(), dtype, param_line.name, param_line.value, param_line.is_array);
-            });
-          }
+          param_processing_ = true;
+          QFuture <void> exec_state = QtConcurrent::run([=](){
+            if(!stop_param_process_) {
+              if (machine_name == "load_machine") {
+                  rclcomm_->loadMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              } else if (machine_name == "compose_machine") {
+                  rclcomm_->composeMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              } else if (machine_name == "sewing_machine") {
+                  rclcomm_->sewingMachineParam(0, dtype, param_line.name.toStdString(), data, param_line.is_array);
+              } else {
+                  rclcomm_->updateParam(machine_name.toStdString(), dtype, param_line.name, param_line.value, param_line.is_array);
+              }
+            }
+          });
+          QtConcurrent::run([=](){
+            bool success = exec_state.isFinished();
+            while(rclcomm_->returntrycount() < 5) {
+              if(success) {
+                break;
+              }
+              success = exec_state.isFinished();
+            }
+            stop_param_process_ = true;
+            std::this_thread::sleep_for(50ms);
+            while(true) {
+              if(exec_state.isFinished()) {
+                break;
+              }
+              std::this_thread::sleep_for(50ms);
+            }
+            param_processing_ = false;
+            emit signParamProcessFinish(success);
+          });
         });
         menu.addAction(tr("读取参数"), this, [=](){
+          stop_param_process_ = false;
           ParamLine param_line;
           param_line.name = item->parent()->child(item->row(), 0)->text().trimmed();
           param_line.dtype = item->parent()->child(item->row(), 1)->text().trimmed();
@@ -1257,31 +1265,52 @@ void MainWindow::setParamManageComponet() {
 
           DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
           std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
-
-          QtConcurrent::run([=](){
-            if (item->parent()->text() == "load_machine") {
-              auto response = rclcomm_->loadMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
-              QString data_str = setData(item->parent()->child(item->row()), response);
-              item->parent()->child(item->row(), 5)->setText(data_str);
-            } else if (item->parent()->text() == "compose_machine") {
-              auto response = rclcomm_->composeMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
-              QString data_str = setData(item->parent()->child(item->row()), response);
-              item->parent()->child(item->row(), 5)->setText(data_str);
-            } else if (item->parent()->text() == "sewing_machine") {
-              auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
-              QString data_str = setData(item->parent()->child(item->row()), response);
-              item->parent()->child(item->row(), 5)->setText(data_str);
-            } else {
-              QString machine_name = item->parent()->text();
-              auto value = rclcomm_->readParam(machine_name.toStdString(), dtype, param_line.name, param_line.is_array);
-              syt_msgs::srv::ParamManage::Response response;
-              response.success = true;
-              response.dtype.data = 8;
-              response.field = param_line.name.toStdString();
-              response.data = value;
-              QString data_str = setData(item->parent()->child(item->row()), response);
-              item->parent()->child(item->row(), 5)->setText(data_str);
+          param_processing_ = true;
+          QFuture<void> exec_state = QtConcurrent::run([=](){
+            if(!stop_param_process_){
+              if (item->parent()->text() == "load_machine") {
+                auto response = rclcomm_->loadMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+                QString data_str = setData(item->parent()->child(item->row()), response);
+                item->parent()->child(item->row(), 5)->setText(data_str);
+              } else if (item->parent()->text() == "compose_machine") {
+                auto response = rclcomm_->composeMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+                QString data_str = setData(item->parent()->child(item->row()), response);
+                item->parent()->child(item->row(), 5)->setText(data_str);
+              } else if (item->parent()->text() == "sewing_machine") {
+                auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
+                QString data_str = setData(item->parent()->child(item->row()), response);
+                item->parent()->child(item->row(), 5)->setText(data_str);
+              } else {
+                QString machine_name = item->parent()->text();
+                auto value = rclcomm_->readParam(machine_name.toStdString(), dtype, param_line.name, param_line.is_array);
+                syt_msgs::srv::ParamManage::Response response;
+                response.success = true;
+                response.dtype.data = 8;
+                response.field = param_line.name.toStdString();
+                response.data = value;
+                QString data_str = setData(item->parent()->child(item->row()), response);
+                item->parent()->child(item->row(), 5)->setText(data_str);
+              }
             }
+          });
+          QtConcurrent::run([=](){
+            bool success = exec_state.isFinished();
+            while (rclcomm_->returntrycount() < 5) {
+              if (success) {
+                break;
+              }
+              success = exec_state.isFinished();
+            }
+            stop_param_process_ = true;
+            std::this_thread::sleep_for(50ms);
+            while (true) {
+              if (exec_state.isFinished()) {
+                break;
+              }
+              std::this_thread::sleep_for(50ms);
+            }
+            param_processing_ = false;
+            emit signParamProcessFinish(success);
           });
         });
         menu.addAction(tr("增加参数"), this, [=]() {
