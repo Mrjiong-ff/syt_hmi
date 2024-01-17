@@ -28,8 +28,8 @@ InteractiveButtonBase::InteractiveButtonBase(QWidget *parent)
       click_ani_appearing(false), click_ani_disappearing(false), click_ani_progress(0),
       mouse_press_event(nullptr), mouse_release_event(nullptr),
       unified_geometry(false), _l(0), _t(0), _w(32), _h(32),
-      jitter_animation(true), elastic_coefficient(1.2), jitter_duration(300),
-      water_animation(true), water_press_duration(800), water_release_duration(400), water_finish_duration(300),
+      jitter_animation(false), elastic_coefficient(0.0), jitter_duration(0),
+      water_animation(false), water_press_duration(0), water_release_duration(0), water_finish_duration(0),
       align(Qt::AlignCenter), _state(false), leave_after_clicked(false), _block_hover(false),
       double_clicked(false), double_timer(nullptr), double_prevent(false) {
   setMouseTracking(true); // 鼠标没有按下时也能捕获移动事件
@@ -1906,19 +1906,21 @@ void InteractiveButtonBase::anchorTimeOut() {
       jitters.clear();
       emit jitterAniFinished();
     }
-  } else if (anchor_pos != mouse_pos) // 移动效果
-  {
-    double delta_x = anchor_pos.x() - mouse_pos.x(),
-           delta_y = anchor_pos.y() - mouse_pos.y();
+  } 
+  // else if (anchor_pos != mouse_pos) // 移动效果
+  // {
+  //   double delta_x = anchor_pos.x() - mouse_pos.x(),
+  //          delta_y = anchor_pos.y() - mouse_pos.y();
 
-    anchor_pos.setX(anchor_pos.x() - quick_sqrt(int(delta_x)));
-    anchor_pos.setY(anchor_pos.y() - quick_sqrt(int(delta_y)));
+  //   anchor_pos.setX(anchor_pos.x() - quick_sqrt(int(delta_x)));
+  //   anchor_pos.setY(anchor_pos.y() - quick_sqrt(int(delta_y)));
 
-    offset_pos.setX(quick_sqrt(long(anchor_pos.x() - (width() >> 1))));
-    offset_pos.setY(quick_sqrt(long(anchor_pos.y() - (height() >> 1))));
-    effect_pos.setX((width() >> 1) + offset_pos.x());
-    effect_pos.setY((height() >> 1) + offset_pos.y());
-  } else if (!pressing && !hovering && !hover_progress && !press_progress && !click_ani_appearing &&
+  //   offset_pos.setX(quick_sqrt(long(anchor_pos.x() - (width() >> 1))));
+  //   offset_pos.setY(quick_sqrt(long(anchor_pos.y() - (height() >> 1))));
+  //   effect_pos.setX((width() >> 1) + offset_pos.x());
+  //   effect_pos.setY((height() >> 1) + offset_pos.y());
+  // } 
+  else if (!pressing && !hovering && !hover_progress && !press_progress && !click_ani_appearing &&
              !click_ani_disappearing && !jitters.size() && !waters.size() && !show_ani_appearing &&
              !show_ani_disappearing) // 没有需要加载的项，暂停（节约资源）
   {
