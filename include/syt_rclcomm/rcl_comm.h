@@ -100,6 +100,8 @@ public:
 
   template <class T>
   CALL_RESULT callService(std::string srv_name, std::string info, uint32_t timeout_ms, std::shared_ptr<typename T::Request> request, typename T::Response &response);
+  int try_count = 0;
+  int returntrycount(){ return try_count; }
 
   void resetWholeMachine(); // 复位整机
   void stopWholeMachine();  // 停止整机

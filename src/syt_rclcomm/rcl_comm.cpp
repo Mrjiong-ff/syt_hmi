@@ -290,13 +290,15 @@ template <class T>
 SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::string info, uint32_t timeout_ms, std::shared_ptr<typename T::Request> request, typename T::Response &response) {
   typename rclcpp::Client<T>::SharedPtr client = node_->create_client<T>(srv_name);
 
-  int try_count = 0;
-  while (!client->wait_for_service(1s)) {
-    if (try_count++ >= 5) {
+  int try_count_ = 0;
+  while (!client->wait_for_service(800ms)) {
+    try_count = try_count_;
+    if (try_count_++ >= 5) {
       RCLCPP_INFO(node_->get_logger(), "无法连接至" + info + "服务超过限制次数，停止连接...");
       return CALL_DISCONNECT;
     }
     if (!rclcpp::ok()) {
+      try_count = 5;
       RCLCPP_ERROR(node_->get_logger(), "连接至" + info + "服务被打断");
       return CALL_INTERRUPT;
     }
@@ -309,11 +311,12 @@ SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::strin
     timeout_ms = UINT32_MAX;
   }
 
-  auto begin_time = std::chrono::high_resolution_clock::now();
+  auto begin_time = std::chrono::steady_clock::now();
   while (result.wait_for(50ms) != std::future_status::ready) {
-    auto current_time = std::chrono::high_resolution_clock::now();
+    auto current_time = std::chrono::steady_clock::now();
     uint32_t cost_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - begin_time).count();
     if (cost_time > timeout_ms) {
+      try_count = 5;
       RCLCPP_INFO(node_->get_logger(), info + "服务调用超时");
       return CALL_TIMEOUT;
     }
