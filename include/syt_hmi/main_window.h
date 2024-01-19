@@ -245,4 +245,7 @@ private:
   // 参数预览配置
   QStandardItemModel *model_;
   QString current_param_file_;
+
+  // 参数错误名称
+  QString error_param_name;
 };
