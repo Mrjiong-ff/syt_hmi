@@ -1193,16 +1193,21 @@ void MainWindow::setParamManageComponet() {
         break;
       case 1:
         menu.addAction(tr("写入参数"), this, [=]() {
+          waiting_spinner_widget_->start();
           stop_param_process_ = false;
           QString machine_name = item->parent()->text();
+          QStandardItem* parentItem = item->parent();
+          int row = item->row();
+          QStandardItem* childItem = parentItem->child(row);
+          error_param_name = childItem->text().trimmed();
           ParamLine param_line;
-          param_line.name = item->parent()->child(item->row(), 0)->text().trimmed();
-          param_line.dtype = item->parent()->child(item->row(), 1)->text().trimmed();
-          param_line.length = item->parent()->child(item->row(), 2)->text().trimmed().toInt();
-          param_line.min_range = item->parent()->child(item->row(), 3)->text().trimmed();
-          param_line.max_range = item->parent()->child(item->row(), 4)->text().trimmed();
-          param_line.value = item->parent()->child(item->row(), 5)->text().trimmed();
-          QStringList value_list = item->parent()->child(item->row(), 5)->text().split(",");
+          param_line.name = childItem->text().trimmed();
+          param_line.dtype = parentItem->child(row, 1)->text().trimmed();
+          param_line.length = parentItem->child(row, 2)->text().trimmed().toInt();
+          param_line.min_range = parentItem->child(row, 3)->text().trimmed();
+          param_line.max_range = parentItem->child(row, 4)->text().trimmed();
+          param_line.value = parentItem->child(row, 5)->text().trimmed();
+          QStringList value_list = param_line.value.split(",");
           if (value_list.size() > 1) {
             param_line.is_array = true;
           } else {
@@ -1247,15 +1252,28 @@ void MainWindow::setParamManageComponet() {
           });
         });
         menu.addAction(tr("读取参数"), this, [=](){
+          waiting_spinner_widget_->start();
           stop_param_process_ = false;
+          // ParamLine param_line;
+          // param_line.name = item->parent()->child(item->row(), 0)->text().trimmed();
+          // param_line.dtype = item->parent()->child(item->row(), 1)->text().trimmed();
+          // param_line.length = item->parent()->child(item->row(), 2)->text().trimmed().toInt();
+          // param_line.min_range = item->parent()->child(item->row(), 3)->text().trimmed();
+          // param_line.max_range = item->parent()->child(item->row(), 4)->text().trimmed();
+          // param_line.value = item->parent()->child(item->row(), 5)->text().trimmed();
+          // QStringList value_list = item->parent()->child(item->row(), 5)->text().split(",");
+          QStandardItem* parentItem = item->parent();
+          int row = item->row();
+          QStandardItem* childItem = parentItem->child(row);
+          error_param_name = childItem->text().trimmed();
           ParamLine param_line;
-          param_line.name = item->parent()->child(item->row(), 0)->text().trimmed();
-          param_line.dtype = item->parent()->child(item->row(), 1)->text().trimmed();
-          param_line.length = item->parent()->child(item->row(), 2)->text().trimmed().toInt();
-          param_line.min_range = item->parent()->child(item->row(), 3)->text().trimmed();
-          param_line.max_range = item->parent()->child(item->row(), 4)->text().trimmed();
-          param_line.value = item->parent()->child(item->row(), 5)->text().trimmed();
-          QStringList value_list = item->parent()->child(item->row(), 5)->text().split(",");
+          param_line.name = childItem->text().trimmed();
+          param_line.dtype = parentItem->child(row, 1)->text().trimmed();
+          param_line.length = parentItem->child(row, 2)->text().trimmed().toInt();
+          param_line.min_range = parentItem->child(row, 3)->text().trimmed();
+          param_line.max_range = parentItem->child(row, 4)->text().trimmed();
+          param_line.value = parentItem->child(row, 5)->text().trimmed();
+          QStringList value_list = param_line.value.split(",");
           if (value_list.size() > 1) {
             param_line.is_array = true;
           } else {
