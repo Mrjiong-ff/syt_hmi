@@ -958,6 +958,7 @@ void MainWindow::setParamManageComponet() {
             if (stop_param_process_) {
               break;
             }
+            error_param_name = item->child(j, 0)->text().trimmed();
             ParamLine param_line;
             param_line.name = item->child(j, 0)->text().trimmed();
             param_line.dtype = item->child(j, 1)->text().trimmed();
@@ -1016,6 +1017,7 @@ void MainWindow::setParamManageComponet() {
                 if (stop_param_process_) {
                   break;
                 }
+                error_param_name = item->child(j, 0)->text().trimmed();
                 ParamLine param_line;
                 param_line.name = item->child(j, 0)->text().trimmed();
                 param_line.dtype = item->child(j, 1)->text().trimmed();
@@ -1030,7 +1032,7 @@ void MainWindow::setParamManageComponet() {
                   param_line.is_array = false;
                 }
                 param_line.comment = item->child(j, 6)->text();
-
+                
                 DATA_TYPE dtype = str_data_type_map.value(param_line.dtype);
                 std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
 
@@ -1315,6 +1317,7 @@ void MainWindow::setParamManageComponet() {
             if (stop_param_process_) {
               break;
             }
+            error_param_name = item->child(j, 0)->text().trimmed();
             ParamLine param_line;
             param_line.name = item->child(j, 0)->text().trimmed();
             param_line.dtype = item->child(j, 1)->text().trimmed();
@@ -1334,16 +1337,6 @@ void MainWindow::setParamManageComponet() {
             std::string data = getData(param_line.dtype, param_line.is_array, param_line.value);
 
             if (item->text() == "load_machine") {
-              // syt_msgs::srv::ParamManage::Response response;
-              // response.field = "load_distance";
-              // uint32_t load_distance = 9500;
-              // uint8_t byte_array[sizeof(uint32_t)];
-              // std::memcpy(byte_array, &load_distance, sizeof(uint32_t));
-              // response.data.resize(sizeof(uint32_t));
-              // for (int k = 0; k < sizeof(uint32_t); ++k) {
-              // response.data.at(k) = byte_array[k];
-              //}
-
               auto response = rclcomm_->loadMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
               QString data_str = setData(item->child(j), response);
               item->child(j, 5)->setText(data_str);
@@ -1352,66 +1345,6 @@ void MainWindow::setParamManageComponet() {
               QString data_str = setData(item->child(j), response);
               item->child(j, 5)->setText(data_str);
             } else if (item->text() == "sewing_machine") {
-              // syt_msgs::srv::ParamManage::Response response;
-              //  response.dtype.data = FLOAT32;
-              //  response.field="needle_pitch";
-
-              // QString pitch = "2.7,2.7,2.7,2.7";
-              // pitch.remove(QChar(' '), Qt::CaseInsensitive);
-              // QStringList pitch_list = pitch.split(",");
-
-              // QVector<float> pitch_vec;
-              // for (int k = 0; k < pitch_list.length(); ++k) {
-              // pitch_vec.append(pitch_list.at(k).toFloat());
-              //}
-
-              // int pitch_size = sizeof(float) * pitch_vec.length();
-              // uint8_t pitch_array[pitch_size];
-              // memcpy(pitch_array, pitch_vec.data(), pitch_size);
-              // response.data.resize(sizeof(float) * pitch_vec.length());
-              // for (int k = 0; k < response.data.size(); ++k) {
-              // response.data.at(k) = pitch_array[k];
-              //}
-
-              // response.dtype.data = UCHAR;
-              // response.field = "care_label_side";
-              // QString pitch = "a,b,c,d";
-              // pitch.remove(QChar(' '), Qt::CaseInsensitive);
-              // QStringList pitch_list = pitch.split(",");
-
-              // QVector<uchar> pitch_vec;
-              // for (int k = 0; k < pitch_list.length(); ++k) {
-              // pitch_vec.append(pitch_list.at(k).at(0).toLatin1());
-              //}
-
-              // int pitch_size = sizeof(uchar) * pitch_vec.length();
-              // uint8_t pitch_array[pitch_size];
-              // memcpy(pitch_array, pitch_vec.data(), pitch_size);
-              // response.data.resize(sizeof(uchar) * pitch_vec.length());
-              // for (int k = 0; k < response.data.size(); ++k) {
-              // response.data.at(k) = pitch_array[k];
-              //}
-
-              // response.dtype.data = FLOAT32;
-              // response.field = "c_zero_offset";
-              // float c_zero_offset = 2.12;
-              // uint8_t byte_array[sizeof(float)];
-              // std::memcpy(byte_array, &c_zero_offset, sizeof(float));
-              // response.data.resize(sizeof(float));
-              // for (int k = 0; k < sizeof(float); ++k) {
-              // response.data.at(k) = byte_array[k];
-              //}
-
-              // response.dtype.data = UCHAR;
-              // response.field="care_label_side";
-              // uchar care_label_side = 2;
-              // uint8_t byte_array[sizeof(uchar)];
-              // std::memcpy(byte_array, &care_label_side, sizeof(uchar));
-              // response.data.resize(sizeof(uchar));
-              // for (int k = 0; k < sizeof(uchar); ++k) {
-              // response.data.at(k) = byte_array[k];
-              //}
-
               auto response = rclcomm_->sewingMachineParam(1, dtype, param_line.name.toStdString(), data, param_line.is_array);
               QString data_str = setData(item->child(j), response);
               item->child(j, 5)->setText(data_str);
@@ -1468,6 +1401,7 @@ void MainWindow::setParamManageComponet() {
             if (stop_param_process_) {
               break;
             }
+            error_param_name = item->child(j, 0)->text().trimmed();
             ParamLine param_line;
             param_line.name = item->child(j, 0)->text().trimmed();
             param_line.dtype = item->child(j, 1)->text().trimmed();
@@ -2257,7 +2191,8 @@ void MainWindow::startFinish(bool result) {
 void MainWindow::paramProcessFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (!result) {
-    showMessageBox(this, ERROR, tr("参数配置失败"), 1, {tr("确认")});
+    QString text = "参数配置失败 错误参数：";
+    showMessageBox(this, ERROR, (text + error_param_name), 1, {tr("确认")});
   }
 }
 
