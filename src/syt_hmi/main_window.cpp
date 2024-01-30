@@ -509,10 +509,18 @@ void MainWindow::setToolBar() {
     void (MainWindow::*auto_create_style_slot)(ClothStyleDialog *parent) = &MainWindow::slotAutoCreateStyle;
     connect(cloth_style_dialog, auto_create_style_signal, this, auto_create_style_slot, Qt::ConnectionType::QueuedConnection);
 
-    // 手动创建
+    // 复位抓手（手动创建改）
     void (ClothStyleDialog::*manual_input_param_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signManualInputParam;
-    void (MainWindow::*manual_input_param_slot)(ClothStyleDialog *parent) = &MainWindow::slotManualInputParam;
-    connect(cloth_style_dialog, manual_input_param_signal, this, manual_input_param_slot, Qt::ConnectionType::QueuedConnection);
+    // void (MainWindow::*manual_input_param_slot)(ClothStyleDialog *parent) = &MainWindow::slotManualInputParam;
+    // connect(cloth_style_dialog, manual_input_param_signal, this, manual_input_param_slot, Qt::ConnectionType::QueuedConnection);
+    connect(cloth_style_dialog, manual_input_param_signal, [=](){
+      waiting_spinner_widget_->start();
+      QtConcurrent::run([=]() {
+        rclcomm_->composeMachineReset();
+        rclcomm_->sewingMachineReset();
+        waiting_spinner_widget_->stop();
+      });
+    });
 
     // 从已有文件创建
     void (ClothStyleDialog::*create_from_source_signal)(ClothStyleDialog *parent) = &ClothStyleDialog::signCreateFromSource;
@@ -725,112 +733,152 @@ void MainWindow::setParamManageComponet() {
     case INT32: {
       if (!is_array) {
         int32_t type_value = value.toInt();
-        data = std::string(reinterpret_cast<const char *>(&type_value), sizeof(int32_t));
+        uint8_t byte_array[sizeof(int32_t)];
+        std::memcpy(byte_array, &type_value, sizeof(int32_t));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<int32_t> value_vec;
-        for (const QString &val : value_list) {
-          value_vec.append(val.toInt());
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toInt());
         }
-        data = std::string(reinterpret_cast<const char *>(value_vec.data()), sizeof(int32_t) * value_vec.length());
+        int data_size = sizeof(int32_t) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       }
       break;
     }
     case UINT32: {
       if (!is_array) {
         uint32_t type_value = value.toUInt();
-        data = std::string(reinterpret_cast<const char *>(&type_value), sizeof(uint32_t));
+        uint8_t byte_array[sizeof(uint32_t)];
+        std::memcpy(byte_array, &type_value, sizeof(uint32_t));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<uint32_t> value_vec;
-        for (const QString &val : value_list) {
-          value_vec.append(val.toInt());
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toUInt());
         }
-        data = std::string(reinterpret_cast<const char *>(value_vec.data()), sizeof(uint32_t) * value_vec.length());
+        int data_size = sizeof(uint32_t) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       }
       break;
     }
     case INT64: {
       if (!is_array) {
         int64_t type_value = value.toLongLong();
-        data = std::string(reinterpret_cast<const char *>(&type_value), sizeof(int64_t));
+        uint8_t byte_array[sizeof(int64_t)];
+        std::memcpy(byte_array, &type_value, sizeof(int64_t));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<int64_t> value_vec;
-        for (const QString &val : value_list) {
-          value_vec.append(val.toLongLong());
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toLongLong());
         }
-        data = std::string(reinterpret_cast<const char *>(value_vec.data()), sizeof(int64_t) * value_vec.length());
+        int data_size = sizeof(int64_t) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       }
       break;
     }
     case UINT64: {
       if (!is_array) {
         uint64_t type_value = value.toULongLong();
-        data = std::string(reinterpret_cast<const char *>(&type_value), sizeof(uint64_t));
+        uint8_t byte_array[sizeof(uint64_t)];
+        std::memcpy(byte_array, &type_value, sizeof(uint64_t));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<uint64_t> value_vec;
-        for (const QString &val : value_list) {
-          value_vec.append(val.toULongLong());
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toULongLong());
         }
-        data = std::string(reinterpret_cast<const char *>(value_vec.data()), sizeof(uint64_t) * value_vec.length());
+        int data_size = sizeof(uint64_t) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       }
       break;
     }
     case FLOAT32: {
       if (!is_array) {
         float type_value = value.toFloat();
-        data = std::string(reinterpret_cast<const char *>(&type_value), sizeof(float));
+        uint8_t byte_array[sizeof(float)];
+        std::memcpy(byte_array, &type_value, sizeof(float));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<float> value_vec;
-        for (const QString &val : value_list) {
-          value_vec.append(val.toFloat());
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toFloat());
         }
-        data = std::string(reinterpret_cast<const char *>(value_vec.data()), sizeof(float) * value_vec.length());
+        int data_size = sizeof(float) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       }
       break;
     }
     case FLOAT64: {
       if (!is_array) {
         double type_value = value.toDouble();
-        data = std::string(reinterpret_cast<const char *>(&type_value), sizeof(double));
+        uint8_t byte_array[sizeof(double)];
+        std::memcpy(byte_array, &type_value, sizeof(double));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<double> value_vec;
-        for (const QString &val : value_list) {
-          value_vec.append(val.toDouble());
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toDouble());
         }
-        data = std::string(reinterpret_cast<const char *>(value_vec.data()), sizeof(double) * value_vec.length());
+        int data_size = sizeof(double) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       }
       break;
     }
     case CHAR: {
       if (!is_array) {
         char type_value = value.at(0).toLatin1();
-        data = std::string(reinterpret_cast<const char *>(&type_value), sizeof(uchar));
+        uint8_t byte_array[sizeof(char)];
+        std::memcpy(byte_array, &type_value, sizeof(char));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<char> value_vec;
-        for (const QString &val : value_list) {
-          value_vec.append(val.at(0).toLatin1());
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).at(0).toLatin1());
         }
-        data = std::string(reinterpret_cast<const char *>(value_vec.data()), sizeof(char) * value_vec.length());
+        int data_size = sizeof(char) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       }
       break;
     }
     case UCHAR: {
       if (!is_array) {
         uchar type_value = value.toUInt();
-        data = std::string(reinterpret_cast<const char *>(&type_value), sizeof(uchar));
+        uint8_t byte_array[sizeof(uchar)];
+        std::memcpy(byte_array, &type_value, sizeof(uchar));
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       } else {
         QStringList value_list = value.remove(QChar(' ', Qt::CaseInsensitive)).split(",");
         QVector<char> value_vec;
-        for (const QString val : value_list) {
-          value_vec.append(val.toUInt());
+        for (int i = 0; i < value_list.length(); ++i) {
+          value_vec.append(value_list.at(i).toUInt());
         }
-        data = std::string(reinterpret_cast<const char *>(value_vec.data()), sizeof(uint8_t) * value_vec.length());
+        int data_size = sizeof(uchar) * value_vec.length();
+        uint8_t byte_array[data_size];
+        std::memcpy(byte_array, value_vec.data(), data_size);
+        data = std::string(reinterpret_cast<char *>(byte_array), sizeof(byte_array) / sizeof(uint8_t));
       }
       break;
     }
@@ -846,85 +894,140 @@ void MainWindow::setParamManageComponet() {
     }
     QString data_str;
     bool is_array = item->parent()->child(item->row(), 2)->text().toInt() > 1 ? true : false;
-    size_t length = item->parent()->child(item->row(), 2)->text().toInt();
-    auto processArrayData = [&](const void* data_ptr, int element_size) {
-      QStringList data_list;
-      for(int i = 0;i < length; ++i){
-        const auto* element_ptr = reinterpret_cast<const int*>(static_cast<const char*>(data_ptr) + i * element_size);
-        data_list << QString::number(*element_ptr);
-      }
-      data_str = data_list.join(",");
-    };
     switch (response.dtype.data) {
     case INT32: {
       if (!is_array) {
-        const auto* data = reinterpret_cast<const int32_t*>(response.data.data());
-        data_str = QString::number(*data);
+        int32_t data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
       } else {
-        processArrayData(response.data.data(),sizeof(int32_t));
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        int32_t data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
       }
       break;
     }
     case UINT32: {
       if (!is_array) {
-        const auto* data = reinterpret_cast<const uint32_t*>(response.data.data());
-        data_str = QString::number(*data);
+        uint32_t data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
       } else {
-        processArrayData(response.data.data(),sizeof(uint32_t));
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        uint32_t data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
       }
       break;
     }
     case INT64: {
       if (!is_array) {
-        const auto* data = reinterpret_cast<const int64_t*>(response.data.data());
-        data_str = QString::number(*data);
+        int64_t data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
       } else {
-        processArrayData(response.data.data(),sizeof(int64_t));
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        int64_t data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
       }
       break;
     }
     case UINT64: {
       if (!is_array) {
-        const auto* data = reinterpret_cast<const uint64_t*>(response.data.data());
-        data_str = QString::number(*data);
+        uint64_t data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
       } else {
-        processArrayData(response.data.data(),sizeof(uint64_t));
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        uint64_t data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
       }
       break;
     }
     case FLOAT32: {
       if (!is_array) {
-        const auto* data = reinterpret_cast<const float*>(response.data.data());
-        data_str = QString::number(*data);
+        float data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
       } else {
-        processArrayData(response.data.data(),sizeof(float));
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        float data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
       }
       break;
     }
     case FLOAT64: {
       if (!is_array) {
-        const auto* data = reinterpret_cast<const double*>(response.data.data());
-        data_str = QString::number(*data);
+        double data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
       } else {
-        processArrayData(response.data.data(),sizeof(double));
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        double data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
       }
       break;
     }
     case CHAR: {
       if (!is_array) {
-        const auto* data = reinterpret_cast<const char*>(response.data.data());
-        data_str = QString::number(*data);
+        char data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
       } else {
-        processArrayData(response.data.data(),sizeof(char));
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        char data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
       }
       break;
     }
     case UCHAR: {
       if (!is_array) {
-        const auto* data = reinterpret_cast<const uchar*>(response.data.data());
-        data_str = QString::number(*data);
+        uchar data;
+        memcpy(&data, response.data.data(), response.data.size());
+        data_str = QString::number(data);
       } else {
-        processArrayData(response.data.data(),sizeof(uchar));
+        size_t length = item->parent()->child(item->row(), 2)->text().toInt();
+        uchar data_arr[length];
+        memcpy(data_arr, response.data.data(), response.data.size());
+        QStringList data_list;
+        for (int i = 0; i < length; ++i) {
+          data_list << QString::number(data_arr[i]);
+        }
+        data_str = data_list.join(", ");
       }
       break;
     }
@@ -938,6 +1041,7 @@ void MainWindow::setParamManageComponet() {
     }
     return data_str;
   };
+
 
   // 右键菜单
   connect(ui->param_manage_tree_view, &QTreeView::customContextMenuRequested, this, [=](const QPoint &pos) {

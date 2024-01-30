@@ -16,11 +16,12 @@ ClothStyleDialog::ClothStyleDialog(QWidget *parent)
   ui->auto_create_style_btn->setParentEnabled(true);
   ui->auto_create_style_btn->setForeEnabled(false);
   ui->auto_create_style_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
+  ui->auto_create_style_btn->setDisabled(true);
 
   ui->manual_input_param_btn->setParentEnabled(true);
   ui->manual_input_param_btn->setForeEnabled(false);
   ui->manual_input_param_btn->setStyleSheet("qproperty-press_color: rgba(0,0,100,0.5);");
-  ui->manual_input_param_btn->hide(); // TODO:delete
+  // ui->manual_input_param_btn->hide(); // TODO:delete
 
   ui->create_from_source_btn->setParentEnabled(true);
   ui->create_from_source_btn->setForeEnabled(false);
@@ -37,6 +38,8 @@ ClothStyleDialog::ClothStyleDialog(QWidget *parent)
 
   connect(ui->manual_input_param_btn, &QPushButton::clicked, [=] {
     emit signManualInputParam(this);
+    ui->auto_create_style_btn->setDisabled(false);
+    ui->auto_create_style_btn->setEnabled(true);
   });
 
   connect(ui->create_from_source_btn, &QPushButton::clicked, [=] {
