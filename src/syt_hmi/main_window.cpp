@@ -1806,21 +1806,25 @@ void MainWindow::settingConnection() {
   // 机器空闲
   connect(rclcomm_, &SytRclComm::machineIdle, [=]() {
     this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn});
+    this->btnControl({ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn}, {});
   });
 
   // 机器运行
   connect(rclcomm_, &SytRclComm::machineRun, [=]() {
     this->btnControl({ui->pause_btn, ui->end_btn}, {ui->start_btn, ui->add_cloth_btn, ui->reset_btn});
+    this->btnControl({}, {ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn});
   });
 
   // 机器暂停
   connect(rclcomm_, &SytRclComm::machinePause, [=]() {
     this->btnControl({ui->reset_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn});
+    this->btnControl({}, {ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn});
   });
 
   // 机器停止
   connect(rclcomm_, &SytRclComm::machineStop, [=]() {
     this->btnControl({ui->reset_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn, ui->start_btn});
+    this->btnControl({ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn}, {});
   });
 }
 
@@ -2250,7 +2254,10 @@ void MainWindow::resetBtnClicked() {
 
   // 复位指令
   emit signUpdateLabelState(tr("复位中"));
-  QtConcurrent::run([=]() { rclcomm_->resetCmd(); });
+  QtConcurrent::run([=]() {
+    rclcomm_->sewingMachineReset(); 
+    rclcomm_->resetCmd();
+  });
   waiting_spinner_widget_->start();
 }
 

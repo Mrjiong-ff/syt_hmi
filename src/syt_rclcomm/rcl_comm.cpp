@@ -298,7 +298,7 @@ SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::strin
       return CALL_DISCONNECT;
     }
     if (!rclcpp::ok()) {
-      try_count = 5;
+      // try_count = 5;
       RCLCPP_ERROR(node_->get_logger(), "连接至" + info + "服务被打断");
       return CALL_INTERRUPT;
     }
@@ -316,7 +316,7 @@ SytRclComm::CALL_RESULT SytRclComm::callService(std::string srv_name, std::strin
     auto current_time = std::chrono::steady_clock::now();
     uint32_t cost_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - begin_time).count();
     if (cost_time > timeout_ms) {
-      try_count = 5;
+      // try_count = 5;
       RCLCPP_INFO(node_->get_logger(), info + "服务调用超时");
       return CALL_TIMEOUT;
     }
