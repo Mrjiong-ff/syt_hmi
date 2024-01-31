@@ -300,6 +300,7 @@ signals:
   // 缝纫机相关信号
   void signSewingMachineMoveHandFinish(bool result);      // 移动抓手
   void signSewingMachineSendKeypointsFinish(bool result); // 发送关键点
+  void signSewingMachineResetFinish(bool result); //缝纫机复位完成
 
   // 视觉检测相关信号
   void signGetClothInfoFinish(bool result, int cloth_type, syt_msgs::msg::ClothInfo cloth_info);

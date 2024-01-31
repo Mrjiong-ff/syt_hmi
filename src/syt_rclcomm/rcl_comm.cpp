@@ -943,6 +943,16 @@ void SytRclComm::sewingMachineReset() {
   syt_msgs::srv::SewingMachineReset::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::SewingMachineReset>("/syt/robot_control/sewing_machine/primal/reset", "缝纫复位", 20000, request, response);
   qDebug() << "缝纫复位：" << result;
+  switch (result) {
+  case CALL_SUCCESS:
+    emit signSewingMachineResetFinish(response.success);
+    break;
+  case CALL_TIMEOUT:
+  case CALL_INTERRUPT:
+  case CALL_DISCONNECT:
+    emit signSewingMachineResetFinish(false);
+    break;
+  }
 }
 
 // 移动抓手
