@@ -1,583 +1,736 @@
 {
-    "sewing_machine": {
-        "needle_pitch": {
+    "compose_machine": {
+        "blow_height": {
+            "comment": "【弹簧吹气高度】（除褶初始高度，除褶初始高度+50）范围内能吹气，\n范围外不吹气，范围内数值越大，吹气时间越短。\nV3#1: (-140, -90)\nV3#2: (-146, -96)\nV3#3/#4: (-198, -148)\n单位：mm",
             "dtype": "float32",
-            "length": "4",
-            "min": "0",
-            "max": "10",
-            "value": [
-                "2.5",
-                " 2.5",
-                " 2.5",
-                " 2.5"
-            ],
-            "storable": "1",
-            "comment": "【针距】依次是缝的第一侧边，第一肩部，第二肩部，第二侧边，和缝纫顺序一致",
-            "modify_freq": 2
+            "length": "1",
+            "max": "0",
+            "min": "-220",
+            "value": "-93"
         },
-        "care_label_side": {
+        "g_button_auto": {
+            "comment": "【四位急停按钮盒】用户旋钮",
             "dtype": "uchar",
             "length": "1",
-            "min": "0 ",
-            "max": " 1",
-            "value": "0",
-            "storable": "1",
-            "comment": "【水洗标方位】0：第一侧边 1：第二侧边",
-            "modify_freq": 2
-        },
-        "control_values": {
-            "dtype": "uchar",
-            "length": "16",
+            "max": "1",
             "min": "0",
-            "max": "255",
+            "value": "0"
+        },
+        "g_button_manual": {
+            "comment": "【四位急停按钮盒】调试旋钮",
+            "dtype": "uchar",
+            "length": "1",
+            "max": "1",
+            "min": "0",
+            "value": "0"
+        },
+        "g_button_pause": {
+            "comment": "【四位急停按钮盒】红色按钮",
+            "dtype": "uchar",
+            "length": "1",
+            "max": "1",
+            "min": "0",
+            "value": "0"
+        },
+        "g_button_shut1": {
+            "comment": "【四位急停按钮盒】急停按钮",
+            "dtype": "uchar",
+            "length": "1",
+            "max": "1",
+            "min": "0",
+            "value": "0"
+        },
+        "g_button_shut2": {
+            "comment": "【一位急停按钮盒】急停按钮",
+            "dtype": "uchar",
+            "length": "1",
+            "max": "1",
+            "min": "0",
+            "value": "0"
+        },
+        "g_button_start": {
+            "comment": "【四位急停按钮盒】绿色按钮",
+            "dtype": "uchar",
+            "length": "1",
+            "max": "1",
+            "min": "0",
+            "value": "0"
+        },
+        "g_step_motor_alm": {
+            "comment": "【XYCZ电机报警】依次是：\n0：X电机驱动器报警\n1：Y电机驱动器报警\n2：C电机驱动器报警\n3：Z电机驱动器报警",
+            "dtype": "uchar",
+            "length": "4",
+            "max": "1",
+            "min": "0",
             "value": [
                 "0",
+                " 0",
+                " 0",
+                " 0"
+            ]
+        },
+        "g_switch_high_val": {
+            "comment": "【XYCZ电机正限位】依次是：\n0：X电机正限位\n1：Y电机正限位\n2：C电机正限位\n3：Z电机正限位",
+            "dtype": "uchar",
+            "length": "4",
+            "max": "1",
+            "min": "0",
+            "value": [
                 "0",
+                " 0",
+                " 0",
+                " 0"
+            ]
+        },
+        "g_switch_low_val": {
+            "comment": "【XYCZ电机负限位】依次是：\n0：X电机负限位\n1：Y电机负限位\n2：C电机负限位\n3：Z电机负限位",
+            "dtype": "uchar",
+            "length": "4",
+            "max": "1",
+            "min": "0",
+            "value": [
                 "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0"
-            ],
-            "storable": "1",
-            "comment": "【继电器】\n0：",
-            "modify_freq": 2
+                " 0",
+                " 0",
+                " 0"
+            ]
         }
     },
     "load_machine": {
-        "l_feeder_run_mode": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "0",
-            "max": "2",
-            "value": "1",
-            "storable": "1",
-            "comment": "【B面运上料行模式】依据不同厚度采用不同上料策略，0：薄料， 1：中料， 2：厚料",
-            "modify_freq": 2
-        },
         "l_feeder_sheet_thick": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "0.3",
-            "max": "2.0",
-            "value": "0.3",
-            "storable": "1",
             "comment": "【B面裁片厚度】上料裁片的厚度，单位：mm",
-            "modify_freq": 2
-        },
-        "l_feeder_front_fan_duty": {
             "dtype": "float32",
             "length": "1",
-            "min": "0.5",
-            "max": "0.98",
-            "value": "0.7",
-            "storable": "1",
-            "comment": "【B面前组风扇风速】前组风扇吹风占空比",
-            "modify_freq": 2
-        },
-        "l_feeder_back_fan_duty": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "0.5",
-            "max": "0.98",
-            "value": "0.8",
-            "storable": "1",
-            "comment": "【B面后组风扇风速】后组风扇吹风占空比",
-            "modify_freq": 2
-        },
-        "l_feeder_success_times": {
-            "dtype": "uint32",
-            "length": "1",
-            "min": "0",
-            "max": "4294967295",
-            "value": "0",
-            "storable": "1",
-            "comment": "【B面上料成功次数】上料成功次数",
-            "modify_freq": 2
-        },
-        "l_feeder_failed_times": {
-            "dtype": "uint32",
-            "length": "1",
-            "min": "0",
-            "max": "4294967295",
-            "value": "0",
-            "storable": "1",
-            "comment": "【B面上料失败次数】上料失败次数",
-            "modify_freq": 2
-        },
-        "l_feeder_pull_pos": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-3.4028235e+38",
-            "max": "3.4028235e+38",
-            "value": "950",
-            "storable": "1",
-            "comment": "【B面裁片放置位置】最终放置裁片的位置，单位：mm",
-            "modify_freq": 2
-        },
-        "l_grip_mech_width_fdb": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "-2147483648",
-            "max": "2147483647",
-            "value": "0",
-            "storable": "1",
-            "comment": "【B面上料抓手宽度反馈】上料抓手宽度反馈，单位：0.1mm",
-            "modify_freq": 2
-        },
-        "l_grip_mech_offset_ref_abs": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "-2147483648",
-            "max": "2147483647",
-            "value": "0",
-            "storable": "1",
-            "comment": "【B面上料抓手平移绝对参考位置】上料抓手平移绝对参考位置，单位：0.1mm",
-            "modify_freq": 2
-        },
-        "l_grip_mech_offset_fdb_abs": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "-2147483648",
-            "max": "2147483647",
-            "value": "0",
-            "storable": "1",
-            "comment": "【B面上料抓手平移绝对反馈位置】上料抓手平移绝对反馈位置，单位：0.1mm",
-            "modify_freq": 2
-        },
-        "l_weigher_weight": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "-2147483648",
-            "max": "2147483647",
-            "value": "0",
-            "storable": "1",
-            "comment": "【B面称重传感器反馈值】称重传感器检测到的重量数据",
-            "modify_freq": 2
-        },
-        "r_feeder_run_mode": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "0",
-            "max": "2",
-            "value": "1",
-            "storable": "1",
-            "comment": "【A面运上料行模式】依据不同厚度采用不同上料策略，0：薄料， 1：中料， 2：厚料",
-            "modify_freq": 2
+            "max": "2.0",
+            "min": "0.3",
+            "value": "0.3"
         },
         "r_feeder_sheet_thick": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "0.3",
-            "max": "2.0",
-            "value": "0.3",
-            "storable": "1",
             "comment": "【A面裁片厚度】上料裁片的厚度，单位：mm",
-            "modify_freq": 2
-        },
-        "r_feeder_front_fan_duty": {
             "dtype": "float32",
             "length": "1",
-            "min": "0.5",
-            "max": "0.98",
-            "value": "0.7",
-            "storable": "1",
-            "comment": "【A面前组风扇风速】前组风扇吹风占空比",
-            "modify_freq": 2
-        },
-        "r_feeder_back_fan_duty": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "0.5",
-            "max": "0.98",
-            "value": "0.8",
-            "storable": "1",
-            "comment": "【A面后组风扇风速】后组风扇吹风占空比",
-            "modify_freq": 2
-        },
-        "r_feeder_success_times": {
-            "dtype": "uint32",
-            "length": "1",
-            "min": "0",
-            "max": "4294967295",
-            "value": "0",
-            "storable": "1",
-            "comment": "【A面上料成功次数】上料成功次数",
-            "modify_freq": 2
-        },
-        "r_feeder_failed_times": {
-            "dtype": "uint32",
-            "length": "1",
-            "min": "0",
-            "max": "4294967295",
-            "value": "0",
-            "storable": "1",
-            "comment": "【A面上料失败次数】上料失败次数",
-            "modify_freq": 2
-        },
-        "r_feeder_pull_pos": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-3.4028235e+38",
-            "max": "3.4028235e+38",
-            "value": "950",
-            "storable": "1",
-            "comment": "【A面裁片放置位置】最终放置裁片的位置，单位：mm",
-            "modify_freq": 2
-        },
-        "r_grip_mech_width_fdb": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "-2147483648",
-            "max": "2147483647",
-            "value": "0",
-            "storable": "1",
-            "comment": "【A面上料抓手宽度反馈】上料抓手宽度反馈，单位：0.1mm",
-            "modify_freq": 2
-        },
-        "r_grip_mech_offset_ref_abs": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "-2147483648",
-            "max": "2147483647",
-            "value": "0",
-            "storable": "1",
-            "comment": "【A面上料抓手平移绝对参考位置】上料抓手平移绝对参考位置，单位：0.1mm",
-            "modify_freq": 2
-        },
-        "r_grip_mech_offset_fdb_abs": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "-2147483648",
-            "max": "2147483647",
-            "value": "0",
-            "storable": "1",
-            "comment": "【A面上料抓手平移绝对反馈位置】上料抓手平移绝对反馈位置，单位：0.1mm",
-            "modify_freq": 2
-        },
-        "r_weigher_weight": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "-2147483648",
-            "max": "2147483647",
-            "value": "0",
-            "storable": "1",
-            "comment": "【A面称重传感器反馈值】称重传感器检测到的重量数据",
-            "modify_freq": 2
+            "max": "2.0",
+            "min": "0.3",
+            "value": "0.3"
         }
     },
-    "compose_machine": {
-        "motor_x_pos": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-90",
-            "max": "0",
-            "value": "0",
-            "storable": "1",
-            "comment": "【X电机位置】X轴电机移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "motor_y_pos": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "0",
-            "max": "1188",
-            "value": "0",
-            "storable": "1",
-            "comment": "【Y电机位置】X轴电机移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "motor_z_pos": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-220",
-            "max": "0",
-            "value": "0",
-            "storable": "1",
-            "comment": "【Z电机位置】X轴电机移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "motor_c_pos": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-1",
-            "max": "1",
-            "value": "0",
-            "storable": "1",
-            "comment": "【C电机位置】X轴电机移动距离，单位：rad",
-            "modify_freq": 2
-        },
-        "sucker_motor_hem_l_x": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-120",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【左下摆X位置】左下摆X方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_hem_l_y": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-190",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【左下摆Y位置】左下摆Y方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_armpit_l_x": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-120",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【左腋下X位置】左腋下X方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_armpit_l_y": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-120",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【左腋下Y位置】左腋下Y方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_shoulder_l_x": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-95",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【左肩膀X位置】左肩膀X方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_shoulder_l_y": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-40",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【左肩膀Y位置】左肩膀Y方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_shoulder_l_c": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "0.02",
-            "max": "0.55",
-            "value": "0",
-            "storable": "1",
-            "comment": "【左肩膀C位置】左肩膀C方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_shoulder_r_x": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "5",
-            "max": "95",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右肩膀X位置】右肩膀X方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_shoulder_r_y": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-40",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右肩膀Y位置】右肩膀Y方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_shoulder_r_c": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-0.55",
-            "max": "-0.02",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右肩膀C位置】右肩膀C方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_armpit_r_x": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "5",
-            "max": "120",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右腋下X位置】右腋下X方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_armpit_r_y": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-120",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右腋下Y位置】右腋下Y方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_hem_r_x": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "5",
-            "max": "120",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右下摆X位置】右下摆X方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "sucker_motor_hem_r_y": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-190",
-            "max": "-5",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右下摆Y位置】右下摆Y方向移动距离，单位：mm",
-            "modify_freq": 2
-        },
-        "blow_height": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "-220",
-            "max": "0",
-            "value": "-155",
-            "storable": "1",
-            "comment": "【弹簧吹气高度】（弹簧吹气高度，弹簧吹气高度+50）范围内能吹气，\n范围外不吹气，范围内数值越大，吹气时间越短。单位：mm",
-            "modify_freq": 2
-        },
-        "relay_control": {
+    "sewing_machine": {
+        "arc": {
+            "comment": "【缝纫弧形】0：不使用 1：使用",
             "dtype": "uchar",
-            "length": "16",
+            "length": "1",
+            "max": " 1",
+            "min": "0 ",
+            "value": "0"
+        },
+        "care_label_pos": {
+            "comment": "【水洗标位置】离底边距离",
+            "dtype": "float32",
+            "length": "1",
+            "max": " 2000",
+            "min": "20 ",
+            "value": "100"
+        },
+        "care_label_side": {
+            "comment": "【水洗标方位】0：第一侧边 1：第二侧边",
+            "dtype": "uchar",
+            "length": "1",
+            "max": " 1",
+            "min": "0 ",
+            "value": "0"
+        },
+        "care_label_width": {
+            "comment": "【水洗标宽度】",
+            "dtype": "float32",
+            "length": "1",
+            "max": " 200",
+            "min": "0 ",
+            "value": "30"
+        },
+        "continue_blow": {
+            "comment": "【缝纫持续吹气】0：缝纫时不持续吹气 1：缝纫时持续吹气",
+            "dtype": "uchar",
+            "length": "1",
+            "max": " 1",
+            "min": "0 ",
+            "value": "1"
+        },
+        "flag_sew_hem": {
+            "comment": "【缝纫下摆】0：不缝 1：缝",
+            "dtype": "uchar",
+            "length": "1",
+            "max": " 1",
+            "min": "0 ",
+            "value": "0"
+        },
+        "motor_differ_pos": {
+            "comment": "参数注释",
+            "dtype": "float32",
+            "length": "4",
+            "max": "4.4",
             "min": "0",
-            "max": "1",
             "value": [
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0"
-            ],
-            "storable": "1",
-            "comment": "【继电器控制】依次是：\n0：下摆弹簧吹气\n1：下摆固定吹气\n2：腋下弹簧吹气\n3：腋下固定吹气\n4：左肩弹簧吹气\n5：左肩固定吹气\n6：右弹簧吹气\n7：右肩固定吹气\n8：针吸盘\n9：自动抓手电源控制\n10：吸风台控制\n11：暂无\n12：警示灯绿灯\n13：警示灯黄灯\n14：警示灯红灯\n15：警示灯蜂鸣\n，0：不执行动作，1：执行动作",
-            "modify_freq": 2
+                "3",
+                " 3",
+                " 3",
+                " 3"
+            ]
+        },
+        "needle_pitch": {
+            "comment": "【针距】依次是缝的第一侧边，第一肩部，第二肩部，第二侧边，和缝纫顺序一致",
+            "dtype": "float32",
+            "length": "4",
+            "max": "10",
+            "min": "0.1",
+            "value": [
+                "3",
+                " 3",
+                " 3",
+                " 3"
+            ]
+        },
+        "num_sewing_line": {
+            "comment": "feng ren bian shu",
+            "dtype": "uchar",
+            "length": "1",
+            "max": "4",
+            "min": "1",
+            "value": "4"
+        },
+        "only_shoulder": {
+            "comment": "【只缝纫肩部】0：不使用 1：使用",
+            "dtype": "uchar",
+            "length": "1",
+            "max": " 1",
+            "min": "0 ",
+            "value": "0"
+        },
+        "sewing_spd_rpm": {
+            "comment": "【缝纫机速度】根据缝纫机驱动器速度进行设置",
+            "dtype": "float32",
+            "length": "1",
+            "max": " 5500",
+            "min": "100 ",
+            "value": "5500"
+        },
+        "shoulder_strap": {
+            "comment": "【缝纫肩带】0：不使用 1：使用",
+            "dtype": "uchar",
+            "length": "1",
+            "max": " 1",
+            "min": "0 ",
+            "value": "0"
+        },
+        "use_care_label": {
+            "comment": "【使用水洗标】0：不使用 1：使用",
+            "dtype": "uchar",
+            "length": "1",
+            "max": " 1",
+            "min": "0 ",
+            "value": "0"
         }
     },
-    "care_label": {},
-    "syt_motion_planner_node": {
-        "side_difference_thresh": {
+    "syt_compose_machine_node": {
+        "bottom_offset_x1": {
+            "comment": "【下摆吸盘1档位置x偏移值】正值表示吸盘向靠近抓手Y轴的方向移动，负值则相反",
             "dtype": "float32",
             "length": "1",
-            "min": "0",
-            "max": "3.4028235e+38",
-            "value": "15",
-            "storable": "1",
-            "comment": "【侧缝长度差阈值】前后裁片侧缝长度差异阈值，大于该数值则认为裁片对匹配度不佳，重新上料",
-            "modify_freq": 2
+            "max": "400",
+            "min": "-400",
+            "value": "50"
         },
-        "shoulder_difference_thresh": {
+        "bottom_offset_x2": {
+            "comment": "【下摆吸盘2档位置x偏移值】正值表示吸盘向靠近抓手Y轴的方向移动，负值则相反",
             "dtype": "float32",
             "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "50"
+        },
+        "bottom_offset_y1": {
+            "comment": "【下摆吸盘1档位置y偏移值】正值表示吸盘向肩膀方向移动，负值表示吸盘向下摆方向移动",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "0"
+        },
+        "bottom_offset_y2": {
+            "comment": "【下摆吸盘2档位置y偏移值】正值表示吸盘向肩膀方向移动，负值表示吸盘向下摆方向移动",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "89"
+        },
+        "bottom_position": {
+            "comment": "【下摆吸盘安装档位】该参数的值代表下摆吸盘的安装位置，有0，1，2三个档位",
+            "dtype": "int32",
+            "length": "1",
+            "max": "2",
             "min": "0",
-            "max": "3.4028235e+38",
-            "value": "15",
-            "storable": "1",
-            "comment": "【肩缝长度差阈值】前后裁片肩缝长度差异阈值，大于该数值则认为裁片对匹配度不佳，重新上料",
-            "modify_freq": 2
+            "value": "0"
+        },
+        "left_bottom_default_x": {
+            "comment": "【下摆吸盘初始安装位置x值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "-219.62"
+        },
+        "left_bottom_default_y": {
+            "comment": "【下摆吸盘初始安装位置y值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "-277.29"
+        },
+        "left_oxter_default_x": {
+            "comment": "【左侧腋下吸盘初始安装位置x值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "-225.85"
+        },
+        "left_oxter_default_y": {
+            "comment": "【左侧腋下吸盘初始安装位置y值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "55.39"
+        },
+        "left_shoulder_default_c": {
+            "comment": "【左侧肩膀吸盘初始安装位置c值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "10",
+            "min": "-10",
+            "value": "0.1"
+        },
+        "left_shoulder_default_x": {
+            "comment": "【左侧肩膀吸盘初始安装位置x值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "-129.3"
+        },
+        "left_shoulder_default_y": {
+            "comment": "【左侧肩膀吸盘初始安装位置y值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "289.4"
+        },
+        "oxter_offset_x1": {
+            "comment": "【腋下吸盘1档位置x偏移值】正值表示吸盘向靠近抓手Y轴的方向移动，负值则相反",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "50"
+        },
+        "oxter_offset_x2": {
+            "comment": "【腋下吸盘2档位置x偏移值】正值表示吸盘向靠近抓手Y轴的方向移动，负值则相反",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "50"
+        },
+        "oxter_offset_y1": {
+            "comment": "【腋下吸盘1档位置y偏移值】正值表示吸盘向肩膀方向移动，负值表示吸盘向下摆方向移动",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "0"
+        },
+        "oxter_offset_y2": {
+            "comment": "【腋下吸盘2档位置y偏移值】正值表示吸盘向肩膀方向移动，负值表示吸盘向下摆方向移动",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "60"
+        },
+        "oxter_position": {
+            "comment": "【腋下吸盘安装档位】该参数的值代表下摆吸盘的安装位置，有0，1，2三个档位",
+            "dtype": "int32",
+            "length": "1",
+            "max": "2",
+            "min": "0",
+            "value": "0"
+        },
+        "right_bottom_default_x": {
+            "comment": "【下摆吸盘初始安装位置x值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "210.62"
+        },
+        "right_bottom_default_y": {
+            "comment": "【下摆吸盘初始安装位置y值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "-280.29"
+        },
+        "right_oxter_default_x": {
+            "comment": "【右侧腋下吸盘初始安装位置x值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "223.91"
+        },
+        "right_oxter_default_y": {
+            "comment": "【右侧腋下吸盘初始安装位置y值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "53.39"
+        },
+        "right_shoulder_default_c": {
+            "comment": "【右侧肩膀吸盘初始安装位置c值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "10",
+            "min": "-10",
+            "value": "-0.2"
+        },
+        "right_shoulder_default_x": {
+            "comment": "【左侧肩膀吸盘初始安装位置x值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "129.35"
+        },
+        "right_shoulder_default_y": {
+            "comment": "【右侧肩膀吸盘初始安装位置y值】",
+            "dtype": "float32",
+            "length": "1",
+            "max": "400",
+            "min": "-400",
+            "value": "288.4"
+        },
+        "shoulder_offset_1": {
+            "comment": "【肩膀吸盘档位0偏移值】此时肩膀吸盘应当位于外侧",
+            "dtype": "float32",
+            "length": "1",
+            "max": "100",
+            "min": "-100",
+            "value": "36"
+        },
+        "shoulder_offset_2": {
+            "comment": "【肩膀吸盘档位1偏移值】此时肩膀吸盘应当位于内侧",
+            "dtype": "float32",
+            "length": "1",
+            "max": "100",
+            "min": "-100",
+            "value": "-1.6"
+        },
+        "shoulder_position": {
+            "comment": "【肩膀吸盘安装档位】该参数的值代表下摆吸盘的安装位置，有0，1两个档位",
+            "dtype": "int32",
+            "length": "1",
+            "max": "1",
+            "min": "0",
+            "value": "0"
+        }
+    },
+    "syt_load_machine_node": {
+        "grab_width_compensation": {
+            "comment": "【上料抓手宽度补偿】调整上料抓手抓取裁片时的宽度",
+            "dtype": "int32",
+            "length": "1",
+            "max": "500",
+            "min": "-500",
+            "value": "0"
+        }
+    },
+    "syt_motion_planner_node": {
+        "bottom_difference_thresh": {
+            "comment": "【底边长度差阈值】前后裁片底边长度差异阈值，大于该数值则认为裁片对匹配度不佳，重新上料",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "70"
         },
         "compose_mode": {
+            "comment": "【工作模式】0为全功能模式，1为仅肩缝模式，2为仅侧缝模式",
             "dtype": "int32",
             "length": "1",
-            "min": "0",
             "max": "2",
-            "value": "0",
-            "storable": "1",
-            "comment": "【工作模式】0为全功能模式，1为仅肩缝模式，2为仅侧缝模式",
-            "modify_freq": 2
+            "min": "0",
+            "value": "0"
+        },
+        "compose_offset_x": {
+            "comment": "【合片时合片抓手X轴偏移量】用于微调合片对齐位置",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "0"
+        },
+        "compose_offset_y": {
+            "comment": "【合片时合片抓手Y轴偏移量】用于微调合片对齐位置",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "-3"
+        },
+        "compose_offset_z": {
+            "comment": "【合片时合片抓手C轴偏移量】用于微调合片对齐位置",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "0"
+        },
+        "enable_quality_check": {
+            "comment": "【是否开启质检】",
+            "dtype": "uint32",
+            "length": "1",
+            "max": "1",
+            "min": "0",
+            "value": "1"
+        },
+        "is_hemmed_fabric": {
+            "comment": "【布料是否卷边】",
+            "dtype": "uchar",
+            "length": "1",
+            "max": "1",
+            "min": "0",
+            "value": "0"
+        },
+        "left_bottom_compose_offset_x": {
+            "comment": "【合片时坐下摆吸盘X轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "0"
+        },
+        "left_bottom_compose_offset_y": {
+            "comment": "【合片时左下摆吸盘Y轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "3"
+        },
+        "left_oxter_compose_offset_x": {
+            "comment": "【合片时左腋下吸盘X轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "0"
+        },
+        "left_oxter_compose_offset_y": {
+            "comment": "【合片时左腋下吸盘Y轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "2"
         },
         "left_shoulder_align_mode": {
-            "dtype": "int32",
-            "length": "1",
-            "min": "0",
-            "max": "2",
-            "value": "0",
-            "storable": "1",
             "comment": "【左肩缝对齐策略】0为对齐领口、1为对齐袖口、2为对齐中点",
-            "modify_freq": 2
-        },
-        "right_shoulder_align_mode": {
             "dtype": "int32",
             "length": "1",
-            "min": "0",
             "max": "2",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右肩缝对齐策略】0为对齐领口、1为对齐袖口、2为对齐中点",
-            "modify_freq": 2
+            "min": "0",
+            "value": "0"
+        },
+        "left_shoulder_compose_offset_c": {
+            "comment": "【合片时左肩吸盘C轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "0"
+        },
+        "left_shoulder_compose_offset_x": {
+            "comment": "【合片时左肩吸盘X轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "7"
+        },
+        "left_shoulder_compose_offset_y": {
+            "comment": "【合片时左肩吸盘Y轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "3"
         },
         "left_side_align_mode": {
+            "comment": "【左摆缝对齐策略】0为对齐下摆、1为对齐袖口、2为对齐中点",
             "dtype": "int32",
             "length": "1",
-            "min": "0",
             "max": "2",
-            "value": "0",
-            "storable": "1",
-            "comment": "【左摆缝对齐策略】0为对齐下摆、1为对齐袖口、2为对齐中点",
-            "modify_freq": 2
+            "min": "0",
+            "value": "0"
+        },
+        "mid_collar_and_shoulder_to_center": {
+            "comment": "【缝纫抓手Z轴轴线至裁片肩缝距离】调节该参数的目的是为了使缝纫压板能够良好地控制裁片，且留出余量来缝纫。",
+            "dtype": "float64",
+            "length": "1",
+            "max": "500",
+            "min": "380",
+            "value": "410"
+        },
+        "right_bottom_compose_offset_x": {
+            "comment": "【合片时右下摆吸盘X轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "4"
+        },
+        "right_bottom_compose_offset_y": {
+            "comment": "【合片时右下摆吸盘Y轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "4"
+        },
+        "right_oxter_compose_offset_x": {
+            "comment": "【合片时右腋下吸盘X轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "0"
+        },
+        "right_oxter_compose_offset_y": {
+            "comment": "【合片时右腋下吸盘Y轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "6"
+        },
+        "right_shoulder_align_mode": {
+            "comment": "【右肩缝对齐策略】0为对齐领口、1为对齐袖口、2为对齐中点",
+            "dtype": "int32",
+            "length": "1",
+            "max": "2",
+            "min": "0",
+            "value": "0"
+        },
+        "right_shoulder_compose_offset_c": {
+            "comment": "【合片时右肩吸盘C轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "0"
+        },
+        "right_shoulder_compose_offset_x": {
+            "comment": "【合片时右肩吸盘X轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "6"
+        },
+        "right_shoulder_compose_offset_y": {
+            "comment": "【合片时右肩吸盘Y轴偏移量】",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "2"
         },
         "right_side_align_mode": {
+            "comment": "【右摆缝对齐策略】0为对齐下摆、1为对齐袖口、2为对齐中点",
             "dtype": "int32",
             "length": "1",
-            "min": "0",
             "max": "2",
-            "value": "0",
-            "storable": "1",
-            "comment": "【右摆缝对齐策略】0为对齐下摆、1为对齐袖口、2为对齐中点",
-            "modify_freq": 2
+            "min": "0",
+            "value": "0"
+        },
+        "sewing_cut_width": {
+            "comment": "【缝纫裁剪宽度】该参数的值应为缝纫时裁剪的宽度加上线宽",
+            "dtype": "float64",
+            "length": "1",
+            "max": "15",
+            "min": "0",
+            "value": "8"
         },
         "shoulder_blow_time": {
-            "dtype": "float32",
-            "length": "1",
-            "min": "0",
-            "max": "0.5",
-            "value": "0.2",
-            "storable": "1",
             "comment": "【肩部吹气除褶时间】适用于仅肩缝模式",
-            "modify_freq": 2
+            "dtype": "float64",
+            "length": "1",
+            "max": "0.5",
+            "min": "0",
+            "value": "0.2"
+        },
+        "shoulder_difference_thresh": {
+            "comment": "【肩缝长度差阈值】前后裁片肩缝长度差异阈值，大于该数值则认为裁片对匹配度不佳，重新上料",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "15"
+        },
+        "shoulder_seam_width": {
+            "comment": "【肩部缝纫线宽】肩部缝纫机面线宽度",
+            "dtype": "float64",
+            "length": "1",
+            "max": "10",
+            "min": "2",
+            "value": "6"
+        },
+        "shoulder_sewing_cut_width": {
+            "comment": "【肩部缝纫裁切宽度】肩部缝纫机缝纫时切掉的布料宽度",
+            "dtype": "float64",
+            "length": "1",
+            "max": "30",
+            "min": "0",
+            "value": "2"
+        },
+        "side_difference_thresh": {
+            "comment": "【侧缝长度差阈值】前后裁片侧缝长度差异阈值，大于该数值则认为裁片对匹配度不佳，重新上料",
+            "dtype": "float64",
+            "length": "1",
+            "max": "1.7976931348623157e+308",
+            "min": "0",
+            "value": "15"
+        },
+        "side_seam_width": {
+            "comment": "【侧缝缝纫线宽】侧缝缝纫机面线宽度",
+            "dtype": "float64",
+            "length": "1",
+            "max": "10",
+            "min": "2",
+            "value": "6"
+        },
+        "side_sewing_cut_width": {
+            "comment": "【侧缝缝纫裁切宽度】侧缝缝纫机缝纫时切掉的布料宽度",
+            "dtype": "float64",
+            "length": "1",
+            "max": "30",
+            "min": "0",
+            "value": "2"
         }
     },
-    "syt_sewing_machine_node": {},
-    "syt_compose_machine_node": {},
-    "syt_load_machine_node": {}
+    "syt_sewing_machine_node": ""
 }

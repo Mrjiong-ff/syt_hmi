@@ -2216,7 +2216,7 @@ void MainWindow::resetBtnClicked() {
     showMessageBox(this, WARN, tr("请先设置裁片样式。"), 1, {tr("确认")});
     return;
   }
-
+  is_style_changed_ = false;
   bool res = isFastClick(ui->reset_btn, 1000);
   if (!res) {
     return;
@@ -2278,6 +2278,11 @@ void MainWindow::resetFinish(bool result) {
 
 // 开始按钮槽函数
 void MainWindow::startBtnClicked() {
+  if (is_style_changed_) {
+    showMessageBox(this, WARN, tr("样式已更改，请先进行复位"), 1, {tr("确认")});
+    return;
+  }
+
   bool res = isFastClick(ui->start_btn, 1000);
   if (!res) {
     return;
@@ -2872,6 +2877,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     waiting_spinner_widget_->stop();
 
     is_style_seted_ = true;
+    is_style_changed_ = true;
     emit signUpdateLabelState(tr("已设置样式，允许运行"));
 
     showMessageBox(this, SUCCESS, tr("样式设置成功"), 1, {tr("确认")});
