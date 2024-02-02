@@ -201,6 +201,7 @@ private:
   // 定义的一些bool类型标志位
   bool is_style_seted_ = false;
   bool is_style_changed_ = false;
+  bool is_style_rational_ = false;
 
   // 运行次数
   int exe_count_;

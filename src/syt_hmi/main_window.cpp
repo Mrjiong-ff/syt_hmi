@@ -2392,6 +2392,7 @@ void MainWindow::addClothFinish(bool result, int id) {
       showMessageBox(this, SUCCESS,
                      tr("补料模式设置成功，请在手动补充裁片后再点击确认。"), 1,
                      {tr("确认")});
+      btnControl({ui->reset_btn}, {ui->start_btn, ui->pause_btn, ui->end_btn, ui->add_cloth_btn});
     } else {
       emit signUpdateLabelState(tr("补料模式设置失败"));
       showMessageBox(this, ERROR, tr("补料模式设置失败"), 1, {tr("确认")});
@@ -2626,7 +2627,22 @@ void MainWindow::slotGetClothStyle(QString prefix, QString file_name) {
 }
 
 void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
-  if (result) {
+  if (cloth_style_front.cloth_length >= cloth_style_back.cloth_length){
+    float bl_ = cloth_style_front.bottom_length - cloth_style_back.bottom_length;
+    if(bl_ > -5){
+      is_style_rational_ = true;
+    } else {
+      is_style_rational_ = false;
+    }
+  }else{
+    float bl_ = cloth_style_back.bottom_length - cloth_style_front.bottom_length;
+    if(bl_ > -5){
+      is_style_rational_ = true;
+    } else {
+      is_style_rational_ = false;
+    }
+  }
+  if (result && is_style_rational_) {
     cloth_style_front_ = cloth_style_front;
     cloth_style_back_ = cloth_style_back;
 
@@ -2881,7 +2897,17 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     emit signUpdateLabelState(tr("已设置样式，允许运行"));
 
     showMessageBox(this, SUCCESS, tr("样式设置成功"), 1, {tr("确认")});
-  } else {
+  }
+  else if (result == true && is_style_rational_ == false){
+    is_style_seted_ = false;
+    QString front_cl = "前片衣长：" + QString::number(cloth_style_front.cloth_length);
+    QString front_bl = "前下摆长：" + QString::number(cloth_style_front.bottom_length);
+    QString back_cl = "后片衣长：" + QString::number(cloth_style_back.cloth_length);
+    QString back_bl = "后下摆长：" + QString::number(cloth_style_back.bottom_length);
+    QString text = "样式有误请检查数据\n";
+    showMessageBox(this, WARN, (text + "\n" + front_cl + "\n" + front_bl + "\n" + back_cl + "\n" + back_bl), 1, {tr("确认")});
+  } 
+  else {
     showMessageBox(this, WARN, tr("获取样式信息失败"), 1, {tr("确认")});
   }
 }
