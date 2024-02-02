@@ -2894,18 +2894,21 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
 
     is_style_seted_ = true;
     is_style_changed_ = true;
+    ui->choose_style_line_edit->setText(style_file_name_);
+    last_style_file_name_ = style_file_name_;
     emit signUpdateLabelState(tr("已设置样式，允许运行"));
 
     showMessageBox(this, SUCCESS, tr("样式设置成功"), 1, {tr("确认")});
   }
   else if (result == true && is_style_rational_ == false){
-    is_style_seted_ = false;
+    waiting_spinner_widget_->stop();
     QString front_cl = "前片衣长：" + QString::number(cloth_style_front.cloth_length);
     QString front_bl = "前下摆长：" + QString::number(cloth_style_front.bottom_length);
     QString back_cl = "后片衣长：" + QString::number(cloth_style_back.cloth_length);
     QString back_bl = "后下摆长：" + QString::number(cloth_style_back.bottom_length);
     QString text = "样式有误请检查数据\n";
     showMessageBox(this, WARN, (text + "\n" + front_cl + "\n" + front_bl + "\n" + back_cl + "\n" + back_bl), 1, {tr("确认")});
+    ui->choose_style_line_edit->setText(last_style_file_name_);
   } 
   else {
     showMessageBox(this, WARN, tr("获取样式信息失败"), 1, {tr("确认")});
@@ -2913,7 +2916,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
 }
 
 void MainWindow::slotSetCurrentStyleName(QString file_name) {
-  ui->choose_style_line_edit->setText(file_name);
+  // ui->choose_style_line_edit->setText(file_name);
 }
 
 ////////////////////////// 创建衣服样式槽函数 //////////////////////////
