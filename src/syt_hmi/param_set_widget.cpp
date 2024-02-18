@@ -171,7 +171,7 @@ void ParamSetWidget::bindComposeMachine() {
 void ParamSetWidget::bindLoadMachine() {
   // 复位B
   connect(ui->load_reset_btn_B, &QPushButton::clicked, [=]() {
-    emit signLoadMachineReset(0);
+    emit signLoadMachineReset(1);
   });
 
   // 厚度B
@@ -181,7 +181,7 @@ void ParamSetWidget::bindLoadMachine() {
 
   // 复位A
   connect(ui->load_reset_btn_A, &QPushButton::clicked, [=]() {
-    emit signLoadMachineReset(1);
+    emit signLoadMachineReset(0);
   });
 
   // 厚度A

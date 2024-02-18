@@ -2627,20 +2627,24 @@ void MainWindow::slotGetClothStyle(QString prefix, QString file_name) {
 }
 
 void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
-  if (cloth_style_front.cloth_length >= cloth_style_back.cloth_length){
-    float bl_ = cloth_style_front.bottom_length - cloth_style_back.bottom_length;
-    if(bl_ > -5){
-      is_style_rational_ = true;
-    } else {
-      is_style_rational_ = false;
+  if (qAbs(cloth_style_front.cloth_length - cloth_style_back.cloth_length) < 5){
+    if (cloth_style_front.cloth_length >= cloth_style_back.cloth_length){
+      float bl_ = cloth_style_front.bottom_length - cloth_style_back.bottom_length;
+      if(bl_ > -10){
+        is_style_rational_ = true;
+      } else {
+        is_style_rational_ = false;
+      }
+    }else{
+      float bl_ = cloth_style_back.bottom_length - cloth_style_front.bottom_length;
+      if(bl_ > -10){
+        is_style_rational_ = true;
+      } else {
+        is_style_rational_ = false;
+      }
     }
-  }else{
-    float bl_ = cloth_style_back.bottom_length - cloth_style_front.bottom_length;
-    if(bl_ > -5){
-      is_style_rational_ = true;
-    } else {
-      is_style_rational_ = false;
-    }
+  }else {
+    is_style_rational_ = false;
   }
   if (result && is_style_rational_) {
     cloth_style_front_ = cloth_style_front;
@@ -2896,7 +2900,8 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     is_style_changed_ = true;
     ui->choose_style_line_edit->setText(style_file_name_);
     last_style_file_name_ = style_file_name_;
-    emit signUpdateLabelState(tr("已设置样式，允许运行"));
+    emit signUpdateLabelState(tr("已设置样式，请进行复位"));
+    btnControl({ui->reset_btn}, {{ui->start_btn, ui->pause_btn, ui->end_btn, ui->add_cloth_btn}});
 
     showMessageBox(this, SUCCESS, tr("样式设置成功"), 1, {tr("确认")});
   }
@@ -2915,9 +2920,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
   }
 }
 
-void MainWindow::slotSetCurrentStyleName(QString file_name) {
-  // ui->choose_style_line_edit->setText(file_name);
-}
+void MainWindow::slotSetCurrentStyleName(QString file_name) {}
 
 ////////////////////////// 创建衣服样式槽函数 //////////////////////////
 // 从CAD创建

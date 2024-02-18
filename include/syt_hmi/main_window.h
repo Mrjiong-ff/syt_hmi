@@ -228,6 +228,7 @@ private:
   // 样式文件变量
   QString style_file_prefix_;
   QString style_file_name_;
+  QString last_style_file_name_;
   syt_msgs::msg::ClothStyle cloth_style_front_;
   syt_msgs::msg::ClothStyle cloth_style_back_;
 
