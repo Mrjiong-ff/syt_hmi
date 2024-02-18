@@ -281,6 +281,7 @@ void SytRclComm::runCountCallback(const std_msgs::msg::UInt64::SharedPtr msg) {
 // 监听错误码
 void SytRclComm::errorCodeCallback(const syt_msgs::msg::ErrorCode::SharedPtr msg) {
   uint32_t error_code = msg->data;
+  dead_error_code = msg->data;
   int exception_level = (error_code & 0x00f00000) >> 20;
   emit signErrorLevel(exception_level);
   current_exception_level_ = exception_level;
@@ -948,7 +949,9 @@ void SytRclComm::sewingMachineReset() {
     emit signSewingMachineResetFinish(response.success);
     break;
   case CALL_TIMEOUT:
+    emit signSewingMachineResetFinish(false);
   case CALL_INTERRUPT:
+    emit signSewingMachineResetFinish(false);
   case CALL_DISCONNECT:
     emit signSewingMachineResetFinish(false);
     break;

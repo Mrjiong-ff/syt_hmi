@@ -117,6 +117,7 @@ private:
   bool readJson(const QString &json_file, QStandardItemModel *model);
   bool dumpJson(const QString &json_file, QStandardItemModel *model);
   int getItemLevel(QStandardItem *item);
+  void monitorErrorCode();
 
   // 参数配置相关函数
   bool param_processing_;
@@ -130,6 +131,7 @@ signals:
   void signUpdateLabelState(QString);
   void signGetClothStyle(QString prefix, QString file_name);
   void signParamProcessFinish(bool);
+  void signScramCondition(bool);
 
 private slots:
   void slotMaxBtnClicked();
@@ -144,6 +146,7 @@ private slots:
   void stopBtnClicked();
   void stopFinish(bool);
   void paramProcessFinish(bool);
+  void deadErrorProcess(bool);
   void addClothBtnClicked();
   void addClothFinish(bool result, int id);
   void changePlateBtnClicked();

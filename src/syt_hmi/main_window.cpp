@@ -545,6 +545,7 @@ void MainWindow::setMainControlButton() {
   connect(rclcomm_, &SytRclComm::signStopFinish, this, &MainWindow::stopFinish);
   connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
   connect(this, &MainWindow::signParamProcessFinish, this, &MainWindow::paramProcessFinish);
+  connect(this, &MainWindow::signScramCondition, this, &MainWindow::deadErrorProcess);
 }
 
 // 视觉功能可视化
@@ -2312,6 +2313,20 @@ void MainWindow::paramProcessFinish(bool result) {
   }
 }
 
+void MainWindow::deadErrorProcess(bool result) {
+  if(result){
+    btnControl({}, {ui->reset_btn, ui->start_btn, ui->pause_btn, ui->end_btn, ui->add_cloth_btn,
+               ui->add_cloth_btn, ui->developer_mode_btn, ui->param_set_btn, ui->head_eye_calibration_btn, 
+               ui->create_style_btn, ui->lock_screen_btn, ui->help_btn});
+    emit signUpdateLabelState("请松开急停按钮");
+  }else {
+    btnControl({ui->reset_btn,
+               ui->add_cloth_btn, ui->developer_mode_btn, ui->param_set_btn, ui->head_eye_calibration_btn, 
+               ui->create_style_btn, ui->lock_screen_btn, ui->help_btn}, {});
+    emit signUpdateLabelState("请进行复位");
+  }
+}
+
 // 暂停按钮槽函数
 void MainWindow::pauseBtnClicked() {
   bool res = isFastClick(ui->pause_btn, 1000);
@@ -2998,4 +3013,14 @@ void MainWindow::slotRenameClothStyle(QString old_name, QString new_name) {
   future_ = QtConcurrent::run([=] {
     rclcomm_->renameClothStyle(old_name, new_name);
   });
+}
+
+void MainWindow::monitorErrorCode(){
+  uint32_t error_code = rclcomm_->returndeadcode();
+  uint32_t dead_code = '0x00300001';
+  if(error_code == dead_code){
+    emit signScramCondition(true);
+  }else{
+    emit signScramCondition(false);
+  }
 }

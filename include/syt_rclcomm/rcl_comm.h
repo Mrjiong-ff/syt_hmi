@@ -101,7 +101,9 @@ public:
   template <class T>
   CALL_RESULT callService(std::string srv_name, std::string info, uint32_t timeout_ms, std::shared_ptr<typename T::Request> request, typename T::Response &response);
   int try_count = 0;
-  int returntrycount(){ return try_count; }
+  int returntrycount(){ return try_count; } //失败尝试次数
+  uint32_t dead_error_code;
+  uint32_t returndeadcode(){ return dead_error_code; } //急停状态码
 
   void resetWholeMachine(); // 复位整机
   void stopWholeMachine();  // 停止整机
