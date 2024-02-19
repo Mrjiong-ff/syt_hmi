@@ -461,6 +461,8 @@ void MainWindow::setTimeComponent() {
 
   // 动态显示时间
   connect(time_timer_, &QTimer::timeout, ui->current_time_label, [=]() {
+    time_count_++;
+    monitorErrorCode();
     QTime time_now = QTime::currentTime();
     ui->current_time_label->setText(QString("%1").arg(time_now.toString()));
   });
@@ -2320,10 +2322,9 @@ void MainWindow::deadErrorProcess(bool result) {
                ui->create_style_btn, ui->lock_screen_btn, ui->help_btn});
     emit signUpdateLabelState("请松开急停按钮");
   }else {
-    btnControl({ui->reset_btn,
-               ui->add_cloth_btn, ui->developer_mode_btn, ui->param_set_btn, ui->head_eye_calibration_btn, 
-               ui->create_style_btn, ui->lock_screen_btn, ui->help_btn}, {});
-    emit signUpdateLabelState("请进行复位");
+    btnControl({ui->reset_btn,}, {});
+    emit signUpdateLabelState("松开急停后 请进行复位");
+    is_dead_error_ = true;
   }
 }
 
@@ -3016,11 +3017,18 @@ void MainWindow::slotRenameClothStyle(QString old_name, QString new_name) {
 }
 
 void MainWindow::monitorErrorCode(){
+  bool error_flags = false;
   uint32_t error_code = rclcomm_->returndeadcode();
-  uint32_t dead_code = '0x00300001';
-  if(error_code == dead_code){
+  uint32_t dead_code = 0x00300001;
+  if(time_count_ > 10){
+    error_flags = rclcomm_->returnstatus();
+  }
+  if(error_code == dead_code && error_flags){
     emit signScramCondition(true);
+    is_dead_error_ = false;
   }else{
-    emit signScramCondition(false);
+    if(!is_dead_error_){
+      emit signScramCondition(false);
+    }
   }
 }

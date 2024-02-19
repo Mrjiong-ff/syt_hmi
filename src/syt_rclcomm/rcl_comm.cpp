@@ -285,6 +285,7 @@ void SytRclComm::errorCodeCallback(const syt_msgs::msg::ErrorCode::SharedPtr msg
   int exception_level = (error_code & 0x00f00000) >> 20;
   emit signErrorLevel(exception_level);
   current_exception_level_ = exception_level;
+  error_count++;
 }
 
 template <class T>

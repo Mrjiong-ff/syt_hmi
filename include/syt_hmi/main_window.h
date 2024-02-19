@@ -205,11 +205,13 @@ private:
   bool is_style_seted_ = false;
   bool is_style_changed_ = false;
   bool is_style_rational_ = false;
+  bool is_dead_error_ = true;
 
   // 运行次数
   int exe_count_;
   int max_count_;
   int cur_count_;
+  int time_count_ = 0;
 
   // 日志等级过滤动作
   LOG_LEVEL log_level_ = LOG_WARN;

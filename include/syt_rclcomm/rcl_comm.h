@@ -104,6 +104,15 @@ public:
   int returntrycount(){ return try_count; } //失败尝试次数
   uint32_t dead_error_code;
   uint32_t returndeadcode(){ return dead_error_code; } //急停状态码
+  int error_count = 0;
+  int last_error_count = 0;
+  bool returnstatus(){
+    bool status = false;
+    if(error_count - last_error_count > 0) { status = true; }
+    last_error_count = error_count;
+    if(error_count > 10000) { error_count = 0; last_error_count = 0;}
+    return status;
+  }
 
   void resetWholeMachine(); // 复位整机
   void stopWholeMachine();  // 停止整机
