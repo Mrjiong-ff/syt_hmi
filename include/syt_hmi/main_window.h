@@ -4,6 +4,8 @@
 #include <QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
 #include <memory>
+#include <queue>
+#include <deque>
 
 #include "syt_btn/winclosebutton.h"
 #include "syt_btn/winmaxbutton.h"
@@ -205,13 +207,17 @@ private:
   bool is_style_seted_ = false;
   bool is_style_changed_ = false;
   bool is_style_rational_ = false;
-  bool is_dead_error_ = true;
 
   // 运行次数
   int exe_count_;
   int max_count_;
   int cur_count_;
+  
+  // 急停错误动作
   int time_count_ = 0;
+  std::vector<uint32_t> codeQueue;
+  bool is_dead_error_ = true;
+  const int maxSize = 10;
 
   // 日志等级过滤动作
   LOG_LEVEL log_level_ = LOG_WARN;

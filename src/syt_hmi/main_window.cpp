@@ -2268,8 +2268,8 @@ void MainWindow::resetFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
     emit signUpdateLabelState(tr("复位完成"));
-    // this->btnControl({ui->start_btn, ui->end_btn, ui->add_cloth_btn},
-    // {ui->reset_btn, ui->pause_btn});
+    this->btnControl({ui->start_btn, ui->end_btn, ui->add_cloth_btn},
+    {ui->reset_btn, ui->pause_btn});
     //  setMutuallyLight(GREEN);
   } else {
     emit signUpdateLabelState(tr("复位失败"));
@@ -3018,12 +3018,25 @@ void MainWindow::slotRenameClothStyle(QString old_name, QString new_name) {
 
 void MainWindow::monitorErrorCode(){
   bool error_flags = false;
+  bool found = false;
   uint32_t error_code = rclcomm_->returndeadcode();
   uint32_t dead_code = 0x00300001;
+
+  if(codeQueue.size() >= maxSize){
+    codeQueue.erase(codeQueue.begin());
+  }
+  codeQueue.push_back(error_code);
+  for(auto i = 0; i < codeQueue.size(); i++){
+    if(codeQueue[i] == dead_code){
+      found = true;
+      break;
+    }
+  }
+
   if(time_count_ > 10){
     error_flags = rclcomm_->returnstatus();
   }
-  if(error_code == dead_code && error_flags){
+  if(found && error_flags){
     emit signScramCondition(true);
     is_dead_error_ = false;
   }else{
