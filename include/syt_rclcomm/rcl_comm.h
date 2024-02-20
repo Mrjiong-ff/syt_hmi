@@ -101,9 +101,11 @@ public:
   template <class T>
   CALL_RESULT callService(std::string srv_name, std::string info, uint32_t timeout_ms, std::shared_ptr<typename T::Request> request, typename T::Response &response);
   int try_count = 0;
-  int returntrycount(){ return try_count; } //失败尝试次数
-  uint32_t dead_error_code;
-  uint32_t returndeadcode(){ return dead_error_code; } //急停状态码
+  int returntrycount(){ return try_count; } // 失败尝试次数
+  // 急停状态码
+  std::vector<uint32_t> codeQueue;
+  const int maxSize = 20;
+  bool found = false; 
   int error_count = 0;
   int last_error_count = 0;
   bool returnstatus(){
@@ -112,6 +114,19 @@ public:
     last_error_count = error_count;
     if(error_count > 10000) { error_count = 0; last_error_count = 0;}
     return status;
+  }
+
+  bool returnfound(){
+    if(codeQueue.size() >= maxSize){
+      codeQueue.erase(codeQueue.begin());
+    }
+    for(auto i = 0;i < codeQueue.size(); i++){
+      if(codeQueue[i] == 0x00300001){
+        found = true;
+        break;
+      }
+    }
+    return found;
   }
 
   void resetWholeMachine(); // 复位整机

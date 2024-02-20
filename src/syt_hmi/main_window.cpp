@@ -466,6 +466,13 @@ void MainWindow::setTimeComponent() {
     QTime time_now = QTime::currentTime();
     ui->current_time_label->setText(QString("%1").arg(time_now.toString()));
   });
+
+  error_timer_ = new QTimer(this);
+  error_timer_->start(500);
+
+  connect(time_timer_, &QTimer::timeout, this, [=]() {
+    monitorErrorCode();
+  });
 }
 
 void MainWindow::setToolBar() {
@@ -2273,8 +2280,8 @@ void MainWindow::resetFinish(bool result) {
     //  setMutuallyLight(GREEN);
   } else {
     emit signUpdateLabelState(tr("复位失败"));
-    // this->btnControl({ui->reset_btn}, {ui->pause_btn, ui->start_btn,
-    // ui->end_btn, ui->add_cloth_btn});
+    this->btnControl({ui->reset_btn}, {ui->pause_btn, ui->start_btn,
+    ui->end_btn, ui->add_cloth_btn});
     showMessageBox(this, ERROR, tr("复位失败"), 1, {tr("确认")});
   }
 }
@@ -3019,24 +3026,12 @@ void MainWindow::slotRenameClothStyle(QString old_name, QString new_name) {
 void MainWindow::monitorErrorCode(){
   bool error_flags = false;
   bool found = false;
-  uint32_t error_code = rclcomm_->returndeadcode();
-  uint32_t dead_code = 0x00300001;
+  bool error_status = rclcomm_->returnfound();
 
-  if(codeQueue.size() >= maxSize){
-    codeQueue.erase(codeQueue.begin());
-  }
-  codeQueue.push_back(error_code);
-  for(auto i = 0; i < codeQueue.size(); i++){
-    if(codeQueue[i] == dead_code){
-      found = true;
-      break;
-    }
-  }
-
-  if(time_count_ > 10){
+  if(time_count_ > 5){
     error_flags = rclcomm_->returnstatus();
   }
-  if(found && error_flags){
+  if(error_status && error_flags){
     emit signScramCondition(true);
     is_dead_error_ = false;
   }else{

@@ -245,6 +245,7 @@ private:
 
   // 显示时间:
   QTimer *time_timer_;
+  QTimer *error_timer_;
 
   QMenu *title_menu_;
 
