@@ -3024,7 +3024,6 @@ void MainWindow::slotRenameClothStyle(QString old_name, QString new_name) {
 }
 
 void MainWindow::monitorErrorCode(){
-  bool error_flags = false;
   bool found = false;
   bool error_status = rclcomm_->returnfound();
 

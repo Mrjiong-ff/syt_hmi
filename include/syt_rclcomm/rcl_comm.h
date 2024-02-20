@@ -105,7 +105,6 @@ public:
   // 急停状态码
   std::vector<uint32_t> codeQueue;
   const int maxSize = 20;
-  bool found = false; 
   int error_count = 0;
   int last_error_count = 0;
   bool returnstatus(){
@@ -117,8 +116,11 @@ public:
   }
 
   bool returnfound(){
-    if(codeQueue.size() >= maxSize){
-      codeQueue.erase(codeQueue.begin());
+    bool found = false;
+    for(int i = 0; i < 30; i++){
+      if(codeQueue.size() >= maxSize){
+        codeQueue.erase(codeQueue.begin());
+      }
     }
     for(auto i = 0;i < codeQueue.size(); i++){
       if(codeQueue[i] == 0x00300001){

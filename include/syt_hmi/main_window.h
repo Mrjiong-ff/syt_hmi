@@ -214,6 +214,7 @@ private:
   int cur_count_;
   
   // 急停错误动作
+  bool error_flags = false;
   int time_count_ = 0;
   std::vector<uint32_t> codeQueue;
   bool is_dead_error_ = true;
