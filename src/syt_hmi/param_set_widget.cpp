@@ -118,6 +118,10 @@ void ParamSetWidget::bindSwitchMode() {
 }
 
 void ParamSetWidget::bindSewingMachine() {
+  // 由于裁片厚度与合片处功能重叠 暂时将按钮隐藏
+  ui->sewing_thickness_btn->hide();
+  ui->sewing_thickness_spinbox->hide();
+
   // 缝纫复位
   connect(ui->sewing_reset_btn, &QPushButton::clicked, [=]() {
     emit signSewingMachineReset();

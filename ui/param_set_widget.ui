@@ -195,7 +195,7 @@
         <enum>QFrame::Raised</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="mode_page">
         <layout class="QGridLayout" name="gridLayout">
@@ -431,21 +431,52 @@
            <property name="spacing">
             <number>10</number>
            </property>
-           <item row="3" column="1" colspan="2">
-            <widget class="QDoubleSpinBox" name="label_width_spin_box">
+           <item row="2" column="0" colspan="2">
+            <widget class="QRadioButton" name="left_label_radio_box">
              <property name="font">
               <font>
                <pointsize>14</pointsize>
               </font>
              </property>
-             <property name="maximum">
-              <double>60.000000000000000</double>
+             <property name="text">
+              <string>边一</string>
              </property>
-             <property name="singleStep">
-              <double>1.000000000000000</double>
+            </widget>
+           </item>
+           <item row="5" column="0" colspan="3">
+            <widget class="WaterZoomButton" name="set_label_btn">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>40</height>
+              </size>
              </property>
-             <property name="value">
-              <double>30.000000000000000</double>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>设置水洗标</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QRadioButton" name="right_label_radio_box">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>边四</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0" colspan="3">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>宽度范围[0.00，30.00]</string>
              </property>
             </widget>
            </item>
@@ -473,76 +504,21 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0" colspan="2">
-            <widget class="QRadioButton" name="left_label_radio_box">
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>边一</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1" colspan="2">
-            <widget class="QDoubleSpinBox" name="label_position_spin_box">
+           <item row="3" column="1" colspan="2">
+            <widget class="QDoubleSpinBox" name="label_width_spin_box">
              <property name="font">
               <font>
                <pointsize>14</pointsize>
               </font>
              </property>
              <property name="maximum">
-              <double>1000.000000000000000</double>
+              <double>60.000000000000000</double>
              </property>
              <property name="singleStep">
-              <double>10.000000000000000</double>
+              <double>1.000000000000000</double>
              </property>
              <property name="value">
-              <double>150.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0" colspan="3">
-            <widget class="WaterZoomButton" name="set_label_btn">
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>设置水洗标</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0" colspan="3">
-            <spacer name="verticalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="2">
-            <widget class="QRadioButton" name="right_label_radio_box">
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>边四</string>
+              <double>30.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -558,7 +534,7 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="0" colspan="3">
+           <item row="8" column="0" colspan="3">
             <spacer name="verticalSpacer_7">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -570,6 +546,44 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item row="0" column="0" colspan="3">
+            <spacer name="verticalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="4" column="1" colspan="2">
+            <widget class="QDoubleSpinBox" name="label_position_spin_box">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="maximum">
+              <double>650.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>10.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>150.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0" colspan="3">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>位置范围[0.00,650.00]</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -591,25 +605,32 @@
            <property name="spacing">
             <number>10</number>
            </property>
-           <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="line_3_spin_box">
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_88">
              <property name="font">
               <font>
                <pointsize>14</pointsize>
               </font>
              </property>
-             <property name="decimals">
-              <number>3</number>
-             </property>
-             <property name="singleStep">
-              <double>0.050000000000000</double>
-             </property>
-             <property name="value">
-              <double>2.700000000000000</double>
+             <property name="text">
+              <string>边四</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="0" colspan="2">
+           <item row="0" column="0" colspan="2">
+            <spacer name="verticalSpacer_9">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="7" column="0" colspan="2">
             <widget class="WaterZoomButton" name="set_needle_btn">
              <property name="minimumSize">
               <size>
@@ -627,7 +648,7 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="0" colspan="2">
+           <item row="9" column="0" colspan="2">
             <spacer name="verticalSpacer_8">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -640,43 +661,7 @@
              </property>
             </spacer>
            </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="line_1_spin_box">
-             <property name="minimumSize">
-              <size>
-               <width>80</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>3</number>
-             </property>
-             <property name="singleStep">
-              <double>0.050000000000000</double>
-             </property>
-             <property name="value">
-              <double>2.700000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_88">
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>边四</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
+           <item row="4" column="1">
             <widget class="QDoubleSpinBox" name="line_2_spin_box">
              <property name="minimumSize">
               <size>
@@ -692,23 +677,8 @@
              <property name="decimals">
               <number>3</number>
              </property>
-             <property name="singleStep">
-              <double>0.050000000000000</double>
-             </property>
-             <property name="value">
-              <double>2.700000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QDoubleSpinBox" name="line_4_spin_box">
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>3</number>
+             <property name="maximum">
+              <double>5.000000000000000</double>
              </property>
              <property name="singleStep">
               <double>0.050000000000000</double>
@@ -718,7 +688,7 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="3" column="0">
             <widget class="QLabel" name="label_74">
              <property name="font">
               <font>
@@ -730,7 +700,28 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="6" column="1">
+            <widget class="QDoubleSpinBox" name="line_4_spin_box">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="maximum">
+              <double>5.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>2.700000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
             <widget class="QLabel" name="label_87">
              <property name="font">
               <font>
@@ -742,7 +733,28 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="5" column="1">
+            <widget class="QDoubleSpinBox" name="line_3_spin_box">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="maximum">
+              <double>5.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>2.700000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
             <widget class="QLabel" name="label_76">
              <property name="font">
               <font>
@@ -754,18 +766,39 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0" colspan="2">
-            <spacer name="verticalSpacer_9">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
+           <item row="3" column="1">
+            <widget class="QDoubleSpinBox" name="line_1_spin_box">
+             <property name="minimumSize">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>80</width>
+               <height>0</height>
               </size>
              </property>
-            </spacer>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="maximum">
+              <double>5.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>2.700000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0" colspan="2">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>针距范围 [0.00, 5.00]</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -874,8 +907,8 @@
        </widget>
        <widget class="QWidget" name="compose_page">
         <layout class="QGridLayout" name="gridLayout_7">
-         <item row="0" column="1">
-          <spacer name="verticalSpacer_19">
+         <item row="6" column="2">
+          <spacer name="verticalSpacer_18">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -887,20 +920,7 @@
            </property>
           </spacer>
          </item>
-         <item row="1" column="0">
-          <spacer name="horizontalSpacer_14">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>212</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="1">
+         <item row="3" column="2">
           <layout class="QGridLayout" name="gridLayout_6">
            <item row="0" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -912,16 +932,16 @@
                 </font>
                </property>
                <property name="minimum">
-                <double>-134.000000000000000</double>
+                <double>-220.000000000000000</double>
                </property>
                <property name="maximum">
-                <double>-102.000000000000000</double>
+                <double>0.000000000000000</double>
                </property>
                <property name="singleStep">
                 <double>1.000000000000000</double>
                </property>
                <property name="value">
-                <double>-134.000000000000000</double>
+                <double>-144.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -1008,7 +1028,7 @@
            </item>
           </layout>
          </item>
-         <item row="1" column="2">
+         <item row="3" column="3">
           <spacer name="horizontalSpacer_15">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -1021,8 +1041,8 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="1">
-          <spacer name="verticalSpacer_18">
+         <item row="1" column="2">
+          <spacer name="verticalSpacer_19">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -1033,6 +1053,46 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item row="3" column="0">
+          <spacer name="horizontalSpacer_14">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>212</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="2">
+          <widget class="QLabel" name="label">
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>      设置吹气高度范围内的值才会吹气</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="2">
+          <widget class="QLabel" name="label_2">
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>       标准范围：[-144.00，-220.00]</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

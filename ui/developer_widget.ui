@@ -223,7 +223,7 @@
         <number>5</number>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="page_load">
         <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -5012,7 +5012,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>10</x>
