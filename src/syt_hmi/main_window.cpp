@@ -2103,6 +2103,7 @@ void MainWindow::bindParamSetConnection() {
 
   // 缝纫机-水洗标设置
   connect(param_set_widget_, &ParamSetWidget::signSewingMachineLabelWidth, [=](bool enable, int side, float width, float position) {
+    showMessageBox(this, SUCCESS, tr("设置成功"), 1, {tr("确认")});
     QtConcurrent::run([=]() {
       rclcomm_->sewingMachineLabelWidth(enable, side, width, position);
     });
@@ -2110,6 +2111,7 @@ void MainWindow::bindParamSetConnection() {
 
   // 缝纫机-设置针长
   connect(param_set_widget_, &ParamSetWidget::signSewingMachineNeedle, [=](float line_1, float line_2, float line_3, float line_4) {
+    showMessageBox(this, SUCCESS, tr("设置成功"), 1, {tr("确认")});    
     QtConcurrent::run([=]() {
       rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
     });
@@ -2117,6 +2119,7 @@ void MainWindow::bindParamSetConnection() {
 
   // 缝纫机-设置厚度
   connect(param_set_widget_, &ParamSetWidget::signSewingMachineThickness, [=](float thickness) {
+    showMessageBox(this, SUCCESS, tr("设置成功"), 1, {tr("确认")});
     QtConcurrent::run([=]() { rclcomm_->sewingMachineThickness(thickness); });
   });
 
@@ -2127,11 +2130,13 @@ void MainWindow::bindParamSetConnection() {
 
   // 合片机-吹气高度
   connect(param_set_widget_, &ParamSetWidget::signComposeMachineBlowHeight, [=](float height) {
+    showMessageBox(this, SUCCESS, tr("设置成功"), 1, {tr("确认")});
     QtConcurrent::run([=]() { rclcomm_->composeMachineBlowHeight(height); });
   });
 
   // 合片机-合片台灯
   connect(param_set_widget_, &ParamSetWidget::signComposeMachineTableLight, [=](float ratio) {
+    showMessageBox(this, SUCCESS, tr("设置成功"), 1, {tr("确认")});
     QtConcurrent::run([=]() { rclcomm_->composeMachineTableLight(ratio); });
   });
 
@@ -2142,6 +2147,7 @@ void MainWindow::bindParamSetConnection() {
 
   // 上料机-设置厚度
   connect(param_set_widget_, &ParamSetWidget::signLoadMachineThickness, [=](int id, float thickness) {
+    showMessageBox(this, SUCCESS, tr("设置成功"), 1, {tr("确认")});
     QtConcurrent::run([=]() { rclcomm_->loadMachineThickness(id, thickness); });
   });
 }
@@ -2641,7 +2647,11 @@ void MainWindow::slotGetClothStyle(QString prefix, QString file_name) {
 }
 
 void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle cloth_style_front, syt_msgs::msg::ClothStyle cloth_style_back) {
-  if (qAbs(cloth_style_front.cloth_length - cloth_style_back.cloth_length) < 10){
+  if((cloth_style_front.cloth_length > cloth_style_back.cloth_length) && (cloth_style_front.bottom_length > cloth_style_back.bottom_length)){
+    is_style_rational_ = true;
+  }else if ((cloth_style_back.cloth_length > cloth_style_front.cloth_length) && (cloth_style_back.bottom_length > cloth_style_front.bottom_length)){
+    is_style_rational_ = true;
+  }else if (qAbs(cloth_style_front.cloth_length - cloth_style_back.cloth_length) <= 8){
     if (cloth_style_front.cloth_length >= cloth_style_back.cloth_length){
       float bl_ = cloth_style_front.bottom_length - cloth_style_back.bottom_length;
       if(bl_ > -20){
@@ -2657,9 +2667,19 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
         is_style_rational_ = false;
       }
     }
-  }else {
+  }else if (qAbs(cloth_style_front.cloth_length - cloth_style_back.cloth_length) > 8){
+    float bl_ = qAbs(cloth_style_front.bottom_length - cloth_style_back.bottom_length);
+    if(bl_ <= 5){
+      is_style_rational_ = true;
+      cloth_style_front.cloth_length += 50;
+      cloth_style_back.cloth_location -= 50;
+    }else{
+      is_style_rational_ = false;
+    }
+  }else{
     is_style_rational_ = false;
   }
+
   if (result && is_style_rational_) {
     cloth_style_front_ = cloth_style_front;
     cloth_style_back_ = cloth_style_back;
