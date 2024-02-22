@@ -104,9 +104,10 @@ public:
   int returntrycount(){ return try_count; } // 失败尝试次数
   // 急停状态码
   std::vector<uint32_t> codeQueue;
-  const int maxSize = 20;
+  const int maxSize = 10;
   int error_count = 0;
   int last_error_count = 0;
+  int count_ = 0;
   bool returnstatus(){
     bool status = false;
     if(error_count - last_error_count > 0) { status = true; }
@@ -117,17 +118,22 @@ public:
 
   bool returnfound(){
     bool found = false;
-    for(int i = 0; i < 30; i++){
-      if(codeQueue.size() >= maxSize){
+    if(codeQueue.size() >= maxSize){
+      for(int i = 0; i < 30; i++){
         codeQueue.erase(codeQueue.begin());
       }
     }
     for(auto i = 0;i < codeQueue.size(); i++){
       if(codeQueue[i] == 0x00300001){
-        found = true;
-        break;
-      }
+        count_++;
+        }
     }
+    if(count_ > 2){
+      found = true;
+    }else{
+      found = false;
+    }
+    count_ = 0;
     return found;
   }
 

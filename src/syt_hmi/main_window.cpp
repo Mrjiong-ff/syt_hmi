@@ -462,7 +462,6 @@ void MainWindow::setTimeComponent() {
   // 动态显示时间
   connect(time_timer_, &QTimer::timeout, ui->current_time_label, [=]() {
     time_count_++;
-    monitorErrorCode();
     QTime time_now = QTime::currentTime();
     ui->current_time_label->setText(QString("%1").arg(time_now.toString()));
   });
@@ -2364,8 +2363,20 @@ void MainWindow::stopBtnClicked() {
 
   // 停止指令
   emit signUpdateLabelState(tr("开始结束"));
-  QtConcurrent::run([=]() { rclcomm_->stopCmd(); });
+  // QtConcurrent::run([=]() { rclcomm_->stopCmd(); });
+  // QFuture<void> state = QtConcurrent::run([=](){
+  //   // 整机暂停
+  //   rclcomm_->pauseCmd();
+  // });
   waiting_spinner_widget_->start();
+  QtConcurrent::run([=](){
+    // bool success = state.isFinished();
+    // 整机暂停
+    rclcomm_->pauseCmd();
+    //复位
+    rclcomm_->sewingMachineReset();
+    rclcomm_->resetCmd();
+  });
 }
 
 void MainWindow::stopFinish(bool result) {
@@ -2671,8 +2682,8 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     float bl_ = qAbs(cloth_style_front.bottom_length - cloth_style_back.bottom_length);
     if(bl_ <= 5){
       is_style_rational_ = true;
-      cloth_style_front.cloth_length += 50;
-      cloth_style_back.cloth_location -= 50;
+      cloth_style_front.cloth_location -= 1;
+      cloth_style_back.cloth_location += 1;
     }else{
       is_style_rational_ = false;
     }
