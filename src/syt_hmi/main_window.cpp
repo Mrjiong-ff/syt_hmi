@@ -546,6 +546,7 @@ void MainWindow::setMainControlButton() {
   // 主控组件
   connect(ui->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
   connect(rclcomm_, &SytRclComm::signResetFinish, this, &MainWindow::resetFinish);
+  connect(rclcomm_, &SytRclComm::signSewingMachineResetFinish, this, &MainWindow::sewingResetFinish);
   connect(ui->start_btn, &QPushButton::clicked, this, &MainWindow::startBtnClicked);
   connect(rclcomm_, &SytRclComm::signStartFinish, this, &MainWindow::startFinish);
   connect(ui->pause_btn, &QPushButton::clicked, this, &MainWindow::pauseBtnClicked);
@@ -1823,6 +1824,14 @@ void MainWindow::settingConnection() {
     this->btnControl({ui->reset_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn, ui->start_btn});
     this->btnControl({ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn}, {});
   });
+
+  connect(rclcomm_, &SytRclComm::signErrorLevel, [=](int level){
+    if(is_dead_error_){
+      if(level == 3){
+        this->btnControl({ui->reset_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn, ui->start_btn});
+      }
+    }
+  });
 }
 
 void MainWindow::bindControlConnection() {
@@ -2264,19 +2273,27 @@ void MainWindow::resetBtnClicked() {
   waiting_spinner_widget_->start();
 }
 
+void MainWindow::sewingResetFinish(bool result) {
+  if(result){
+    is_sewing_reset_ = true;
+  }
+}
+
 void MainWindow::resetFinish(bool result) {
   waiting_spinner_widget_->stop();
-  if (result) {
+  if (result && is_sewing_reset_) {
     emit signUpdateLabelState(tr("复位完成"));
     this->btnControl({ui->start_btn, ui->end_btn, ui->add_cloth_btn},
     {ui->reset_btn, ui->pause_btn});
     this->btnControl({ui->developer_mode_btn, ui->param_set_btn, ui->head_eye_calibration_btn, ui->create_style_btn, ui->lock_screen_btn},{});
+    is_sewing_reset_ = false;
     //  setMutuallyLight(GREEN);
   } else {
     emit signUpdateLabelState(tr("复位失败"));
     this->btnControl({ui->reset_btn}, {ui->pause_btn, ui->start_btn,
     ui->end_btn, ui->add_cloth_btn});
     showMessageBox(this, ERROR, tr("复位失败"), 1, {tr("确认")});
+    is_sewing_reset_ = false;
   }
 }
 

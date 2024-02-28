@@ -285,6 +285,9 @@ void SytRclComm::errorCodeCallback(const syt_msgs::msg::ErrorCode::SharedPtr msg
   emit signErrorLevel(exception_level);
   current_exception_level_ = exception_level;
   error_count++;
+  if(codeQueue.size() >= maxSize){
+    codeQueue.erase(codeQueue.begin(), codeQueue.begin() + 5);
+  }
   codeQueue.push_back(error_code);
 }
 

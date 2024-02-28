@@ -141,6 +141,7 @@ private slots:
   void slotNextPage();
   void resetBtnClicked();
   void resetFinish(bool);
+  void sewingResetFinish(bool);
   void startBtnClicked();
   void startFinish(bool);
   void pauseBtnClicked();
@@ -207,6 +208,7 @@ private:
   bool is_style_seted_ = false;
   bool is_style_changed_ = false;
   bool is_style_rational_ = false;
+  bool is_sewing_reset_ = false;
 
   // 运行次数
   int exe_count_;
