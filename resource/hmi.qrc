@@ -1,80 +1,78 @@
-<RCC warning="WARNING! File created programmatically. All changes made in this file will be lost!">
-    <qresource prefix="m_logo">
-        <file>logo/win_logo.svg</file>
-        <file>logo/win_logo.png</file>
-        <file>logo/title_logo.png</file>
-        <file>logo/bg_logo.png</file>
-        <file>logo/logo2.png</file>
-    </qresource>
-
-    <qresource prefix="m_font">
-        <file>font/NotoSansSC-Regular.otf</file>
-    </qresource>
-
-    <qresource prefix="m_lang">
-        <file>lang/en_US.qm</file>
-        <file>lang/zh_CN.qm</file>
-    </qresource>
-
-    <qresource prefix="m_icon">
-        <file>icon/about.svg</file>
-        <file>icon/accept.svg</file>
-        <file>icon/add_cloth.svg</file>
-        <file>icon/auto_create.svg</file>
-        <file>icon/axis.svg</file>
-        <file>icon/cad_style.svg</file>
-        <file>icon/calibration.svg</file>
-        <file>icon/cancel.svg</file>
-        <file>icon/clear.svg</file>
-        <file>icon/close.svg</file>
-        <file>icon/compose.svg</file>
-        <file>icon/developer.svg</file>
-        <file>icon/download.svg</file>
-        <file>icon/end.svg</file>
-        <file>icon/error.svg</file>
-        <file>icon/export.svg</file>
-        <file>icon/filter.svg</file>
-        <file>icon/fold.svg</file>
-        <file>icon/full_screen.svg</file>
-        <file>icon/help.svg</file>
-        <file>icon/import.svg</file>
-        <file>icon/l-page.svg</file>
-        <file>icon/lock.svg</file>
-        <file>icon/locking.png</file>
-        <file>icon/login.png</file>
-        <file>icon/manual_create.svg</file>
-        <file>icon/minimize.svg</file>
-        <file>icon/off_screen.svg</file>
-        <file>icon/param_set.svg</file>
-        <file>icon/pause.svg</file>
-        <file>icon/preview_close.svg</file>
-        <file>icon/preview_open.svg</file>
-        <file>icon/r-page.svg</file>
-        <file>icon/reset.svg</file>
-        <file>icon/save.svg</file>
-        <file>icon/selection.svg</file>
-        <file>icon/setting.svg</file>
-        <file>icon/sewing.svg</file>
-        <file>icon/source_create.svg</file>
-        <file>icon/start.svg</file>
-        <file>icon/stop.svg</file>
-        <file>icon/style.svg</file>
-        <file>icon/style_layer.png</file>
-        <file>icon/success.svg</file>
-        <file>icon/to_bottom.svg</file>
-        <file>icon/translate.svg</file>
-        <file>icon/unfold.svg</file>
-        <file>icon/unlock.svg</file>
-        <file>icon/update.svg</file>
-        <file>icon/upload.svg</file>
-        <file>icon/warn.svg</file>
-    </qresource>
-
-    <qresource prefix="m_bg">
-        <file>background/loading.gif</file>
-    </qresource>
-
-    <qresource prefix="m_qss">
-        <file>syt_style.qss</file>
-    </qresource>
+<RCC>
+  <qresource prefix="m_logo">
+    <file>logo/win_logo.svg</file>
+    <file>logo/win_logo.png</file>
+    <file>logo/title_logo.png</file>
+    <file>logo/bg_logo.png</file>
+    <file>logo/logo2.png</file>
+  </qresource>
+  <qresource prefix="m_font">
+    <file>font/NotoSansSC-Regular.otf</file>
+  </qresource>
+  <qresource prefix="m_lang">
+    <file>lang/en_US.qm</file>
+    <file>lang/zh_CN.qm</file>
+  </qresource>
+  <qresource prefix="m_icon">
+    <file>icon/param.svg</file>
+    <file>icon/control1.svg</file>
+    <file>icon/user.svg</file>
+    <file>icon/about.svg</file>
+    <file>icon/accept.svg</file>
+    <file>icon/add_cloth.svg</file>
+    <file>icon/auto_create.svg</file>
+    <file>icon/axis.svg</file>
+    <file>icon/cad_style.svg</file>
+    <file>icon/calibration.svg</file>
+    <file>icon/cancel.svg</file>
+    <file>icon/clear.svg</file>
+    <file>icon/close.svg</file>
+    <file>icon/compose.svg</file>
+    <file>icon/developer.svg</file>
+    <file>icon/download.svg</file>
+    <file>icon/end.svg</file>
+    <file>icon/error.svg</file>
+    <file>icon/export.svg</file>
+    <file>icon/filter.svg</file>
+    <file>icon/fold.svg</file>
+    <file>icon/full_screen.svg</file>
+    <file>icon/help.svg</file>
+    <file>icon/import.svg</file>
+    <file>icon/l-page.svg</file>
+    <file>icon/lock.svg</file>
+    <file>icon/locking.png</file>
+    <file>icon/login.png</file>
+    <file>icon/manual_create.svg</file>
+    <file>icon/minimize.svg</file>
+    <file>icon/off_screen.svg</file>
+    <file>icon/param_set.svg</file>
+    <file>icon/pause.svg</file>
+    <file>icon/preview_close.svg</file>
+    <file>icon/preview_open.svg</file>
+    <file>icon/r-page.svg</file>
+    <file>icon/reset.svg</file>
+    <file>icon/save.svg</file>
+    <file>icon/selection.svg</file>
+    <file>icon/setting.svg</file>
+    <file>icon/sewing.svg</file>
+    <file>icon/source_create.svg</file>
+    <file>icon/start.svg</file>
+    <file>icon/stop.svg</file>
+    <file>icon/style.svg</file>
+    <file>icon/style_layer.png</file>
+    <file>icon/success.svg</file>
+    <file>icon/to_bottom.svg</file>
+    <file>icon/translate.svg</file>
+    <file>icon/unfold.svg</file>
+    <file>icon/unlock.svg</file>
+    <file>icon/update.svg</file>
+    <file>icon/upload.svg</file>
+    <file>icon/warn.svg</file>
+  </qresource>
+  <qresource prefix="m_bg">
+    <file>background/loading.gif</file>
+  </qresource>
+  <qresource prefix="m_qss">
+    <file>syt_style.qss</file>
+  </qresource>
 </RCC>

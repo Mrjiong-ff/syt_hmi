@@ -394,7 +394,7 @@ void SytRclComm::pauseCmd() {
 void SytRclComm::stopCmd() {
   start_flag_ = false;
   auto request = std::make_shared<syt_msgs::srv::FSMControlFlow::Request>();
-  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::END;
+  request->control_cmd.command = syt_msgs::msg::FSMFlowControlCommand::STOP;
 
   syt_msgs::srv::FSMControlFlow::Response response;
   CALL_RESULT result = callService<syt_msgs::srv::FSMControlFlow>("/syt/motion_planner/control_flow", "整机结束", 60000, request, response);

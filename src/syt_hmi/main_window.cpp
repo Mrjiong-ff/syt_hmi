@@ -24,11 +24,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // 设置各组件
   setStatisticComponent();
   setPreviewComponent();
-  setLogComponent();
+  setUserLogComponent();
   setTimeComponent();
   setToolBar();
   setMainControlButton();
-  setVisualComponent();
   setBaseComponet();
   setChooseStyleComponet();
   setParamManageComponet();
@@ -43,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   // 信号槽
   settingConnection();
+  mainControlConnection();
 }
 
 MainWindow::~MainWindow() { this->deleteAll(); }
@@ -291,19 +291,36 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
   event->accept();
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event) {
-  if (event->modifiers() == Qt::AltModifier) {
-    // 一些主界面的快捷键
-    switch (event->key()) {
-    case Qt::Key_A:
-      slotPrevPage();
-      break;
-    case Qt::Key_D:
-      slotNextPage();
-      break;
-    default:
-      break;
-    }
+void MainWindow::switchPage(){
+  if (sender() == ui->user_btn) {
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->user_btn->setStyleSheet("background-color:rgb(105,105,105)");
+    ui->control_btn->setStyleSheet("");
+    ui->param_btn->setStyleSheet("");
+  } else if (sender() == ui->control_btn) {
+    ui->stackedWidget->setCurrentIndex(2);
+    ui->control_btn->setStyleSheet("background-color:rgb(105,105,105)");
+    ui->user_btn->setStyleSheet("");
+    ui->param_btn->setStyleSheet("");
+  } else if (sender() == ui->param_btn) {
+    ui->stackedWidget->setCurrentIndex(1);
+    ui->param_btn->setStyleSheet("background-color:rgb(105,105,105)");
+    ui->user_btn->setStyleSheet("");
+    ui->control_btn->setStyleSheet("");
+  } 
+
+  if (sender() == ui->switch_compose_btn) {
+    ui->current_page_label->setText(tr("合片机"));
+    ui->controlstackedWidget->setCurrentIndex(0);
+  } else if(sender() == ui->switch_sewing_btn) {
+    ui->current_page_label->setText(tr("缝纫机"));
+    ui->controlstackedWidget->setCurrentIndex(1);
+  } else if(sender() == ui->switch_load_btn) {
+    ui->current_page_label->setText(tr("上料机"));
+    ui->controlstackedWidget->setCurrentIndex(2);
+  } else if(sender() == ui->switch_other_btn) {
+    ui->current_page_label->setText(tr("测试"));
+    ui->controlstackedWidget->setCurrentIndex(3);
   }
 }
 
@@ -372,12 +389,12 @@ void MainWindow::initWidget() {
   // 旋转条初始化
   waiting_spinner_widget_ = new WaitingSpinnerWidget(this);
 
-  // title logo
-  auto tit_logo = QPixmap(":m_logo/logo/logo2.png");
-  tit_logo = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(),
-                             Qt::AspectRatioMode::KeepAspectRatio,
-                             Qt::TransformationMode::SmoothTransformation);
-  ui->sytLogoLabel->setPixmap(tit_logo);
+  // // title logo
+  // auto tit_logo = QPixmap(":m_logo/logo/logo2.png");
+  // tit_logo = tit_logo.scaled(ui->sytLogoLabel->width(), ui->sytLogoLabel->height(),
+  //                            Qt::AspectRatioMode::KeepAspectRatio,
+  //                            Qt::TransformationMode::SmoothTransformation);
+  // ui->sytLogoLabel->setPixmap(tit_logo);
 
   // 移动到中心
   QScreen *desktop = QApplication::screenAt(QCursor::pos());
@@ -386,18 +403,6 @@ void MainWindow::initWidget() {
 }
 
 void MainWindow::setStatisticComponent() {
-  ui->progress_bar_1->setLabel(QString(tr("B区余量")));
-  ui->progress_bar_1->setProperty("translator", "B区余量");
-  ui->progress_bar_1->setPercentage(true);
-  ui->progress_bar_1->setProgressBar(100, 100);
-  ui->progress_bar_1->hide();
-
-  ui->progress_bar_2->setLabel(QString(tr("A区余量")));
-  ui->progress_bar_2->setProperty("translator", "A区余量");
-  ui->progress_bar_2->setPercentage(true);
-  ui->progress_bar_2->setProgressBar(100, 100);
-  ui->progress_bar_2->hide();
-
   ui->progress_bar_3->setLabel(QString(tr("产量")));
   ui->progress_bar_3->setProperty("translator", "产量");
   ui->progress_bar_3->setProgressBar(0, 400);
@@ -413,42 +418,41 @@ void MainWindow::setPreviewComponent() {
   ui->style_graphics_view->setScene(style_scene_);
 }
 
-void MainWindow::setLogComponent() {
-  // 日志过滤筛选
+void MainWindow::setUserLogComponent() {
+  //日志过滤筛选
   QAction *set_log_level_debug_act = new QAction("DEBUG", this);
   QAction *set_log_level_info_act = new QAction("INFO", this);
   QAction *set_log_level_warn_act = new QAction("WARN", this);
   QAction *set_log_level_error_act = new QAction("ERROR", this);
   QAction *set_log_level_fatal_act = new QAction("FATAL", this);
-  ui->log_filter_tool_btn->addAction(set_log_level_debug_act);
-  ui->log_filter_tool_btn->addAction(set_log_level_info_act);
-  ui->log_filter_tool_btn->addAction(set_log_level_warn_act);
-  ui->log_filter_tool_btn->addAction(set_log_level_error_act);
-  ui->log_filter_tool_btn->addAction(set_log_level_fatal_act);
+  ui->user_log_filter_tool_btn->addAction(set_log_level_debug_act);
+  ui->user_log_filter_tool_btn->addAction(set_log_level_info_act);
+  ui->user_log_filter_tool_btn->addAction(set_log_level_warn_act);
+  ui->user_log_filter_tool_btn->addAction(set_log_level_error_act);
+  ui->user_log_filter_tool_btn->addAction(set_log_level_fatal_act);
 
-  // 日志只读
-  ui->log_plain_text_edit->setReadOnly(true);
+  // 设置只读
+  ui->log_plainTextEdit->setReadOnly(true);
 
-  // 信号绑定
+  //日志筛选等级信号绑定
   connect(set_log_level_debug_act, &QAction::triggered, [=] { log_level_ = LOG_DEBUG; });
   connect(set_log_level_info_act, &QAction::triggered, [=] { log_level_ = LOG_INFO; });
   connect(set_log_level_warn_act, &QAction::triggered, [=] { log_level_ = LOG_WARN; });
   connect(set_log_level_error_act, &QAction::triggered, [=] { log_level_ = LOG_ERROR; });
   connect(set_log_level_fatal_act, &QAction::triggered, [=] { log_level_ = LOG_FATAL; });
 
-  // 日志清除
-  connect(ui->log_clear_btn, &QPushButton::clicked,
-          [=] { ui->log_plain_text_edit->clear(); });
+  //清除按钮信号绑定
+  connect(ui->user_log_clear_btn, &QPushButton::clicked,[=]{ ui->log_plainTextEdit->clear(); });
 
-  // 日志定位到最后一行 继续滚动
-  connect(ui->log_end_btn, &QPushButton::clicked, [=] {
-    QTextCursor cursor = ui->log_plain_text_edit->textCursor();
+  //自动滚动到末行
+  connect(ui->user_log_end_btn, &QPushButton::clicked, [=] {
+    QTextCursor cursor = ui->log_plainTextEdit->textCursor();
     cursor.movePosition(QTextCursor::End);
-    ui->log_plain_text_edit->setTextCursor(cursor);
+    ui->log_plainTextEdit->setTextCursor(cursor);
     // 自动滚动到末尾
-    QScrollBar *scrollBar = ui->log_plain_text_edit->verticalScrollBar();
+    QScrollBar *scrollBar = ui->log_plainTextEdit->verticalScrollBar();
     scrollBar->setValue(scrollBar->maximum());
-    ui->log_plain_text_edit->verticalScrollBar()->show();
+    ui->log_plainTextEdit->verticalScrollBar()->show();
   });
 }
 
@@ -476,18 +480,9 @@ void MainWindow::setTimeComponent() {
 
 void MainWindow::setToolBar() {
   // 工具栏信号槽
-  connect(ui->developer_mode_btn, &QPushButton::clicked, this, &MainWindow::slotShowDevLoginWindow);
+  // connect(ui->developer_mode_btn, &QPushButton::clicked, this, &MainWindow::slotShowDevLoginWindow);
   connect(ui->head_eye_calibration_btn, &QPushButton::clicked, this, &MainWindow::slotStartHeadEyeWindow);
   connect(ui->create_style_btn, &QPushButton::clicked, this, &MainWindow::slotStartClothStyleWindow);
-  connect(ui->lock_screen_btn, &QPushButton::clicked, this, &MainWindow::slotLockScreen);
-  connect(ui->param_set_btn, &QPushButton::clicked, this, &MainWindow::slotParamSet);
-  // TODO:delete
-  ui->help_btn->hide();
-  // connect(ui->help_btn, &QPushButton::clicked, [=] {
-  //// TODO: 帮助文档
-  // showMessageBox(this, ERROR, "", 1, {"返回"});
-  // return;
-  //});
 
   // head eye dialog 信号槽
   connect(this, &MainWindow::signHandEyeWindowShow, [=] {
@@ -556,33 +551,6 @@ void MainWindow::setMainControlButton() {
   connect(ui->add_cloth_btn, &QPushButton::clicked, this, &MainWindow::addClothBtnClicked);
   connect(this, &MainWindow::signParamProcessFinish, this, &MainWindow::paramProcessFinish);
   connect(this, &MainWindow::signScramCondition, this, &MainWindow::deadErrorProcess);
-}
-
-// 视觉功能可视化
-void MainWindow::setVisualComponent() {
-  // 可视化的两个按钮
-  ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_close.svg"));
-  ui->load_machine_visible_btn->setText(tr("隐藏"));
-
-  connect(ui->load_machine_visible_btn, &QPushButton::clicked, [=] {
-    is_load_cloth_on_ = !is_load_cloth_on_;
-    if (is_load_cloth_on_) {
-      ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_close.svg"));
-      ui->load_machine_visible_btn->setText(tr("隐藏"));
-      showLoadMachineImage();
-    } else {
-      ui->load_machine_visible_btn->setIcon(QIcon(":m_icon/icon/preview_open.svg"));
-      ui->load_machine_visible_btn->setText(tr("显示"));
-      ui->B_left_visual_label->clear();
-      ui->B_right_visual_label->clear();
-      ui->A_left_visual_label->clear();
-      ui->A_right_visual_label->clear();
-      ui->B_left_visual_label->setText("NO IMAGE");
-      ui->B_right_visual_label->setText("NO IMAGE");
-      ui->A_left_visual_label->setText("NO IMAGE");
-      ui->A_right_visual_label->setText("NO IMAGE");
-    }
-  });
 }
 
 void MainWindow::setBaseComponet() {
@@ -1587,40 +1555,6 @@ void MainWindow::setParamSetWidget() {
   bindParamSetConnection();
 }
 
-void MainWindow::showLoadMachineImage() {
-  if (!pix_A_left_.isNull()) {
-    ui->A_left_visual_label->clear();
-    pix_A_left_ = pix_A_left_.scaled(ui->A_left_visual_label->width(), ui->A_left_visual_label->height(), Qt::KeepAspectRatio);
-    ui->A_left_visual_label->setPixmap(pix_A_left_);
-    ui->A_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    ui->A_left_visual_label->update();
-  }
-
-  if (!pix_A_right_.isNull()) {
-    ui->A_right_visual_label->clear();
-    pix_A_right_ = pix_A_right_.scaled(ui->A_right_visual_label->width(), ui->A_right_visual_label->height(), Qt::KeepAspectRatio);
-    ui->A_right_visual_label->setPixmap(pix_A_right_);
-    ui->A_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    ui->A_right_visual_label->update();
-  }
-
-  if (!pix_B_left_.isNull()) {
-    ui->B_left_visual_label->clear();
-    pix_B_left_ = pix_B_left_.scaled(ui->B_left_visual_label->width(), ui->B_left_visual_label->height(), Qt::KeepAspectRatio);
-    ui->B_left_visual_label->setPixmap(pix_B_left_);
-    ui->B_left_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    ui->B_left_visual_label->update();
-  }
-
-  if (!pix_B_right_.isNull()) {
-    ui->B_right_visual_label->clear();
-    pix_B_right_ = pix_B_right_.scaled(ui->B_right_visual_label->width(), ui->B_right_visual_label->height(), Qt::KeepAspectRatio);
-    ui->B_right_visual_label->setPixmap(pix_B_right_);
-    ui->B_right_visual_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    ui->B_right_visual_label->update();
-  }
-}
-
 bool MainWindow::readJson(const QString &json_file, QStandardItemModel *model) {
   model->clear();
   // 设置表头
@@ -1778,12 +1712,14 @@ void MainWindow::settingConnection() {
   // 关闭事件
   connect(this, &MainWindow::signClose, this, &MainWindow::close);
 
-  // 跳转界面显示上料机监控
-  connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=]() {
-    if (ui->stackedWidget->currentWidget() == ui->monitor_page) {
-      showLoadMachineImage();
-    }
-  });
+  // 切换页面
+  connect(ui->user_btn, &QPushButton::clicked, this, &MainWindow::switchPage, Qt::UniqueConnection);
+  connect(ui->control_btn, &QPushButton::clicked, this, &MainWindow::switchPage, Qt::UniqueConnection);
+  connect(ui->param_btn, &QPushButton::clicked, this, &MainWindow::switchPage, Qt::UniqueConnection);
+  connect(ui->switch_compose_btn, &QPushButton::clicked, this, &MainWindow::switchPage, Qt::UniqueConnection);
+  connect(ui->switch_load_btn, &QPushButton::clicked, this, &MainWindow::switchPage, Qt::UniqueConnection);
+  connect(ui->switch_sewing_btn, &QPushButton::clicked, this, &MainWindow::switchPage, Qt::UniqueConnection);
+  connect(ui->switch_other_btn, &QPushButton::clicked, this, &MainWindow::switchPage, Qt::UniqueConnection);
 
   connect(rclcomm_, &SytRclComm::visualLoadClothRes, this, &MainWindow::slotVisualLoadCloth); // 上料机可视化
   connect(rclcomm_, &SytRclComm::errorNodeMsgSign, this, &MainWindow::errorNodeMsgSlot);      // 错误提示
@@ -1804,25 +1740,25 @@ void MainWindow::settingConnection() {
   // 机器空闲
   connect(rclcomm_, &SytRclComm::machineIdle, [=]() {
     this->btnControl({ui->reset_btn, ui->add_cloth_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn});
-    this->btnControl({ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn}, {});
+    this->btnControl({ui->create_style_btn, ui->head_eye_calibration_btn, ui->choose_style_btn}, {});
   });
 
   // 机器运行
   connect(rclcomm_, &SytRclComm::machineRun, [=]() {
     this->btnControl({ui->pause_btn, ui->end_btn}, {ui->start_btn, ui->add_cloth_btn, ui->reset_btn});
-    this->btnControl({}, {ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn});
+    this->btnControl({}, {ui->create_style_btn, ui->head_eye_calibration_btn, ui->choose_style_btn});
   });
 
   // 机器暂停
   connect(rclcomm_, &SytRclComm::machinePause, [=]() {
     this->btnControl({ui->reset_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn});
-    this->btnControl({}, {ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn});
+    this->btnControl({}, {ui->create_style_btn, ui->head_eye_calibration_btn, ui->choose_style_btn});
   });
 
   // 机器停止
   connect(rclcomm_, &SytRclComm::machineStop, [=]() {
     this->btnControl({ui->reset_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn, ui->start_btn});
-    this->btnControl({ui->create_style_btn, ui->head_eye_calibration_btn, ui->help_btn, ui->choose_style_btn}, {});
+    this->btnControl({ui->create_style_btn, ui->head_eye_calibration_btn, ui->choose_style_btn}, {});
   });
 
   connect(rclcomm_, &SytRclComm::signErrorLevel, [=](int level){
@@ -1830,6 +1766,533 @@ void MainWindow::settingConnection() {
       if(level == 3){
         this->btnControl({ui->reset_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn, ui->start_btn});
       }
+    }
+  });
+}
+
+void MainWindow::mainControlConnection() {
+  // 合片机
+  // 合片-当前抓手坐标
+  syt_msgs::msg::ComposeMachineState composestate;
+  ui->compose_hand_x_line_edit->setText(QString::number(composestate.hand_position.x));
+  ui->compose_hand_y_line_edit->setText(QString::number(composestate.hand_position.y));
+  ui->compose_hand_z_line_edit->setText(QString::number(composestate.hand_position.z));
+  ui->compose_hand_c_line_edit->setText(QString::number(composestate.hand_position.c));
+
+  // 合片-移动合片抓手
+  connect(ui->compose_move_hand_btn, &QPushButton::clicked, [=](){
+    ui->compose_hand_x_spinbox->setValue(ui->compose_hand_x_line_edit->text().toFloat());
+    ui->compose_hand_y_spinbox->setValue(ui->compose_hand_y_line_edit->text().toFloat());
+    ui->compose_hand_z_spinbox->setValue(ui->compose_hand_z_line_edit->text().toFloat());
+    ui->compose_hand_c_spinbox->setValue(ui->compose_hand_c_line_edit->text().toFloat());
+  });
+
+  // 合片-移动抓手
+  connect(ui->compose_move_hand_btn, &QPushButton::clicked, [=](){
+    float x = ui->compose_hand_x_spinbox->value();
+    float y = ui->compose_hand_y_spinbox->value();
+    float z = ui->compose_hand_z_spinbox->value();
+    float c = ui->compose_hand_c_spinbox->value();
+    QtConcurrent::run([=]() { rclcomm_->composeMachineMoveHand(x, y, z, c); });
+  });
+
+  // 合片-出针
+  connect(ui->extend_needle_btn, &QPushButton::clicked, [=](){
+    QtConcurrent::run([=]() { rclcomm_->composeMachineExtendNeedle(); });
+  });
+
+  // 合片-收针
+  connect(ui->close_needle_btn, &QPushButton::clicked, [=](){
+    QtConcurrent::run([=]() { rclcomm_->composeMachineWithdrawNeedle(); });
+  });
+
+  //合片-吹气 
+  connect(ui->blow_gas_btn, &QPushButton::clicked, [=](){
+    QtConcurrent::run([=]() { rclcomm_->composeMachineBlowWind(); });
+  });
+
+  // 合片-停气
+  connect(ui->stop_gas_btn, &QPushButton::clicked, [=](){
+    QtConcurrent::run([=]() { rclcomm_->composeMachineStopBlow(); });
+  });
+
+  // 合片-开吸风台
+  connect(ui->suction_on_btn, &QPushButton::clicked, [=](){
+    QtConcurrent::run([=]() { rclcomm_->composeMachineFastenSheet(); });
+  });
+
+  // 合片-关吸风台
+  connect(ui->suction_off_btn, &QPushButton::clicked, [=](){
+    QtConcurrent::run([=]() { rclcomm_->composeMachineUnfastenSheet(); });
+  });
+
+  // 合片-复位
+  connect(ui->compose_reset_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->composeMachineReset(); });
+  });
+
+  // 合片-抓手偏移量
+  connect(ui->compose_offset_move_hand_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("compose_offset_x");
+    param_name.push_back("compose_offset_y");
+    param_name.push_back("compose_offset_z");
+    std::vector<float> param_value;
+    param_value.push_back(ui->compose_offset_hand_x_spinbox->value());
+    param_value.push_back(ui->compose_offset_hand_y_spinbox->value());
+    param_value.push_back(ui->compose_offset_hand_z_spinbox->value());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 5, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-长度差阈值
+  connect(ui->length_difference_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("bottom_difference_thresh");
+    param_name.push_back("side_difference_thresh");
+    param_name.push_back("shoulder_difference_thresh");
+    std::vector<float> param_value;
+    param_value.push_back(ui->bottom_length_value_spinbox->value());
+    param_value.push_back(ui->shoulder_length_value_spinbox->value());
+    param_value.push_back(ui->side_length_value_spinbox->value());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 5, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-吸盘安装档位-下摆
+  connect(ui->bottom_sucker_gear_combobox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](){
+    switch(ui->bottom_sucker_gear_combobox->currentIndex()){
+    case 0:
+      rclcomm_->updateParam("syt_compose_machine_node", 0, "bottom_position", QString::number(0), 0);
+      break;
+    case 1:
+      rclcomm_->updateParam("syt_compose_machine_node", 0, "bottom_position", QString::number(1), 0);
+      break;
+    case 2:
+      rclcomm_->updateParam("syt_compose_machine_node", 0, "bottom_position", QString::number(2), 0);
+      break;
+    }
+  });
+
+  // 合片-吸盘安装档位-腋下
+  connect(ui->oxter_sucker_gear_combobox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](){
+    switch(ui->oxter_sucker_gear_combobox->currentIndex()){
+    case 0:
+      rclcomm_->updateParam("syt_compose_machine_node", 0, "oxter_position", QString::number(0), 0);
+      break;
+    case 1:
+      rclcomm_->updateParam("syt_compose_machine_node", 0, "oxter_position", QString::number(1), 0);
+      break;
+    case 2:
+      rclcomm_->updateParam("syt_compose_machine_node", 0, "oxter_position", QString::number(2), 0);
+      break;
+    }
+  });
+
+  // 合片-吸盘安装档位-肩膀
+  connect(ui->shoulder_sucker_gear_combobox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](){
+    switch(ui->shoulder_sucker_gear_combobox->currentIndex()){
+    case 0:
+      rclcomm_->updateParam("syt_compose_machine_node", 0, "shoulder_position", QString::number(0), 0);
+      break;
+    case 1:
+      rclcomm_->updateParam("syt_compose_machine_node", 0, "shoulder_position", QString::number(1), 0);
+      break;
+    }
+  });  
+
+  // 合片-吸盘位置偏移-下摆
+  connect(ui->bottom_sucker_skew_set_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    std::vector<float>  param_value;
+    switch(ui->bottom_sucker_gear_combobox->currentIndex()){
+    case 0:
+      break;
+    case 1:
+      param_name.push_back("bottom_offset_x1");
+      param_name.push_back("bottom_offset_y1");
+      param_value.push_back(ui->bottom_offset_x_spinbox->value());
+      param_value.push_back(ui->bottom_offset_y_spinbox->value());
+      for(int i = 0; i < param_name.size(); i++){
+        rclcomm_->updateParam("syt_compose_machine_node", 4, param_name[i], QString::number(param_value[i]), 0);
+      }
+      break;
+    case 2:
+      param_name.push_back("bottom_offset_x2");
+      param_name.push_back("bottom_offset_y2");
+      param_value.push_back(ui->bottom_offset_x_spinbox->value());
+      param_value.push_back(ui->bottom_offset_y_spinbox->value());
+      for(int i = 0; i < param_name.size(); i++){
+        rclcomm_->updateParam("syt_compose_machine_node", 4, param_name[i], QString::number(param_value[i]), 0);
+      }
+      break;
+    }
+  });
+
+  // 合片-吸盘位置偏移-腋下
+  connect(ui->oxter_sucker_skew_set_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    std::vector<float>  param_value;
+    switch(ui->oxter_sucker_gear_combobox->currentIndex()){
+    case 0:
+      break;
+    case 1:
+      param_name.push_back("oxter_offset_x1");
+      param_name.push_back("oxter_offset_y1");
+      param_value.push_back(ui->oxter_offset_x_spinbox->value());
+      param_value.push_back(ui->oxter_offset_y_spinbox->value());
+      for(int i = 0; i < param_name.size(); i++){
+        rclcomm_->updateParam("syt_compose_machine_node", 4, param_name[i], QString::number(param_value[i]), 0);
+      }
+      break;
+    case 2:
+      param_name.push_back("oxter_offset_x2");
+      param_name.push_back("oxter_offset_y2");
+      param_value.push_back(ui->oxter_offset_x_spinbox->value());
+      param_value.push_back(ui->oxter_offset_y_spinbox->value());
+      for(int i = 0; i < param_name.size(); i++){
+        rclcomm_->updateParam("syt_compose_machine_node", 4, param_name[i], QString::number(param_value[i]), 0);
+      }
+      break;
+    }
+  });
+
+  // 合片-吸盘位置偏移-肩膀
+  connect(ui->shoulder_sucker_skew_set_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    std::vector<float>  param_value;
+    switch(ui->shoulder_sucker_gear_combobox->currentIndex()){
+    case 0:
+      param_name.push_back("shoulder_offset_1");
+      param_value.push_back(ui->shoulder_offset_1_spinbox->value());
+      for(int i = 0; i < param_name.size(); i++){
+        rclcomm_->updateParam("syt_compose_machine_node", 4, param_name[i], QString::number(param_value[i]), 0);
+      }
+      break;
+    case 1:
+      param_name.push_back("shoulder_offset_2");
+      param_value.push_back(ui->shoulder_offset_2_spinbox->value());
+      for(int i = 0; i < param_name.size(); i++){
+        rclcomm_->updateParam("syt_compose_machine_node", 4, param_name[i], QString::number(param_value[i]), 0);
+      }
+      break;
+    }
+  });
+
+  // 合片-肩部缝纫裁剪宽度
+  connect(ui->shoulder_sewing_cut_btn, &QPushButton::clicked, [=](){
+    float value = ui->shoulder_sewing_cut_spinbox->value();
+    rclcomm_->updateParam("syt_motion_planner_node", 5, "shoulder_sewing_cut_width", QString::number(value), 0);
+  });
+
+  // 合片-肩部缝纫线宽
+  connect(ui->shoulder_seam_width_btn, &QPushButton::clicked, [=](){
+    float value = ui->shoulder_seam_width_spinbox->value();
+    rclcomm_->updateParam("syt_motion_planner_node", 5, "shoulder_seam_width", QString::number(value), 0);
+  });
+
+  // 合片-吸盘偏移量-左下摆
+  connect(ui->left_buttom_compose_offset_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("left_bottom_compose_offset_x");
+    param_name.push_back("left_bottom_compose_offset_y");
+    std::vector<float> param_value;
+    param_value.push_back(ui->left_buttom_compose_offset_x_spinbox->value());
+    param_value.push_back(ui->left_buttom_compose_offset_y_spinbox->value());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 5, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-吸盘偏移量-左腋下
+  connect(ui->left_oxter_compose_offset_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("left_oxter_compose_offset_x");
+    param_name.push_back("left_oxter_compose_offset_y");
+    std::vector<float> param_value;
+    param_value.push_back(ui->left_oxter_compose_offset_x_spinbox->value());
+    param_value.push_back(ui->left_oxter_compose_offset_y_spinbox->value());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 5, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-吸盘偏移量-左肩膀
+  connect(ui->left_shoulder_compose_offset_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("left_shoulder_compose_offset_x");
+    param_name.push_back("left_shoulder_compose_offset_y");
+    param_name.push_back("left_shoulder_compose_offset_c");
+    std::vector<float> param_value;
+    param_value.push_back(ui->left_shoulder_compose_offset_x_spinbox->value());
+    param_value.push_back(ui->left_shoulder_compose_offset_y_spinbox->value());
+    param_value.push_back(ui->left_shoulder_compose_offset_c_spinbox->value());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 5, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-吸盘偏移量-右下摆
+  connect(ui->right_buttom_compose_offset_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("right_bottom_compose_offset_x");
+    param_name.push_back("right_bottom_compose_offset_y");
+    std::vector<float> param_value;
+    param_value.push_back(ui->right_buttom_compose_offset_x_spinbox->value());
+    param_value.push_back(ui->right_buttom_compose_offset_y_spinbox->value());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 5, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-吸盘偏移量-右腋下
+  connect(ui->right_oxter_compose_offset_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("right_oxter_compose_offset_x");
+    param_name.push_back("right_oxter_compose_offset_y");
+    std::vector<float> param_value;
+    param_value.push_back(ui->right_oxter_compose_offset_x_spinbox->value());
+    param_value.push_back(ui->right_oxter_compose_offset_y_spinbox->value());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 5, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-吸盘偏移量-右肩膀
+  connect(ui->right_shoulder_compose_offset_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("right_shoulder_compose_offset_x");
+    param_name.push_back("right_shoulder_compose_offset_y");
+    param_name.push_back("right_shoulder_compose_offset_c");
+    std::vector<float> param_value;
+    param_value.push_back(ui->right_shoulder_compose_offset_x_spinbox->value());
+    param_value.push_back(ui->right_shoulder_compose_offset_y_spinbox->value());
+    param_value.push_back(ui->right_shoulder_compose_offset_c_spinbox->value());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 5, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-对齐策略
+  connect(ui->align_mode_btn, &QPushButton::clicked, [=](){
+    std::vector<QString> param_name;
+    param_name.push_back("left_shoulder_align_mode");
+    param_name.push_back("left_side_align_mode");
+    param_name.push_back("right_shoulder_align_mode");
+    param_name.push_back("right_side_align_mode");
+    std::vector<int> param_value;
+    param_value.push_back(ui->left_shoulder_align_mode_spinbox->currentIndex());
+    param_value.push_back(ui->right_shoulder_align_mode_spinbox->currentIndex());
+    param_value.push_back(ui->left_side_align_mode_spinbox->currentIndex());
+    param_value.push_back(ui->right_side_align_mode_spinbox->currentIndex());
+    for(int i = 0; i < param_name.size(); i++){
+      rclcomm_->updateParam("syt_motion_planner_node", 0, param_name[i], QString::number(param_value[i]), 0);
+    }
+  });
+
+  // 合片-开启质检
+  connect(ui->quality_check_checkbox, &QCheckBox::toggled, [=](bool toggled){
+    if(toggled){
+      rclcomm_->updateParam("syt_motion_planner_node", 0, "enable_quality_check", QString::number(1), 0);
+    }else{
+      rclcomm_->updateParam("syt_motion_planner_node", 0, "enable_quality_check", QString::number(0), 0);
+    }
+  });
+
+  // 合片-吹气高度
+  connect(ui->blow_height_btn, &QPushButton::clicked, [=](){
+    rclcomm_->updateParam("compose_machine", 4, "blow_height", QString::number(ui->blow_height_spinbox->value()), 0);
+  });
+
+  // 上料机
+  // 上料A-出针
+  connect(ui->load_extend_needle_A_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineExtendNeedle(1, 1); });
+  });
+
+  // 上料B-出针
+  connect(ui->load_extend_needle_B_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineExtendNeedle(0, 1); });
+  });
+
+  // 上料A-收针
+  connect(ui->load_close_needle_A_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineExtendNeedle(1, 0); });
+  });
+
+  // 上料B-收针
+  connect(ui->load_close_needle_B_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineExtendNeedle(0, 0); });
+  });
+
+  // 上料A-复位
+  connect(ui->load_reset_A_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineReset(1); });
+  });
+
+  // 上料B-复位
+  connect(ui->load_reset_B_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineReset(0); });
+  });
+
+  // 上料A-预备上料
+  connect(ui->load_ready_A_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachinePreSetup(1); });
+  });
+
+  // 上料B-预备上料
+  connect(ui->load_ready_B_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachinePreSetup(0); });
+  });
+
+  // 上料A-视觉对位
+  connect(ui->load_vision_A_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineVisualAlign(1); });
+  });
+
+  // 上料B-视觉对位
+  connect(ui->load_vision_B_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineVisualAlign(0); });
+  });
+
+  // 上料A-上裁片
+  connect(ui->load_cloth_A_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineGrabCloth(1); });
+  });
+
+  // 上料B-上裁片
+  connect(ui->load_cloth_B_btn, &QPushButton::clicked, [=]() {
+    QtConcurrent::run([=]() { rclcomm_->loadMachineGrabCloth(0); });
+  });
+
+  // 上料A-重量传感器
+  connect(ui->load_weight_A_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled){
+     QtConcurrent::run([=]() { rclcomm_->loadMachineWeightSwitch(1, 1); });
+    }else{
+     QtConcurrent::run([=]() { rclcomm_->loadMachineWeightSwitch(1, 0); });
+    }
+  });
+
+  // 上料B-重量传感器
+  connect(ui->load_weight_B_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled){
+     QtConcurrent::run([=]() { rclcomm_->loadMachineWeightSwitch(0, 1); });
+    }else{
+     QtConcurrent::run([=]() { rclcomm_->loadMachineWeightSwitch(0, 0); });
+    }
+  });
+
+  // 上料A-上料除褶
+  connect(ui->unpleat_switch_A_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled){
+     QtConcurrent::run([=]() { rclcomm_->loadMachineUnpleatSwitch(1, 1); });
+    }else{
+     QtConcurrent::run([=]() { rclcomm_->loadMachineUnpleatSwitch(1, 0); });
+    }
+  });
+
+  // 上料B-上料除褶
+  connect(ui->unpleat_switch_B_check_box, &QCheckBox::toggled, [=](bool toggled) {
+    if (toggled){
+     QtConcurrent::run([=]() { rclcomm_->loadMachineUnpleatSwitch(0, 1); });
+    }else{
+     QtConcurrent::run([=]() { rclcomm_->loadMachineUnpleatSwitch(0, 0); });
+    }
+  });
+
+  // 缝纫机
+  // 当前抓手坐标显示
+  syt_msgs::msg::SewingMachineState sewingstate;
+  ui->sewing_hand_x_line_edit->setText(QString::number(sewingstate.hand_position.x));
+  ui->sewing_hand_y_line_edit->setText(QString::number(sewingstate.hand_position.y));
+  ui->sewing_hand_c_line_edit->setText(QString::number(sewingstate.hand_position.c));
+  // 缝纫机-设置针距
+  // 边一
+  connect(ui->line_1_btn, &QPushButton::clicked, [=](){
+    float line_1 = ui->line_1_spin_box->value();
+    float line_2 = ui->line_2_spin_box->value();
+    float line_3 = ui->line_3_spin_box->value();
+    float line_4 = ui->line_4_spin_box->value();
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
+    });
+  });
+  // 边二
+  connect(ui->line_2_btn, &QPushButton::clicked, [=](){
+    float line_1 = ui->line_1_spin_box->value();
+    float line_2 = ui->line_2_spin_box->value();
+    float line_3 = ui->line_3_spin_box->value();
+    float line_4 = ui->line_4_spin_box->value();
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
+    });
+  });
+  // 边三
+  connect(ui->line_3_btn, &QPushButton::clicked, [=](){
+    float line_1 = ui->line_1_spin_box->value();
+    float line_2 = ui->line_2_spin_box->value();
+    float line_3 = ui->line_3_spin_box->value();
+    float line_4 = ui->line_4_spin_box->value();
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
+    });
+  });
+  // 边四
+  connect(ui->line_4_btn, &QPushButton::clicked, [=](){
+    float line_1 = ui->line_1_spin_box->value();
+    float line_2 = ui->line_2_spin_box->value();
+    float line_3 = ui->line_3_spin_box->value();
+    float line_4 = ui->line_4_spin_box->value();
+    QtConcurrent::run([=]() {
+      rclcomm_->sewingMachineNeedle(line_1, line_2, line_3, line_4);
+    });
+  });
+
+  // 缝纫机-移动抓手
+  connect(ui->sewing_move_hand_btn, &QPushButton::clicked, [=](){
+    float x = ui->sewing_hand_x_spin_box->value();
+    float y = ui->sewing_hand_y_spin_box->value();
+    float c = ui->sewing_hand_c_spin_box->value();
+    QtConcurrent::run([=]() { rclcomm_->sewingMachineMoveHand(x, y, c, 0); });
+  });
+
+  // 缝纫机-设置当前值
+  connect(ui->sewing_setvalue_btn, &QPushButton::clicked, [=]{
+    ui->sewing_hand_x_spin_box->setValue(ui->sewing_hand_x_line_edit->text().toFloat());
+    ui->sewing_hand_y_spin_box->setValue(ui->sewing_hand_y_line_edit->text().toFloat());
+    ui->sewing_hand_c_spin_box->setValue(ui->sewing_hand_c_line_edit->text().toFloat());
+  });
+
+  // 测试页面
+  // 测试-使用缝纫机
+  connect(ui->use_sewing_check_box, &QCheckBox::toggled, [=](bool toggled){
+    if(toggled){
+      system("ros2 param set /syt_sewing_machine_node use_sewing True");
+    }else{
+      system("ros2 param set /syt_sewing_machine_node use_sewing False");
+    }
+  });
+
+  // 测试-老化 暂不做链接 之后可进行功能拓展 ui->oldtest_check_box
+
+  // 测试-切换模式
+  connect(ui->mode_combobox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index){
+    switch(index) {
+    case 0:
+      QtConcurrent::run([=]() { rclcomm_->changeMode(0); });
+      break;
+    case 1:
+      QtConcurrent::run([=]() { rclcomm_->changeMode(1); });
+      break;
+    case 2:
+      QtConcurrent::run([=]() { rclcomm_->changeMode(2); });
+      break;
+    case 3:
+      QtConcurrent::run([=]() { rclcomm_->changeMode(3); });
+      break;
     }
   });
 }
@@ -2234,16 +2697,6 @@ void MainWindow::resetBtnClicked() {
     return;
   }
 
-  // 清空可视化
-  ui->B_left_visual_label->clear();
-  ui->B_right_visual_label->clear();
-  ui->A_left_visual_label->clear();
-  ui->A_right_visual_label->clear();
-  ui->B_left_visual_label->setText("NO IMAGE");
-  ui->B_right_visual_label->setText("NO IMAGE");
-  ui->A_left_visual_label->setText("NO IMAGE");
-  ui->A_right_visual_label->setText("NO IMAGE");
-
   // 在复位时自动设置软件参数
   QVector<QString> embeded_param_group{"care_label", "sewing_machine", 
                                        "load_machine", "compose_machine"};
@@ -2285,7 +2738,7 @@ void MainWindow::resetFinish(bool result) {
     emit signUpdateLabelState(tr("复位完成"));
     this->btnControl({ui->start_btn, ui->end_btn, ui->add_cloth_btn},
     {ui->reset_btn, ui->pause_btn});
-    this->btnControl({ui->developer_mode_btn, ui->param_set_btn, ui->head_eye_calibration_btn, ui->create_style_btn, ui->lock_screen_btn},{});
+    this->btnControl({ui->head_eye_calibration_btn, ui->create_style_btn},{});
     is_sewing_reset_ = false;
     //  setMutuallyLight(GREEN);
   } else {
@@ -2336,11 +2789,11 @@ void MainWindow::paramProcessFinish(bool result) {
 void MainWindow::deadErrorProcess(bool result) {
   if(result){
     btnControl({}, {ui->reset_btn, ui->start_btn, ui->pause_btn, ui->end_btn, ui->add_cloth_btn,
-               ui->add_cloth_btn, ui->developer_mode_btn, ui->param_set_btn, ui->head_eye_calibration_btn, 
-               ui->create_style_btn, ui->lock_screen_btn, ui->help_btn});
+               ui->add_cloth_btn, ui->head_eye_calibration_btn, 
+               ui->create_style_btn});
     emit signUpdateLabelState("请松开急停按钮");
   }else {
-    btnControl({ui->reset_btn,}, {});
+    btnControl({ui->reset_btn, ui->choose_style_btn}, {});
     emit signUpdateLabelState("松开急停后 请进行复位");
     is_dead_error_ = true;
   }
@@ -2364,7 +2817,7 @@ void MainWindow::pauseFinish(bool result) {
   if (result) {
     emit signUpdateLabelState(tr("暂停中"));
     this->btnControl({ui->reset_btn, ui->start_btn}, {ui->end_btn, ui->pause_btn, ui->add_cloth_btn});
-    this->btnControl({}, {ui->create_style_btn, ui->head_eye_calibration_btn, ui->lock_screen_btn, ui->choose_style_btn});
+    this->btnControl({}, {ui->create_style_btn, ui->head_eye_calibration_btn, ui->choose_style_btn});
   } else {
     emit signUpdateLabelState(tr("暂停失败"));
     showMessageBox(this, ERROR, tr("暂停失败"), 1, {tr("确认")});
@@ -2388,8 +2841,8 @@ void MainWindow::stopBtnClicked() {
   waiting_spinner_widget_->start();
   QtConcurrent::run([=](){
     // bool success = state.isFinished();
-    // 整机暂停
-    rclcomm_->pauseCmd();
+    // 整机结束
+    rclcomm_->stopCmd();
     //复位
     rclcomm_->sewingMachineReset();
     rclcomm_->resetCmd();
@@ -2399,7 +2852,8 @@ void MainWindow::stopBtnClicked() {
 void MainWindow::stopFinish(bool result) {
   waiting_spinner_widget_->stop();
   if (result) {
-    emit signUpdateLabelState(tr("结束中"));
+    waiting_spinner_widget_->start();
+    emit signUpdateLabelState(tr("结束中 等待复位完成"));
   } else {
     emit signUpdateLabelState(tr("结束失败"));
     showMessageBox(this, ERROR, tr("结束失败"), 1, {tr("确认")});
@@ -2558,17 +3012,6 @@ void MainWindow::slotShowDevLoginWindow() {
   dev_login_window->setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void MainWindow::slotParamSet() {
-  param_set_widget_->move(this->geometry().center() - QPoint(param_set_widget_->width() / 2, param_set_widget_->height() / 2));
-  param_set_widget_->show();
-}
-
-void MainWindow::slotLockScreen() {
-  auto lock_dialog = new LockDialog(this);
-  lock_dialog->show();
-  lock_dialog->setAttribute(Qt::WA_DeleteOnClose);
-}
-
 void MainWindow::slotStartHeadEyeWindow() {
   QString tip = tr(
       "<html>"
@@ -2585,6 +3028,7 @@ void MainWindow::slotStartHeadEyeWindow() {
   auto res = showMessageBox(this, WARN, tip, 2, {tr("确认"), tr("返回")});
   if (res == 0) {
     emit signHandEyeWindowShow();
+    btnControl({ui->reset_btn}, {ui->start_btn, ui->pause_btn, ui->end_btn, ui->add_cloth_btn});
   }
 }
 
@@ -2634,7 +3078,7 @@ void MainWindow::slotLogShow(QString time, int level, QString location, QString 
   default:
     break;
   }
-  ui->log_plain_text_edit->appendHtml(htmlText);
+  ui->log_plainTextEdit->appendHtml(htmlText);
 }
 
 ////////////////////////// 选择设置样式槽函数 //////////////////////////
@@ -2699,8 +3143,13 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     float bl_ = qAbs(cloth_style_front.bottom_length - cloth_style_back.bottom_length);
     if(bl_ <= 5){
       is_style_rational_ = true;
-      cloth_style_front.cloth_location -= 1;
-      cloth_style_back.cloth_location += 1;
+      if((cloth_style_front.cloth_location - 50) <= 0){
+        cloth_style_front.cloth_location = 51;
+        cloth_style_back.cloth_location = 50;
+      } else {
+        cloth_style_front.cloth_location = 50;
+        cloth_style_back.cloth_location = 51;
+      }
     }else{
       is_style_rational_ = false;
     }
@@ -2773,7 +3222,7 @@ void MainWindow::slotGetClothStyleFinish(bool result, syt_msgs::msg::ClothStyle 
     // 画笔对象
     QPainter painter(&style_image);
     painter.setRenderHint(QPainter::Antialiasing);
-
+  
     // 裁片颜色以填充图像
     QColor front_color, back_color;
     int front_color_value = cloth_style_front.cloth_color;
@@ -3014,6 +3463,7 @@ void MainWindow::slotAutoCreateStyle(ClothStyleDialog *parent) {
 
   auto_create_style_wizard->show();
   auto_create_style_wizard->setAttribute(Qt::WA_DeleteOnClose);
+  btnControl({ui->reset_btn}, {});
 }
 
 // 手动输入创建

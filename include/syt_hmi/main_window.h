@@ -4,8 +4,6 @@
 #include <QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
 #include <memory>
-#include <queue>
-#include <deque>
 
 #include "syt_btn/winclosebutton.h"
 #include "syt_btn/winmaxbutton.h"
@@ -87,23 +85,25 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event) override;
   bool eventFilter(QObject *obj, QEvent *ev) override;
   void resizeEvent(QResizeEvent *event) override;
-  virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
   void checkOk();
   void initWidget();
   void settingConnection();
+  void mainControlConnection();
   void bindControlConnection();
   void bindParamSetConnection();
   void deleteAll();
   void initOther();
   // void setMutuallyLight(LIGHT_COLOR color);
   void btnControl(std::vector<QPushButton *> enables, std::vector<QPushButton *> unables);
+  void switchPage();
 
   // 设置各个组件的属性和信号槽
   void setStatisticComponent();
   void setPreviewComponent();
   void setLogComponent();
+  void setUserLogComponent();
   void setTimeComponent();
   void setToolBar();
   void setMainControlButton();
@@ -115,7 +115,6 @@ private:
   void setParamSetWidget();
 
   // 辅助函数
-  void showLoadMachineImage();
   bool readJson(const QString &json_file, QStandardItemModel *model);
   bool dumpJson(const QString &json_file, QStandardItemModel *model);
   int getItemLevel(QStandardItem *item);
@@ -162,10 +161,8 @@ private slots:
 
   ////////////////////////// 工具栏函数 //////////////////////////
   void slotShowDevLoginWindow();
-  void slotParamSet();
   void slotStartHeadEyeWindow();
   void slotStartClothStyleWindow();
-  void slotLockScreen();
 
   void slotDeveloperMode();
 

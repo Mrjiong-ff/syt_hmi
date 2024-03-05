@@ -275,7 +275,7 @@ Create</translation>
     </message>
     <message>
         <location filename="src/syt_hmi/wizard_pages.cpp" line="99"/>
-        <source>%1检测失败!</source>
+        <source>%1检测失败!请检查裁片是否平整/缺角！</source>
         <translation>Detect %1 failed!</translation>
     </message>
     <message>

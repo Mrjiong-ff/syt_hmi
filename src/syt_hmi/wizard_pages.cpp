@@ -96,7 +96,7 @@ void DetectClothPage::slotDetectClothResult(bool result, int cloth_type) {
   }
   detected_result_ = result;
   if (result == false) {
-    showMessageBox(this, ERROR, QString(tr("%1检测失败!")).arg(cloth_type_ ? tr("后片") : tr("前片")), 1, {tr("确认")});
+    showMessageBox(this, ERROR, QString(tr("%1检测失败!请检查裁片是否平整/缺角！")).arg(cloth_type_ ? tr("后片") : tr("前片")), 1, {tr("确认")});
     return;
   }
   showMessageBox(this, SUCCESS, QString(tr("%1检测成功，请点击下一步。")).arg(cloth_type_ ? tr("后片") : tr("前片")), 1, {tr("确认")});
